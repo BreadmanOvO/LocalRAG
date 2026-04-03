@@ -1,7 +1,7 @@
 ############################################################
 version = "1.0.0"
 author = "breadman"
-email = "breadman@gmail.com"
+email = "gluweinzhu@hotmail.com"
 description = "A local RAG system"
 ############################################################
 uploader = "breadman"
