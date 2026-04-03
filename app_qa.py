@@ -1,7 +1,6 @@
 import streamlit as st
-import time
+import uuid
 from rag import RagService
-import config_data as config
 
 st.title("智能助手")
 st.divider()
@@ -11,6 +10,9 @@ if "message" not in st.session_state:
 
 if "rag" not in st.session_state:
     st.session_state["rag"] = RagService()
+
+if "session_id" not in st.session_state:
+    st.session_state["session_id"] = str(uuid.uuid4())
 
 for message in st.session_state["message"]:
     st.chat_message(message["role"]).write(message["content"])
@@ -23,13 +25,14 @@ if prompt:
 
     ai_res_list = []
     with st.spinner("思考中..."):
-        response_stream = st.session_state["rag"].chain.stream({"question": prompt}, config.session_config)
+        session_config = {"configurable": {"session_id": st.session_state["session_id"]}}
+        response_stream = st.session_state["rag"].chain.stream({"question": prompt}, session_config)
         
-        def capture(generator, cache_list):
+        def capture(generator):
             for chunk in generator:
                 ai_res_list.append(chunk)
                 yield chunk
 
-        st.chat_message("assistant").write_stream(capture(response_stream, ai_res_list))
-        response = st.session_state["message"].append({"role": "assistant", "content": "".join(ai_res_list)})
+        st.chat_message("assistant").write_stream(capture(response_stream))
+        st.session_state["message"].append({"role": "assistant", "content": "".join(ai_res_list)})
 

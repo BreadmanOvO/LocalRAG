@@ -1,0 +1,37 @@
+# Python cache / bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local runtime data (project-specific)
+chroma_db/
+chat_history/
+md5.txt
+
+# Local Streamlit cache/config
+.streamlit/
+
+# Local secrets / env files
+.env
+.env.*
+*.local

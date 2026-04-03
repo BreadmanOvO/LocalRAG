@@ -12,7 +12,7 @@ from chat_history_store import get_history
 
 class RagService(object):
     def __init__(self) -> None:
-        self.vecotr_service = VectorStoreService(
+        self.vector_service = VectorStoreService(
             embedding=DashScopeEmbeddings(model=config.embedding_model_name),
         )
 
@@ -32,7 +32,7 @@ class RagService(object):
 
     def __get_chain(self):
         '''获取最终的执行链'''
-        retriever = self.vecotr_service.get_retriever()
+        retriever = self.vector_service.get_retriever()
 
         def format_for_retriever(value: dict) -> str: 
             return value["question"]

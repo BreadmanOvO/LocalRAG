@@ -1,7 +1,9 @@
-# 数据库上传人
-from requests import session
-
-
+############################################################
+version = "1.0.0"
+author = "breadman"
+email = "breadman@gmail.com"
+description = "A local RAG system"
+############################################################
 uploader = "breadman"
 
 # md5文件路径
@@ -23,9 +25,3 @@ similarity_top_k = 2 # 相似度top k
 # 模型参数-qwen百炼平台
 embedding_model_name = "text-embedding-v4"
 chat_model_name = "qwen3-max"
-
-session_config = {
-    "configurable": {
-        "session_id": "user_001",
-    }
-}
