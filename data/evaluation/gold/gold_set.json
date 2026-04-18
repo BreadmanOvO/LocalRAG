@@ -1,0 +1,87 @@
+[
+  {
+    "id": "gold-001",
+    "question": "Apollo Cyber RT 的核心作用是什么？",
+    "reference_answer": "Apollo Cyber RT 负责提供自动驾驶系统中的通信、调度和组件协作基础能力。",
+    "evidence": [
+      {
+        "quote": "Cyber RT is the core framework for Apollo runtime communication and scheduling.",
+        "source_id": "apollo-doc-002",
+        "locator": "chapter=1/overview"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-002",
+    "question": "感知融合为什么对自动驾驶很重要？",
+    "reference_answer": "感知融合能综合不同传感器的互补信息，从而提升目标检测与环境理解的稳定性。",
+    "evidence": [
+      {
+        "quote": "Fusion combines semantic cues with geometric robustness.",
+        "source_id": "apollo-doc-005",
+        "locator": "chapter=2/section=2.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-003",
+    "question": "UN R155 主要关注什么类型的安全问题？",
+    "reference_answer": "UN R155 主要关注车辆网络安全管理体系和网络攻击风险。",
+    "evidence": [
+      {
+        "quote": "The regulation addresses cyber security and cyber security management systems.",
+        "source_id": "standard-007",
+        "locator": "section=scope"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-004",
+    "question": "为什么预测模块与规划模块需要紧密协同？",
+    "reference_answer": "因为预测结果直接影响规划决策，只有保持时序和接口一致，才能减少决策偏差。",
+    "evidence": [
+      {
+        "quote": "Prediction output feeds downstream planning decisions.",
+        "source_id": "apollo-doc-007",
+        "locator": "chapter=3/section=3.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-005",
+    "question": "BEV 感知在自动驾驶系统中有什么优势？",
+    "reference_answer": "BEV 感知能够统一多源信息到鸟瞰空间表示，提升空间一致性和下游规划理解能力。",
+    "evidence": [
+      {
+        "quote": "BEV representation helps normalize spatial scale across the scene.",
+        "source_id": "paper-001",
+        "locator": "page=4/paragraph=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  }
+]

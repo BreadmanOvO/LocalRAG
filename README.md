@@ -23,6 +23,7 @@
 
 ## 当前阶段与下一步
 - 当前阶段：v1.0 Baseline 规划中
+- baseline 状态：Gold Set / Synthetic Set / `eval_ragas.py` / `eval_llm_judge.py` 已完成首版骨架与测试覆盖；当前环境下 baseline 运行前还需要提供有效的 `OPENAI_API_KEY`，后续继续扩样本并补充真实 Ragas 指标。
 - 本周重点：先建立 Gold Set + Synthetic Set 双数据集，并完成 Ragas + LLM-as-a-Judge baseline 跑通
 - 下一步任务：
   1. 创建人工 Gold Set（30-50 题）
@@ -59,3 +60,9 @@
 
 ## 仓库说明
 当前仓库以规划文档为主；后续代码、脚本和评估结果会随版本推进逐步补齐。README 会继续从“规划首页”演进为“项目首页”。
+
+## 环境依赖
+- 主运行依赖见 `requirements.txt`
+- 文档清洗专项依赖见 `requirements-source-cleaning.txt`
+- 运行 `eval_ragas.py` 前需要先设置 `OPENAI_API_KEY`
+- 默认生成模型为 `gpt-5.4`，当前 embedding 仍使用 DashScope 配置

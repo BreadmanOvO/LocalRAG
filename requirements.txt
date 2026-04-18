@@ -1,0 +1,12 @@
+langchain-core
+langchain-community
+langchain-openai
+langchain-chroma
+langchain-text-splitters
+chromadb
+pysqlite3-binary
+streamlit
+dashscope
+pypdf
+pymupdf
+rapidocr-onnxruntime

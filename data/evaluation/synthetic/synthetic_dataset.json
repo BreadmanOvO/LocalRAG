@@ -1,0 +1,172 @@
+[
+  {
+    "id": "syn-001",
+    "question": "Apollo Open Platform 在自动驾驶系统中起什么作用？",
+    "reference_answer": "Apollo Open Platform 提供自动驾驶开发所需的开放能力与集成接口，便于开发和部署不同模块。",
+    "evidence": [
+      {
+        "quote": "Apollo Open Platform provides open capabilities for autonomous driving development.",
+        "source_id": "apollo-doc-004",
+        "locator": "overview"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "syn-002",
+    "question": "为什么规划系统需要同时考虑定位信息和环境信息？",
+    "reference_answer": "规划系统需要把自身位姿与周围环境统一考虑，才能生成可执行且安全的轨迹。",
+    "evidence": [
+      {
+        "quote": "Planning requires both ego-state and environment context.",
+        "source_id": "apollo-doc-008",
+        "locator": "chapter=2/section=2.3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "syn-003",
+    "question": "控制模块为什么必须关注执行稳定性？",
+    "reference_answer": "控制模块需要稳定地把规划指令转换为车辆动作，否则会放大误差并影响乘坐舒适性与安全性。",
+    "evidence": [
+      {
+        "quote": "Control stability is essential for safe vehicle actuation.",
+        "source_id": "apollo-doc-009",
+        "locator": "chapter=1/section=1.2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "syn-004",
+    "question": "定位模块为什么对自动驾驶系统的整体性能重要？",
+    "reference_answer": "定位模块为感知、预测和规划提供准确的自车位姿参考，是系统稳定运行的基础之一。",
+    "evidence": [
+      {
+        "quote": "Localization provides the ego pose foundation for downstream modules.",
+        "source_id": "apollo-doc-010",
+        "locator": "chapter=1/section=overview"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "syn-005",
+    "question": "BEVFusion 为什么适合做多模态感知？",
+    "reference_answer": "BEVFusion 可以把不同传感器的表示统一到鸟瞰空间，从而更好地融合几何和语义信息。",
+    "evidence": [
+      {
+        "quote": "Fusion combines semantic cues with geometry.",
+        "source_id": "paper-002",
+        "locator": "page=5/paragraph=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "syn-006",
+    "question": "VAD 为什么可以帮助构建更高效的自动驾驶表示？",
+    "reference_answer": "VAD 使用向量化场景表示，能够减少冗余并提升下游规划与建模效率。",
+    "evidence": [
+      {
+        "quote": "Vectorized scene representation improves efficiency for autonomous driving.",
+        "source_id": "paper-005",
+        "locator": "abstract"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "syn-007",
+    "question": "为什么 Apollo 感知融合结果会影响下游规划稳定性？",
+    "reference_answer": "感知融合会把多传感器结果统一成更完整的障碍物信息，输出质量越高，下游规划越稳定。",
+    "evidence": [
+      {
+        "quote": "Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "source_id": "apollo-doc-005",
+        "locator": "chapter=4/section=4.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "syn-008",
+    "question": "UN R156 为什么和自动驾驶软件更新密切相关？",
+    "reference_answer": "UN R156 关注软件更新管理体系，因此直接关系到自动驾驶系统的软件发布与升级安全。",
+    "evidence": [
+      {
+        "quote": "The regulation addresses software update and software update management systems.",
+        "source_id": "standard-008",
+        "locator": "section=purpose"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "syn-009",
+    "question": "UN R157 对自动车道保持系统意味着什么？",
+    "reference_answer": "UN R157 为自动车道保持系统设定了监管和安全要求，影响其设计、验证和部署。",
+    "evidence": [
+      {
+        "quote": "Automated Lane Keeping Systems are covered by the regulation.",
+        "source_id": "standard-009",
+        "locator": "section=scope"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "syn-010",
+    "question": "Apollo 的预测输出为什么要及时供给规划模块？",
+    "reference_answer": "预测输出会直接进入规划决策流程，因此及时、准确的预测结果能帮助规划模块生成更合理的行驶方案。",
+    "evidence": [
+      {
+        "quote": "Prediction output feeds downstream planning decisions.",
+        "source_id": "apollo-doc-003",
+        "locator": "chapter=5/section=5.4"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  }
+]

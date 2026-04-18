@@ -1,10 +1,18 @@
 import hashlib
 import os
-from langchain_chroma import Chroma
+import sys
+import sqlite3
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import datetime
 import config_data as config
+
+if tuple(map(int, sqlite3.sqlite_version.split("."))) < (3, 35, 0):
+    import pysqlite3
+
+    sys.modules["sqlite3"] = pysqlite3
+
+from langchain_chroma import Chroma
 
 def check_md5(md5_str: str):
     # 检查传入的md5值是否已经传入，True表示已经传入，False表示没有传入

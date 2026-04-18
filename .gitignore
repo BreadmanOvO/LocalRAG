@@ -31,6 +31,9 @@ md5.txt
 # Local Streamlit cache/config
 .streamlit/
 
+# Local git worktrees
+.worktrees/
+
 # Local secrets / env files
 .env
 .env.*

@@ -22,6 +22,6 @@ min_split_length = 500 # 文本分割的最小长度
 # VectorStoreService 参数
 similarity_top_k = 2 # 相似度top k
 
-# 模型参数-qwen百炼平台
+# 模型参数
 embedding_model_name = "text-embedding-v4"
-chat_model_name = "qwen3-max"
+chat_model_name = "gpt-5.4"

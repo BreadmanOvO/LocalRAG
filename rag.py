@@ -2,13 +2,14 @@
 from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 from vector_stores import VectorStoreService
 from langchain_community.embeddings import DashScopeEmbeddings
+from langchain_openai import ChatOpenAI
 import config_data as config
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_community.chat_models.tongyi import ChatTongyi
 from langchain_core.documents import Document
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from chat_history_store import get_history
+from uuid import uuid4
 
 class RagService(object):
     def __init__(self) -> None:
@@ -26,7 +27,7 @@ class RagService(object):
             ]
         )
         
-        self.chat_model = ChatTongyi(model=config.chat_model_name)
+        self.chat_model = ChatOpenAI(model=config.chat_model_name)
 
         self.chain = self.__get_chain()
 
@@ -67,3 +68,13 @@ class RagService(object):
         )
 
         return chain_with_history
+
+    def answer_once(self, question: str, session_id: str = "eval-session") -> str:
+        effective_session_id = session_id
+        if session_id == "eval-session":
+            effective_session_id = f"eval-session-{uuid4().hex}"
+
+        return self.chain.invoke(
+            {"question": question},
+            config={"configurable": {"session_id": effective_session_id}},
+        )
