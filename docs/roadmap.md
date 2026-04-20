@@ -12,10 +12,10 @@
 | 版本 | 时间 | 核心目标 | 关键产出 | 评估对比 | 亮点 |
 |------|------|----------|----------|----------|------|
 | **v1.0 Baseline** | 第1周 | 建立双评估框架与基准数据集 | Gold Set + Synthetic Set + 双评估基线 | - | 先建立可复用评估闭环 |
-| **v1.1 数据层** | 第2周 | 文档清洗、结构化切分与元数据增强 | 文档解析结果 + chunking 策略 + metadata 规范 | vs v1.0 | 为检索优化建立稳定输入 |
-| **v1.2 检索层** | 第3周 | 分阶段升级检索链路：hybrid retrieval + reranker | 混合检索、重排、检索消融实验结果 | vs v1.1 | 聚焦最可能产生核心收益的主链路 |
+| **v1.1 数据层** | 第2周 | 文档清洗、source registry、结构化切分与 metadata 增强 | 文档解析结果 + baseline chunking + doc-type-aware chunking + metadata 规范 | vs v1.0 | 为检索优化建立稳定、可追溯输入 |
+| **v1.2 检索层** | 第3周 | 分阶段升级检索链路：hybrid retrieval + retrieval inspection + reranker | 混合检索、检索检查能力、重排、检索消融实验结果 | vs v1.1 | 聚焦最可能产生核心收益的主链路 |
 | **v1.3 模型层** | 第4-5周 | 仅在检索趋于稳定后再评估 QLoRA | 指令微调实验（条件满足时） | vs v1.2 | 用门槛控制训练投入 |
-| **v1.4 工程增强** | 第6周 | UI、部署、性能优化与可选底层实验 | Chainlit / 部署整理 / 性能测试 | vs v1.3 | 把增强项放在主线之后 |
+| **v1.4 工程增强** | 第6周 | UI、部署、性能优化与可选底层实验 | Chainlit / 部署整理 / 性能测试 / 可选 parent-child chunking | vs v1.3 | 把增强项放在主线之后 |
 
 ### v1.0 Baseline
 - 建立人工小规模 Gold Set（30-50 题）
@@ -26,13 +26,28 @@
 
 ### v1.1 数据层
 - 收集 Apollo 中文文档、经典英文论文、技术规范
-- 先完成稳定的文本提取、结构化切分和 metadata 设计
-- 用统一 chunking 策略建立初始入库数据
-- 将多模态 OCR 作为增强项，仅在文本检索稳定后再深入
+- 先完成稳定的文本提取、source registry、结构化切分和 metadata 设计
+- 先建立统一 baseline chunking，再引入按文档类型选择 chunk 策略的能力
+- 文档类型感知 chunking 的首批范围：
+  - Apollo 官方文档：按章节 / 小节 / 模块说明边界切分
+  - 标准规范材料：按条款 / 定义 / 列表边界切分
+  - 方法论文 / 技术报告：按摘要 / 方法 / 实验 / 结论等结构边界切分
+- 每个 chunk 必须保留来源信息，包括 `source_id`、文档类型、页码/章节、chunk 顺序与切分策略
+- 多模态 OCR 作为增强项，仅在文本检索稳定后再深入
 
 ### v1.2 检索层
 - 先切换嵌入模型到 BGE-M3、本地向量库到 Qdrant
-- 按消融顺序推进：metadata/chunking → hybrid retrieval → reranker → 可选 HyDE → 可选 hierarchical index
+- 明确知识库级 embedding 配置，避免同一知识库混用不同 embedding space
+- 按消融顺序推进：
+  1. baseline metadata/chunking
+  2. doc-type-aware chunking
+  3. hybrid retrieval
+  4. retrieval inspection
+  5. reranker
+  6. 可选 HyDE
+  7. 可选 hierarchical index
+- hybrid retrieval 以 dense + sparse/BM25 融合为主，先支持可调融合权重与召回阈值
+- 增加 retrieval inspection 能力，用于查看 query、召回 chunk、chunk 分数、来源文档与切分策略
 - 每一步都在同一套 Gold Set + Synthetic Set 上验证收益
 - 重点验证检索层相对微调层的收益
 
@@ -46,8 +61,8 @@
 - 将 UI 从 Streamlit 升级到 Chainlit
 - 视情况补充 Docker 容器化
 - 推进 llama.cpp 编译、量化与 TTFT 实验
+- 如前序收益已趋稳，可选评估 parent-child chunking
 - 工程增强不应阻塞评估与检索主线
-
 
 ## 技术决策
 
@@ -56,6 +71,23 @@
 - 每个版本都跑同一套测试集，输出独立指标文件。
 - 通过 pairwise 对战验证新版本相对上版本的实际收益。
 - 评估优先使用人工 Gold Set，Synthetic Set 用于扩展覆盖与压力测试。
+
+### 数据输入稳定优先
+- 检索优化之前，先固定来源登记、清洗规则和 chunk 生成规则。
+- `source_registry` 作为统一入口，保证每份知识源可追溯、可复查、可重复入库。
+- 数据层优先解决“来源是否稳定、chunk 是否可靠、metadata 是否完整”，而不是过早堆叠复杂检索技巧。
+
+### 文档类型感知 chunking
+- 不再假设所有文档适用同一种 chunking 策略。
+- chunking 策略至少按三类来源区分：官方文档、标准规范、论文/技术报告。
+- 统一 baseline chunking 作为对照组，doc-type-aware chunking 作为 v1.2 首批消融项。
+- chunk 元数据需显式记录 `chunk_strategy`，便于后续评测与误差分析。
+
+### 检索可观察性优先
+- 检索优化不能只看最终回答质量，还要能观察中间召回结果。
+- 在 v1.2 阶段补齐 retrieval inspection 能力，用于展示 query、召回 chunk、融合分数、rerank 分数与来源信息。
+- 每个 chunk 都应保留可追溯字段，至少包括 `source_id`、`doc_type`、页码/章节、`chunk_order`、`chunk_strategy`。
+- 检索调优优先依赖可观察证据，而不是只凭主观回答印象做判断。
 
 ### 嵌入模型：BGE-M3 本地化
 - v1.2 起统一切换到 BGE-M3。
@@ -70,7 +102,7 @@
 
 ### 向量数据库：Qdrant
 - v1.2 直接切换到 Qdrant。
-- 原因是其内置混合检索支持更适合当前路线。
+- 原因是其对本地部署和混合检索路线更友好。
 - Qdrant 本地部署轻量，适合单机开发环境。
 
 ### LangChain 渐进式简化
@@ -81,8 +113,8 @@
 
 ### UI 路线
 - v1.0 维持现有 Streamlit 思路。
-- v1.1-v1.3 推荐迁移到 Chainlit。
-- v1.4 若系统稳定，再评估 Vue + FastAPI 前后端分离方案。
+- v1.1-v1.3 优先补足检索检查视图，而不是先追求前端重构。
+- v1.4 若系统稳定，再评估 Chainlit 或 Vue + FastAPI 前后端分离方案。
 
 ### Docker 容器化
 - 作为 v1.4 或之后的可选项。
@@ -103,19 +135,22 @@
   └─ 错误处理与日志
         ↓
 核心服务层
+  ├─ 文档解析与 doc-type-aware chunking
   ├─ 混合检索（BM25 + BGE-M3 + 融合排序）
-  ├─ 层级索引（文档 → 章节 → 段落）
+  ├─ 检索检查 / inspection
   ├─ Rerank 精排
   └─ 模型生成（Qwen2-7B / Qwen3-8B）
         ↓
 数据存储层
   ├─ Qdrant
   ├─ 本地文档存储
+  ├─ source registry
   └─ 会话存储
         ↓
 评估监控层
   ├─ Ragas 自动评估
   ├─ LLM-as-a-Judge 主观评估
+  ├─ 检索消融实验记录
   └─ 指标可视化与日志分析
 ```
 
@@ -132,19 +167,25 @@
 ### 第2周：数据层升级
 - [ ] 收集 Apollo 中文文档（20篇）
 - [ ] 下载经典英文论文（5篇）
-- [ ] 实现 `semantic_splitter.py`
-- [ ] 实现多模态解析器
+- [ ] 完成 `source_registry` 与来源元数据规范
+- [ ] 实现 baseline chunking
+- [ ] 实现文档类型感知 chunking 策略
+- [ ] 为 chunk 增加 provenance metadata（`source_id`、`doc_type`、`page/section`、`chunk_order`、`chunk_strategy`）
+- [ ] 视评估需求决定是否补充多模态解析
 - [ ] 重新入库并跑评估对比
 
 ### 第3周：检索层升级
 - [ ] 切换嵌入模型到 BGE-M3 本地
 - [ ] 切换到 Qdrant
+- [ ] 固定知识库级 embedding 配置
 - [ ] 优化 metadata 与 chunking 策略
-- [ ] 实现 BM25 关键词检索
+- [ ] 实现 BM25 / sparse retrieval
+- [ ] 实现 hybrid retrieval 与融合参数配置
+- [ ] 实现 retrieval inspection（查看召回 chunk、分数、来源、chunk_strategy）
 - [ ] 集成 `reranker_service.py`
 - [ ] 视评估结果决定是否引入 HyDE
 - [ ] 视评估结果决定是否引入层级索引
-- [ ] 跑评估对比
+- [ ] 跑评估对比并记录消融结果
 
 ### 第4-5周：模型层升级
 - [ ] 基于 error analysis 判断是否进入微调
@@ -168,6 +209,7 @@
 - [ ] UI 升级
 - [ ] 代码简化重构
 - [ ] Docker 容器化
+- [ ] 如前序收益稳定，评估 parent-child chunking
 - [ ] 性能测试
 
 ## 风险与应对
@@ -177,6 +219,8 @@
 | **BGE-M3 显存不足** | 中 | 高 | 使用 FP16 或切 CPU 模式，必要时降级模型 | 4080 需提前压测 |
 | **QLoRA / DPO 训练失败** | 中 | 高 | 先小规模试训并监控 loss，保留替代训练方案 | DPO 为加分项 |
 | **评估指标无提升** | 高 | 中 | 分模块定位瓶颈，优先保证检索层收益 | 检索收益通常大于微调 |
+| **chunking 收益不稳定** | 中 | 中 | 保留 baseline chunking 作为对照，按文档类型逐类验证 | 避免一次改太多变量 |
+| **检索链路过早复杂化** | 中 | 中 | 先完成 hybrid retrieval + inspection，再决定是否上 hierarchical index / HyDE | 先抓主收益项 |
 | **时间不足（6周紧张）** | 高 | 高 | 先完成 v1.0 → v1.1 → v1.2 核心路径 | v1.2 是最高优先级 |
 | **合成数据质量差** | 中 | 中 | 多轮生成、去重、人工抽检 | 生成数据必须审核 |
 | **HyDE 效果不佳** | 中 | 低 | 准备 Query Expansion 等备选方案 | 原理理解同样重要 |
@@ -185,5 +229,5 @@
 ## 时间管理策略
 - **核心原则**：检索层（v1.2）收益通常大于微调层（v1.3）。
 - **必做路径**：先完成 v1.0 评估、v1.1 数据、v1.2 检索。
-- **加分路径**：时间允许再做 DPO、性能优化和容器化。
+- **加分路径**：时间允许再做 DPO、性能优化、parent-child chunking 和容器化。
 - **最简可行方案**：至少完成 v1.0 + v1.1 + v1.2，并将 v1.3 压缩为基础 QLoRA。
