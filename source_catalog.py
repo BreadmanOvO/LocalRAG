@@ -11,7 +11,7 @@ REGISTRY_REL_PATH = "data/evaluation/shared/source_registry.json"
 class SourceDocument:
     source_id: str
     title: str
-    source_type: str
+    doc_type: str
     category: str
     language: str
     raw_relpath: str
@@ -34,7 +34,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="apollo-doc-001",
         title="Apollo Developer Center Learning Path",
-        source_type="official_doc",
+        doc_type="official_doc",
         category="apollo",
         language="en",
         raw_relpath="data/sources/raw/apollo/apollo-devcenter-learning-path.pdf",
@@ -47,7 +47,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="apollo-doc-002",
         title="Apollo Cyber RT Framework",
-        source_type="official_doc",
+        doc_type="official_doc",
         category="apollo",
         language="en",
         raw_relpath="data/sources/raw/apollo/Apollo-Cyber-RT-framework.pdf",
@@ -60,7 +60,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="apollo-doc-003",
         title="Apollo Channel Data Format",
-        source_type="official_doc",
+        doc_type="official_doc",
         category="apollo",
         language="zh",
         raw_relpath="data/sources/raw/apollo/apollo-channel-data-format.pdf",
@@ -73,7 +73,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="apollo-doc-004",
         title="Apollo Open Platform Overview",
-        source_type="official_doc",
+        doc_type="official_doc",
         category="apollo",
         language="en",
         raw_relpath="data/sources/raw/apollo/Apollo-Open-Platform-overview.pdf",
@@ -86,7 +86,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="apollo-doc-005",
         title="Apollo Perception Fusion Overview",
-        source_type="official_doc",
+        doc_type="official_doc",
         category="apollo",
         language="zh",
         raw_relpath="data/sources/raw/apollo/apollo-perception-fusion-overview.pdf",
@@ -99,7 +99,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="apollo-doc-006",
         title="Apollo Vision Perception Overview",
-        source_type="official_doc",
+        doc_type="official_doc",
         category="apollo",
         language="zh",
         raw_relpath="data/sources/raw/apollo/apollo-vision-perception-overview.pdf",
@@ -112,7 +112,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="apollo-doc-007",
         title="Apollo Prediction Overview",
-        source_type="official_doc",
+        doc_type="official_doc",
         category="apollo",
         language="zh",
         raw_relpath="data/sources/raw/apollo/apollo-vision-prediction-overview.pdf",
@@ -125,7 +125,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="apollo-doc-008",
         title="Apollo Planning Overview",
-        source_type="official_doc",
+        doc_type="official_doc",
         category="apollo",
         language="zh",
         raw_relpath="data/sources/raw/apollo/apollo-vision-plan-overview.pdf",
@@ -138,7 +138,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="apollo-doc-009",
         title="Apollo Control Overview",
-        source_type="official_doc",
+        doc_type="official_doc",
         category="apollo",
         language="zh",
         raw_relpath="data/sources/raw/apollo/apollo-vision-control-overview.pdf",
@@ -151,7 +151,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="apollo-doc-010",
         title="Apollo Localization Overview",
-        source_type="official_doc",
+        doc_type="official_doc",
         category="apollo",
         language="zh",
         raw_relpath="data/sources/raw/apollo/apollo-vision-location-overview.pdf",
@@ -164,7 +164,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="standard-001",
         title="NHTSA Automated Driving Systems Overview",
-        source_type="standard",
+        doc_type="standard",
         category="standards",
         language="en",
         raw_relpath="data/sources/raw/standards/NHTSA ADS overview.pdf",
@@ -177,7 +177,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="standard-002",
         title="Automated Driving Systems 2.0: A Vision for Safety",
-        source_type="standard",
+        doc_type="standard",
         category="standards",
         language="en",
         raw_relpath="data/sources/raw/standards/Automated Driving Systems 2.0 A Vision for Safety.pdf",
@@ -190,7 +190,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="standard-003",
         title="Preparing for the Future of Transportation: Automated Vehicles 3.0",
-        source_type="standard",
+        doc_type="standard",
         category="standards",
         language="en",
         raw_relpath="data/sources/raw/standards/Preparing for the Future of Transportation Automated Vehicles 3.0.pdf",
@@ -203,7 +203,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="standard-004",
         title="Ensuring American Leadership in Automated Vehicle Technologies: AV 4.0",
-        source_type="standard",
+        doc_type="standard",
         category="standards",
         language="en",
         raw_relpath="data/sources/raw/standards/Ensuring American Leadership in Automated Vehicle Technologies AV 4.0.pdf",
@@ -216,7 +216,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="standard-005",
         title="Automated Driving System Safety: Overview of NHTSA Activities",
-        source_type="standard",
+        doc_type="standard",
         category="standards",
         language="en",
         raw_relpath="data/sources/raw/standards/Automated Driving System Safety Overview of NHTSA Activities.pdf",
@@ -229,7 +229,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="standard-006",
         title="Overview of Select NHTSA Activities – Automated Driving Systems",
-        source_type="standard",
+        doc_type="standard",
         category="standards",
         language="en",
         raw_relpath="data/sources/raw/standards/Overview of Select NHTSA Activities – Automated Driving Systems.pdf",
@@ -242,7 +242,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="standard-007",
         title="UN Regulation No. 155 - Cyber security and cyber security management system",
-        source_type="standard",
+        doc_type="standard",
         category="standards",
         language="en",
         raw_relpath="data/sources/raw/standards/UN Regulation No. 155 - Cyber security and cyber security management system.pdf",
@@ -255,7 +255,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="standard-008",
         title="UN Regulation No. 156 - Software update and software update management system",
-        source_type="standard",
+        doc_type="standard",
         category="standards",
         language="en",
         raw_relpath="data/sources/raw/standards/UN Regulation No. 156 - Software update and software update management system.pdf",
@@ -268,7 +268,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="standard-009",
         title="UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS)",
-        source_type="standard",
+        doc_type="standard",
         category="standards",
         language="en",
         raw_relpath="data/sources/raw/standards/UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS).pdf",
@@ -281,7 +281,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="paper-001",
         title="BEVFormer",
-        source_type="paper",
+        doc_type="paper",
         category="papers",
         language="en",
         raw_relpath="data/sources/raw/papers/BEVFormer.pdf",
@@ -294,7 +294,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="paper-002",
         title="BEVFusion",
-        source_type="paper",
+        doc_type="paper",
         category="papers",
         language="en",
         raw_relpath="data/sources/raw/papers/BEVFusion.pdf",
@@ -307,7 +307,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="paper-003",
         title="Occupancy Flow Fields for Motion Forecasting in Autonomous Driving",
-        source_type="paper",
+        doc_type="paper",
         category="papers",
         language="en",
         raw_relpath="data/sources/raw/papers/Occupancy Flow Fields for Motion Forecasting in Autonomous Driving.pdf",
@@ -320,7 +320,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="paper-004",
         title="Scalability in Perception for Autonomous Driving: Waymo Open Dataset",
-        source_type="report",
+        doc_type="report",
         category="papers",
         language="en",
         raw_relpath="data/sources/raw/papers/Scalability in Perception for Autonomous Driving Waymo Open Dataset.pdf",
@@ -333,7 +333,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="paper-005",
         title="VAD: Vectorized Scene Representation for Efficient Autonomous Driving",
-        source_type="paper",
+        doc_type="paper",
         category="papers",
         language="en",
         raw_relpath="data/sources/raw/papers/VAD Vectorized Scene Representation for Efficient Autonomous Driving.pdf",
@@ -346,7 +346,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="paper-006",
         title="FusionAD: Multi-modality Fusion for Prediction and Planning Tasks of Autonomous Driving",
-        source_type="paper",
+        doc_type="paper",
         category="papers",
         language="en",
         raw_relpath="data/sources/raw/papers/FusionAD Multi-modality Fusion for Prediction and Planning Tasks of Autonomous.pdf",
@@ -359,7 +359,7 @@ SOURCE_DOCUMENTS: tuple[SourceDocument, ...] = (
     SourceDocument(
         source_id="paper-007",
         title="GenAD: Generative End-to-End Autonomous Driving",
-        source_type="paper",
+        doc_type="paper",
         category="papers",
         language="en",
         raw_relpath="data/sources/raw/papers/GenAD Generative End-to-End Autonomous Driving.pdf",

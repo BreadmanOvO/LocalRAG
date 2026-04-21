@@ -18,6 +18,13 @@ chunk_size = 500
 chunk_overlap = 50
 separators = ["\n\n", "\n", ".", "!", "?", "。", "！", "？", " ", ""]
 min_split_length = 500 # 文本分割的最小长度
+chunking_strategy = "baseline"
+doc_type_chunking = {
+    "official_doc": {"chunk_size": 500, "chunk_overlap": 50},
+    "standard": {"chunk_size": 900, "chunk_overlap": 100},
+    "paper": {"chunk_size": 700, "chunk_overlap": 80},
+    "report": {"chunk_size": 700, "chunk_overlap": 80},
+}
 
 # VectorStoreService 参数
 similarity_top_k = 2 # 相似度top k

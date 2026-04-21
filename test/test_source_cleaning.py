@@ -21,7 +21,7 @@ class SourceRenderingTests(unittest.TestCase):
         self.doc = SourceDocument(
             source_id="sample-001",
             title="Sample Source",
-            source_type="official_doc",
+            doc_type="official_doc",
             category="apollo",
             language="en",
             raw_relpath="data/sources/raw/apollo/sample.pdf",
@@ -52,6 +52,7 @@ class SourceRenderingTests(unittest.TestCase):
         self.assertEqual("sample-001", entry["source_id"])
         self.assertEqual("data/sources/apollo/sample.md", entry["path_or_url"])
         self.assertEqual("data/sources/raw/apollo/sample.pdf", entry["raw_path"])
+        self.assertEqual("official_doc", entry["doc_type"])
         self.assertEqual(["perception", "sensor_fusion"], entry["topic_tags"])
 
     def test_write_source_registry_creates_parent_directory(self):

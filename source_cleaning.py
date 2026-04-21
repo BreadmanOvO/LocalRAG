@@ -621,7 +621,7 @@ def render_clean_markdown(doc: SourceDocument, page_texts: list[str]) -> str:
     lines = [
         f"# {doc.title}",
         "",
-        f"- Source type: {doc.source_type}",
+        f"- Doc type: {doc.doc_type}",
         f"- Category: {doc.category}",
         f"- Original file: {doc.raw_relpath}",
         f"- Original URL: {doc.origin_url}",
@@ -675,7 +675,7 @@ def build_registry_entry(doc: SourceDocument) -> dict:
     return {
         "source_id": doc.source_id,
         "title": doc.title,
-        "source_type": doc.source_type,
+        "doc_type": doc.doc_type,
         "category": doc.category,
         "language": doc.language,
         "path_or_url": doc.clean_relpath,

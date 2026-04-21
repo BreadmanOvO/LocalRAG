@@ -48,13 +48,13 @@ class FullSourceCatalogTests(unittest.TestCase):
     def test_source_document_metadata_contract(self):
         for doc in SOURCE_DOCUMENTS:
             self.assertIn(doc.category, {"apollo", "standards", "papers"})
-            self.assertIn(doc.source_type, {"official_doc", "standard", "paper", "report"})
+            self.assertIn(doc.doc_type, {"official_doc", "standard", "paper", "report"})
             if doc.category == "apollo":
-                self.assertEqual("official_doc", doc.source_type)
+                self.assertEqual("official_doc", doc.doc_type)
             elif doc.category == "standards":
-                self.assertEqual("standard", doc.source_type)
+                self.assertEqual("standard", doc.doc_type)
             else:
-                self.assertIn(doc.source_type, {"paper", "report"})
+                self.assertIn(doc.doc_type, {"paper", "report"})
             self.assertTrue(doc.raw_relpath.endswith(".pdf"))
             self.assertTrue(doc.clean_relpath.endswith(".md"))
             self.assertGreater(len(doc.topic_tags), 0)

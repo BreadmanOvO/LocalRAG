@@ -3,9 +3,9 @@ import os
 import sys
 import sqlite3
 from langchain_community.embeddings import DashScopeEmbeddings
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 import datetime
 import config_data as config
+from chunking import choose_chunking_strategy, chunk_text_baseline, chunk_text_doc_type_aware
 
 if tuple(map(int, sqlite3.sqlite_version.split("."))) < (3, 35, 0):
     import pysqlite3
@@ -57,34 +57,37 @@ class KnowledgeBaseService(object):
             embedding_function=DashScopeEmbeddings(model=config.embedding_model_name),
             persist_directory=config.persist_directory, # 数据库本地存储文件夹
         )
-        # 文本拆分器对象
-        self.spliter = RecursiveCharacterTextSplitter(
-            chunk_size=config.chunk_size,  # 分割后的文本段最大长度
-            chunk_overlap=config.chunk_overlap, # 连续文本段之间的字符重叠数量
-            separators=config.separators, # 自然段落划分的符号
-            length_function=len # 长度统计函数-使用Python自带的len函数
+
+    def _build_source_metadata(self, filename: str) -> dict:
+        return {
+            "source": filename,
+            "source_id": f"upload::{filename}",
+            "doc_type": "untyped",
+            "create_time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "operator": config.uploader,
+        }
+
+    def _chunk_upload(self, data: str, source_metadata: dict):
+        chunk_strategy = choose_chunking_strategy(
+            source_metadata["doc_type"],
+            getattr(config, "chunking_strategy", "baseline"),
         )
-    
+        if chunk_strategy == "doc_type_aware":
+            return chunk_text_doc_type_aware(data, source_metadata=source_metadata)
+        return chunk_text_baseline(data, source_metadata=source_metadata)
+
     def upload_by_str(self, data: str, filename):
         # 将传入字符串向量化，并上传到向量库
         data_md5_hex = get_string_md5(data)
         if check_md5(data_md5_hex):
             return "【失败】该数据已存在知识库中，请勿重复上传"
         else:
-            if len(data) > config.min_split_length:
-                chunks: list[str] = self.spliter.split_text(data)
-            else:
-                chunks = [data]
-            
-            metadata = {
-                "source": filename,
-                "create_time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "operator": config.uploader,
-            }
+            source_metadata = self._build_source_metadata(filename)
+            chunk_records = self._chunk_upload(data, source_metadata)
 
             self.chroma.add_texts(
-                texts=chunks,
-                metadatas=[metadata for _ in chunks]
+                texts=[record.text for record in chunk_records],
+                metadatas=[record.metadata for record in chunk_records]
             )
 
             save_md5(data_md5_hex)
