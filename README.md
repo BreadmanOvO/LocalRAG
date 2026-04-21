@@ -49,8 +49,18 @@
 - [评估框架与指标](docs/evaluation.md)
 - [简历表达与面试亮点](docs/resume_notes.md)
 - [参考资料与学习路径](docs/references.md)
+- [仓库使用说明](docs/repo_guide.md)
 - [首页重构设计](docs/superpowers/specs/2026-04-09-readme-homepage-redesign-design.md)
 - [首页重构实施计划](docs/superpowers/plans/2026-04-10-readme-homepage-refactor.md)
+
+## 工程/运行入口
+- 运行入口、实验脚本、结果目录的详细分类统一维护在 [docs/repo_guide.md](docs/repo_guide.md)。
+- 日常开发优先关注主服务、知识库、chunking 与配置相关文件。
+
+## 实验/评测入口
+- baseline 评测入口：`eval_ragas.py`
+- chunking 对比入口：`eval_chunking.py`
+- 详细说明与结果目录约定见 [docs/repo_guide.md](docs/repo_guide.md)
 
 ## 成功标准
 - 检索效果：目标提升 Top-k 召回与排序质量

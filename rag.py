@@ -11,6 +11,28 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from chat_history_store import get_history
 from uuid import uuid4
 
+
+def _normalize_retrieved_row(doc: Document) -> dict:
+    return {
+        "source_id": doc.metadata.get("source_id", ""),
+        "doc_type": doc.metadata.get("doc_type", ""),
+        "locator": doc.metadata.get("locator", ""),
+        "chunk_strategy": doc.metadata.get("chunk_strategy", ""),
+        "content": doc.page_content,
+    }
+
+
+def _format_documents(documents: list[Document]) -> str:
+    if not documents:
+        return "无相关参考资料"
+    formatted_str = ""
+    for doc in documents:
+        source_id = doc.metadata.get("source_id", "")
+        locator = doc.metadata.get("locator", "")
+        formatted_str += f"资料内容：{doc.page_content}。资料来源：source_id={source_id}, locator={locator}\n"
+    return formatted_str
+
+
 class RagService(object):
     def __init__(self) -> None:
         self.vector_service = VectorStoreService(
@@ -35,7 +57,7 @@ class RagService(object):
         '''获取最终的执行链'''
         retriever = self.vector_service.get_retriever()
 
-        def format_for_retriever(value: dict) -> str: 
+        def format_for_retriever(value: dict) -> str:
             return value["question"]
 
         def format_for_prompt_template(value: dict) -> dict:
@@ -45,18 +67,10 @@ class RagService(object):
             new_dict["context"] = value["context"]
             return new_dict
 
-        def format_document(doc: list[Document]): 
-            if not doc:
-                return "无相关参考资料"
-            formatted_str = ""
-            for doc in doc:
-                formatted_str += f"资料内容：{doc.page_content}。资料来源：{doc.metadata}\n"
-            return formatted_str
-        
         chain = (
             {
                 "question": RunnablePassthrough(),
-                "context": RunnableLambda(format_for_retriever) | retriever | format_document
+                "context": RunnableLambda(format_for_retriever) | retriever | RunnableLambda(_format_documents)
             } | RunnableLambda(format_for_prompt_template) | self.prompt_template | self.chat_model | StrOutputParser()
         )
 
@@ -69,12 +83,33 @@ class RagService(object):
 
         return chain_with_history
 
-    def answer_once(self, question: str, session_id: str = "eval-session") -> str:
-        effective_session_id = session_id
+    def _get_effective_session_id(self, session_id: str) -> str:
         if session_id == "eval-session":
-            effective_session_id = f"eval-session-{uuid4().hex}"
+            return f"eval-session-{uuid4().hex}"
+        return session_id
 
+    def retrieve_documents(self, question: str) -> list[Document]:
+        retriever = self.vector_service.get_retriever()
+        return retriever.invoke(question)
+
+    def answer_from_documents(self, question: str, documents: list[Document], session_id: str = "eval-session") -> str:
+        effective_session_id = self._get_effective_session_id(session_id)
         return self.chain.invoke(
-            {"question": question},
+            {
+                "question": question,
+                "context": _format_documents(documents),
+            },
             config={"configurable": {"session_id": effective_session_id}},
         )
+
+    def answer_once(self, question: str, session_id: str = "eval-session") -> str:
+        documents = self.retrieve_documents(question)
+        return self.answer_from_documents(question, documents, session_id=session_id)
+
+    def answer_with_retrieval(self, question: str, session_id: str = "eval-session") -> dict:
+        documents = self.retrieve_documents(question)
+        return {
+            "answer": self.answer_from_documents(question, documents, session_id=session_id),
+            "retrieved_context": "\n".join(doc.page_content for doc in documents),
+            "retrieved_rows": [_normalize_retrieved_row(doc) for doc in documents],
+        }
