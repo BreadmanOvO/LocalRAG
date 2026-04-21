@@ -1,10 +1,10 @@
 import argparse
 import json
-import os
 from pathlib import Path
 from typing import Any
 
 from data.evaluation.shared.eval_schema import validate_dataset
+from runtime_keys import load_bailian_runtime_config
 
 
 def load_dataset(path: Path) -> list[dict[str, Any]]:
@@ -50,6 +50,10 @@ def build_session_id(sample: dict[str, Any]) -> str:
     return f"eval-session-{sample_id}"
 
 
+def require_runtime_keys() -> None:
+    load_bailian_runtime_config()
+
+
 def run_baseline(
     dataset_path: Path | str, predictions_path: Path | str, metrics_path: Path | str
 ) -> dict[str, Any]:
@@ -58,11 +62,7 @@ def run_baseline(
     metrics_path = Path(metrics_path)
 
     dataset = load_dataset(dataset_path)
-
-    if not os.getenv("OPENAI_API_KEY"):
-        raise RuntimeError(
-            "Missing OPENAI_API_KEY. Export the OpenAI API key before running baseline evaluation."
-        )
+    require_runtime_keys()
 
     from rag import RagService
 

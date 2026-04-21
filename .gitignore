@@ -38,3 +38,4 @@ md5.txt
 .env
 .env.*
 *.local
+key.json

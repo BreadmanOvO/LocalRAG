@@ -3,6 +3,7 @@ import importlib.util
 import json
 import tempfile
 import unittest
+from types import SimpleNamespace
 from pathlib import Path
 from unittest import mock
 
@@ -33,8 +34,14 @@ class RegistryBackedIngestionTests(unittest.TestCase):
             "report": {"chunk_size": 120, "chunk_overlap": 20},
         }
 
+        runtime_config = SimpleNamespace(
+            embedding_model_name="text-embedding-v4",
+            dashscope_api_key="test-key",
+        )
+
         with tempfile.TemporaryDirectory() as temp_dir:
             with (
+                mock.patch.object(knowledge_base, "load_bailian_runtime_config", return_value=runtime_config),
                 mock.patch.object(knowledge_base, "Chroma", return_value=mock_chroma),
                 mock.patch.object(knowledge_base, "DashScopeEmbeddings", return_value=object()),
                 mock.patch.object(config, "persist_directory", temp_dir),
@@ -60,6 +67,33 @@ class RegistryBackedIngestionTests(unittest.TestCase):
 
 
 class RagEvaluationHelperTests(unittest.TestCase):
+    def test_rag_service_uses_runtime_bailian_settings(self):
+        runtime_config = SimpleNamespace(
+            dashscope_api_key="test-key",
+            dashscope_base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+            chat_model_name="qwen3-max",
+            embedding_model_name="text-embedding-v4",
+        )
+
+        with (
+            mock.patch.object(rag, "load_bailian_runtime_config", return_value=runtime_config),
+            mock.patch.object(rag, "DashScopeEmbeddings", return_value=object()) as mock_embeddings,
+            mock.patch.object(rag, "VectorStoreService", return_value=mock.Mock()),
+            mock.patch.object(rag, "ChatOpenAI", return_value=mock.Mock()) as mock_chat,
+            mock.patch.object(rag.RagService, "_RagService__get_chain", return_value=mock.Mock()),
+        ):
+            rag.RagService()
+
+        mock_embeddings.assert_called_once_with(
+            model="text-embedding-v4",
+            dashscope_api_key="test-key",
+        )
+        mock_chat.assert_called_once_with(
+            model="qwen3-max",
+            api_key="test-key",
+            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+        )
+
     def test_answer_with_retrieval_returns_normalized_rows(self):
         self.assertTrue(hasattr(rag.RagService, "answer_with_retrieval"))
 
