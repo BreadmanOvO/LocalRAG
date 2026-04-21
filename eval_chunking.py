@@ -1,6 +1,5 @@
 import argparse
 import json
-import os
 import shutil
 from collections import defaultdict
 from contextlib import contextmanager
@@ -12,6 +11,7 @@ import config_data as config
 from eval_ragas import build_session_id, load_dataset, write_json
 from knowledge_base import KnowledgeBaseService
 from rag import RagService
+from runtime_keys import load_bailian_runtime_config
 
 REGISTRY_PATH = Path("data/evaluation/shared/source_registry.json")
 STRATEGY_BASELINE = "baseline"
@@ -304,10 +304,7 @@ def build_run_id(dataset_path: Path) -> str:
 
 
 def require_runtime_credentials() -> None:
-    if not os.getenv("OPENAI_API_KEY"):
-        raise RuntimeError("Missing OPENAI_API_KEY. Export the OpenAI API key before running chunking evaluation.")
-    if not os.getenv("DASHSCOPE_API_KEY"):
-        raise RuntimeError("Missing DASHSCOPE_API_KEY. Export the DashScope API key before rebuilding chunking stores.")
+    load_bailian_runtime_config()
 
 
 def main() -> dict[str, Any]:

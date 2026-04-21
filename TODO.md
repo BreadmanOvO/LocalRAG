@@ -4,12 +4,12 @@
 
 1. **Run the baseline evaluation for real and save artifacts**
    - Script: `eval_ragas.py`
-   - Blocker: missing `OPENAI_API_KEY`
+   - Blocker: missing repository-root `key.json` runtime config
    - Desired output: real `predictions` / `metrics` artifacts for the current baseline instead of test-only validation.
 
 2. **Run the chunking comparison for real and save artifacts**
    - Script: `eval_chunking.py`
-   - Blockers: missing `OPENAI_API_KEY` and `DASHSCOPE_API_KEY`
+   - Blockers: missing repository-root `key.json` runtime config
    - Desired output: `results/chunking_eval/<run_id>/` containing:
      - `baseline/predictions.json`
      - `baseline/metrics.json`
@@ -23,11 +23,17 @@
 
 ## How to unblock
 
-In this Claude Code session, export the keys first:
+Create a local-only root `key.json` with this exact shape:
 
-```bash
-! export OPENAI_API_KEY=...
-! export DASHSCOPE_API_KEY=...
+```json
+{
+  "dashscope_api_key": "...",
+  "dashscope_base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "chat_model_name": "qwen3-max",
+  "embedding_model_name": "text-embedding-v4"
+}
 ```
+
+Do not commit this file.
 
 Then run the blocked scripts.

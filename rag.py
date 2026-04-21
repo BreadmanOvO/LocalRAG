@@ -9,6 +9,7 @@ from langchain_core.documents import Document
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from chat_history_store import get_history
+from runtime_keys import load_bailian_runtime_config
 from uuid import uuid4
 
 
@@ -35,8 +36,12 @@ def _format_documents(documents: list[Document]) -> str:
 
 class RagService(object):
     def __init__(self) -> None:
+        runtime_config = load_bailian_runtime_config()
         self.vector_service = VectorStoreService(
-            embedding=DashScopeEmbeddings(model=config.embedding_model_name),
+            embedding=DashScopeEmbeddings(
+                model=runtime_config.embedding_model_name,
+                dashscope_api_key=runtime_config.dashscope_api_key,
+            ),
         )
 
         self.prompt_template = ChatPromptTemplate.from_messages(
@@ -49,7 +54,11 @@ class RagService(object):
             ]
         )
         
-        self.chat_model = ChatOpenAI(model=config.chat_model_name)
+        self.chat_model = ChatOpenAI(
+            model=runtime_config.chat_model_name,
+            api_key=runtime_config.dashscope_api_key,
+            base_url=runtime_config.dashscope_base_url,
+        )
 
         self.chain = self.__get_chain()
 

@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest import mock
 
 import config_data as config
@@ -92,12 +93,38 @@ class ChunkingTests(unittest.TestCase):
         self.assertTrue(all(chunk.metadata["chunk_strategy"] == "doc_type_aware" for chunk in official_chunks))
         self.assertTrue(all(chunk.metadata["chunk_strategy"] == "doc_type_aware" for chunk in standard_chunks))
 
+    def test_knowledge_base_service_uses_runtime_embedding_settings(self):
+        runtime_config = SimpleNamespace(
+            embedding_model_name="text-embedding-v4",
+            dashscope_api_key="test-key",
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with (
+                mock.patch.object(knowledge_base, "load_bailian_runtime_config", return_value=runtime_config),
+                mock.patch.object(knowledge_base, "DashScopeEmbeddings", return_value=object()) as mock_embeddings,
+                mock.patch.object(knowledge_base, "Chroma", return_value=mock.Mock()),
+                mock.patch.object(config, "persist_directory", temp_dir),
+            ):
+                knowledge_base.KnowledgeBaseService()
+
+        mock_embeddings.assert_called_once_with(
+            model="text-embedding-v4",
+            dashscope_api_key="test-key",
+        )
+
     def test_upload_by_str_writes_per_chunk_metadata(self):
         mock_chroma = mock.Mock()
         text = "知识库文本。" * 60
 
+        runtime_config = SimpleNamespace(
+            embedding_model_name="text-embedding-v4",
+            dashscope_api_key="test-key",
+        )
+
         with tempfile.TemporaryDirectory() as temp_dir:
             with (
+                mock.patch.object(knowledge_base, "load_bailian_runtime_config", return_value=runtime_config),
                 mock.patch.object(knowledge_base, "Chroma", return_value=mock_chroma),
                 mock.patch.object(knowledge_base, "DashScopeEmbeddings", return_value=object()),
                 mock.patch.object(knowledge_base, "check_md5", return_value=False),
