@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "WebSearch",
+      "WebFetch(domain:developer.apollo.auto)",
+      "WebFetch(domain:www.iso.org)",
+      "WebFetch(domain:saemobilus.sae.org)",
+      "WebFetch(domain:arxiv.org)",
+      "WebFetch(domain:waymo.com)",
+      "WebFetch(domain:www.nhtsa.gov)",
+      "Bash(python:*)",
+      "WebFetch(domain:unece.org)",
+      "Bash(PYTHONPATH=\"D:/Code/Learn/LLM/LocalRAG/.claude/worktrees/agent-ae986724\" python:*)",
+      "Bash(pwd -W)",
+      "Bash(cp 'D:/Code/Learn/LLM/LocalRAG/data/sources/raw/standards/*.pdf' __TRACKED_VAR__/.config/superpowers/worktrees/LocalRAG/source-cleaning-registry/data/sources/raw/standards/)",
+      "Bash(cp 'D:/Code/Learn/LLM/LocalRAG/data/sources/raw/papers/*.pdf' __TRACKED_VAR__/.config/superpowers/worktrees/LocalRAG/source-cleaning-registry/data/sources/raw/papers/)",
+      "Bash(PYTHONPATH=\"/c/Users/zhuyu/.config/superpowers/worktrees/LocalRAG/source-cleaning-registry\" python:*)",
+      "Bash(PYTHONPATH=\"C:/Users/zhuyu/.config/superpowers/worktrees/LocalRAG/source-cleaning-registry\" python:*)",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs",
+      "Bash(pip install *)"
+    ]
+  }
+}

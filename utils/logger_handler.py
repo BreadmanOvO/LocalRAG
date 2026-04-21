@@ -23,3 +23,6 @@ def get_logger(
     console_handler = logging.StreamHandler()
     console_handler.setLevel(console_level)
     console_handler.setFormatter(DEFAULT_LOG_FORMAT)
+
+    logger.addHandler(console_handler)
+    
