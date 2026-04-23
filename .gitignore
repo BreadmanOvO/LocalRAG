@@ -34,6 +34,9 @@ md5.txt
 # Local git worktrees
 .worktrees/
 
+# Local experiment stores
+results/chunking_eval/stores/
+
 # Local secrets / env files
 .env
 .env.*

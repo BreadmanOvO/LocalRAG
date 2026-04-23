@@ -1,0 +1,10 @@
+{
+  "sample_count": 5,
+  "answered_count": 5,
+  "answered_ratio": 1.0,
+  "retrieved_row_count": 10,
+  "evidence_source_hit_count": 4,
+  "evidence_source_hit_ratio": 0.8,
+  "evidence_locator_hit_count": 0,
+  "evidence_locator_hit_ratio": 0.0
+}

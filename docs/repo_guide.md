@@ -21,6 +21,7 @@
   - `doc_type_aware/`
   - `comparison/`
   - `report.md`
+- `results/chunking_eval/stores/`：实验运行时生成的本地向量库缓存，不提交到仓库
 
 ## 使用约定
 - 日常运行主系统时，优先看工程/运行文件。
