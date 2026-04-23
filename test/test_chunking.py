@@ -93,6 +93,27 @@ class ChunkingTests(unittest.TestCase):
         self.assertTrue(all(chunk.metadata["chunk_strategy"] == "doc_type_aware" for chunk in official_chunks))
         self.assertTrue(all(chunk.metadata["chunk_strategy"] == "doc_type_aware" for chunk in standard_chunks))
 
+    def test_doc_type_aware_chunking_emits_canonical_locator_and_provenance(self):
+        text = "# Intro\n\n[p.2] Alpha paragraph.\n\n## Details\n\n[p.3] Beta paragraph."
+        source_metadata = {
+            "source": "apollo.md",
+            "source_id": "apollo-doc-001",
+            "doc_type": "official_doc",
+            "create_time": "2026-04-23 10:00:00",
+            "operator": "tester",
+        }
+
+        chunks = chunk_text_doc_type_aware(text, source_metadata=source_metadata)
+
+        self.assertGreaterEqual(len(chunks), 2)
+        first = chunks[0].metadata
+        self.assertEqual("apollo.md", first["source"])
+        self.assertEqual("apollo-doc-001", first["source_id"])
+        self.assertEqual("official_doc", first["doc_type"])
+        self.assertEqual("doc_type_aware", first["chunk_strategy"])
+        self.assertIn("chunk_order", first)
+        self.assertEqual("p.2 | § Intro", first["locator"])
+
     def test_knowledge_base_service_uses_runtime_embedding_settings(self):
         runtime_config = SimpleNamespace(
             embedding_model_name="text-embedding-v4",

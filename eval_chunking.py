@@ -61,6 +61,12 @@ def _build_source_metadata(entry: dict[str, Any]) -> dict[str, str]:
     }
 
 
+def _normalize_locator(locator: str | None) -> str:
+    if not locator:
+        return ""
+    return " ".join(locator.strip().split())
+
+
 def summarize_chunking_predictions(predictions: list[dict[str, Any]]) -> dict[str, Any]:
     sample_count = len(predictions)
     answered_count = sum(1 for row in predictions if row.get("answer", "").strip())
@@ -71,11 +77,11 @@ def summarize_chunking_predictions(predictions: list[dict[str, Any]]) -> dict[st
     for row in predictions:
         retrieved_rows = row.get("retrieved_rows", [])
         retrieved_sources = {item.get("source_id", "") for item in retrieved_rows}
-        retrieved_locators = {item.get("locator", "") for item in retrieved_rows}
+        retrieved_locators = {_normalize_locator(item.get("locator", "")) for item in retrieved_rows}
         evidence = row.get("evidence", [])
         if any(item.get("source_id", "") in retrieved_sources for item in evidence):
             evidence_source_hit_count += 1
-        if any(item.get("locator", "") in retrieved_locators for item in evidence):
+        if any(_normalize_locator(item.get("locator", "")) in retrieved_locators for item in evidence):
             evidence_locator_hit_count += 1
 
     summary = _empty_summary()
@@ -114,11 +120,11 @@ def _index_predictions(predictions: list[dict[str, Any]]) -> dict[str, dict[str,
 def _build_error_case(baseline_row: dict[str, Any], candidate_row: dict[str, Any]) -> dict[str, Any] | None:
     baseline_sources = {item.get("source_id", "") for item in baseline_row.get("retrieved_rows", [])}
     candidate_sources = {item.get("source_id", "") for item in candidate_row.get("retrieved_rows", [])}
-    baseline_locators = {item.get("locator", "") for item in baseline_row.get("retrieved_rows", [])}
-    candidate_locators = {item.get("locator", "") for item in candidate_row.get("retrieved_rows", [])}
+    baseline_locators = {_normalize_locator(item.get("locator", "")) for item in baseline_row.get("retrieved_rows", [])}
+    candidate_locators = {_normalize_locator(item.get("locator", "")) for item in candidate_row.get("retrieved_rows", [])}
     evidence = baseline_row.get("evidence", [])
     evidence_sources = {item.get("source_id", "") for item in evidence}
-    evidence_locators = {item.get("locator", "") for item in evidence}
+    evidence_locators = {_normalize_locator(item.get("locator", "")) for item in evidence}
     baseline_hit = bool(evidence_sources & baseline_sources)
     candidate_hit = bool(evidence_sources & candidate_sources)
     baseline_locator_hit = bool(evidence_locators & baseline_locators)
@@ -237,7 +243,14 @@ def render_chunking_report(
             f"- {doc_type}: baseline={baseline['evidence_source_hit_ratio']} doc_type_aware={candidate['evidence_source_hit_ratio']}"
         )
 
-    lines.extend(["", "## Error cases"])
+    lines.extend([
+        "",
+        "## Metric notes",
+        "- evidence source hit: whether any retrieved row matched the gold evidence source_id",
+        "- evidence locator hit: whether any retrieved row matched the gold evidence locator after normalization",
+        "",
+        "## Error cases",
+    ])
     if comparison["error_cases"]:
         for row in comparison["error_cases"][:10]:
             lines.append(

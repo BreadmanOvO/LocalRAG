@@ -395,6 +395,68 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
         self.assertEqual(2, len(predictions[0]["retrieval_debug_candidates"]))
         self.assertEqual(0.75, predictions[0]["retrieval_debug_candidates"][1]["score"])
 
+    def test_summarize_chunking_predictions_normalizes_locator_format(self):
+        eval_chunking = self._load_module()
+        predictions = [
+            self._build_prediction(
+                sample_id="sample-1",
+                doc_type="official_doc",
+                source_id="apollo-doc-001",
+                locator=" p.2 | § Intro ",
+                answer="Answer 1",
+                retrieved_rows=[
+                    {
+                        "source_id": "apollo-doc-001",
+                        "doc_type": "official_doc",
+                        "locator": "p.2 | § Intro",
+                        "chunk_strategy": "baseline",
+                        "content": "Alpha",
+                    }
+                ],
+            )
+        ]
+
+        summary = eval_chunking.summarize_chunking_predictions(predictions)
+
+        self.assertEqual(1, summary["evidence_locator_hit_count"])
+
+    def test_build_error_case_ignores_locator_formatting_only_differences(self):
+        eval_chunking = self._load_module()
+        baseline = self._build_prediction(
+            sample_id="sample-1",
+            doc_type="official_doc",
+            source_id="apollo-doc-001",
+            locator="p.2 | § Intro",
+            answer="Baseline answer",
+            retrieved_rows=[
+                {
+                    "source_id": "apollo-doc-001",
+                    "doc_type": "official_doc",
+                    "locator": "p.2 | § Intro",
+                    "chunk_strategy": "baseline",
+                    "content": "Alpha",
+                }
+            ],
+        )
+        candidate = self._build_prediction(
+            sample_id="sample-1",
+            doc_type="official_doc",
+            source_id="apollo-doc-001",
+            locator=" p.2 | § Intro ",
+            answer="Candidate answer",
+            retrieved_rows=[
+                {
+                    "source_id": "apollo-doc-001",
+                    "doc_type": "official_doc",
+                    "locator": " p.2 | § Intro ",
+                    "chunk_strategy": "doc_type_aware",
+                    "content": "Alpha",
+                }
+            ],
+        )
+
+        self.assertIsNone(eval_chunking._build_error_case(baseline, candidate))
+
     def test_build_comparison_artifacts_matches_rows_by_sample_id(self):
         eval_chunking = self._load_module()
 
