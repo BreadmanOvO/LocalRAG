@@ -110,4 +110,6 @@
 - 不同难度题型的稳定性
 
 ## 使用说明
-当前文档描述的是规划中的评估体系与指标口径，后续版本落地后再补充真实结果。现阶段不应把这些指标写成既成事实，只能作为目标值和评估方法说明。当前阶段的目标是先跑通最小可执行 baseline：先产出可复用的数据集文件、预测结果文件和基线指标文件，再逐步补充更完整的 Ragas 指标与真实 pairwise judge 流程。
+当前仓库已经落地了部分评测链路：`eval_chunking.py` 可以产出真实的 chunking 对比实验结果，结果目录位于 `results/chunking_eval/<run_id>/`，包含 `baseline/`、`doc_type_aware/`、`comparison/` 与 `report.md`。这些结果主要用于验证数据层与检索前置能力，例如 source-level evidence hit、chunking 对比和 retrieval inspection 产物。
+
+仍处于规划/持续补齐中的部分包括：更完整的 Ragas 指标、真实 LLM-as-a-Judge 流程、以及更大规模的 Gold Set / Synthetic Set。阅读本文件时，应区分“已落地的 chunking 评测链路”和“仍作为目标值的完整评估体系”。

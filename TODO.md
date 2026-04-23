@@ -1,29 +1,26 @@
 # TODO
 
-## Pending runs blocked by API keys
+## Next work before and during v1.2
 
-1. **Run the baseline evaluation for real and save artifacts**
+1. **Expand the Gold Set into a stronger version gate**
+   - Goal: move from the current tiny sample to a more stable 30-50 question gate.
+   - Focus: perception, planning/control, safety, and system architecture coverage.
+
+2. **Run the baseline evaluation for real and keep the artifacts**
    - Script: `eval_ragas.py`
-   - Blocker: missing repository-root `key.json` runtime config
-   - Desired output: real `predictions` / `metrics` artifacts for the current baseline instead of test-only validation.
+   - Desired output: reusable real `predictions` / `metrics` artifacts for the current baseline.
 
-2. **Run the chunking comparison for real and save artifacts**
-   - Script: `eval_chunking.py`
-   - Blockers: missing repository-root `key.json` runtime config
-   - Desired output: `results/chunking_eval/<run_id>/` containing:
-     - `baseline/predictions.json`
-     - `baseline/metrics.json`
-     - `doc_type_aware/predictions.json`
-     - `doc_type_aware/metrics.json`
-     - `comparison/summary.json`
-     - `comparison/by_doc_type.json`
-     - `comparison/by_source_id.json`
-     - `comparison/error_cases.json`
-     - `report.md`
+3. **Start hybrid retrieval experiment design**
+   - Goal: define the first dense + sparse/BM25 comparison against the current chunking baseline.
+   - Constraint: keep retrieval inspection and comparison artifacts reusable.
 
-## How to unblock
+4. **Deepen retrieval inspection and error analysis**
+   - Goal: make it easier to explain why a gold evidence source was retrieved, outranked, or missing.
+   - Focus: scored candidates, locator boundaries, and per-sample evidence analysis.
 
-Create a local-only root `key.json` with this exact shape:
+## Local runtime reminder
+
+Keep a local-only root `key.json` with this exact shape:
 
 ```json
 {
@@ -35,5 +32,3 @@ Create a local-only root `key.json` with this exact shape:
 ```
 
 Do not commit this file.
-
-Then run the blocked scripts.

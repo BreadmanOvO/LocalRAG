@@ -14,6 +14,8 @@
 | **v1.0 Baseline** | 第1周 | 建立双评估框架与基准数据集 | Gold Set + Synthetic Set + 双评估基线 | - | 先建立可复用评估闭环 |
 | **v1.1 数据层** | 第2周 | 文档清洗、source registry、结构化切分与 metadata 增强 | 文档解析结果 + baseline chunking + doc-type-aware chunking + metadata 规范 | vs v1.0 | 为检索优化建立稳定、可追溯输入 |
 | **v1.2 检索层** | 第3周 | 分阶段升级检索链路：hybrid retrieval + retrieval inspection + reranker | 混合检索、检索检查能力、重排、检索消融实验结果 | vs v1.1 | 聚焦最可能产生核心收益的主链路 |
+
+> 当前状态：v1.1 的 baseline/doc-type-aware chunking、provenance metadata、真实 chunking 对比实验与 retrieval score inspection 已基本落地；当前收尾重点是 locator 级评测合同与文档状态同步，随后进入 v1.2 检索层实验。
 | **v1.3 模型层** | 第4-5周 | 仅在检索趋于稳定后再评估 QLoRA | 指令微调实验（条件满足时） | vs v1.2 | 用门槛控制训练投入 |
 | **v1.4 工程增强** | 第6周 | UI、部署、性能优化与可选底层实验 | Chainlit / 部署整理 / 性能测试 / 可选 parent-child chunking | vs v1.3 | 把增强项放在主线之后 |
 
@@ -25,14 +27,11 @@
 - 产出 `synthetic_dataset.json`、`eval_ragas.py`、`eval_llm_judge.py`、`results/baseline_metrics.json`
 
 ### v1.1 数据层
-- 收集 Apollo 中文文档、经典英文论文、技术规范
-- 先完成稳定的文本提取、source registry、结构化切分和 metadata 设计
-- 先建立统一 baseline chunking，再引入按文档类型选择 chunk 策略的能力
-- 文档类型感知 chunking 的首批范围：
-  - Apollo 官方文档：按章节 / 小节 / 模块说明边界切分
-  - 标准规范材料：按条款 / 定义 / 列表边界切分
-  - 方法论文 / 技术报告：按摘要 / 方法 / 实验 / 结论等结构边界切分
-- 每个 chunk 必须保留来源信息，包括 `source_id`、文档类型、页码/章节、chunk 顺序与切分策略
+- 已完成 `source_registry` 驱动的知识源入库路径与真实 chunking 对比实验骨架
+- 已完成统一 baseline chunking 与按文档类型选择 chunk 策略的能力
+- 已完成 chunk provenance metadata 规范，核心字段包括 `source_id`、`doc_type`、`chunk_order`、`chunk_strategy` 与可选 locator 信息
+- 已完成真实 chunking 对比实验与结果产物落盘，当前已验证 `similarity_top_k = 5` 下 baseline 与 `doc_type_aware` 的 source-level 命中都达到 1.0
+- 当前收尾项：locator 级评测合同、Gold Set 扩容、以及数据层状态文档同步
 - 多模态 OCR 作为增强项，仅在文本检索稳定后再深入
 
 ### v1.2 检索层
@@ -42,7 +41,7 @@
   1. baseline metadata/chunking
   2. doc-type-aware chunking
   3. hybrid retrieval
-  4. retrieval inspection
+  4. retrieval inspection 增强
   5. reranker
   6. 可选 HyDE
   7. 可选 hierarchical index

@@ -632,6 +632,8 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
 
         self.assertIn("docs/repo_guide.md", readme_text)
         self.assertIn("eval_chunking.py", readme_text)
+        self.assertIn("key.json", readme_text)
+        self.assertNotIn("OPENAI_API_KEY", readme_text)
         self.assertIn("工程/运行文件", guide_text)
         self.assertIn("实验/评测脚本", guide_text)
         self.assertIn("results/chunking_eval/<run_id>/", guide_text)

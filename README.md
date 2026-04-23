@@ -4,10 +4,10 @@
 这是一个面向自动驾驶感知算法场景的垂直领域 RAG 项目，目标是围绕评估体系、数据工程、检索优化、模型对齐与推理性能，逐步构建具备工程落地价值的专家系统。
 
 ## 当前定位
-- 项目状态：规划阶段
-- 当前目标版本：v1.0 Baseline
-- 当前最高优先级：先建立评估基线，再推进数据与检索升级
-- 仓库内容：当前以规划与设计文档为主
+- 项目状态：v1.1 收尾中
+- 当前目标版本：v1.2 检索层
+- 当前最高优先级：完成 1.1 数据层收口，并开始检索消融实验
+- 仓库内容：已包含可运行的评测脚本、chunking 对比链路与真实实验结果
 
 ## 当前状态总览
 
@@ -22,17 +22,17 @@
 | 文档 | 进行中 | 已完成首页与分主题文档拆分 | 持续同步路线图与评估口径 |
 
 ## 当前阶段与下一步
-- 当前阶段：v1.0 Baseline 规划中
-- baseline 状态：Gold Set / Synthetic Set / `eval_ragas.py` / `eval_llm_judge.py` 已完成首版骨架与测试覆盖；当前环境下 baseline 运行前还需要提供有效的 `OPENAI_API_KEY`，后续继续扩样本并补充真实 Ragas 指标。
-- 本周重点：先建立 Gold Set + Synthetic Set 双数据集，并完成 Ragas + LLM-as-a-Judge baseline 跑通
+- 当前阶段：v1.1 数据层基本完成，正在收口 provenance / locator 合同与状态文档。
+- baseline 状态：`eval_ragas.py` / `eval_llm_judge.py` 已具备首版骨架；运行时配置统一从仓库根目录 `key.json` 加载。
+- chunking 状态：`eval_chunking.py` 已完成真实对比实验，`results/chunking_eval/gold_set-20260423-115858/` 证明在 `similarity_top_k = 5` 下 baseline 与 `doc_type_aware` 的 evidence source hit 都达到 `1.0`。
+- 当前重点：保持 source-level 命中稳定，厘清 locator 级评测边界，并为 v1.2 检索消融建立干净起点。
 - 下一步任务：
-  1. 创建人工 Gold Set（30-50 题）
-  2. 生成 `synthetic_dataset.json`（首期 200+ 三元组）
-  3. 实现 `eval_ragas.py`
-  4. 实现 `eval_llm_judge.py`
-  5. 产出 `results/baseline_metrics.json`
+  1. 扩充 Gold Set 覆盖范围到更稳定的版本闸门规模
+  2. 补齐 baseline 真实评测结果与更完整的 Ragas 指标
+  3. 启动 hybrid retrieval / reranker 的实验设计
+  4. 继续增强 retrieval inspection 的误差分析能力
 - 准入原则：只有在 v1.2 检索收益稳定、且 error analysis 证明瓶颈主要在生成层后，才进入 QLoRA
-- 优先级提醒：整体规划很多，但实际开发阶段要优先保证 v1.2 检索收益
+- 优先级提醒：先证明检索层收益，再决定是否进入模型层
 
 ## 开发路线图
 
@@ -69,10 +69,11 @@
 - 领域覆盖：覆盖感知、规划、安全等核心主题
 
 ## 仓库说明
-当前仓库以规划文档为主；后续代码、脚本和评估结果会随版本推进逐步补齐。README 会继续从“规划首页”演进为“项目首页”。
+当前仓库已经包含主问答服务、知识入库、chunking 对比实验、真实实验结果与版本规划文档。README 的职责是同步当前工程状态，并为后续 v1.2 检索实验提供入口导航。
 
 ## 环境依赖
 - 主运行依赖见 `requirements.txt`
 - 文档清洗专项依赖见 `requirements-source-cleaning.txt`
-- 运行 `eval_ragas.py` 前需要先设置 `OPENAI_API_KEY`
-- 默认生成模型为 `gpt-5.4`，当前 embedding 仍使用 DashScope 配置
+- 运行评测脚本前需要在仓库根目录提供本地 `key.json`，字段包括 `dashscope_api_key`、`dashscope_base_url`、`chat_model_name`、`embedding_model_name`
+- `key.json` 只用于本地运行，不应提交到仓库
+- 默认生成模型为 `gpt-5.4`，当前 embedding 使用 DashScope 配置
