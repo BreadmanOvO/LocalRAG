@@ -28,3 +28,6 @@ class VectorStoreService(object):
         """
         result = self.vector_store.as_retriever(search_kwargs={"k": config.similarity_top_k})
         return result
+
+    def get_scored_documents(self, query: str, *, k: int):
+        return self.vector_store.similarity_search_with_relevance_scores(query, k=k)

@@ -192,6 +192,7 @@ def _build_prediction_record(sample: dict[str, Any], result: dict[str, Any]) -> 
         "answer": result["answer"],
         "retrieved_context": result["retrieved_context"],
         "retrieved_rows": result["retrieved_rows"],
+        "retrieval_debug_candidates": result["retrieval_debug_candidates"],
         "evidence": sample.get("evidence", []),
         "metadata": sample.get("metadata", {}),
     }

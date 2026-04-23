@@ -27,7 +27,8 @@ doc_type_chunking = {
 }
 
 # VectorStoreService 参数
-similarity_top_k = 2 # 相似度top k
+similarity_top_k = 5 # 相似度top k
+retrieval_debug_top_k = 10 # 调试/实验分析使用的候选召回 top k
 
 # 模型参数
 embedding_model_name = "text-embedding-v4"

@@ -13,14 +13,26 @@ from runtime_keys import load_bailian_runtime_config
 from uuid import uuid4
 
 
-def _normalize_retrieved_row(doc: Document) -> dict:
-    return {
+def _normalize_retrieved_row(doc: Document, score: float | None = None, rank: int | None = None) -> dict:
+    row = {
         "source_id": doc.metadata.get("source_id", ""),
         "doc_type": doc.metadata.get("doc_type", ""),
         "locator": doc.metadata.get("locator", ""),
         "chunk_strategy": doc.metadata.get("chunk_strategy", ""),
         "content": doc.page_content,
     }
+    if score is not None:
+        row["score"] = score
+    if rank is not None:
+        row["rank"] = rank
+    return row
+
+
+def _normalize_scored_rows(scored_documents: list[tuple[Document, float]]) -> list[dict]:
+    return [
+        _normalize_retrieved_row(doc, score=score, rank=index)
+        for index, (doc, score) in enumerate(scored_documents, start=1)
+    ]
 
 
 def _format_documents(documents: list[Document]) -> str:
@@ -101,6 +113,10 @@ class RagService(object):
         retriever = self.vector_service.get_retriever()
         return retriever.invoke(question)
 
+    def retrieve_scored_documents(self, question: str) -> list[tuple[Document, float]]:
+        debug_top_k = max(config.similarity_top_k, config.retrieval_debug_top_k)
+        return self.vector_service.get_scored_documents(question, k=debug_top_k)
+
     def answer_from_documents(self, question: str, documents: list[Document], session_id: str = "eval-session") -> str:
         effective_session_id = self._get_effective_session_id(session_id)
         return self.chain.invoke(
@@ -117,8 +133,12 @@ class RagService(object):
 
     def answer_with_retrieval(self, question: str, session_id: str = "eval-session") -> dict:
         documents = self.retrieve_documents(question)
+        scored_documents = self.retrieve_scored_documents(question)
+        scored_rows = _normalize_scored_rows(scored_documents)
+        generation_rows = scored_rows[:len(documents)]
         return {
             "answer": self.answer_from_documents(question, documents, session_id=session_id),
             "retrieved_context": "\n".join(doc.page_content for doc in documents),
-            "retrieved_rows": [_normalize_retrieved_row(doc) for doc in documents],
+            "retrieved_rows": generation_rows,
+            "retrieval_debug_candidates": scored_rows,
         }

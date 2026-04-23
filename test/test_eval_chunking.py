@@ -94,11 +94,14 @@ class RagEvaluationHelperTests(unittest.TestCase):
             base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
         )
 
-    def test_answer_with_retrieval_returns_normalized_rows(self):
+    def test_retrieval_debug_top_k_is_at_least_generation_top_k(self):
+        self.assertGreaterEqual(config.retrieval_debug_top_k, config.similarity_top_k)
+
+    def test_answer_with_retrieval_returns_scored_rows_and_debug_candidates(self):
         self.assertTrue(hasattr(rag.RagService, "answer_with_retrieval"))
 
         service = object.__new__(rag.RagService)
-        documents = [
+        generation_documents = [
             Document(
                 page_content="Alpha chunk",
                 metadata={
@@ -107,9 +110,36 @@ class RagEvaluationHelperTests(unittest.TestCase):
                     "locator": "p.1 | § Intro",
                     "chunk_strategy": "baseline",
                 },
-            )
+            ),
+            Document(
+                page_content="Beta chunk",
+                metadata={
+                    "source_id": "apollo-doc-002",
+                    "doc_type": "official_doc",
+                    "locator": "p.2 | § Intro",
+                    "chunk_strategy": "baseline",
+                },
+            ),
         ]
-        service.retrieve_documents = mock.Mock(return_value=documents)
+        debug_scored_documents = [
+            (generation_documents[0], 0.91),
+            (generation_documents[1], 0.82),
+            (
+                Document(
+                    page_content="Gamma chunk",
+                    metadata={
+                        "source_id": "apollo-doc-003",
+                        "doc_type": "official_doc",
+                        "locator": "p.3 | § Intro",
+                        "chunk_strategy": "baseline",
+                    },
+                ),
+                0.74,
+            ),
+        ]
+
+        service.retrieve_documents = mock.Mock(return_value=generation_documents)
+        service.retrieve_scored_documents = mock.Mock(return_value=debug_scored_documents)
         service.answer_from_documents = mock.Mock(return_value="Alpha answer")
 
         result = rag.RagService.answer_with_retrieval(
@@ -120,17 +150,34 @@ class RagEvaluationHelperTests(unittest.TestCase):
 
         self.assertEqual("Alpha answer", result["answer"])
         self.assertIn("Alpha chunk", result["retrieved_context"])
-        self.assertEqual(1, len(result["retrieved_rows"]))
-        self.assertEqual("apollo-doc-001", result["retrieved_rows"][0]["source_id"])
-        self.assertEqual("official_doc", result["retrieved_rows"][0]["doc_type"])
-        self.assertEqual("p.1 | § Intro", result["retrieved_rows"][0]["locator"])
-        self.assertEqual("baseline", result["retrieved_rows"][0]["chunk_strategy"])
+        self.assertEqual(2, len(result["retrieved_rows"]))
+        self.assertEqual(3, len(result["retrieval_debug_candidates"]))
+        self.assertEqual(0.91, result["retrieved_rows"][0]["score"])
+        self.assertEqual(1, result["retrieved_rows"][0]["rank"])
+        self.assertEqual("apollo-doc-003", result["retrieval_debug_candidates"][2]["source_id"])
+        self.assertEqual(3, result["retrieval_debug_candidates"][2]["rank"])
         service.retrieve_documents.assert_called_once_with("What is Alpha?")
+        service.retrieve_scored_documents.assert_called_once_with("What is Alpha?")
         service.answer_from_documents.assert_called_once_with(
             "What is Alpha?",
-            documents,
+            generation_documents,
             session_id="eval-session-sample-1",
         )
+
+
+class VectorStoreServiceScoredRetrievalTests(unittest.TestCase):
+    def test_get_scored_documents_uses_chroma_relevance_scores(self):
+        fake_doc = Document(page_content="Alpha chunk", metadata={"source_id": "apollo-doc-001"})
+        vector_store = mock.Mock()
+        vector_store.similarity_search_with_relevance_scores.return_value = [(fake_doc, 0.91)]
+
+        service = object.__new__(rag.VectorStoreService)
+        service.vector_store = vector_store
+
+        result = rag.VectorStoreService.get_scored_documents(service, "What is Alpha?", k=5)
+
+        self.assertEqual([(fake_doc, 0.91)], result)
+        vector_store.similarity_search_with_relevance_scores.assert_called_once_with("What is Alpha?", k=5)
 
 
 class ChunkingEvaluationContractTests(unittest.TestCase):
@@ -139,7 +186,17 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
         self.assertIsNotNone(spec)
         return importlib.import_module("eval_chunking")
 
-    def _build_prediction(self, *, sample_id, doc_type, source_id, locator, answer, retrieved_rows):
+    def _build_prediction(
+        self,
+        *,
+        sample_id,
+        doc_type,
+        source_id,
+        locator,
+        answer,
+        retrieved_rows,
+        retrieval_debug_candidates=None,
+    ):
         return {
             "id": sample_id,
             "question": f"Question {sample_id}",
@@ -147,6 +204,7 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
             "answer": answer,
             "retrieved_context": "\n".join(row["content"] for row in retrieved_rows),
             "retrieved_rows": retrieved_rows,
+            "retrieval_debug_candidates": retrieval_debug_candidates or list(retrieved_rows),
             "evidence": [{"quote": "Evidence", "source_id": source_id, "locator": locator}],
             "metadata": {"difficulty": "easy", "topic": "apollo", "doc_type": doc_type},
         }
@@ -232,7 +290,29 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
                     "locator": "chapter=1/overview",
                     "chunk_strategy": "baseline",
                     "content": "Alpha chunk",
+                    "score": 0.91,
+                    "rank": 1,
                 }
+            ],
+            "retrieval_debug_candidates": [
+                {
+                    "source_id": "apollo-doc-002",
+                    "doc_type": "official_doc",
+                    "locator": "chapter=1/overview",
+                    "chunk_strategy": "baseline",
+                    "content": "Alpha chunk",
+                    "score": 0.91,
+                    "rank": 1,
+                },
+                {
+                    "source_id": "apollo-doc-003",
+                    "doc_type": "official_doc",
+                    "locator": "chapter=2/overview",
+                    "chunk_strategy": "baseline",
+                    "content": "Beta chunk",
+                    "score": 0.75,
+                    "rank": 2,
+                },
             ],
         }
 
@@ -258,6 +338,62 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
         self.assertEqual("baseline", ingest_call.kwargs["chunking_strategy"])
         self.assertEqual("Framework answer", predictions[0]["answer"])
         self.assertEqual("apollo-doc-002", predictions[0]["retrieved_rows"][0]["source_id"])
+
+    def test_run_strategy_evaluation_persists_retrieval_debug_candidates(self):
+        eval_chunking = self._load_module()
+        dataset = [
+            {
+                "id": "gold-001",
+                "question": "What is Apollo Cyber RT?",
+                "reference_answer": "Framework answer",
+                "evidence": [{"quote": "Cyber RT", "source_id": "apollo-doc-002", "locator": "chapter=1/overview"}],
+                "metadata": {"difficulty": "easy", "topic": "system_architecture", "doc_type": "official_doc"},
+            }
+        ]
+        fake_rag_service = mock.Mock()
+        fake_rag_service.answer_with_retrieval.return_value = {
+            "answer": "Framework answer",
+            "retrieved_context": "Alpha chunk",
+            "retrieved_rows": [
+                {
+                    "source_id": "apollo-doc-002",
+                    "doc_type": "official_doc",
+                    "locator": "chapter=1/overview",
+                    "chunk_strategy": "baseline",
+                    "content": "Alpha chunk",
+                    "score": 0.91,
+                    "rank": 1,
+                }
+            ],
+            "retrieval_debug_candidates": [
+                {
+                    "source_id": "apollo-doc-002",
+                    "doc_type": "official_doc",
+                    "locator": "chapter=1/overview",
+                    "chunk_strategy": "baseline",
+                    "content": "Alpha chunk",
+                    "score": 0.91,
+                    "rank": 1,
+                },
+                {
+                    "source_id": "apollo-doc-003",
+                    "doc_type": "official_doc",
+                    "locator": "chapter=2/overview",
+                    "chunk_strategy": "baseline",
+                    "content": "Beta chunk",
+                    "score": 0.75,
+                    "rank": 2,
+                },
+            ],
+        }
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            store_path = Path(temp_dir) / "baseline-store"
+            with mock.patch.object(eval_chunking, "RagService", return_value=fake_rag_service):
+                predictions = eval_chunking.run_strategy_evaluation(dataset, store_path)
+
+        self.assertEqual(2, len(predictions[0]["retrieval_debug_candidates"]))
+        self.assertEqual(0.75, predictions[0]["retrieval_debug_candidates"][1]["score"])
 
     def test_build_comparison_artifacts_matches_rows_by_sample_id(self):
         eval_chunking = self._load_module()
