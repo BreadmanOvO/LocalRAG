@@ -1,3 +1,0 @@
-pypdf
-pymupdf
-rapidocr-onnxruntime

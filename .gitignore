@@ -31,10 +31,11 @@ md5.txt
 # Local Streamlit cache/config
 .streamlit/
 
-# Local git worktrees
+# Local git worktrees (both locations)
 .worktrees/
+.claude/worktrees/
 
-# Local experiment stores
+# Local experiment stores (large binary data)
 results/chunking_eval/stores/
 
 # Local secrets / env files
