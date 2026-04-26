@@ -7,7 +7,7 @@ from collections import Counter
 from math import ceil
 from pathlib import Path
 
-from source_catalog import REGISTRY_REL_PATH, ROOT, SourceDocument, all_documents, documents_for_category
+from processing.source_catalog import REGISTRY_REL_PATH, ROOT, SourceDocument, all_documents, documents_for_category
 
 WHITESPACE_RE = re.compile(r"[ \t\xa0\u3000]+")
 PARAGRAPH_SPLIT_RE = re.compile(r"\n{2,}")

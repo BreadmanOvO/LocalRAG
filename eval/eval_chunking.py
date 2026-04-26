@@ -7,11 +7,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-import config_data as config
+from config import settings as config
 from eval.eval_ragas import build_session_id, load_dataset, write_json
-from knowledge_base import KnowledgeBaseService
-from rag import RagService
-from runtime_keys import load_bailian_runtime_config
+from core.knowledge_base import KnowledgeBaseService
+from core.rag import RagService
+from config.runtime_keys import load_bailian_runtime_config
 
 REGISTRY_PATH = Path("data/evaluation/shared/source_registry.json")
 STRATEGY_BASELINE = "baseline"

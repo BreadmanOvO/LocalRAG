@@ -1,6 +1,6 @@
 # import time
 import streamlit as st
-from knowledge_base import KnowledgeBaseService
+from core.knowledge_base import KnowledgeBaseService
 
 # 页面标题
 st.title("知识库更新服务")

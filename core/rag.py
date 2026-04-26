@@ -1,15 +1,15 @@
 # from langchain_core.prompts.base import format_document
 from langchain_core.runnables import RunnableLambda, RunnablePassthrough
-from vector_stores import VectorStoreService
+from core.vector_stores import VectorStoreService
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_community.chat_models import ChatOpenAI
-import config_data as config
+from config import settings as config
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.documents import Document
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from chat_history_store import get_history
-from runtime_keys import load_bailian_runtime_config
+from core.chat_history import get_history
+from config.runtime_keys import load_bailian_runtime_config
 from uuid import uuid4
 
 

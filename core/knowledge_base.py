@@ -4,9 +4,9 @@ import sys
 import sqlite3
 from langchain_community.embeddings import DashScopeEmbeddings
 import datetime
-import config_data as config
-from chunking import choose_chunking_strategy, chunk_text_baseline, chunk_text_doc_type_aware
-from runtime_keys import load_bailian_runtime_config
+from config import settings as config
+from core.chunking import choose_chunking_strategy, chunk_text_baseline, chunk_text_doc_type_aware
+from config.runtime_keys import load_bailian_runtime_config
 
 if tuple(map(int, sqlite3.sqlite_version.split("."))) < (3, 35, 0):
     import pysqlite3

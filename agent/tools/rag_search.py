@@ -1,5 +1,5 @@
 from langchain_core.tools import tool
-from rag import RagService
+from core.rag import RagService
 
 # 全局缓存最近一次检索结果
 _last_retrieval_result: dict = {

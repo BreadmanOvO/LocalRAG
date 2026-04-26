@@ -1,6 +1,6 @@
 from langchain.agents import create_agent
 from langchain_community.chat_models import ChatOpenAI
-from runtime_keys import load_bailian_runtime_config
+from config.runtime_keys import load_bailian_runtime_config
 from utils.path_tools import get_abs_path
 
 from agent.tools import rag_search, show_sources, clarify_question

@@ -8,7 +8,7 @@ if tuple(map(int, sqlite3.sqlite_version.split("."))) < (3, 35, 0):
     sys.modules["sqlite3"] = pysqlite3
 
 from langchain_chroma import Chroma
-import config_data as config
+from config import settings as config
 
 class VectorStoreService(object):
     def __init__(self, embedding) -> None:

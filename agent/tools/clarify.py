@@ -1,6 +1,6 @@
 from langchain_core.tools import tool
 from langchain_community.chat_models import ChatOpenAI
-from runtime_keys import load_bailian_runtime_config
+from config.runtime_keys import load_bailian_runtime_config
 
 
 @tool

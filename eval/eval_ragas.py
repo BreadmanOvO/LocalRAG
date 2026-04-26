@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from data.evaluation.shared.eval_schema import validate_dataset
-from runtime_keys import load_bailian_runtime_config
+from config.runtime_keys import load_bailian_runtime_config
 
 
 def load_dataset(path: Path) -> list[dict[str, Any]]:
@@ -64,7 +64,7 @@ def run_baseline(
     dataset = load_dataset(dataset_path)
     require_runtime_keys()
 
-    from rag import RagService
+    from core.rag import RagService
 
     rag_service = RagService()
     predictions = []

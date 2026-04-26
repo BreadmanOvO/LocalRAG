@@ -6,7 +6,7 @@ import re
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-import config_data as config
+from config import settings as config
 
 
 @dataclass(frozen=True)
