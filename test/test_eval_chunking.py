@@ -9,9 +9,9 @@ from unittest import mock
 
 from langchain_core.documents import Document
 
-import config_data as config
-import knowledge_base
-import rag
+from config import settings as config
+from core import knowledge_base
+from core import rag
 
 
 class RegistryBackedIngestionTests(unittest.TestCase):
@@ -182,9 +182,9 @@ class VectorStoreServiceScoredRetrievalTests(unittest.TestCase):
 
 class ChunkingEvaluationContractTests(unittest.TestCase):
     def _load_module(self):
-        spec = importlib.util.find_spec("eval_chunking")
+        spec = importlib.util.find_spec("eval.eval_chunking")
         self.assertIsNotNone(spec)
-        return importlib.import_module("eval_chunking")
+        return importlib.import_module("eval.eval_chunking")
 
     def _build_prediction(
         self,

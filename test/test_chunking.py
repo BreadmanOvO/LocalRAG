@@ -3,9 +3,10 @@ import unittest
 from types import SimpleNamespace
 from unittest import mock
 
-import config_data as config
-import knowledge_base
-from chunking import (
+from config import settings as config
+from core import knowledge_base
+from core.knowledge_base import KnowledgeBaseService
+from core.chunking import (
     ChunkRecord,
     build_locator,
     choose_chunking_strategy,
@@ -127,7 +128,7 @@ class ChunkingTests(unittest.TestCase):
                 mock.patch.object(knowledge_base, "Chroma", return_value=mock.Mock()),
                 mock.patch.object(config, "persist_directory", temp_dir),
             ):
-                knowledge_base.KnowledgeBaseService()
+                KnowledgeBaseService()
 
         mock_embeddings.assert_called_once_with(
             model="text-embedding-v4",
@@ -156,7 +157,7 @@ class ChunkingTests(unittest.TestCase):
                 mock.patch.object(config, "chunk_overlap", 5),
                 mock.patch.object(config, "min_split_length", 10),
             ):
-                service = knowledge_base.KnowledgeBaseService()
+                service = KnowledgeBaseService()
                 result = service.upload_by_str(text, "sample.txt")
 
         self.assertEqual("【成功】向数据库更新成功", result)

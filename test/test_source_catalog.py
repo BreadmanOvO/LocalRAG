@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 
-from source_catalog import ROOT, REGISTRY_REL_PATH, SOURCE_DOCUMENTS, documents_for_category
+from processing.source_catalog import ROOT, REGISTRY_REL_PATH, SOURCE_DOCUMENTS, documents_for_category
 
 
 class ApolloSourceCatalogTests(unittest.TestCase):

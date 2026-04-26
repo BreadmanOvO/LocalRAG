@@ -6,12 +6,12 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-sys.modules.setdefault("knowledge_base", types.SimpleNamespace(KnowledgeBaseService=object))
-sys.modules.setdefault("rag", types.SimpleNamespace(RagService=object))
+sys.modules.setdefault("core.knowledge_base", types.SimpleNamespace(KnowledgeBaseService=object))
+sys.modules.setdefault("core.rag", types.SimpleNamespace(RagService=object))
 
-import eval_chunking
-from eval_llm_judge import summarize_judgements
-from eval_ragas import (
+from eval import eval_chunking
+from eval.eval_llm_judge import summarize_judgements
+from eval.eval_ragas import (
     build_prediction_record,
     build_session_id,
     require_runtime_keys,
@@ -111,8 +111,8 @@ class EvalRunnerTests(unittest.TestCase):
             fake_rag_module.RagService = mock.Mock(return_value=fake_rag_service)
 
             with (
-                mock.patch.dict(sys.modules, {"rag": fake_rag_module}),
-                mock.patch("eval_ragas.load_bailian_runtime_config", return_value=None),
+                mock.patch.dict(sys.modules, {"core.rag": fake_rag_module}),
+                mock.patch("eval.eval_ragas.load_bailian_runtime_config", return_value=None),
             ):
                 summary = run_baseline(dataset_path, predictions_path, metrics_path)
 
@@ -132,20 +132,20 @@ class EvalRunnerTests(unittest.TestCase):
             self.assertTrue(metrics_path.exists())
 
     def test_require_runtime_keys_calls_runtime_config_loader(self):
-        with mock.patch("eval_ragas.load_bailian_runtime_config", return_value=None) as loader:
+        with mock.patch("eval.eval_ragas.load_bailian_runtime_config", return_value=None) as loader:
             require_runtime_keys()
 
         loader.assert_called_once_with()
 
     def test_require_chunking_runtime_credentials_calls_runtime_config_loader(self):
-        with mock.patch("eval_chunking.load_bailian_runtime_config", return_value=None) as loader:
+        with mock.patch("eval.eval_chunking.load_bailian_runtime_config", return_value=None) as loader:
             eval_chunking.require_runtime_credentials()
 
         loader.assert_called_once_with()
 
     def test_require_runtime_keys_surfaces_loader_runtime_error(self):
         with mock.patch(
-            "eval_ragas.load_bailian_runtime_config",
+            "eval.eval_ragas.load_bailian_runtime_config",
             side_effect=RuntimeError("Missing runtime credentials"),
         ):
             with self.assertRaisesRegex(RuntimeError, "Missing runtime credentials"):
@@ -153,7 +153,7 @@ class EvalRunnerTests(unittest.TestCase):
 
     def test_require_chunking_runtime_credentials_surfaces_loader_runtime_error(self):
         with mock.patch(
-            "eval_chunking.load_bailian_runtime_config",
+            "eval.eval_chunking.load_bailian_runtime_config",
             side_effect=RuntimeError("Missing runtime credentials"),
         ):
             with self.assertRaisesRegex(RuntimeError, "Missing runtime credentials"):

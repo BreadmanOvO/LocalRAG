@@ -3,8 +3,8 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from source_catalog import SourceDocument
-from source_cleaning import (
+from processing.source_catalog import SourceDocument
+from processing.source_cleaning import (
     assemble_ocr_page_text,
     assemble_ocr_page_text_from_items,
     build_registry_entry,

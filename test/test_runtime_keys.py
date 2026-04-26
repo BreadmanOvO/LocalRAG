@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from runtime_keys import BailianRuntimeConfig, load_bailian_runtime_config
+from config.runtime_keys import BailianRuntimeConfig, load_bailian_runtime_config
 
 
 class BailianRuntimeKeysTests(unittest.TestCase):
