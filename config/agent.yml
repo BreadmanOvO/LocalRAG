@@ -1,0 +1,3 @@
+# config/agent.yml
+system_prompt_path: prompts/agent_system.txt
+max_iterations: 5
