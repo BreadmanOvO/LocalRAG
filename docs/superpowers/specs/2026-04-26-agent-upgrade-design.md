@@ -22,8 +22,8 @@ LocalRAG/
 │       ├── rag_search.py     # 检索问答工具
 │       ├── show_sources.py   # 来源展示工具
 │       └── clarify.py        # 澄清追问工具
-├── rag/                      # 现有 RAG 能力，保持不动
-│   ├── __init__.py
+├── rag/                      # 现有 RAG 模块（如 vector_stores.py），不迁移、不重构
+│   ├── __init__.py           # 可能需新增
 │   ├── vector_stores.py
 │   └── ...
 ├── eval/                     # 评测专用（原 eval_*.py 迁入）
@@ -135,7 +135,9 @@ response_stream = st.session_state["agent"].execute_stream(prompt)
 
 ## 6. 保护资产
 
-- 现有 `rag.py` 不动
+- `rag.py`（RagService）保持在根目录，不做任何修改
+- `rag/` 目录下的现有模块（如 `vector_stores.py`）不迁移、不重构
+- Agent 工具通过 `from rag import RagService` 复用现有能力
 - 评测脚本只迁移目录，不改核心逻辑
 - `results/` 目录不变
 - 现有 `key.json` 配置方式不变
