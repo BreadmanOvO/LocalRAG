@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import config_data as config
-from eval_ragas import build_session_id, load_dataset, write_json
+from eval.eval_ragas import build_session_id, load_dataset, write_json
 from knowledge_base import KnowledgeBaseService
 from rag import RagService
 from runtime_keys import load_bailian_runtime_config

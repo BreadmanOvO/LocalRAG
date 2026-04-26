@@ -1,15 +1,16 @@
+# app_qa.py
 import streamlit as st
 import uuid
-from rag import RagService
+from agent import ReactAgent
 
-st.title("智能助手")
+st.title("自动驾驶问答助手")
 st.divider()
 
 if "message" not in st.session_state:
-    st.session_state["message"] = [{"role": "assistant", "content": "你好，有什么可以帮助你？"}]
+    st.session_state["message"] = [{"role": "assistant", "content": "你好，我是自动驾驶领域的问答助手，有什么可以帮助你？"}]
 
-if "rag" not in st.session_state:
-    st.session_state["rag"] = RagService()
+if "agent" not in st.session_state:
+    st.session_state["agent"] = ReactAgent()
 
 if "session_id" not in st.session_state:
     st.session_state["session_id"] = str(uuid.uuid4())
@@ -25,9 +26,8 @@ if prompt:
 
     ai_res_list = []
     with st.spinner("思考中..."):
-        session_config = {"configurable": {"session_id": st.session_state["session_id"]}}
-        response_stream = st.session_state["rag"].chain.stream({"question": prompt}, session_config)
-        
+        response_stream = st.session_state["agent"].execute_stream(prompt)
+
         def capture(generator):
             for chunk in generator:
                 ai_res_list.append(chunk)
@@ -35,4 +35,3 @@ if prompt:
 
         st.chat_message("assistant").write_stream(capture(response_stream))
         st.session_state["message"].append({"role": "assistant", "content": "".join(ai_res_list)})
-

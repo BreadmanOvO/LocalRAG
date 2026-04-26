@@ -2,7 +2,7 @@
 from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 from vector_stores import VectorStoreService
 from langchain_community.embeddings import DashScopeEmbeddings
-from langchain_openai import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 import config_data as config
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.documents import Document

@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from eval_ragas import write_json
+from eval.eval_ragas import write_json
 
 
 def load_predictions(path: Path) -> list[dict[str, Any]]:
