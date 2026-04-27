@@ -42,4 +42,5 @@ results/chunking_eval/stores/
 .env
 .env.*
 *.local
+runtime_models.json
 key.json

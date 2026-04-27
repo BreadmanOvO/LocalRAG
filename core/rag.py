@@ -1,15 +1,14 @@
 # from langchain_core.prompts.base import format_document
 from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 from core.vector_stores import VectorStoreService
-from langchain_community.embeddings import DashScopeEmbeddings
-from langchain_community.chat_models import ChatOpenAI
 from config import settings as config
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.documents import Document
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from core.chat_history import get_history
-from config.runtime_keys import load_bailian_runtime_config
+from config.runtime_keys import load_runtime_config
+from config.provider_factory import build_chat_model, build_embedding_model
 from uuid import uuid4
 
 
@@ -48,12 +47,9 @@ def _format_documents(documents: list[Document]) -> str:
 
 class RagService(object):
     def __init__(self) -> None:
-        runtime_config = load_bailian_runtime_config()
+        runtime_config = load_runtime_config()
         self.vector_service = VectorStoreService(
-            embedding=DashScopeEmbeddings(
-                model=runtime_config.embedding_model_name,
-                dashscope_api_key=runtime_config.dashscope_api_key,
-            ),
+            embedding=build_embedding_model(runtime_config),
         )
 
         self.prompt_template = ChatPromptTemplate.from_messages(
@@ -66,11 +62,7 @@ class RagService(object):
             ]
         )
         
-        self.chat_model = ChatOpenAI(
-            model=runtime_config.chat_model_name,
-            api_key=runtime_config.dashscope_api_key,
-            base_url=runtime_config.dashscope_base_url,
-        )
+        self.chat_model = build_chat_model(runtime_config)
 
         self.chain = self.__get_chain()
 

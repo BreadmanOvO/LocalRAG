@@ -2,11 +2,11 @@ import hashlib
 import os
 import sys
 import sqlite3
-from langchain_community.embeddings import DashScopeEmbeddings
 import datetime
 from config import settings as config
 from core.chunking import choose_chunking_strategy, chunk_text_baseline, chunk_text_doc_type_aware
-from config.runtime_keys import load_bailian_runtime_config
+from config.runtime_keys import load_runtime_config
+from config.provider_factory import build_embedding_model
 
 if tuple(map(int, sqlite3.sqlite_version.split("."))) < (3, 35, 0):
     import pysqlite3
@@ -51,16 +51,12 @@ def get_string_md5(input_str : str, encoding_style="utf-8"):
 
 class KnowledgeBaseService(object):
     def __init__(self) -> None:
-        runtime_config = load_bailian_runtime_config()
+        runtime_config = load_runtime_config()
         os.makedirs(config.persist_directory, exist_ok=True)
-        # Chroma向量库对象，用来存储向量数据
         self.chroma = Chroma(
-            collection_name=config.collection_name, # 数据库的表名
-            embedding_function=DashScopeEmbeddings(
-                model=runtime_config.embedding_model_name,
-                dashscope_api_key=runtime_config.dashscope_api_key,
-            ),
-            persist_directory=config.persist_directory, # 数据库本地存储文件夹
+            collection_name=config.collection_name,
+            embedding_function=build_embedding_model(runtime_config),
+            persist_directory=config.persist_directory,
         )
 
     def _build_upload_source_metadata(self, filename: str) -> dict:

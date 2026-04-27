@@ -117,38 +117,41 @@ class ChunkingTests(unittest.TestCase):
 
     def test_knowledge_base_service_uses_runtime_embedding_settings(self):
         runtime_config = SimpleNamespace(
+            provider="bailian",
+            api_key="test-key",
+            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+            chat_model_name="qwen3-max",
             embedding_model_name="text-embedding-v4",
-            dashscope_api_key="test-key",
         )
 
         with tempfile.TemporaryDirectory() as temp_dir:
             with (
-                mock.patch.object(knowledge_base, "load_bailian_runtime_config", return_value=runtime_config),
-                mock.patch.object(knowledge_base, "DashScopeEmbeddings", return_value=object()) as mock_embeddings,
+                mock.patch.object(knowledge_base, "load_runtime_config", return_value=runtime_config),
+                mock.patch.object(knowledge_base, "build_embedding_model", return_value=object()) as mock_embeddings,
                 mock.patch.object(knowledge_base, "Chroma", return_value=mock.Mock()),
                 mock.patch.object(config, "persist_directory", temp_dir),
             ):
                 KnowledgeBaseService()
 
-        mock_embeddings.assert_called_once_with(
-            model="text-embedding-v4",
-            dashscope_api_key="test-key",
-        )
+        mock_embeddings.assert_called_once_with(runtime_config)
 
     def test_upload_by_str_writes_per_chunk_metadata(self):
         mock_chroma = mock.Mock()
         text = "知识库文本。" * 60
 
         runtime_config = SimpleNamespace(
+            provider="bailian",
+            api_key="test-key",
+            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+            chat_model_name="qwen3-max",
             embedding_model_name="text-embedding-v4",
-            dashscope_api_key="test-key",
         )
 
         with tempfile.TemporaryDirectory() as temp_dir:
             with (
-                mock.patch.object(knowledge_base, "load_bailian_runtime_config", return_value=runtime_config),
+                mock.patch.object(knowledge_base, "load_runtime_config", return_value=runtime_config),
                 mock.patch.object(knowledge_base, "Chroma", return_value=mock_chroma),
-                mock.patch.object(knowledge_base, "DashScopeEmbeddings", return_value=object()),
+                mock.patch.object(knowledge_base, "build_embedding_model", return_value=object()),
                 mock.patch.object(knowledge_base, "check_md5", return_value=False),
                 mock.patch.object(knowledge_base, "save_md5"),
                 mock.patch.object(config, "persist_directory", temp_dir),
@@ -172,6 +175,18 @@ class ChunkingTests(unittest.TestCase):
             self.assertEqual("untyped", metadata["doc_type"])
             self.assertEqual(index, metadata["chunk_order"])
             self.assertEqual("baseline", metadata["chunk_strategy"])
+    def test_local_hash_embedding_is_deterministic(self):
+        from config.provider_factory import LocalHashEmbeddings
+
+        embeddings = LocalHashEmbeddings(dimensions=16)
+
+        first = embeddings.embed_query("同一段文本")
+        second = embeddings.embed_query("同一段文本")
+        different = embeddings.embed_query("另一段文本")
+
+        self.assertEqual(first, second)
+        self.assertEqual(16, len(first))
+        self.assertNotEqual(first, different)
 
 
 if __name__ == "__main__":

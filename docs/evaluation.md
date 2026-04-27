@@ -1,115 +1,164 @@
 # 评估框架与指标口径
 
-## 评估目标
-- 建立可复用的 baseline 评估体系。
-- 用统一指标比较各版本改进效果。
-- 让每次检索、数据和模型改动都能被量化验证。
+## 文档用途
+本文件描述当前仓库中已经落地的评测链路、结果目录合同，以及仍处于目标态的评估能力。阅读时应区分“已经实现”和“后续计划”，不要把规划项当成当前能力。
 
-## 双评估框架
+## 当前已落地的评测链路
 
-### Gold Set 基准评估
-- 先建立人工小规模 Gold Set（30-50 题）作为主基准集。
-- 每条样本包含问题、标准答案、证据片段与来源定位。
-- Gold Set 优先覆盖高频核心主题、关键术语与代表性难题。
-- 版本对比、pairwise 盲评和关键结论优先以 Gold Set 为准。
+### 1. baseline_eval
+入口：`eval/eval_ragas.py`
 
-### Synthetic Set 扩展评估
-- Synthetic Set 作为扩展覆盖与压力测试数据集。
-- v1.0 首期目标是 200+ 条，后续逐步扩充到 500+。
-- 主要用于放大覆盖面、观察长尾问题与做批量回归。
-- Synthetic Set 不能单独作为版本收益成立的唯一依据，必须结合 Gold Set 结论解释。
+当前实现状态：
+- 会先加载并校验数据集 schema
+- 会校验运行时配置是否可用
+- 通过 `RagService.answer_with_retrieval()` 生成 retrieval-aware prediction
+- 会落盘 `predictions.json`、`metrics.json`、`manifest.json`
 
-### Ragas 客观评估
-- 核心指标包括 `faithfulness`、`answer_relevancy`、`context_precision`、`context_recall`。
-- 可根据版本阶段补充 `answer_correctness` 等指标。
-- 评估流程是：加载测试集 → 统一运行评估脚本 → 输出结构化指标报告。
+当前 prediction 记录包含：
+- `id`
+- `question`
+- `reference_answer`
+- `answer`
+- `retrieved_context`
+- `retrieved_rows`
+- `retrieval_debug_candidates`
+- `evidence`
+- `metadata`
 
-### LLM-as-a-Judge 主观评估
-- 采用两两对战机制，比较基线系统与新版本系统回答。
-- 评估维度包括专业性、准确性、完整性、可读性。
-- 重点记录胜率、平局率与分维度差异。
+当前 metrics 包含基础统计与 evidence 命中统计：
+- `sample_count`
+- `answered_count`
+- `answered_ratio`
+- `context_hit_count`
+- `context_hit_ratio`
+- `evidence_source_hit_count`
+- `evidence_source_hit_ratio`
+- `evidence_locator_hit_count`
+- `evidence_locator_hit_ratio`
 
-### 版本对比方式
-- 每个版本输出独立的 `results/vX_metrics.json`。
-- 新版本相对上版本做盲评 pairwise comparison。
-- 目标是用数据证明检索优化和模型优化的真实收益。
+结果目录合同：
+- `results/baseline_eval/<run_id>/predictions.json`
+- `results/baseline_eval/<run_id>/metrics.json`
+- `results/baseline_eval/<run_id>/manifest.json`
 
-## 合成数据生成原则
-- 基于核心文档按难度分层生成“问题-标准答案-证据片段”三元组。
-- v1.0 首期目标是 200+ 条，后续逐步扩充到 500+。
-- 通过多轮生成、去重与人工抽检控制质量。
-- 重点保证自动驾驶领域术语准确、证据可追溯、难度分布合理。
+### 2. judge_eval
+入口：`eval/eval_llm_judge.py`
 
-## 数据集构建原则
+当前实现状态：
+- 读取 baseline 与 candidate 两份 predictions
+- 校验两侧 sample id 完全一致
+- 基于 answer 是否非空、evidence source hit、evidence locator hit 做 deterministic pairwise 判分
+- 会落盘 `judgements.json`、`summary.json`、`manifest.json`
 
-### Gold Set 构建原则
-1. **规模要求**：v1.0 先建立 30-50 条人工精标样本。
-2. **样本质量**：每题都要求标准答案可核验、证据片段可追溯、来源文档可定位。
-3. **覆盖范围**：优先覆盖感知、传感器融合、规划控制、安全规范等核心主题。
-4. **难度分层**：基础题、中等题、综合题都要覆盖，避免只有术语解释题。
-5. **用途定位**：用于版本闸门、关键回归验证与人工抽检基准。
+当前 summary 包含：
+- `sample_count`
+- `candidate_win_count`
+- `baseline_win_count`
+- `tie_count`
 
-### Synthetic Set 构建原则
-1. **规模要求**：先满足 200+ 合成数据，再逐步扩容到 500+。
-2. **难度分层**：
-   - 基础题（30%）：术语解释、概念定义。
-   - 中等题（50%）：原理分析、算法流程。
-   - 难题（20%）：综合应用、多步推理。
-3. **覆盖范围**：
-   - 传感器融合（LiDAR、Camera、Radar）
-   - 感知算法（BEV、Occupancy、3D 检测）
-   - 规划控制（轨迹预测、决策规划）
-   - 安全标准（ISO 26262、SOTIF）
-4. **质量控制**：通过多轮生成、去重与人工抽检控制质量，避免模板化问题和错误证据。
-5. **用途定位**：用于扩展覆盖、压力测试和观察长尾问题，不替代 Gold Set。
+当前限制：
+- `winner` 已不再是全 tie 占位逻辑，但仍属于规则式 judge，而不是真实 LLM-as-a-Judge
+- `reason` 当前记录的是规则式打分依据，不是自然语言评审结论
+- 尚未接入真实 LLM-as-a-Judge 判分标准
 
-### 数据结构
-- 基础字段：问题、标准答案、证据片段。
-- 评估字段：检索结果、生成结果、对比标签。
-- 元数据字段：类别、难度、来源文档、关键词。
+结果目录合同：
+- `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/judgements.json`
+- `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/summary.json`
+- `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/manifest.json`
 
-## 版本闸门与判定原则
+### 3. chunking_eval
+入口：`eval/eval_chunking.py`
 
-### v1.0 Baseline 闸门
-- 必须先完成 Gold Set 与 Synthetic Set 两类数据准备。
-- 必须能稳定跑通一次 Ragas 评估与一次 LLM-as-a-Judge 评估。
-- 必须产出结构化指标文件，作为后续版本唯一对比基线。
+这是当前最完整的一条实验链路，支持：
+- baseline chunking
+- `doc_type_aware` chunking
+- source-level evidence hit 统计
+- locator-level evidence hit 统计
+- 分 `doc_type` / `source_id` 聚合对比
+- error cases 汇总
+- `report.md` 汇报输出
 
-### v1.1-v1.2 检索层改进判定
-- 每次只引入一类主要变量，优先做 chunking / metadata、hybrid retrieval、reranker 的消融验证。
-- 若 Gold Set 上无稳定收益，即使 Synthetic Set 指标上升，也不能直接判定方案有效。
-- 检索层收益判断优先看证据召回质量、faithfulness 和 pairwise 胜率变化。
+结果目录合同：
+- `results/chunking_eval/<run_id>/baseline/`
+- `results/chunking_eval/<run_id>/doc_type_aware/`
+- `results/chunking_eval/<run_id>/comparison/`
+- `results/chunking_eval/<run_id>/report.md`
+- `results/chunking_eval/<run_id>/manifest.json`
 
-### v1.3 模型层准入条件
-- 只有在 retrieval + reranker 收益趋稳后，才进入 QLoRA。
-- 进入前必须完成 error analysis，确认主要瓶颈来自生成表达，而不是证据召回失败。
-- 若问题主要出在检索链路，则继续优化检索，不提前进入训练主线。
+## 数据集合同
+数据文件：
+- `data/evaluation/gold/gold_set.json`
+- `data/evaluation/synthetic/synthetic_dataset.json`
+- `data/evaluation/shared/eval_schema.py`
 
-## 指标说明
+每条样本必须包含：
+- `id`
+- `question`
+- `reference_answer`
+- `evidence`
+- `metadata`
 
-### 检索效果
-- Top-k 召回率
-- MRR（平均倒数排名）
-- Hit@3 召回率
-- 重排后上下文质量
+`evidence` 内每项必须包含：
+- `quote`
+- `source_id`
+- `locator`
 
-### 回答质量
-- Faithfulness（抗幻觉能力）
-- Answer Relevancy（答案相关性）
-- LLM-as-a-Judge 胜率
-- 人工抽检满意度
+`metadata` 必须包含：
+- `difficulty`
+- `topic`
+- `doc_type`
 
-### 系统性能
-- 端到端延迟
-- 首字延迟（TTFT）
-- 并发能力
+当前 schema 测试还约束：
+- Gold Set 至少 8 条
+- Synthetic Set 至少 14 条
+- 合并后需覆盖核心主题：`system_architecture`、`perception`、`planning_control`、`safety`、`sensor_fusion`
+- 合并后必须至少包含一种 `report` 类型样本
 
-### 领域覆盖
-- 测试集可回答比例
-- 核心主题覆盖度
-- 不同难度题型的稳定性
+## 当前口径下的指标解释
 
-## 使用说明
-当前仓库已经落地了部分评测链路：`eval_chunking.py` 可以产出真实的 chunking 对比实验结果，结果目录位于 `results/chunking_eval/<run_id>/`，包含 `baseline/`、`doc_type_aware/`、`comparison/` 与 `report.md`。这些结果主要用于验证数据层与检索前置能力，例如 source-level evidence hit、chunking 对比和 retrieval inspection 产物。
+### baseline_eval
+当前只适合回答这类问题：
+- 能否稳定产出回答
+- 能否稳定产出检索上下文
+- retrieval-aware prediction 格式是否稳定
 
-仍处于规划/持续补齐中的部分包括：更完整的 Ragas 指标、真实 LLM-as-a-Judge 流程、以及更大规模的 Gold Set / Synthetic Set。阅读本文件时，应区分“已落地的 chunking 评测链路”和“仍作为目标值的完整评估体系”。
+它暂时不能回答这类问题：
+- faithfulness 是否提升
+- answer_relevancy 是否提升
+- 版本之间是否存在显著主观质量差异
+
+### judge_eval
+当前只适合验证：
+- pairwise 输入输出合同是否稳定
+- 后续接入真实 Judge 时目录与数据结构是否可复用
+
+它暂时不能作为真实版本胜负结论。
+
+### chunking_eval
+当前最适合用于：
+- 比较不同 chunking 策略的 source hit / locator hit
+- 做 retrieval inspection
+- 观察不同 `doc_type` 的切分收益差异
+
+## 与目标态的差距
+以下能力仍是 v1.1 的收尾项或 v1.2 之前的准备项：
+- 为 baseline_eval 接入更完整的客观指标
+- 为 judge_eval 接入真实 LLM 判分逻辑
+- 继续扩充 Gold / Synthetic 数据集
+- 用统一 artifact contract 支撑后续 hybrid retrieval / reranker 消融实验
+
+## 运行前提
+运行评测脚本前需要本地提供 `config/runtime_models.json`，统一字段包括：
+- `provider`
+- `api_key`
+- `base_url`
+- `chat_model_name`
+- `embedding_model_name`
+
+当前实现会兼容旧 `config/key.json` 作为历史本地输入，但该兼容路径不是新的公开配置入口。
+仓库内可参考 `config/runtime_models.example.json`，本地运行时复制为 `config/runtime_models.json` 并填写真实值。
+
+## 使用建议
+- 看当前真实实验能力时，优先参考 `eval/eval_chunking.py` 与 `results/chunking_eval/`
+- 看 baseline / judge 合同时，优先参考 `eval/eval_ragas.py`、`eval/eval_llm_judge.py` 与对应测试
+- 新增评测脚本或结果目录时，同步更新本文件与 `docs/repo_guide.md`

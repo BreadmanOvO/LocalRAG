@@ -1,6 +1,6 @@
 from langchain_core.tools import tool
-from langchain_community.chat_models import ChatOpenAI
-from config.runtime_keys import load_bailian_runtime_config
+from config.runtime_keys import load_runtime_config
+from config.provider_factory import build_chat_model
 
 
 @tool
@@ -13,13 +13,9 @@ def clarify_question(reason: str) -> str:
     Returns:
         生成的澄清追问文本
     """
-    runtime_config = load_bailian_runtime_config()
+    runtime_config = load_runtime_config()
 
-    chat_model = ChatOpenAI(
-        model=runtime_config.chat_model_name,
-        api_key=runtime_config.dashscope_api_key,
-        base_url=runtime_config.dashscope_base_url,
-    )
+    chat_model = build_chat_model(runtime_config)
 
     prompt = f"""你是一个自动驾驶领域的专业问答助手。
 用户的问题不够清晰，原因如下：{reason}

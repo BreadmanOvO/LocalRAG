@@ -12,26 +12,26 @@
 | 版本 | 时间 | 核心目标 | 关键产出 | 评估对比 | 亮点 |
 |------|------|----------|----------|----------|------|
 | **v1.0 Baseline** | 第1周 | 建立双评估框架与基准数据集 | Gold Set + Synthetic Set + 双评估基线 | - | 先建立可复用评估闭环 |
-| **v1.1 数据层** | 第2周 | 文档清洗、source registry、结构化切分与 metadata 增强 | 文档解析结果 + baseline chunking + doc-type-aware chunking + metadata 规范 | vs v1.0 | 为检索优化建立稳定、可追溯输入 |
+| **v1.1 数据层** | 第2周 | 文档清洗、source registry、结构化切分与 metadata 增强 | 文档解析结果 + baseline chunking + doc-type-aware chunking + metadata 规范 + 评测 artifact contract | vs v1.0 | 为检索优化建立稳定、可追溯输入 |
 | **v1.2 检索层** | 第3周 | 分阶段升级检索链路：hybrid retrieval + retrieval inspection + reranker | 混合检索、检索检查能力、重排、检索消融实验结果 | vs v1.1 | 聚焦最可能产生核心收益的主链路 |
-
-> 当前状态：v1.1 的 baseline/doc-type-aware chunking、provenance metadata、真实 chunking 对比实验与 retrieval score inspection 已基本落地；当前收尾重点是 locator 级评测合同与文档状态同步，随后进入 v1.2 检索层实验。
 | **v1.3 模型层** | 第4-5周 | 仅在检索趋于稳定后再评估 QLoRA | 指令微调实验（条件满足时） | vs v1.2 | 用门槛控制训练投入 |
+
+> 当前状态：v1.1 已落地 `source_registry`、baseline/doc-type-aware chunking、provenance metadata、真实 chunking 对比实验，以及 baseline/judge/chunking 三条结果目录合同。当前收尾重点已收敛为：补齐更完整的 baseline 客观指标、真实 LLM judge 逻辑，以及继续扩充评测数据集；在这些收口前，不进入 v1.2 检索层实现。
 | **v1.4 工程增强** | 第6周 | UI、部署、性能优化与可选底层实验 | Chainlit / 部署整理 / 性能测试 / 可选 parent-child chunking | vs v1.3 | 把增强项放在主线之后 |
 
 ### v1.0 Baseline
 - 建立人工小规模 Gold Set（30-50 题）
 - 建立 Synthetic Set 作为扩展评估集
 - 建立 Ragas + LLM-as-a-Judge 双评估框架
-- 记录 baseline 指标
-- 产出 `synthetic_dataset.json`、`eval_ragas.py`、`eval_llm_judge.py`、`results/baseline_metrics.json`
+- 记录 baseline 指标与 retrieval/evidence 命中统计
+- 产出 `data/evaluation/synthetic/synthetic_dataset.json`、`eval/eval_ragas.py`、`eval/eval_llm_judge.py`、`results/baseline_eval/<run_id>/`
 
 ### v1.1 数据层
 - 已完成 `source_registry` 驱动的知识源入库路径与真实 chunking 对比实验骨架
 - 已完成统一 baseline chunking 与按文档类型选择 chunk 策略的能力
 - 已完成 chunk provenance metadata 规范，核心字段包括 `source_id`、`doc_type`、`chunk_order`、`chunk_strategy` 与可选 locator 信息
 - 已完成真实 chunking 对比实验与结果产物落盘，当前已验证 `similarity_top_k = 5` 下 baseline 与 `doc_type_aware` 的 source-level 命中都达到 1.0
-- 当前收尾项：locator 级评测合同、Gold Set 扩容、以及数据层状态文档同步
+- 当前收尾项：更完整的 baseline 客观指标、真实 LLM judge 逻辑、评测数据集继续扩容，以及状态文档同步
 - 多模态 OCR 作为增强项，仅在文本检索稳定后再深入
 
 ### v1.2 检索层

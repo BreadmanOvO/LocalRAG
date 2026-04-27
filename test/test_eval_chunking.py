@@ -35,15 +35,18 @@ class RegistryBackedIngestionTests(unittest.TestCase):
         }
 
         runtime_config = SimpleNamespace(
+            provider="bailian",
+            api_key="test-key",
+            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+            chat_model_name="qwen3-max",
             embedding_model_name="text-embedding-v4",
-            dashscope_api_key="test-key",
         )
 
         with tempfile.TemporaryDirectory() as temp_dir:
             with (
-                mock.patch.object(knowledge_base, "load_bailian_runtime_config", return_value=runtime_config),
+                mock.patch.object(knowledge_base, "load_runtime_config", return_value=runtime_config),
                 mock.patch.object(knowledge_base, "Chroma", return_value=mock_chroma),
-                mock.patch.object(knowledge_base, "DashScopeEmbeddings", return_value=object()),
+                mock.patch.object(knowledge_base, "build_embedding_model", return_value=object()),
                 mock.patch.object(config, "persist_directory", temp_dir),
                 mock.patch.object(config, "chunk_size", 40),
                 mock.patch.object(config, "chunk_overlap", 5),
@@ -67,32 +70,26 @@ class RegistryBackedIngestionTests(unittest.TestCase):
 
 
 class RagEvaluationHelperTests(unittest.TestCase):
-    def test_rag_service_uses_runtime_bailian_settings(self):
+    def test_rag_service_uses_unified_runtime_factory(self):
         runtime_config = SimpleNamespace(
-            dashscope_api_key="test-key",
-            dashscope_base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+            provider="bailian",
+            api_key="test-key",
+            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
             chat_model_name="qwen3-max",
             embedding_model_name="text-embedding-v4",
         )
 
         with (
-            mock.patch.object(rag, "load_bailian_runtime_config", return_value=runtime_config),
-            mock.patch.object(rag, "DashScopeEmbeddings", return_value=object()) as mock_embeddings,
+            mock.patch.object(rag, "load_runtime_config", return_value=runtime_config),
+            mock.patch.object(rag, "build_embedding_model", return_value=object()) as mock_embeddings,
             mock.patch.object(rag, "VectorStoreService", return_value=mock.Mock()),
-            mock.patch.object(rag, "ChatOpenAI", return_value=mock.Mock()) as mock_chat,
+            mock.patch.object(rag, "build_chat_model", return_value=mock.Mock()) as mock_chat,
             mock.patch.object(rag.RagService, "_RagService__get_chain", return_value=mock.Mock()),
         ):
             rag.RagService()
 
-        mock_embeddings.assert_called_once_with(
-            model="text-embedding-v4",
-            dashscope_api_key="test-key",
-        )
-        mock_chat.assert_called_once_with(
-            model="qwen3-max",
-            api_key="test-key",
-            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
-        )
+        mock_embeddings.assert_called_once_with(runtime_config)
+        mock_chat.assert_called_once_with(runtime_config)
 
     def test_retrieval_debug_top_k_is_at_least_generation_top_k(self):
         self.assertGreaterEqual(config.retrieval_debug_top_k, config.similarity_top_k)
@@ -614,9 +611,15 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
             self.assertTrue((run_dir / "comparison" / "by_source_id.json").exists())
             self.assertTrue((run_dir / "comparison" / "error_cases.json").exists())
             self.assertTrue((run_dir / "report.md").exists())
+            self.assertTrue((run_dir / "manifest.json").exists())
 
             summary = json.loads((run_dir / "comparison" / "summary.json").read_text(encoding="utf-8"))
             report_text = (run_dir / "report.md").read_text(encoding="utf-8")
+            manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
+
+        self.assertEqual("v1.1", manifest["contract_version"])
+        self.assertEqual("chunking_eval", manifest["pipeline"])
+        self.assertEqual("gold-20260421-120000", manifest["run_id"])
 
         self.assertEqual("gold-20260421-120000", summary["run_id"])
         self.assertIn("doc_type_aware", report_text)
@@ -632,11 +635,13 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
 
         self.assertIn("docs/repo_guide.md", readme_text)
         self.assertIn("eval_chunking.py", readme_text)
-        self.assertIn("key.json", readme_text)
+        self.assertIn("runtime_models.json", readme_text)
         self.assertNotIn("OPENAI_API_KEY", readme_text)
         self.assertIn("工程/运行文件", guide_text)
         self.assertIn("实验/评测脚本", guide_text)
         self.assertIn("results/chunking_eval/<run_id>/", guide_text)
+        self.assertIn("results/baseline_eval/<run_id>/", guide_text)
+        self.assertIn("results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/", guide_text)
 
 
 if __name__ == "__main__":

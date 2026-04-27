@@ -1,6 +1,6 @@
 from langchain.agents import create_agent
-from langchain_community.chat_models import ChatOpenAI
-from config.runtime_keys import load_bailian_runtime_config
+from config.runtime_keys import load_runtime_config
+from config.provider_factory import build_chat_model
 from utils.path_tools import get_abs_path
 
 from agent.tools import rag_search, show_sources, clarify_question
@@ -15,14 +15,9 @@ def load_agent_system_prompt() -> str:
 
 class ReactAgent:
     def __init__(self):
-        runtime_config = load_bailian_runtime_config()
+        runtime_config = load_runtime_config()
 
-        self.chat_model = ChatOpenAI(
-            model=runtime_config.chat_model_name,
-            api_key=runtime_config.dashscope_api_key,
-            base_url=runtime_config.dashscope_base_url,
-            temperature=0.7,
-        )
+        self.chat_model = build_chat_model(runtime_config, temperature=0.7)
 
         self.tools = [rag_search, show_sources, clarify_question]
 

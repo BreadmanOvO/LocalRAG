@@ -20,14 +20,15 @@
 
 ## Local runtime reminder
 
-Keep a local-only root `key.json` with this exact shape:
+Keep a local-only `config/runtime_models.json` with a unified shape:
 
 ```json
 {
-  "dashscope_api_key": "...",
-  "dashscope_base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-  "chat_model_name": "qwen3-max",
-  "embedding_model_name": "text-embedding-v4"
+  "provider": "modelscope",
+  "api_key": "...",
+  "base_url": "https://api-inference.modelscope.cn/v1",
+  "chat_model_name": "Qwen/Qwen2.5-72B-Instruct",
+  "embedding_model_name": "Qwen/Qwen3-Embedding-8B"
 }
 ```
 

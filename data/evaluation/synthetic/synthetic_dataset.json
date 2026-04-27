@@ -168,5 +168,73 @@
       "topic": "planning_control",
       "doc_type": "official_doc"
     }
+  },
+  {
+    "id": "syn-011",
+    "question": "Waymo Open Dataset 报告为什么适合作为自动驾驶感知评测基础？",
+    "reference_answer": "因为该数据集规模大、模态丰富且场景多样，适合支撑更贴近真实世界的感知评测。",
+    "evidence": [
+      {
+        "quote": "To further accelerate the development of autonomous driving technology, we present the largest and most diverse multimodal autonomous driving dataset to date, comprising of images recorded by multiple high-resolution cameras and sensor readings from multiple high-quality LiDAR scanners mounted on a fleet of self-driving vehicles.",
+        "source_id": "paper-004",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "report"
+    }
+  },
+  {
+    "id": "syn-012",
+    "question": "Apollo Channel 文档里感知、预测和规划模块之间是什么关系？",
+    "reference_answer": "文档将感知、预测和规划视作通过 Channel 互联的模块链路，其中感知识别交通参与者，预测分析其行为，规划负责主车决策与规划线生成。",
+    "evidence": [
+      {
+        "quote": "识别交通参与者（汽车、自行车、行人等），识别交通信号灯等。 感知(Perception) 预测 (Prediction) 对交通参与都的行为进行预测。 规划(Plamring) 对主车行为进行决策，实时生成车辆规划线。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "syn-013",
+    "question": "FusionAD 为什么有助于预测和规划任务？",
+    "reference_answer": "因为它通过多模态融合提供更丰富稳定的 BEV 特征，使预测模块能够获得更细粒度的场景信息，并提升规划表现。",
+    "evidence": [
+      {
+        "quote": "The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end-to-end learning methods solely reliant on camera-based BEV.",
+        "source_id": "paper-006",
+        "locator": "p.7"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "syn-014",
+    "question": "NHTSA 对自动驾驶系统的总体安全目标是什么？",
+    "reference_answer": "NHTSA 强调自动驾驶系统的目标是提升道路安全、减少伤亡与事故成本，并通过技术演进带来更大的安全收益。",
+    "evidence": [
+      {
+        "quote": "NHTSA's mission is to save lives, prevent injuries, and reduce the economic costs of roadway crashes. The continuing evolution of automotive technology aims to deliver even greater safety benefits than earlier technologies.",
+        "source_id": "standard-001",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
   }
 ]

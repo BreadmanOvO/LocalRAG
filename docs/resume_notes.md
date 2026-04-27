@@ -13,25 +13,20 @@
 
 ## 核心贡献表达
 
-### 1. 工程化评估体系
-- 利用 LLM 合成技术构建首期 200+、目标 500+ 三元组的专家级测试集。
-- 引入 Ragas 客观指标 + LLM-as-a-Judge 主观评估双评估框架。
-- 建立量化反馈闭环，指导检索策略与模型迭代。
+### 1. 已落地的工程化评估体系
+- 建立了自动驾驶领域评测数据合同，统一样本的 `evidence`、`metadata` 与 `locator` 字段要求。
+- 搭建了 baseline runner、规则式 pairwise judge 与 chunking 对比实验三条评测链路，并统一了结果目录 contract。
+- 通过 source-level / locator-level 指标与 error case 汇总，为后续检索实验提供可复用的量化闭环。
 
-### 2. 检索链路深度优化
-- 针对自动驾驶术语密集特点，引入 HyDE 查询改写，缓解查询与文档语义空间不一致问题。
-- 定制 BM25 领域词典，优化专有名词召回。
-- 构建 BGE-M3 多模式混合检索 + Rerank 重排序 + 层级索引管道。
+### 2. 已落地的数据与检索前置能力
+- 建立 `source_registry` 驱动的知识源管理方式，统一 Apollo 文档、标准规范、论文/报告的来源登记。
+- 实现 baseline chunking 与 doc-type-aware chunking，并把 `source_id`、`doc_type`、`chunk_strategy`、`locator` 等 provenance metadata 写入 chunk。
+- 为后续 retrieval inspection、混合检索与 reranker 消融打下可追溯输入基础。
 
-### 3. 算力受限下的模型优化
-- 在单卡 4080 环境下，使用 Unsloth + QLoRA 进行指令微调。
-- 结合 Flash-Attention 2 与梯度优化手段提升训练效率。
-- 视时间探索 DPO 偏好对齐，以提升回答简洁性和格式稳定性。
-
-### 4. C++ 背景的性能优化亮点
-- 深入分析 llama.cpp 编译与推理链路。
-- 通过 threading 策略、KV Cache 管理和量化方案优化 TTFT。
-- 把底层性能优化与上层 RAG 体验提升结合起来，形成差异化优势。
+### 3. 仍应保留“计划”口径的方向
+- Ragas 客观指标的完整接入仍在收尾，不应写成已经完成。
+- 真实 LLM-as-a-Judge 判分逻辑仍未接入，不应写成已有稳定胜率结论。
+- hybrid retrieval、HyDE、BGE-M3、Rerank、QLoRA、DPO、llama.cpp 性能优化都属于后续路线，不应提前写成既成事实。
 
 ## 面试亮点准备
 1. 为什么检索层收益往往大于微调层收益？

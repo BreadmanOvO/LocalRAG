@@ -1,4 +1,4 @@
 from config.settings import *
-from config.runtime_keys import load_bailian_runtime_config, BailianRuntimeConfig
+from config.runtime_keys import RuntimeProviderConfig, load_runtime_config
 
-__all__ = ["load_bailian_runtime_config", "BailianRuntimeConfig"]
+__all__ = ["load_runtime_config", "RuntimeProviderConfig"]

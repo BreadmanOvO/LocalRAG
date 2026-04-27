@@ -1,0 +1,7 @@
+{
+  "provider": "modelscope",
+  "api_key": "your-api-key",
+  "base_url": "https://api-inference.modelscope.cn/v1",
+  "chat_model_name": "Qwen/Qwen3-8B",
+  "embedding_model_name": "local-hash-embedding"
+}

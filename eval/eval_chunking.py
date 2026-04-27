@@ -1,17 +1,21 @@
 import argparse
 import json
 import shutil
+import sys
 from collections import defaultdict
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from config import settings as config
 from eval.eval_ragas import build_session_id, load_dataset, write_json
 from core.knowledge_base import KnowledgeBaseService
 from core.rag import RagService
-from config.runtime_keys import load_bailian_runtime_config
+from config.runtime_keys import load_runtime_config
 
 REGISTRY_PATH = Path("data/evaluation/shared/source_registry.json")
 STRATEGY_BASELINE = "baseline"
@@ -280,6 +284,14 @@ def write_chunking_run_artifacts(
     write_json(run_dir / "comparison" / "by_doc_type.json", comparison["by_doc_type"])
     write_json(run_dir / "comparison" / "by_source_id.json", comparison["by_source_id"])
     write_json(run_dir / "comparison" / "error_cases.json", comparison["error_cases"])
+    write_json(
+        run_dir / "manifest.json",
+        {
+            "contract_version": "v1.1",
+            "pipeline": "chunking_eval",
+            "run_id": comparison["summary"]["run_id"],
+        },
+    )
     (run_dir / "report.md").write_text(report, encoding="utf-8")
 
 
@@ -317,8 +329,8 @@ def build_run_id(dataset_path: Path) -> str:
     return f"{dataset_path.stem}-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
 
-def require_runtime_credentials() -> None:
-    load_bailian_runtime_config()
+def require_runtime_config() -> None:
+    load_runtime_config()
 
 
 def main() -> dict[str, Any]:
@@ -328,7 +340,7 @@ def main() -> dict[str, Any]:
     parser.add_argument("--registry", default=REGISTRY_PATH, type=Path)
     args = parser.parse_args()
 
-    require_runtime_credentials()
+    require_runtime_config()
     dataset = load_dataset(args.dataset)
     run_id = build_run_id(args.dataset)
     stores_dir = args.out_dir / "stores" / run_id
