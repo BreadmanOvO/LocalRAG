@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/redirect_docs_to_rag_md.py",
+            "timeout": 30,
+            "statusMessage": "Redirecting docs to RAG_md when needed"
+          }
+        ]
+      }
+    ]
+  }
+}

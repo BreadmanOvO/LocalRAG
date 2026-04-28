@@ -1,0 +1,1266 @@
+[
+  {
+    "id": "gold-001",
+    "question": "Apollo Cyber RT 的核心作用是什么？",
+    "reference_answer": "Apollo Cyber RT 负责提供自动驾驶系统中的通信、调度和组件协作基础能力。",
+    "answer": "Apollo Cyber RT 的核心作用是为自动驾驶系统提供一个**高实时性、高性能、高可靠性的开源计算框架**，作为 Apollo 自动驾驶平台的“操作系统级”运行底座。\n\n其主要作用包括：\n\n1. **任务调度与资源管理**  \n   通过有向无环图（DAG）管理组件间的依赖关系，在运行时动态加载并调度任务，实现高并发、低延迟的执行。\n\n2. **高效通信机制**  \n   基于共享内存和零拷贝技术的发布-订阅模型，减少数据传输延迟，提升系统吞吐量。\n\n3. **模块化开发支持**  \n   提供标准化的组件模型，支持感知、定位、规划、控制等模块的即插即用式开发与集成。\n\n4. **确定性执行保障**  \n   确保关键任务（如传感器数据融合、路径规划）的时间触发与实时响应，满足车规级安全要求。\n\n5. **提升研发效率**  \n   提供抽象通信接口、高效数据融合机制及丰富的开发工具链，简化自动驾驶系统的构建与部署。\n\n**简而言之，Apollo Cyber RT 是自动驾驶软件系统的“中枢神经系统”，负责协调所有软硬件资源，确保环境感知、决策规划与控制执行的高效、安全闭环。**",
+    "retrieved_context": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。\n- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apollo Cyber RT 的高度集成的并行计算模型，能够实现任务执行的高并发、低延迟以 及高吞吐量。针对自动驾驶业务场景的定制开发，使其能够满足自动驾驶解决方案的 高性能要求。\n### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。\n### Pages 2-2\n- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT…\n- [p.2] 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。 框架中集成了丰富的研发工具和传感器驱动程序，使开发者能够在不牺牲性能或者品 牌形象的同时，更快地构建自动驾驶系统。 易于部署的自适应设计 Apollo Cyber RT 框架的灵活的集成方案以及最小的环境依赖使得应用程序的部署更加 简…\n## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。",
+        "score": 0.5970862434794957,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apollo Cyber RT 的高度集成的并行计算模型，能够实现任务执行的高并发、低延迟以 及高吞吐量。针对自动驾驶业务场景的定制开发，使其能够满足自动驾驶解决方案的 高性能要求。",
+        "score": 0.5928040393770919,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.5828409458576016,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 2-2\n- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT…\n- [p.2] 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。 框架中集成了丰富的研发工具和传感器驱动程序，使开发者能够在不牺牲性能或者品 牌形象的同时，更快地构建自动驾驶系统。 易于部署的自适应设计 Apollo Cyber RT 框架的灵活的集成方案以及最小的环境依赖使得应用程序的部署更加 简…",
+        "score": 0.5360416753269841,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。",
+        "score": 0.5296662479932865,
+        "rank": 5
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。",
+        "score": 0.5970862434794957,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apollo Cyber RT 的高度集成的并行计算模型，能够实现任务执行的高并发、低延迟以 及高吞吐量。针对自动驾驶业务场景的定制开发，使其能够满足自动驾驶解决方案的 高性能要求。",
+        "score": 0.5928040393770919,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.5828409458576016,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 2-2\n- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT…\n- [p.2] 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。 框架中集成了丰富的研发工具和传感器驱动程序，使开发者能够在不牺牲性能或者品 牌形象的同时，更快地构建自动驾驶系统。 易于部署的自适应设计 Apollo Cyber RT 框架的灵活的集成方案以及最小的环境依赖使得应用程序的部署更加 简…",
+        "score": 0.5360416753269841,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。",
+        "score": 0.5296662479932865,
+        "rank": 5
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…",
+        "score": 0.4752856023525295,
+        "rank": 6
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.341715369485199,
+        "rank": 7
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Cyber RT Framework\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/Apollo-Cyber-RT-framework.pdf\n- Original URL: https://developer.apollo.auto/cyber.html\n- Language: en\n- Version: Apollo Cyber RT\n- Pages: 3\n- Topic tags: [system_architecture, planning_control]\n\n## Summary\nOfficial Apollo runtime-framework material describing Cyber RT, its component model, scheduling model, and how it supports low-latency autonomous-driving workloads.",
+        "score": 0.08384468161202407,
+        "rank": 8
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber",
+        "score": 0.06012805989906489,
+        "rank": 9
+      },
+      {
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1. 开放车辆认证平台 这是 Apollo 架构的最底层，旨在确保自动驾驶车辆的硬件兼容性和标准化。 • 认证 Apollo 兼容的线控车辆：这一层关注的是车辆本身的物理平台。Apollo 定 义了标准接口，使得经过认证的“线控车辆”（即可以通过电子信号控制转向、 加速和制动的车辆）能够接入 Apollo 系统。 • 开放车辆接口标准：为了实现上述兼容性，Apollo 制定了一套开放的接口标 准，确保不同厂商的车辆都能与 Apollo 的软件和硬件平台无缝对接。 2. 硬件开发平台 这一层提供了自动驾驶系统所需的物理计算和感知硬件。 • 计算单元：负责处理海量数据的核心计算硬件。 • 传感器套件：包括 GPS/IMU（定位与惯性测量） 、Camera（摄像头） 、LIDAR （激光雷达） 、Radar（毫米波雷达）以及 Ultrasonic Radar（超声波雷达） ，用 于全方位感知周围环境。",
+        "score": 0.00836355343907591,
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Cyber RT is the core framework for Apollo runtime communication and scheduling.",
+        "source_id": "apollo-doc-002",
+        "locator": "chapter=1/overview"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-002",
+    "question": "感知融合为什么对自动驾驶很重要？",
+    "reference_answer": "感知融合能综合不同传感器的互补信息，从而提升目标检测与环境理解的稳定性。",
+    "answer": "感知融合对自动驾驶至关重要，主要体现在以下几个方面：\n\n1. **弥补传感器局限性**  \n   自动驾驶系统依赖多种传感器（如摄像头、激光雷达、毫米波雷达）获取环境信息。每种传感器都有其优缺点：例如，摄像头在光照变化下可能失效，激光雷达在雨雾中性能下降，毫米波雷达分辨率较低。通过感知融合，系统可以综合各传感器的优势，弥补单一传感器的不足，提升整体感知能力。\n\n2. **提高环境感知的准确性和鲁棒性**  \n   感知融合模块通过融合多源数据（如目标位置、速度、类别、形状等），结合历史跟踪信息，过滤误检和漏检，输出更稳定、精确的环境模型。这有助于车辆更准确地识别障碍物、行人、车道线等关键信息，从而做出更安全的决策。\n\n3. **增强系统在复杂场景下的适应能力**  \n   在极端天气（如大雨、浓雾）、低光照或强光干扰等环境下，单一传感器可能无法正常工作。而多传感器融合能够有效应对这些挑战，确保系统在各种复杂场景下仍能保持可靠的感知能力，实现全天候运行。\n\n4. **满足高阶自动驾驶的安全与法规要求**  \n   高级别自动驾驶（如L3及以上）对感知系统的可靠性提出了更高要求。感知融合是实现功能安全（如ISO 26262）和符合国际标准（如UN R157）的关键技术，为自动驾驶提供持续、稳定的环境感知支持。\n\n**总结**：感知融合是自动驾驶系统实现安全、可靠、高效运行的核心技术，通过多传感器协同工作，全面提升环境感知能力，为后续的路径规划、控制决策提供高质量输入。",
+    "retrieved_context": "- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。\n### Pages 7-7\n- [p.7] Yokohama, Japan, April 3-6, 2023 NHTSA Research Days NHTSA Safety Research Portfolio Public Meeting: Fall 2022 - https://www.nhtsa.gov/events/research-public-meeting-2022 Docket No. NHTSA-2022-0091 https://www.usajobs.g…\n# UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS)\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS).pdf\n- Original URL: https://unece.org/sites/default/files/2025-06/R157r1e.pdf\n- Language: en\n- Version: UN R157\n- Pages: 102\n- Topic tags: [safety, planning_control]\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": -0.03624905429709946,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": -0.16021338818606945,
+        "rank": 2
+      },
+      {
+        "source_id": "standard-005",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 7-7\n- [p.7] Yokohama, Japan, April 3-6, 2023 NHTSA Research Days NHTSA Safety Research Portfolio Public Meeting: Fall 2022 - https://www.nhtsa.gov/events/research-public-meeting-2022 Docket No. NHTSA-2022-0091 https://www.usajobs.g…",
+        "score": -0.16803061706047617,
+        "rank": 3
+      },
+      {
+        "source_id": "standard-009",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS)\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS).pdf\n- Original URL: https://unece.org/sites/default/files/2025-06/R157r1e.pdf\n- Language: en\n- Version: UN R157\n- Pages: 102\n- Topic tags: [safety, planning_control]",
+        "score": -0.18775812385557633,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…",
+        "score": -0.19060666075903354,
+        "rank": 5
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": -0.03624905429709946,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": -0.16021338818606945,
+        "rank": 2
+      },
+      {
+        "source_id": "standard-005",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 7-7\n- [p.7] Yokohama, Japan, April 3-6, 2023 NHTSA Research Days NHTSA Safety Research Portfolio Public Meeting: Fall 2022 - https://www.nhtsa.gov/events/research-public-meeting-2022 Docket No. NHTSA-2022-0091 https://www.usajobs.g…",
+        "score": -0.16803061706047617,
+        "rank": 3
+      },
+      {
+        "source_id": "standard-009",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS)\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS).pdf\n- Original URL: https://unece.org/sites/default/files/2025-06/R157r1e.pdf\n- Language: en\n- Version: UN R157\n- Pages: 102\n- Topic tags: [safety, planning_control]",
+        "score": -0.18775812385557633,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…",
+        "score": -0.19060666075903354,
+        "rank": 5
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo…\n- +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。\n- channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。",
+        "score": -0.19335050489078975,
+        "rank": 6
+      },
+      {
+        "source_id": "standard-007",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# UN Regulation No. 155 - Cyber security and cyber security management system\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 155 - Cyber security and cyber security management system.pdf\n- Original URL: https://unece.org/sites/default/files/2023-02/R155e%20%282%29.pdf\n- Language: en\n- Version: UN R155\n- Pages: 30\n- Topic tags: [safety]",
+        "score": -0.19917233336929652,
+        "rank": 7
+      },
+      {
+        "source_id": "standard-008",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# UN Regulation No. 156 - Software update and software update management system\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 156 - Software update and software update management system.pdf\n- Original URL: https://unece.org/sites/default/files/2024-03/R156e%20%282%29.pdf\n- Language: en\n- Version: UN R156\n- Pages: 16\n- Topic tags: [safety]",
+        "score": -0.19917233336929652,
+        "rank": 8
+      },
+      {
+        "source_id": "standard-005",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.7] Yokohama, Japan, April 3-6, 2023 NHTSA Research Days NHTSA Safety Research Portfolio Public Meeting: Fall 2022 - https://www.nhtsa.gov/events/research-public-meeting-2022 Docket No. NHTSA-2022-0091 https://www.usajobs.gov/ www-esv.nhtsa.dot.gov WE WANT YOU - NHTSA Is Hiring! https://rosap.ntl.bts.gov/ 7 DOT Virtual Career Fair – January 25, 2023, 10 am-4 pm, careereco.com",
+        "score": -0.22851825675676474,
+        "rank": 9
+      },
+      {
+        "source_id": "standard-004",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- The release of Ensuring American Leadership in Automated Vehicle Technologies: Automated Vehicles 4.0 (AV 4.0) marks another milestone in American innovation.\n- Department of Transportation (USDOT) developed AV 4.0 to unify efforts in automated vehicles across 38 Federal departments, independent agencies, commissions, and Executive Office…",
+        "score": -0.23460830777919495,
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Fusion combines semantic cues with geometric robustness.",
+        "source_id": "apollo-doc-005",
+        "locator": "chapter=2/section=2.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-003",
+    "question": "UN R155 主要关注什么类型的安全问题？",
+    "reference_answer": "UN R155 主要关注车辆网络安全管理体系和网络攻击风险。",
+    "answer": "UN R155 主要关注**车辆网络安全（Cybersecurity）**问题。该法规要求汽车制造商建立并实施**网络安全管理体系（CSMS）**，以系统性地识别、评估和应对车辆在整个生命周期中可能面临的网络威胁和攻击，确保车辆电子系统和相关功能的安全性与完整性。",
+    "retrieved_context": "- [p.7] The Approval Authority shall issue a new certific ate in cases where changes have been brought to the attention of the Approval Authority or its Technical Service and the changes have been positively re-assessed. 6.10.…\n# Occupancy Flow Fields for Motion Forecasting in Autonomous Driving\n\n- Source type: paper\n- Category: papers\n- Original file: data/sources/raw/papers/Occupancy Flow Fields for Motion Forecasting in Autonomous Driving.pdf\n- Original URL: unknown\n- Language: en\n- Version: Occupancy Flow Fields\n- Pages: 8\n- Topic tags: [planning_control, perception]\n# UN Regulation No. 155 - Cyber security and cyber security management system\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 155 - Cyber security and cyber security management system.pdf\n- Original URL: https://unece.org/sites/default/files/2023-02/R155e%20%282%29.pdf\n- Language: en\n- Version: UN R155\n- Pages: 30\n- Topic tags: [safety]\n## Key points\n- This Regulation also applies to vehicles of the Categories L6 and L7 if equipped with automated driving functionalities from level 3 onwards, as defined in the reference document…\n- This Regulation is without prejudice to other UN Regulations, regional or national legislations governing the access by authorized parties to the vehicle, its data, functions and…\n- [p.55] Copyrights to graphics included in this document are reserved by the original copyright holders or their assignees and are used here under the government’s license and by permission. Requests to use any images must be made to the provider identified in the image credits or to OSTP if no provider is identified. Published in the United States of America, 2020.",
+    "retrieved_rows": [
+      {
+        "source_id": "standard-008",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.7] The Approval Authority shall issue a new certific ate in cases where changes have been brought to the attention of the Approval Authority or its Technical Service and the changes have been positively re-assessed. 6.10.…",
+        "score": -0.194020555488416,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-003",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Occupancy Flow Fields for Motion Forecasting in Autonomous Driving\n\n- Source type: paper\n- Category: papers\n- Original file: data/sources/raw/papers/Occupancy Flow Fields for Motion Forecasting in Autonomous Driving.pdf\n- Original URL: unknown\n- Language: en\n- Version: Occupancy Flow Fields\n- Pages: 8\n- Topic tags: [planning_control, perception]",
+        "score": -0.20181569941420285,
+        "rank": 2
+      },
+      {
+        "source_id": "standard-007",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# UN Regulation No. 155 - Cyber security and cyber security management system\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 155 - Cyber security and cyber security management system.pdf\n- Original URL: https://unece.org/sites/default/files/2023-02/R155e%20%282%29.pdf\n- Language: en\n- Version: UN R155\n- Pages: 30\n- Topic tags: [safety]",
+        "score": -0.2279823174311002,
+        "rank": 3
+      },
+      {
+        "source_id": "standard-007",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- This Regulation also applies to vehicles of the Categories L6 and L7 if equipped with automated driving functionalities from level 3 onwards, as defined in the reference document…\n- This Regulation is without prejudice to other UN Regulations, regional or national legislations governing the access by authorized parties to the vehicle, its data, functions and…",
+        "score": -0.23276977795345277,
+        "rank": 4
+      },
+      {
+        "source_id": "standard-004",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.55] Copyrights to graphics included in this document are reserved by the original copyright holders or their assignees and are used here under the government’s license and by permission. Requests to use any images must be made to the provider identified in the image credits or to OSTP if no provider is identified. Published in the United States of America, 2020.",
+        "score": -0.2525230786198416,
+        "rank": 5
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "standard-008",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.7] The Approval Authority shall issue a new certific ate in cases where changes have been brought to the attention of the Approval Authority or its Technical Service and the changes have been positively re-assessed. 6.10.…",
+        "score": -0.194020555488416,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-003",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Occupancy Flow Fields for Motion Forecasting in Autonomous Driving\n\n- Source type: paper\n- Category: papers\n- Original file: data/sources/raw/papers/Occupancy Flow Fields for Motion Forecasting in Autonomous Driving.pdf\n- Original URL: unknown\n- Language: en\n- Version: Occupancy Flow Fields\n- Pages: 8\n- Topic tags: [planning_control, perception]",
+        "score": -0.20181569941420285,
+        "rank": 2
+      },
+      {
+        "source_id": "standard-007",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# UN Regulation No. 155 - Cyber security and cyber security management system\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 155 - Cyber security and cyber security management system.pdf\n- Original URL: https://unece.org/sites/default/files/2023-02/R155e%20%282%29.pdf\n- Language: en\n- Version: UN R155\n- Pages: 30\n- Topic tags: [safety]",
+        "score": -0.2279823174311002,
+        "rank": 3
+      },
+      {
+        "source_id": "standard-007",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- This Regulation also applies to vehicles of the Categories L6 and L7 if equipped with automated driving functionalities from level 3 onwards, as defined in the reference document…\n- This Regulation is without prejudice to other UN Regulations, regional or national legislations governing the access by authorized parties to the vehicle, its data, functions and…",
+        "score": -0.23276977795345277,
+        "rank": 4
+      },
+      {
+        "source_id": "standard-004",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.55] Copyrights to graphics included in this document are reserved by the original copyright holders or their assignees and are used here under the government’s license and by permission. Requests to use any images must be made to the provider identified in the image credits or to OSTP if no provider is identified. Published in the United States of America, 2020.",
+        "score": -0.2525230786198416,
+        "rank": 5
+      },
+      {
+        "source_id": "standard-004",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.20] (Photo credit: FHWA) (For reference: https://cms7.fhwa.dot.gov/research/research- programs/operations/carma-overview) 16 eNsuRiNG AmeRicAN leAdeR shiP iN A utomA ted Vehicle techNoloGies: A utomA ted Vehicles 4.0 Depart…",
+        "score": -0.26987594767614076,
+        "rank": 6
+      },
+      {
+        "source_id": "standard-005",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 7-7\n- [p.7] Yokohama, Japan, April 3-6, 2023 NHTSA Research Days NHTSA Safety Research Portfolio Public Meeting: Fall 2022 - https://www.nhtsa.gov/events/research-public-meeting-2022 Docket No. NHTSA-2022-0091 https://www.usajobs.g…",
+        "score": -0.27207963779738153,
+        "rank": 7
+      },
+      {
+        "source_id": "standard-008",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.4] \"Execution\" means the process of installing and activating an update that has been downloaded. 2.5. \"Software Update Management System (SUMS)\" means a systematic approach defining organizational processes and procedures…",
+        "score": -0.2799822561868712,
+        "rank": 8
+      },
+      {
+        "source_id": "standard-009",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS)\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS).pdf\n- Original URL: https://unece.org/sites/default/files/2025-06/R157r1e.pdf\n- Language: en\n- Version: UN R157\n- Pages: 102\n- Topic tags: [safety, planning_control]",
+        "score": -0.2834692335515714,
+        "rank": 9
+      },
+      {
+        "source_id": "standard-009",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.3] ALKS can be activated under certain conditions on roads where pedestrians and cyclists are prohibited and which, by design, are equipped with a physical separation that divides the traffic moving in opposite directions…",
+        "score": -0.28346940213896543,
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "The regulation addresses cyber security and cyber security management systems.",
+        "source_id": "standard-007",
+        "locator": "section=scope"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-004",
+    "question": "为什么预测模块与规划模块需要紧密协同？",
+    "reference_answer": "因为预测结果直接影响规划决策，只有保持时序和接口一致，才能减少决策偏差。",
+    "answer": "预测模块与规划模块需要紧密协同，是因为自动驾驶系统必须在动态、不确定的环境中做出安全、高效且符合人类预期的实时决策。二者的协同本质上是将“未来可能发生什么”与“我们应该怎么做”这两个核心问题统一解决。具体原因包括：\n\n1. **信息闭环与决策一致性**  \n   - 预测模块提供周围障碍物（如车辆、行人）的未来轨迹及不确定性估计，规划模块基于这些信息生成自车的安全、合理轨迹。\n   - 若二者脱节，可能导致危险行为（如误判前车意图而盲目跟车）或效率低下（如过早停车造成拥堵）。\n   - 协同作用体现在：规划模块可将自车潜在行为反馈给预测模块，使预测考虑交互影响，形成更贴近现实的交互式预测。\n\n2. **处理交互性场景**  \n   - 在城市道路中，交通参与者行为相互影响（如车道合并、无保护左转）。单纯的“预测-反应”式规划可能过于被动或激进。\n   - 协同示例：在路口转弯时，预测模块评估对方车辆是否让行，规划模块根据预测置信度决定是否主动通过或等待。\n\n3. **优化系统性能与舒适性**  \n   - 规划模块需了解预测结果的置信度（如行人80%概率停留），以制定风险规避策略（如略微减速而非急刹）。\n   - 规划意图（如打转向灯）可能改变其他交通参与者行为，预测模块需据此动态更新预测，避免“自我实现的错误预测”。\n\n4. **适应复杂场景与边缘案例**  \n   - 在突发状况（如障碍物突然出现）或规则冲突场景（如交通管制与导航路线矛盾）中，预测与规划需联合推理，确保决策合理。\n\n5. **工程实现与系统效率**  \n   - 若预测与规划接口定义松散，可能导致信息滞后或状态不一致。\n   - 常见技术方案包括：联合优化、闭环迭代等，确保信息实时同步与逻辑一致。\n\n**总结**：预测与规划的紧密协同是自动驾驶从“孤立感知”迈向“协同决策”的关键，是实现安全、效率与舒适性的核心保障。",
+    "retrieved_context": "## Evidence-ready excerpts\n- [p.4] 4 1. Scope 1.1. This Regulation applies to vehicles of Categories 1 M, N, O, R, S and T that permit software updates. 2. Definitions 2.1. \"Vehicle type\" means vehicles which do not differ in at least the following: (a) The manufacturer’s designation of the vehicle type; (b) Essential aspects of the design of the vehicle type with respect to software update processes. 2.2.\n- [p.4] ing positions. Following V AD [21], we consider three cat- egories of map elements (i.e., lane divider, road boundary, and pedestrian crossing). We use the global cross-attention mechanism to update learnable initialized queries M0 from BEV tokens B: M = CA(M0, B, B), (3) where CA(Q, K, V) denotes the cross-attention block composed of interleaved self-attention and cross-attention layers using Q, K, and V as queries, keys, and values, re- spectively. BEV to agent.\n### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…\n- This Regulation is without prejudice to other UN Regulations, national or regional legislation governing the development and installation/system integration of replacement parts a…\n- \"Vehicle type \" means vehicles which do not differ in at least the following essential respects: (a) The manufacturer’s designation of the vehicle type; (b) Essential aspects of t…\n- [p.3] ALKS can be activated under certain conditions on roads where pedestrians and cyclists are prohibited and which, by design, are equipped with a physical separation that divides the traffic moving in opposite directions…",
+    "retrieved_rows": [
+      {
+        "source_id": "standard-008",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.4] 4 1. Scope 1.1. This Regulation applies to vehicles of Categories 1 M, N, O, R, S and T that permit software updates. 2. Definitions 2.1. \"Vehicle type\" means vehicles which do not differ in at least the following: (a) The manufacturer’s designation of the vehicle type; (b) Essential aspects of the design of the vehicle type with respect to software update processes. 2.2.",
+        "score": -0.4142130566109128,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-007",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.4] ing positions. Following V AD [21], we consider three cat- egories of map elements (i.e., lane divider, road boundary, and pedestrian crossing). We use the global cross-attention mechanism to update learnable initialized queries M0 from BEV tokens B: M = CA(M0, B, B), (3) where CA(Q, K, V) denotes the cross-attention block composed of interleaved self-attention and cross-attention layers using Q, K, and V as queries, keys, and values, re- spectively. BEV to agent.",
+        "score": -0.4142131409046099,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- 安装逆明 数据格式 Channel数据格式文档介招 感知模块 CANBUS模块 控制模扶 定位模块 预测模扶 规划模块 监控模块 Guardian模块 人机交互模块 坐标变换模块 Channel数据格式文档介绍 【数据格式】文档，以【 】中介绍的 demo_35urecord数据包为对像，介绍各个Channel 和对应的内部消息格式 (slessan) 前…\n- Apollo通信系统 Apollo的各个模块是以组件的形式存在的。细件之间利用数据通道进行通信。其中，最小的数据单元是消息格式采定义的。也 有其他Node、witereader等，为了避免混淆，这里只关注细件、数据通道和消息格式。\n- 数据通道 Channel是传转辅输数据的通道，管理CybarRT 中的数据通信。用户可以发布/订阅同一个Charel建立通信，实现点对点（P2F) 招放数据包之后，打开CyherMonitor工具井进入特定数据通道，可以看到海个Channel中都有ChannelINae、 HessageType、FraeRatio、Rahessage Size数据字段。关…",
+        "score": -0.41421322519830683,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…",
+        "score": -0.41421322519830683,
+        "rank": 4
+      },
+      {
+        "source_id": "standard-001",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 2-2\n- [p.2] AV 3.0 offers our nation a plan to guide the development of exciting new technologies.As we embrace NHTSA reports across a number of topics addressing new vehicle technologies. See and download some recent NHTSA reports…\n- [p.2] DOT and NHTSA analyzed Federal Register docket (NHTSA-2016- 0090) comments,public meetingproceedings and other stakeholder discussions,recent Congressional hearings,and state activities,and used this analysis as the fou…",
+        "score": -0.41421322519830683,
+        "rank": 5
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "standard-008",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.4] 4 1. Scope 1.1. This Regulation applies to vehicles of Categories 1 M, N, O, R, S and T that permit software updates. 2. Definitions 2.1. \"Vehicle type\" means vehicles which do not differ in at least the following: (a) The manufacturer’s designation of the vehicle type; (b) Essential aspects of the design of the vehicle type with respect to software update processes. 2.2.",
+        "score": -0.4142130566109128,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-007",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.4] ing positions. Following V AD [21], we consider three cat- egories of map elements (i.e., lane divider, road boundary, and pedestrian crossing). We use the global cross-attention mechanism to update learnable initialized queries M0 from BEV tokens B: M = CA(M0, B, B), (3) where CA(Q, K, V) denotes the cross-attention block composed of interleaved self-attention and cross-attention layers using Q, K, and V as queries, keys, and values, re- spectively. BEV to agent.",
+        "score": -0.4142131409046099,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- 安装逆明 数据格式 Channel数据格式文档介招 感知模块 CANBUS模块 控制模扶 定位模块 预测模扶 规划模块 监控模块 Guardian模块 人机交互模块 坐标变换模块 Channel数据格式文档介绍 【数据格式】文档，以【 】中介绍的 demo_35urecord数据包为对像，介绍各个Channel 和对应的内部消息格式 (slessan) 前…\n- Apollo通信系统 Apollo的各个模块是以组件的形式存在的。细件之间利用数据通道进行通信。其中，最小的数据单元是消息格式采定义的。也 有其他Node、witereader等，为了避免混淆，这里只关注细件、数据通道和消息格式。\n- 数据通道 Channel是传转辅输数据的通道，管理CybarRT 中的数据通信。用户可以发布/订阅同一个Charel建立通信，实现点对点（P2F) 招放数据包之后，打开CyherMonitor工具井进入特定数据通道，可以看到海个Channel中都有ChannelINae、 HessageType、FraeRatio、Rahessage Size数据字段。关…",
+        "score": -0.41421322519830683,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…",
+        "score": -0.41421322519830683,
+        "rank": 4
+      },
+      {
+        "source_id": "standard-001",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 2-2\n- [p.2] AV 3.0 offers our nation a plan to guide the development of exciting new technologies.As we embrace NHTSA reports across a number of topics addressing new vehicle technologies. See and download some recent NHTSA reports…\n- [p.2] DOT and NHTSA analyzed Federal Register docket (NHTSA-2016- 0090) comments,public meetingproceedings and other stakeholder discussions,recent Congressional hearings,and state activities,and used this analysis as the fou…",
+        "score": -0.41421322519830683,
+        "rank": 5
+      },
+      {
+        "source_id": "standard-002",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.3] AUTOMATED DRIVING SYSTEMS 2.0: A VISION FOR SAFETY i Today, our country is on the verge of one of the most exciting and important innovations in transportation history— the development of Automated Driving Systems (ADSs), commonly referred to as automated or self-driving vehicles. The future of this new technology is so full of promise. It’s a future where vehicles increasingly help drivers avoid crashes.",
+        "score": -0.41421322519830683,
+        "rank": 6
+      },
+      {
+        "source_id": "standard-003",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 28-53\n- [p.28] to pick up or deliver a load. MARAD and FMCSA are evaluating how automation might relieve the burden on a driver under these circumstances, and, in particular, the regulatory and economic feasibility of using automated…\n- [p.28] The study will investigate whether full or partial automation of queuing within ports could lead to increased productivity by altering the responsibilities and physical presence of drivers, potentially allowing them to…",
+        "score": -0.41421322519830683,
+        "rank": 7
+      },
+      {
+        "source_id": "standard-007",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- This Regulation is without prejudice to other UN Regulations, national or regional legislation governing the development and installation/system integration of replacement parts a…\n- \"Vehicle type \" means vehicles which do not differ in at least the following essential respects: (a) The manufacturer’s designation of the vehicle type; (b) Essential aspects of t…",
+        "score": -0.41421322519830683,
+        "rank": 8
+      },
+      {
+        "source_id": "standard-009",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.3] ALKS can be activated under certain conditions on roads where pedestrians and cyclists are prohibited and which, by design, are equipped with a physical separation that divides the traffic moving in opposite directions…",
+        "score": -0.41421322519830683,
+        "rank": 9
+      },
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.7] The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end- to-end learning methods solely reliant on camera-based BEV .",
+        "score": -0.41421322519830683,
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Prediction output feeds downstream planning decisions.",
+        "source_id": "apollo-doc-007",
+        "locator": "chapter=3/section=3.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-005",
+    "question": "BEV 感知在自动驾驶系统中有什么优势？",
+    "reference_answer": "BEV 感知能够统一多源信息到鸟瞰空间表示，提升空间一致性和下游规划理解能力。",
+    "answer": "BEV（Bird's Eye View，鸟瞰图）感知在自动驾驶系统中的主要优势包括：\n\n1. **统一空间表示**：将多传感器数据（如摄像头、激光雷达）投影到自车上方的俯视坐标系中，形成统一的空间表征，便于多模态信息融合。\n\n2. **支持多任务协同**：BEV 表示可同时用于 3D 目标检测、地图分割、轨迹预测等任务，提升系统整体效率与一致性。\n\n3. **增强时空建模能力**：通过历史帧 BEV 特征的融合（如 Temporal Self-Attention），能够更好地建模动态环境，提升对遮挡和复杂场景的理解。\n\n4. **适配下游模块需求**：BEV 输出直接符合路径规划、行为预测等模块所需的坐标系，减少坐标转换，提高实时性和准确性。\n\n5. **推动端到端学习**：基于 BEV 的深度学习模型（如 BEVFormer）可实现从原始传感器输入到 BEV 特征的端到端处理，简化系统架构并提升性能。\n\n综上，BEV 感知为自动驾驶系统提供了高效、结构化且可扩展的环境理解方式，是当前主流的感知技术路线之一。",
+    "retrieved_context": "- We then utilize Temporal Self-Attention to fuse historical frame BEV features, as shown below: TSA(Qp, (Q, B ′ t−1)) = X V ∈{Q,B′ t−1} DefAttn(Qp, p, V ) (3) where B ′ t−1 represe…\n- Prediction Benefiting from the more informative BEV features, pre- diction module receives more stable and fine-grained in- formation.\n- [p.6] 6 NHTSA ADS Program Consideration • AV STEP – the ADS-equipped Vehicle Safety, Transparency, and Evaluation Program • Regulation Identifier Number: 2127-AM60 AV STEP Would entail:  Review processes  Participation term…\n## Evidence-ready excerpts\n- [p.4] Overall architecture of V AD.The full pipeline of V AD is divided into four phases. Backbone includes an image feature extractor and a BEV encoder to project the image features to the BEV features. Vectorized Scene Learning aims to encode the scene information into agent queries and map queries, as well as represent the scene with motion vectors and map vectors.\n- expanding the scope to 38 relevant United States Government(USG) components which have direct or tangential equities in safe development and integration of AV technologies.AV 4.0…\n- AV 4.0 seeks to ensure a consistent USG approach to AV technologies, and to detail the authorities, research, and investments being made across the USG so that the United States c…\n# Ensuring American Leadership in Automated Vehicle Technologies: AV 4.0\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/Ensuring American Leadership in Automated Vehicle Technologies AV 4.0.pdf\n- Original URL: https://www.transportation.gov/sites/dot.gov/files/docs/policy-initiatives/automated-vehicles/360956/ensuringamericanleadershipav4.pdf\n- Language: en\n- Version: AV 4.0\n- Pages: 56\n- Topic tags: [safety, system_architecture]",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- We then utilize Temporal Self-Attention to fuse historical frame BEV features, as shown below: TSA(Qp, (Q, B ′ t−1)) = X V ∈{Q,B′ t−1} DefAttn(Qp, p, V ) (3) where B ′ t−1 represe…\n- Prediction Benefiting from the more informative BEV features, pre- diction module receives more stable and fine-grained in- formation.",
+        "score": 0.05077702291364983,
+        "rank": 1
+      },
+      {
+        "source_id": "standard-006",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.6] 6 NHTSA ADS Program Consideration • AV STEP – the ADS-equipped Vehicle Safety, Transparency, and Evaluation Program • Regulation Identifier Number: 2127-AM60 AV STEP Would entail:  Review processes  Participation term…",
+        "score": -0.11270217309040587,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-005",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.4] Overall architecture of V AD.The full pipeline of V AD is divided into four phases. Backbone includes an image feature extractor and a BEV encoder to project the image features to the BEV features. Vectorized Scene Learning aims to encode the scene information into agent queries and map queries, as well as represent the scene with motion vectors and map vectors.",
+        "score": -0.12553841727288373,
+        "rank": 3
+      },
+      {
+        "source_id": "standard-001",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- expanding the scope to 38 relevant United States Government(USG) components which have direct or tangential equities in safe development and integration of AV technologies.AV 4.0…\n- AV 4.0 seeks to ensure a consistent USG approach to AV technologies, and to detail the authorities, research, and investments being made across the USG so that the United States c…",
+        "score": -0.1356704353612057,
+        "rank": 4
+      },
+      {
+        "source_id": "standard-004",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Ensuring American Leadership in Automated Vehicle Technologies: AV 4.0\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/Ensuring American Leadership in Automated Vehicle Technologies AV 4.0.pdf\n- Original URL: https://www.transportation.gov/sites/dot.gov/files/docs/policy-initiatives/automated-vehicles/360956/ensuringamericanleadershipav4.pdf\n- Language: en\n- Version: AV 4.0\n- Pages: 56\n- Topic tags: [safety, system_architecture]",
+        "score": -0.14695230377060176,
+        "rank": 5
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- We then utilize Temporal Self-Attention to fuse historical frame BEV features, as shown below: TSA(Qp, (Q, B ′ t−1)) = X V ∈{Q,B′ t−1} DefAttn(Qp, p, V ) (3) where B ′ t−1 represe…\n- Prediction Benefiting from the more informative BEV features, pre- diction module receives more stable and fine-grained in- formation.",
+        "score": 0.05077702291364983,
+        "rank": 1
+      },
+      {
+        "source_id": "standard-006",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.6] 6 NHTSA ADS Program Consideration • AV STEP – the ADS-equipped Vehicle Safety, Transparency, and Evaluation Program • Regulation Identifier Number: 2127-AM60 AV STEP Would entail:  Review processes  Participation term…",
+        "score": -0.11270217309040587,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-005",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.4] Overall architecture of V AD.The full pipeline of V AD is divided into four phases. Backbone includes an image feature extractor and a BEV encoder to project the image features to the BEV features. Vectorized Scene Learning aims to encode the scene information into agent queries and map queries, as well as represent the scene with motion vectors and map vectors.",
+        "score": -0.12553841727288373,
+        "rank": 3
+      },
+      {
+        "source_id": "standard-001",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- expanding the scope to 38 relevant United States Government(USG) components which have direct or tangential equities in safe development and integration of AV technologies.AV 4.0…\n- AV 4.0 seeks to ensure a consistent USG approach to AV technologies, and to detail the authorities, research, and investments being made across the USG so that the United States c…",
+        "score": -0.1356704353612057,
+        "rank": 4
+      },
+      {
+        "source_id": "standard-004",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Ensuring American Leadership in Automated Vehicle Technologies: AV 4.0\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/Ensuring American Leadership in Automated Vehicle Technologies AV 4.0.pdf\n- Original URL: https://www.transportation.gov/sites/dot.gov/files/docs/policy-initiatives/automated-vehicles/360956/ensuringamericanleadershipav4.pdf\n- Language: en\n- Version: AV 4.0\n- Pages: 56\n- Topic tags: [safety, system_architecture]",
+        "score": -0.14695230377060176,
+        "rank": 5
+      },
+      {
+        "source_id": "paper-005",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-4\n- [p.4] Overall architecture of V AD.The full pipeline of V AD is divided into four phases. Backbone includes an image feature extractor and a BEV encoder to project the image features to the BEV features. Vectorized Scene Lear…\n- [p.4] In the inferring phase of planning, V AD utilizes an ego query to extract map and agent information via query interaction and outputs the planning trajectory (represented as ego vector). The proposed vectorized planning…",
+        "score": -0.15601463484371725,
+        "rank": 6
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber",
+        "score": -0.19060674505273045,
+        "rank": 7
+      },
+      {
+        "source_id": "paper-007",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.4] ing positions. Following V AD [21], we consider three cat- egories of map elements (i.e., lane divider, road boundary, and pedestrian crossing). We use the global cross-attention mechanism to update learnable initialized queries M0 from BEV tokens B: M = CA(M0, B, B), (3) where CA(Q, K, V) denotes the cross-attention block composed of interleaved self-attention and cross-attention layers using Q, K, and V as queries, keys, and values, re- spectively. BEV to agent.",
+        "score": -0.22176329705222675,
+        "rank": 8
+      },
+      {
+        "source_id": "standard-001",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] expanding the scope to 38 relevant United States Government(USG) components which have direct or tangential equities in safe development and integration of AV technologies.AV 4.0 is structured around three key areas: US…",
+        "score": -0.2475469688035543,
+        "rank": 9
+      },
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.7] The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end- to-end learning methods solely reliant on cam…",
+        "score": -0.24981446925344053,
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "BEV representation helps normalize spatial scale across the scene.",
+        "source_id": "paper-001",
+        "locator": "page=4/paragraph=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-006",
+    "question": "Waymo Open Dataset 报告为什么强调数据集的多样性？",
+    "reference_answer": "因为自动驾驶系统需要在不同真实环境中泛化，数据集覆盖越多样，越有助于对感知系统做更贴近真实场景的评估。",
+    "answer": "Waymo Open Dataset 报告强调数据集的多样性，是为了提升自动驾驶感知系统的泛化能力和鲁棒性。多样化的数据覆盖了不同的场景、天气条件、交通参与方（如行人、车辆等）以及复杂道路环境，有助于模型在面对真实世界中各种未知或罕见情况时保持稳定和准确的性能。这种多样性是构建安全、可靠自动驾驶系统的关键基础。",
+    "retrieved_context": "# Scalability in Perception for Autonomous Driving: Waymo Open Dataset\n\n- Source type: report\n- Category: papers\n- Original file: data/sources/raw/papers/Scalability in Perception for Autonomous Driving Waymo Open Dataset.pdf\n- Original URL: unknown\n- Language: en\n- Version: Waymo Open Dataset Report\n- Pages: 9\n- Topic tags: [perception, system_architecture]\n## Summary\nTechnical report from the Waymo Open Dataset context explaining perception scalability and dataset-driven evaluation considerations for autonomous driving.\n- [p.7] Predicted Time (s) Predicted Time (s) Predicted Time (s) Pedestrians Vehicles Pedestrians Vehicles Pedestrians Vehicles 0.6 0.00 0.02 0.04 0.06 0.08 0.10 1.2 1.8 2.4 3.0 3.6 4.2 4.8 5.4 6.0 0.6 0.0000 0.0025 0.0050 0.00…\n## Evidence-ready excerpts\n- [p.1] Automated Driving System Safety Overview of NHTSA Activities Dee Williams Deputy Associate Administrator, Vehicle Safety Research January 18, 2023\n## Structured notes\n### Pages 1-3\n- [p.1] No clean paragraph extracted.\n\n### Pages 4-6\n- [p.4] No clean paragraph extracted.\n\n### Pages 7-8\n- [p.8] Y . Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Scalability in Perception for Autonomous Driving: Waymo Open Dataset,” in CVPR.\n\n## Evidence-ready excerpts\n- [p.8] Y . Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Scalability in Perception for Autonomous Driving: Waymo Open Dataset,” in CVPR.",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Scalability in Perception for Autonomous Driving: Waymo Open Dataset\n\n- Source type: report\n- Category: papers\n- Original file: data/sources/raw/papers/Scalability in Perception for Autonomous Driving Waymo Open Dataset.pdf\n- Original URL: unknown\n- Language: en\n- Version: Waymo Open Dataset Report\n- Pages: 9\n- Topic tags: [perception, system_architecture]",
+        "score": 0.08578647121661798,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nTechnical report from the Waymo Open Dataset context explaining perception scalability and dataset-driven evaluation considerations for autonomous driving.",
+        "score": 0.08578647121661798,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-003",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.7] Predicted Time (s) Predicted Time (s) Predicted Time (s) Pedestrians Vehicles Pedestrians Vehicles Pedestrians Vehicles 0.6 0.00 0.02 0.04 0.06 0.08 0.10 1.2 1.8 2.4 3.0 3.6 4.2 4.8 5.4 6.0 0.6 0.0000 0.0025 0.0050 0.00…",
+        "score": -0.08977074716520472,
+        "rank": 3
+      },
+      {
+        "source_id": "standard-005",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.1] Automated Driving System Safety Overview of NHTSA Activities Dee Williams Deputy Associate Administrator, Vehicle Safety Research January 18, 2023",
+        "score": -0.13686352834885218,
+        "rank": 4
+      },
+      {
+        "source_id": "paper-002",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-3\n- [p.1] No clean paragraph extracted.\n\n### Pages 4-6\n- [p.4] No clean paragraph extracted.\n\n### Pages 7-8\n- [p.8] Y . Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Scalability in Perception for Autonomous Driving: Waymo Open Dataset,” in CVPR.\n\n## Evidence-ready excerpts\n- [p.8] Y . Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Scalability in Perception for Autonomous Driving: Waymo Open Dataset,” in CVPR.",
+        "score": -0.14062580892802545,
+        "rank": 5
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Scalability in Perception for Autonomous Driving: Waymo Open Dataset\n\n- Source type: report\n- Category: papers\n- Original file: data/sources/raw/papers/Scalability in Perception for Autonomous Driving Waymo Open Dataset.pdf\n- Original URL: unknown\n- Language: en\n- Version: Waymo Open Dataset Report\n- Pages: 9\n- Topic tags: [perception, system_architecture]",
+        "score": 0.08578647121661798,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nTechnical report from the Waymo Open Dataset context explaining perception scalability and dataset-driven evaluation considerations for autonomous driving.",
+        "score": 0.08578647121661798,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-003",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.7] Predicted Time (s) Predicted Time (s) Predicted Time (s) Pedestrians Vehicles Pedestrians Vehicles Pedestrians Vehicles 0.6 0.00 0.02 0.04 0.06 0.08 0.10 1.2 1.8 2.4 3.0 3.6 4.2 4.8 5.4 6.0 0.6 0.0000 0.0025 0.0050 0.00…",
+        "score": -0.08977074716520472,
+        "rank": 3
+      },
+      {
+        "source_id": "standard-005",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.1] Automated Driving System Safety Overview of NHTSA Activities Dee Williams Deputy Associate Administrator, Vehicle Safety Research January 18, 2023",
+        "score": -0.13686352834885218,
+        "rank": 4
+      },
+      {
+        "source_id": "paper-002",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-3\n- [p.1] No clean paragraph extracted.\n\n### Pages 4-6\n- [p.4] No clean paragraph extracted.\n\n### Pages 7-8\n- [p.8] Y . Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Scalability in Perception for Autonomous Driving: Waymo Open Dataset,” in CVPR.\n\n## Evidence-ready excerpts\n- [p.8] Y . Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Scalability in Perception for Autonomous Driving: Waymo Open Dataset,” in CVPR.",
+        "score": -0.14062580892802545,
+        "rank": 5
+      },
+      {
+        "source_id": "standard-005",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Automated Driving System Safety Overview of NHTSA Activities Dee Williams Deputy Associate Administrator, Vehicle Safety Research January 18, 2023\n- 3 Standing General Order – Public Road Crash Notifications involving L2+ Driving Automation • Issued June 2021 • Data Release – Initial June 2022 o Summary Reports o Dashboards o…\n- 4 Import Exemption Program • Temporary importation permission (49 U.S.C.",
+        "score": -0.18136840874023363,
+        "rank": 6
+      },
+      {
+        "source_id": "paper-003",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.7] Predicted Time (s) Predicted Time (s) Predicted Time (s) Pedestrians Vehicles Pedestrians Vehicles Pedestrians Vehicles 0.6 0.00 0.02 0.04 0.06 0.08 0.10 1.2 1.8 2.4 3.0 3.6 4.2 4.8 5.4 6.0 0.6 0.0000 0.0025 0.0050 0.0075 0.0100 0.0125 0.0150 0.0175 0.0200 1.2 1.8 2.4 3.0 3.6 4.2 4.8 5.4 6.0 0.6 0 1 2 3 4 5 6 1.2 1.8 2.4 3.0 3.6 4.2 4.8 5.4 6.0 Fig. 8: Occupancy (AUC, Soft-IOU) and ﬂow (EPE) metrics for the speculative model on the Crowds dataset.",
+        "score": -0.21320613810536293,
+        "rank": 7
+      },
+      {
+        "source_id": "paper-003",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Regular Agents Speculative Agents Regular Agents Speculative Agents w o l F y c n a p u c c Oe l c i h e Vw o l F e l c i h e V (0.6s) (1.5s) (1.5s) (5.4s) Pedestrian Flow Pedestr…\n- For each scene, a single ﬂow prediction ( Ft) and three combined ﬂow and occupancy predictions ( Ft.Ot) are shown.\n- Predicted Time (s) Predicted Time (s) Predicted Time (s) Pedestrians Vehicles Pedestrians Vehicles Pedestrians Vehicles 0.6 0.00 0.02 0.04 0.06 0.08 0.10 1.2 1.8 2.4 3.0 3.6 4.2 4…",
+        "score": -0.22395291012606489,
+        "rank": 8
+      },
+      {
+        "source_id": "paper-003",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nResearch paper on occupancy-based motion forecasting for autonomous driving, connecting scene understanding to downstream behavior prediction.",
+        "score": -0.23743686707645817,
+        "rank": 9
+      },
+      {
+        "source_id": "standard-006",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 7-8\n- [p.7] 7 Further NHTSA ADS Work and Resources • NHTSA Annual Modal Research Plan • US DOT Regulatory Agenda • NHTSA Report to Congress: Automated Vehicles June 2023 • NHTSA Automated Vehicle Transparency and Engagement for Saf…",
+        "score": -0.24143980616062866,
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Existing self-driving datasets are limited in the scale and variation of the environments they capture, even though generalization within and between operating regions is crucial to the overall viability of the technology.",
+        "source_id": "paper-004",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "report"
+    }
+  },
+  {
+    "id": "gold-007",
+    "question": "Apollo 视觉感知模块为什么要重视高精确率和高稳定性？",
+    "reference_answer": "因为摄像头容易受环境影响且缺乏深度信息，只有高精确率和高稳定性的视觉感知算法才能支撑自动驾驶感知模块可靠运行。",
+    "answer": "Apollo 视觉感知模块重视高精确率和高稳定性，主要是为了确保自动驾驶系统能够安全、可靠地运行。  \n\n- **高精确率**：确保对环境的识别准确无误，避免因误判导致错误决策，例如将静止物体误认为障碍物或漏检关键目标，从而降低潜在的安全风险。  \n- **高稳定性**：保证模块在复杂多变的环境条件下（如不同天气、光照变化、道路状况等）仍能持续稳定工作，避免因感知失效而影响自动驾驶系统的整体性能和安全性。  \n\n高精确率和高稳定性是保障自动驾驶系统安全性和可靠性的基础，直接影响车辆的行驶安全和用户体验。",
+    "retrieved_context": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。\n## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。\n### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。",
+        "score": 0.2532102750665054,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。",
+        "score": 0.15786407278491743,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.1281126124210774,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.12030912341928535,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…",
+        "score": 0.10992886039323424,
+        "rank": 5
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。",
+        "score": 0.2532102750665054,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。",
+        "score": 0.15786407278491743,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.1281126124210774,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.12030912341928535,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…",
+        "score": 0.10992886039323424,
+        "rank": 5
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Prediction Overview",
+        "score": 0.08578647121661798,
+        "rank": 6
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Planning Overview",
+        "score": 0.08578647121661798,
+        "rank": 7
+      },
+      {
+        "source_id": "apollo-doc-009",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Control Overview",
+        "score": 0.08578647121661798,
+        "rank": 8
+      },
+      {
+        "source_id": "apollo-doc-010",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Localization Overview",
+        "score": 0.08578647121661798,
+        "rank": 9
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 2-2\n- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT…\n- [p.2] 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。 框架中集成了丰富的研发工具和传感器驱动程序，使开发者能够在不牺牲性能或者品 牌形象的同时，更快地构建自动驾驶系统。 易于部署的自适应设计 Apollo Cyber RT 框架的灵活的集成方案以及最小的环境依赖使得应用程序的部署更加 简…",
+        "score": 0.07446431042004553,
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。",
+        "source_id": "apollo-doc-006",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-008",
+    "question": "Apollo Channel 文档如何描述规划模块的职责？",
+    "reference_answer": "规划模块负责对主车行为进行决策，并实时生成车辆规划线。",
+    "answer": "根据 Apollo Channel 文档的描述，**规划模块（Planning Module）** 的核心职责是：\n\n> 在满足交通规则和行车舒适性的前提下，依据感知、定位、地图等上游模块提供的信息，并结合车辆当前状态与目标，实时计算出一条安全、平滑且可执行的行驶轨迹，并将其传递给控制模块执行。\n\n具体职责包括以下几个方面：\n\n1. **路径规划（Path Planning）**  \n   根据当前车辆位置、目标位置以及环境信息，规划出一条无碰撞、符合交通规则的行驶路径。\n\n2. **速度规划（Speed Planning）**  \n   为规划出的路径分配合适的速度曲线，确保行驶过程中的平滑性和安全性。\n\n3. **轨迹生成（Trajectory Generation）**  \n   将路径和速度信息整合为一条完整的轨迹，作为控制模块的输入。\n\n4. **行为决策（Behavior Decision）**  \n   在复杂交通环境中，根据周围交通参与者的行为和规则，做出合理的驾驶行为决策（如变道、超车、停车等）。\n\n5. **避障与安全（Obstacle Avoidance & Safety）**  \n   实时识别并规避静态和动态障碍物，确保行驶轨迹的安全性。\n\n6. **遵循交通规则与舒适性（Compliance with Traffic Rules & Comfort）**  \n   规划出的轨迹必须符合交通法规（如车道保持、限速等），同时保证加速度、曲率等参数的平滑性，以提升乘坐舒适性。\n\n7. **实时性与可行性（Real-time & Feasibility）**  \n   规划过程需具备实时响应能力，输出的轨迹必须是车辆控制系统能够实际执行的。\n\n综上所述，Apollo 的规划模块是自动驾驶系统中“**决策中枢**”，负责将高阶导航指令转化为具体的、安全的、可执行的车辆运动指令。",
+    "retrieved_context": "- [p.1] Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1. 开放车辆认证平台 这是 Apollo 架构的最底层，旨在确保自动驾驶车辆的硬件兼容性和标准化。 • 认证 Apollo 兼容的线控车辆：这一层关注的是车辆本身的物理平台。Apollo 定 义了标准接口，使得经过认证的“线控车辆”（即可以通过电子信号控制转向、 加速和制动的车辆）能够接入 Apollo 系统。 • 开放车辆接口标准：为了实现上述兼容性，Apollo 制定了一套开放的接口标 准，确保不同厂商的车辆都能与 Apollo 的软件和硬件平台无缝对接。 2. 硬件开发平台 这一层提供了自动驾驶系统所需的物理计算和感知硬件。 • 计算单元：负责处理海量数据的核心计算硬件。 • 传感器套件：包括 GPS/IMU（定位与惯性测量） 、Camera（摄像头） 、LIDAR （激光雷达） 、Radar（毫米波雷达）以及 Ultrasonic Radar（超声波雷达） ，用 于全方位感知周围环境。\n## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。\n## Structured notes\n### Pages 1-2\n- [p.1] Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1. 开放车辆认证平台 这是 Apollo 架构的最底层，旨在确保自动驾驶车辆的硬件兼容性和标准化。 • 认证 Apollo 兼容的线控车辆：这一层关注的是车辆本身的物理平台。Apollo 定 义了标准接口，使得经过认证的“线控车辆”（即可以通过电子信号控制转向、 加速和制动的车辆）能够接入…\n- [p.1] • 人机交互设备：用于车内人员与自动驾驶系统进行交互的硬件。 • 其他关键组件：包括 Black Box（黑匣子，用于数据记录） 、ASU（可能是指天 线服务单元或特定传感器单元） 、AXU（可能是指加速扩展单元）以及 V2X OBU（车载单元，用于车路协同通信） 。 3. 开放软件平台 这是 Apollo 的核心，包含了自动驾驶所需的全套软件栈。\n## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。\n### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1. 开放车辆认证平台 这是 Apollo 架构的最底层，旨在确保自动驾驶车辆的硬件兼容性和标准化。 • 认证 Apollo 兼容的线控车辆：这一层关注的是车辆本身的物理平台。Apollo 定 义了标准接口，使得经过认证的“线控车辆”（即可以通过电子信号控制转向、 加速和制动的车辆）能够接入 Apollo 系统。 • 开放车辆接口标准：为了实现上述兼容性，Apollo 制定了一套开放的接口标 准，确保不同厂商的车辆都能与 Apollo 的软件和硬件平台无缝对接。 2. 硬件开发平台 这一层提供了自动驾驶系统所需的物理计算和感知硬件。 • 计算单元：负责处理海量数据的核心计算硬件。 • 传感器套件：包括 GPS/IMU（定位与惯性测量） 、Camera（摄像头） 、LIDAR （激光雷达） 、Radar（毫米波雷达）以及 Ultrasonic Radar（超声波雷达） ，用 于全方位感知周围环境。",
+        "score": 0.1713265348425702,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。",
+        "score": 0.13073574797869836,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-2\n- [p.1] Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1. 开放车辆认证平台 这是 Apollo 架构的最底层，旨在确保自动驾驶车辆的硬件兼容性和标准化。 • 认证 Apollo 兼容的线控车辆：这一层关注的是车辆本身的物理平台。Apollo 定 义了标准接口，使得经过认证的“线控车辆”（即可以通过电子信号控制转向、 加速和制动的车辆）能够接入…\n- [p.1] • 人机交互设备：用于车内人员与自动驾驶系统进行交互的硬件。 • 其他关键组件：包括 Black Box（黑匣子，用于数据记录） 、ASU（可能是指天 线服务单元或特定传感器单元） 、AXU（可能是指加速扩展单元）以及 V2X OBU（车载单元，用于车路协同通信） 。 3. 开放软件平台 这是 Apollo 的核心，包含了自动驾驶所需的全套软件栈。",
+        "score": 0.07028797920110097,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。",
+        "score": 0.0528858826257409,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.028593956430608025,
+        "rank": 5
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1. 开放车辆认证平台 这是 Apollo 架构的最底层，旨在确保自动驾驶车辆的硬件兼容性和标准化。 • 认证 Apollo 兼容的线控车辆：这一层关注的是车辆本身的物理平台。Apollo 定 义了标准接口，使得经过认证的“线控车辆”（即可以通过电子信号控制转向、 加速和制动的车辆）能够接入 Apollo 系统。 • 开放车辆接口标准：为了实现上述兼容性，Apollo 制定了一套开放的接口标 准，确保不同厂商的车辆都能与 Apollo 的软件和硬件平台无缝对接。 2. 硬件开发平台 这一层提供了自动驾驶系统所需的物理计算和感知硬件。 • 计算单元：负责处理海量数据的核心计算硬件。 • 传感器套件：包括 GPS/IMU（定位与惯性测量） 、Camera（摄像头） 、LIDAR （激光雷达） 、Radar（毫米波雷达）以及 Ultrasonic Radar（超声波雷达） ，用 于全方位感知周围环境。",
+        "score": 0.1713265348425702,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。",
+        "score": 0.13073574797869836,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-2\n- [p.1] Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1. 开放车辆认证平台 这是 Apollo 架构的最底层，旨在确保自动驾驶车辆的硬件兼容性和标准化。 • 认证 Apollo 兼容的线控车辆：这一层关注的是车辆本身的物理平台。Apollo 定 义了标准接口，使得经过认证的“线控车辆”（即可以通过电子信号控制转向、 加速和制动的车辆）能够接入…\n- [p.1] • 人机交互设备：用于车内人员与自动驾驶系统进行交互的硬件。 • 其他关键组件：包括 Black Box（黑匣子，用于数据记录） 、ASU（可能是指天 线服务单元或特定传感器单元） 、AXU（可能是指加速扩展单元）以及 V2X OBU（车载单元，用于车路协同通信） 。 3. 开放软件平台 这是 Apollo 的核心，包含了自动驾驶所需的全套软件栈。",
+        "score": 0.07028797920110097,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。",
+        "score": 0.0528858826257409,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.028593956430608025,
+        "rank": 5
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.02222228016642802,
+        "rank": 6
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…",
+        "score": 0.013746886105675316,
+        "rank": 7
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Prediction Overview",
+        "score": -0.005965194942869845,
+        "rank": 8
+      },
+      {
+        "source_id": "apollo-doc-009",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Control Overview",
+        "score": -0.005965194942869845,
+        "rank": 9
+      },
+      {
+        "source_id": "apollo-doc-010",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Localization Overview",
+        "score": -0.005965194942869845,
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "规划(Plamring) 对主车行为进行决策，实时生成车辆规划线。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  }
+]

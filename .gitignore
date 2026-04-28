@@ -35,6 +35,9 @@ md5.txt
 .worktrees/
 .claude/worktrees/
 
+# Nested local docs repo
+RAG_md/
+
 # Local experiment stores (large binary data)
 results/chunking_eval/stores/
 
