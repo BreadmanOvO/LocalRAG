@@ -1,12 +1,12 @@
 # 自动驾驶感知算法 LocalRAG
 
 ## 项目简介
-这是一个面向自动驾驶感知算法场景的垂直领域 RAG 项目，当前主线是先补齐 v1.1 的数据、评测与文档合同，再进入 v1.2 检索层消融实验。
+这是一个面向自动驾驶感知算法场景的垂直领域 RAG 项目，v1.1 已完成数据、评测与文档收口，当前进入 v1.2 检索层实验规划阶段。
 
 ## 当前定位
-- 项目状态：v1.1 收尾中
-- 当前最高优先级：补齐评测数据集、稳定 artifact contract、修正文档口径
-- v1.2 状态：尚未正式展开，仅保留检索层实验规划
+- 项目状态：v1.1 已收口，v1.2 规划中
+- 当前最高优先级：在稳定评测合同基础上推进检索层实验设计
+- v1.2 状态：尚未进入实现阶段，当前仅保留检索层实验规划
 
 ## 当前已落地能力
 - Agent 问答入口：`app_qa.py` + `agent/react_agent.py`
@@ -15,7 +15,7 @@
 - 知识库入库与 chunk 写入：`core/knowledge_base.py`
 - chunking 与 locator / provenance metadata：`core/chunking.py`
 - baseline 评测 runner：`eval/eval_ragas.py`
-- pairwise judge scaffold：`eval/eval_llm_judge.py`
+- pairwise LLM judge：`eval/eval_llm_judge.py`
 - chunking 对比实验：`eval/eval_chunking.py`
 
 ## 当前评测状态
@@ -23,7 +23,7 @@
 `eval/eval_ragas.py` 已升级为 retrieval-aware baseline runner：
 - 调用 `RagService.answer_with_retrieval()`
 - 预测结果包含：`answer`、`retrieved_context`、`retrieved_rows`、`retrieval_debug_candidates`、`evidence`、`metadata`
-- 当前 metrics 已包含 answered/context 命中与 evidence source/locator 命中统计
+- 当前 metrics 已包含 answered/context 命中、retrieved row / retrieval candidate 统计，以及 exact match / normalized exact match / reference substring / evidence source/locator 命中统计
 - 支持按 run bundle 输出结果目录
 
 结果目录约定：
@@ -32,12 +32,12 @@
 - `results/baseline_eval/<run_id>/manifest.json`
 
 ### 2. judge_eval
-`eval/eval_llm_judge.py` 目前是 pairwise scaffold：
+`eval/eval_llm_judge.py` 当前是 pairwise LLM judge：
 - 输入 baseline / candidate 两份 predictions
 - 校验 sample id 集合一致
-- 基于 answer/evidence 命中情况做 deterministic pairwise 判分
+- 使用 temperature=0 的真实 judge model 做 pairwise 判分
+- 通过严格 JSON contract 解析 `winner` 与 `reason`
 - 输出 `judgements.json`、`summary.json`、`manifest.json`
-- 当前仍未接入真实 LLM Judge，现阶段主要用于稳定 pairwise contract 与回归比较
 
 结果目录约定：
 - `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/judgements.json`
@@ -69,10 +69,10 @@
 - `evidence` 字段：`quote`、`source_id`、`locator`
 - `metadata` 字段：`difficulty`、`topic`、`doc_type`
 
-## 当前仍未完成的部分
-- `ragas` 真实指标尚未接入，`eval/eval_ragas.py` 目前仍是 baseline runner，而不是完整 Ragas pipeline
-- `eval/eval_llm_judge.py` 尚未接入真实 LLM 判分逻辑
-- Gold / Synthetic 数据集虽然已满足当前合同，但离最终版本闸门规模仍有差距
+## 当前限制与后续方向
+- `eval/eval_ragas.py` 仍是 baseline runner，而不是完整 Ragas pipeline
+- `judge_eval` 已是可复现的真实 LLM judge，但仍依赖本地 provider / model 配置
+- Gold Set 已扩到 30 题并作为当前版本闸门；Synthetic Set 保持为辅助覆盖集
 - v1.2 的 hybrid retrieval、reranker、HyDE、hierarchical index 仍处于规划状态
 
 ## 运行说明
@@ -106,14 +106,11 @@
 该文件仅用于本地运行，不应提交到仓库。
 
 ## 文档导航
-- [版本规划](docs/roadmap.md)
-- [评估框架与指标](docs/evaluation.md)
-- [仓库使用说明](docs/repo_guide.md)
-- [简历表达与面试亮点](docs/resume_notes.md)
-- [参考资料与学习路径](docs/references.md)
+- 评估框架与指标：`docs/evaluation.md`
+- 仓库使用说明：`docs/repo_guide.md`
+- 其余规划与资料文档由仓库外层文档映射维护
 
 ## 下一步迭代
-1. 继续扩充 Gold Set 与 Synthetic Set，提高版本闸门强度
-2. 为 baseline_eval 接入更完整的客观指标
-3. 为 judge_eval 接入真实 pairwise LLM 判分流程
-4. 在 v1.1 完整收口后，再启动 v1.2 检索层消融实验
+1. 进入 v1.2 检索层消融实验，实现 hybrid retrieval、reranker、HyDE、hierarchical index
+2. 在现有 artifact contract 上继续做 retrieval-side ablation
+3. 如有需要，再补充更完整的 Ragas 风格指标

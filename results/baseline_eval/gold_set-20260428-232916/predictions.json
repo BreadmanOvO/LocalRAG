@@ -1,0 +1,632 @@
+[
+  {
+    "id": "gold-001",
+    "question": "Apollo Cyber RT 的核心作用是什么？",
+    "reference_answer": "Apollo Cyber RT 负责提供自动驾驶系统中的通信、调度和组件协作基础能力。",
+    "answer": "Apollo Cyber RT 的核心作用是为自动驾驶系统提供实时的计算和运行环境，支持感知、规划、控制等关键模块的高效执行。它通过优化硬件资源调度和任务优先级管理，确保自动驾驶功能在复杂场景下的稳定性和安全性。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Cyber RT is the core framework for Apollo runtime communication and scheduling.",
+        "source_id": "apollo-doc-002",
+        "locator": "chapter=1/overview"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-002",
+    "question": "感知融合为什么对自动驾驶很重要？",
+    "reference_answer": "感知融合能综合不同传感器的互补信息，从而提升目标检测与环境理解的稳定性。",
+    "answer": "感知融合对自动驾驶非常重要，主要原因包括以下几点：\n\n1. **提高环境感知的准确性**：通过结合多种传感器（如摄像头、激光雷达、毫米波雷达等）的数据，可以弥补单一传感器在特定场景下的局限性，从而更全面、准确地感知周围环境。\n\n2. **增强系统的鲁棒性**：不同传感器在不同天气、光照或障碍物条件下表现各异。感知融合能够有效应对这些变化，提升系统在复杂和不确定环境中的稳定性与可靠性。\n\n3. **提升决策与控制的可靠性**：融合后的感知信息为自动驾驶系统的路径规划、避障和控制提供更高质量的数据支持，有助于做出更安全、合理的决策。\n\n4. **优化计算效率**：通过对多源数据进行融合处理，可以在一定程度上减少冗余计算，提高系统的实时性和响应速度。\n\n综上所述，感知融合是实现高安全性和高可靠性的自动驾驶系统的关键技术之一。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Fusion combines semantic cues with geometric robustness.",
+        "source_id": "apollo-doc-005",
+        "locator": "chapter=2/section=2.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-003",
+    "question": "UN R155 主要关注什么类型的安全问题？",
+    "reference_answer": "UN R155 主要关注车辆网络安全管理体系和网络攻击风险。",
+    "answer": "UN R155 主要关注**车辆网络安全**相关的问题。它是联合国世界卫生组织（WHO）为加强道路车辆的网络安全而制定的一项法规，旨在确保车辆在设计、制造和使用过程中能够抵御潜在的网络攻击，保护车辆系统和数据的安全。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "The regulation addresses cyber security and cyber security management systems.",
+        "source_id": "standard-007",
+        "locator": "section=scope"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-004",
+    "question": "为什么预测模块与规划模块需要紧密协同？",
+    "reference_answer": "因为预测结果直接影响规划决策，只有保持时序和接口一致，才能减少决策偏差。",
+    "answer": "预测模块与规划模块需要紧密协同，是因为它们在智能系统（如自动驾驶、机器人等）中承担着不同的功能，但彼此之间存在高度依赖关系。\n\n1. **预测模块**负责对环境中的动态对象（如其他车辆、行人等）进行未来状态的估计，提供可能的轨迹或行为预测。  \n2. **规划模块**则基于这些预测结果，生成最优的控制策略或路径，以实现系统的任务目标（如安全到达目的地）。\n\n若两者不协同，可能导致以下问题：  \n- **预测偏差**：如果规划模块未考虑预测模块提供的准确信息，可能导致路径规划不合理，甚至引发安全隐患。  \n- **实时性不足**：预测与规划之间的延迟或信息不一致，会影响系统的响应速度和决策质量。  \n- **鲁棒性下降**：在复杂或不确定环境中，缺乏协同的模块难以应对突发情况，降低系统整体性能。\n\n因此，预测与规划模块的紧密协同是确保系统安全、高效运行的关键。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Prediction output feeds downstream planning decisions.",
+        "source_id": "apollo-doc-007",
+        "locator": "chapter=3/section=3.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-005",
+    "question": "BEV 感知在自动驾驶系统中有什么优势？",
+    "reference_answer": "BEV 感知能够统一多源信息到鸟瞰空间表示，提升空间一致性和下游规划理解能力。",
+    "answer": "BEV（Bird's Eye View，鸟瞰图）感知在自动驾驶系统中具有以下优势：\n\n1. **全局视角**：BEV 感知能够提供车辆周围的全景视图，有助于更全面地理解环境，包括车道、障碍物、行人和其他车辆的位置。\n\n2. **提升目标检测与跟踪**：在 BEV 空间中，目标的相对位置和运动轨迹更容易被检测和跟踪，从而提高感知的准确性和鲁棒性。\n\n3. **简化路径规划与决策**：由于 BEV 提供了全局信息，自动驾驶系统可以更高效地进行路径规划和决策，例如避障、变道等操作。\n\n4. **兼容性强**：BEV 感知可以与多种传感器（如摄像头、激光雷达、雷达）融合使用，增强系统的环境感知能力。\n\n5. **支持多任务处理**：BEV 感知框架通常支持同时进行目标检测、语义分割、车道线识别等任务，提高系统的整体效率。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "BEV representation helps normalize spatial scale across the scene.",
+        "source_id": "paper-001",
+        "locator": "page=4/paragraph=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-006",
+    "question": "Waymo Open Dataset 报告为什么强调数据集的多样性？",
+    "reference_answer": "因为自动驾驶系统需要在不同真实环境中泛化，数据集覆盖越多样，越有助于对感知系统做更贴近真实场景的评估。",
+    "answer": "Waymo Open Dataset 报告强调数据集的多样性，主要是为了提升自动驾驶系统在复杂和多样化现实场景中的鲁棒性和泛化能力。具体原因包括：\n\n1. **覆盖广泛场景**：数据集包含多种道路类型（如城市、高速、乡村等）、天气条件（晴天、雨天、雾天等）以及不同时间段（白天、夜晚），有助于训练模型适应各种实际驾驶环境。\n\n2. **增强模型泛化能力**：通过引入多样化的数据，模型可以学习到更丰富的特征和模式，从而在未见过的场景中表现更好。\n\n3. **支持多任务学习**：多样化的数据有助于同时训练多个任务（如目标检测、语义分割、轨迹预测等），提升系统的综合性能。\n\n4. **促进算法研究**：多样化的数据为研究人员提供了更全面的测试基准，有助于推动自动驾驶技术的发展和创新。\n\n综上所述，数据集的多样性是确保自动驾驶系统安全、可靠和高效的重要基础。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Existing self-driving datasets are limited in the scale and variation of the environments they capture, even though generalization within and between operating regions is crucial to the overall viability of the technology.",
+        "source_id": "paper-004",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "report"
+    }
+  },
+  {
+    "id": "gold-007",
+    "question": "Apollo 视觉感知模块为什么要重视高精确率和高稳定性？",
+    "reference_answer": "因为摄像头容易受环境影响且缺乏深度信息，只有高精确率和高稳定性的视觉感知算法才能支撑自动驾驶感知模块可靠运行。",
+    "answer": "Apollo 视觉感知模块重视高精确率和高稳定性，主要是为了确保自动驾驶系统在复杂多变的交通环境中能够安全、可靠地运行。具体原因包括：\n\n1. **安全性**：视觉感知是自动驾驶系统获取环境信息的核心手段。高精确率可以确保系统准确识别道路、车辆、行人、交通标志等关键目标，从而做出正确的驾驶决策，避免潜在的安全风险。\n\n2. **可靠性**：高稳定性意味着视觉感知模块在不同光照、天气和复杂场景下仍能保持一致的性能表现。这对于自动驾驶系统的长期稳定运行至关重要。\n\n3. **决策准确性**：视觉感知模块提供的信息直接影响路径规划、控制执行等后续模块的决策。若感知结果存在偏差或不稳定，可能导致错误的路径规划或控制指令，进而引发事故。\n\n4. **适应复杂环境**：实际道路环境中存在大量不确定性和干扰因素（如遮挡、光照变化、恶劣天气等）。高精确率和高稳定性有助于系统在这些条件下依然保持良好的感知能力。\n\n综上所述，高精确率和高稳定性是保障 Apollo 自动驾驶系统安全、可靠运行的基础。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。",
+        "source_id": "apollo-doc-006",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-008",
+    "question": "Apollo Channel 文档如何描述规划模块的职责？",
+    "reference_answer": "规划模块负责对主车行为进行决策，并实时生成车辆规划线。",
+    "answer": "Apollo Channel 文档中对规划模块的职责描述如下：规划模块负责根据高阶指令（High-Level Instruction）生成车辆的全局路径和局部轨迹，确保路径符合安全约束，并满足任务目标。具体职责包括路径搜索、轨迹优化、避障处理以及与控制模块的协同工作。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "规划(Plamring) 对主车行为进行决策，实时生成车辆规划线。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-009",
+    "question": "Apollo Cyber RT 如何组织自动驾驶系统中的模块依赖关系？",
+    "reference_answer": "Apollo Cyber RT 会从各个组件中提取依赖项，并通过 DAG 依赖关系图将它们连接起来。",
+    "answer": "Apollo Cyber RT 通过其模块化架构和依赖管理机制，有效地组织自动驾驶系统中的模块依赖关系。以下是其核心方法：\n\n1. **模块化设计**：  \n   Apollo Cyber RT 将自动驾驶系统划分为多个独立的模块（如感知、规划、控制等），每个模块负责特定的功能，并通过接口进行通信。\n\n2. **依赖注入（Dependency Injection）**：  \n   通过依赖注入机制，模块可以动态获取所需的依赖项（如传感器数据、其他模块的服务等），避免硬编码依赖关系，提高灵活性和可维护性。\n\n3. **服务注册与发现**：  \n   模块在启动时注册自身提供的服务，并通过服务发现机制查找所需的服务。这种方式支持模块间的松耦合通信。\n\n4. **运行时依赖解析**：  \n   在运行时，Apollo Cyber RT 根据配置或运行环境动态解析模块之间的依赖关系，确保各模块按正确的顺序启动和运行。\n\n5. **配置管理**：  \n   通过配置文件定义模块间的依赖关系和通信参数，实现对依赖关系的集中管理和灵活调整。\n\n6. **事件驱动架构**：  \n   基于事件驱动模型，模块通过发布/订阅机制进行交互，进一步解耦模块间的直接依赖。\n\n这些机制共同作用，使 Apollo Cyber RT 能够高效、可靠地组织和管理自动驾驶系统中复杂的模块依赖关系。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Apollo Cyber RT 框架建立在这些组件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。",
+        "source_id": "apollo-doc-002",
+        "locator": "p.2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-010",
+    "question": "Apollo Open Platform 中 Cyber RT 和 RTOS 的职责有什么区别？",
+    "reference_answer": "Cyber RT 负责管理模块间通信和任务调度，而 RTOS 负责处理时间要求极高的底层控制任务。",
+    "answer": "在 Apollo Open Platform 中，**Cyber RT** 和 **RTOS（Real-Time Operating System）** 分别承担不同的职责，主要区别如下：\n\n### 1. **RTOS（Real-Time Operating System）**\n- **职责**：作为底层操作系统，RTOS 负责硬件资源的管理和调度，包括 CPU、内存、中断、定时器等。\n- **特点**：\n  - 实时性：保证任务在规定时间内完成。\n  - 硬件抽象：提供对底层硬件的访问接口。\n  - 多任务调度：支持多线程或任务调度，确保关键任务优先执行。\n\n### 2. **Cyber RT**\n- **职责**：Cyber RT 是 Apollo 的通信和实时任务调度框架，用于构建自动驾驶系统中的分布式任务调度与通信。\n- **特点**：\n  - **通信中间件**：提供进程间通信（IPC）、消息队列、发布/订阅机制等功能。\n  - **任务调度**：支持基于时间片的实时任务调度，确保关键任务按时执行。\n  - **模块化架构**：支持模块化开发，便于扩展和维护。\n  - **跨平台**：可以在多种操作系统（如 Linux）上运行。\n\n### 总结\n- **RTOS** 是底层操作系统，负责硬件资源管理与实时任务调度。\n- **Cyber RT** 是上层框架，专注于通信和任务调度，构建在 RTOS 之上，用于实现自动驾驶系统的高可靠性和低延迟通信。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Apollo Cyber RT 是 Apollo 自研的高性能运行时框架，用于管理模块间的通信和任务调度；RTOS（实时操作系统）则用于处理对时间要求极高的底层控制任务。",
+        "source_id": "apollo-doc-004",
+        "locator": "p.2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-011",
+    "question": "为什么 Apollo 学习路径把高精地图视为软件栈中的基础能力？",
+    "reference_answer": "因为高精地图支撑了软件栈中几乎所有其他部分，是理解 Apollo 架构的重要基础。",
+    "answer": "Apollo 学习路径将高精地图视为软件栈中的基础能力，主要是因为高精地图在自动驾驶系统中具有核心地位。它为自动驾驶车辆提供了精确的环境感知和定位信息，是实现路径规划、行为决策和控制执行的基础。\n\n高精地图不仅包含道路几何信息（如车道线、路口、交通标志等），还融合了动态数据（如交通状况、施工信息等），能够帮助自动驾驶系统更准确地理解周围环境，从而做出更安全、高效的驾驶决策。\n\n因此，在 Apollo 的学习路径中，高精地图被视为构建自动驾驶系统的基础能力之一，是后续模块（如路径规划、决策控制等）得以正常运行的前提条件。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Get to know how high-definition maps work, which underpin almost every other part of the software stack.",
+        "source_id": "apollo-doc-001",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-012",
+    "question": "Apollo Channel 文档如何描述组件、数据通道和消息格式之间的关系？",
+    "reference_answer": "Apollo 的模块以组件形式存在，组件之间通过数据通道通信，而消息格式定义了通道内最小的数据单元。",
+    "answer": "Apollo Channel 文档中描述，组件、数据通道和消息格式之间的关系如下：\n\n1. **组件**：指的是系统中的各个功能模块或服务单元，负责执行特定的业务逻辑或处理任务。\n\n2. **数据通道**：是组件之间进行通信的桥梁，用于传输数据。数据通道可以基于不同的协议（如 TCP、UDP、MQTT 等）实现，确保数据在不同组件之间高效、可靠地传递。\n\n3. **消息格式**：定义了数据通道中传输的数据结构和内容规范。通常采用标准化的消息格式（如 JSON、Protobuf 等），以保证不同组件能够正确解析和处理接收到的数据。\n\n**三者之间的关系**可以概括为：\n- 组件通过数据通道进行通信；\n- 数据通道使用消息格式来封装和传输数据；\n- 消息格式确保组件间的数据交互具备一致性与可理解性。\n\n这种设计使得系统具有良好的扩展性、灵活性和可维护性。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Apollo的各个模块是以组件的形式存在的。组件之间利用数据通道进行通信。其中，最小的数据单元是消息格式定义的。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-013",
+    "question": "为什么 Apollo Open Platform 强调持续提升感知检测与识别能力？",
+    "reference_answer": "因为感知系统持续提升检测和识别能力，才能为其他自动驾驶模块提供准确、稳定、可靠的输入。",
+    "answer": "Apollo Open Platform 强调持续提升感知检测与识别能力，主要是因为这些能力是自动驾驶系统的核心基础。感知能力决定了车辆对周围环境的理解和反应速度，直接影响到自动驾驶的安全性、可靠性和智能化水平。\n\n具体而言：\n\n1. **环境感知是自动驾驶的基础**：通过传感器（如摄像头、激光雷达、毫米波雷达等）获取的环境信息，需要通过高效的检测与识别算法进行处理，以准确判断道路状况、障碍物、行人、交通标志等关键信息。\n\n2. **提升感知能力有助于提高安全性**：更精确的感知能力可以减少误判和漏检，从而降低交通事故的风险，保障乘客和行人的安全。\n\n3. **支持复杂场景下的自动驾驶**：在复杂多变的城市道路环境中，感知系统的鲁棒性和泛化能力至关重要。持续优化感知检测与识别能力，有助于自动驾驶系统适应更多真实场景。\n\n4. **推动技术迭代与创新**：Apollo Open Platform 作为一个开放平台，鼓励开发者和研究者不断探索和改进感知算法，推动整个行业技术进步。\n\n因此，Apollo Open Platform 重视并持续提升感知检测与识别能力，是为了构建更加智能、安全和可靠的自动驾驶系统。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Artificial intelligence and data-driven solutions combine to enable Apollo’s perception system to continuously improve its detection and recognition capabilities, which provide accurate, stable, and reliable input for other autonomous system modules.",
+        "source_id": "apollo-doc-004",
+        "locator": "p.3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-014",
+    "question": "Apollo 视觉感知算法在平台上主要覆盖哪三类应用场景？",
+    "reference_answer": "主要覆盖红绿灯检测、车道线检测和基于摄像头的障碍物检测三类场景。",
+    "answer": "Apollo 视觉感知算法在平台上主要覆盖的三类应用场景包括：  \n1. **车道线检测**：用于识别道路边界，辅助车辆保持在车道内行驶。  \n2. **交通标志识别**：识别道路上的交通标志，如限速、禁止停车等，以支持自动驾驶决策。  \n3. **行人与车辆检测**：识别道路上的行人和其他车辆，用于避障和路径规划。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "视觉感知算法在Apollo平台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。",
+        "source_id": "apollo-doc-006",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-015",
+    "question": "Apollo 预测模块为什么依赖感知模块提供障碍物状态信息？",
+    "reference_answer": "因为预测模块需要基于障碍物的位置、朝向、速度和加速度等状态信息来推断未来轨迹。",
+    "answer": "Apollo 预测模块依赖感知模块提供障碍物状态信息，是因为预测模块需要基于实时、准确的环境信息来做出合理的未来轨迹预测。感知模块通过传感器（如激光雷达、摄像头、毫米波雷达等）获取周围环境的数据，并对障碍物进行检测、分类和跟踪，从而输出障碍物的位置、速度、方向等状态信息。\n\n这些信息是预测模块进行运动模型建模和轨迹预测的基础。例如，预测模块通常使用卡尔曼滤波、粒子滤波或深度学习方法，都需要依赖感知模块提供的障碍物状态作为输入。如果感知模块的信息不准确或延迟，将直接影响预测模块的性能，进而影响自动驾驶系统的决策和控制。\n\n因此，感知模块与预测模块之间的紧密耦合是实现高精度、安全可靠的自动驾驶系统的关键。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "感知模块作为预测模块的上游，提供障碍物的位置、朝向、速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹。",
+        "source_id": "apollo-doc-007",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-016",
+    "question": "Apollo 规划模块为什么采用 scenario-based 的实现方式？",
+    "reference_answer": "因为它要针对不同场景通过一系列独立任务组合完成轨迹规划，并允许开发者按场景调整任务配置。",
+    "answer": "Apollo 规划模块采用 **scenario-based**（基于场景）的实现方式，主要是为了提升规划系统的灵活性、可扩展性和安全性。这种设计方式的核心思想是：根据不同驾驶场景（如城市道路、高速、停车场等）以及不同交通参与者的交互行为，构建针对性的规划策略。\n\n以下是 Apollo 采用 scenario-based 实现方式的主要原因：\n\n1. **应对复杂多变的交通环境**  \n   真实世界中的交通环境复杂多变，不同场景下车辆的行为模式和决策逻辑差异较大。通过将规划任务分解为不同的场景，Apollo 可以更精确地处理各种情况，提高规划的准确性和可靠性。\n\n2. **提高系统可扩展性**  \n   基于场景的设计允许开发者针对特定场景开发独立的规划模块，便于后续功能扩展和维护。例如，可以为高速公路场景单独设计长距离路径规划逻辑，而为城市道路场景设计更复杂的避障和跟车策略。\n\n3. **增强安全性和鲁棒性**  \n   在不同场景下，Apollo 可以根据预定义的规则和策略进行决策，从而避免因环境不确定性导致的规划错误。例如，在交叉路口场景中，Apollo 会优先考虑让行规则，确保行车安全。\n\n4. **支持多模态融合与协同决策**  \n   在复杂场景中，Apollo 会结合感知模块提供的环境信息（如车道线、障碍物、交通信号灯等），并结合场景分类结果，进行多模态数据融合与协同决策，从而生成更合理的轨迹规划。\n\n5. **优化计算效率**  \n   针对不同场景，Apollo 可以选择适用的规划算法和计算资源，避免不必要的计算开销，提升整体系统性能。\n\n综上所述，Apollo 采用 scenario-based 的实现方式，是为了更好地适应复杂多变的交通环境，提升规划系统的灵活性、安全性与效率。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。",
+        "source_id": "apollo-doc-008",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-017",
+    "question": "Apollo 控制模块的核心执行目标是什么？",
+    "reference_answer": "控制模块的目标是依据规划轨迹和车辆状态生成方向盘、油门和刹车控制命令，并通过 canbus 下发给底层执行器。",
+    "answer": "Apollo 控制模块的核心执行目标是实现对自动驾驶车辆的精确控制，确保车辆按照规划路径安全、高效地行驶。具体包括：  \n1. **轨迹跟踪**：根据高精地图和规划模块输出的路径，控制车辆沿预定轨迹行驶。  \n2. **动力学约束满足**：在控制过程中考虑车辆的动力学特性（如加速度、转向角等），确保控制指令在物理可行范围内。  \n3. **安全性与稳定性**：通过实时反馈和调整，避免车辆发生碰撞或失控，保障行驶安全。  \n4. **平滑性与舒适性**：优化控制输出，使车辆运动平顺，提升乘坐舒适性。  \n\nApollo 控制模块通常采用模型预测控制（MPC）等先进算法，结合传感器数据与规划结果，实现上述目标。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "控制模块的目标是基于规划模块输出的目标轨迹和定位模块输出的车辆状态生成方向盘、油门、刹车控制命令，并通过canbus模块给车辆底层执行器。",
+        "source_id": "apollo-doc-009",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-018",
+    "question": "为什么 Apollo 预测模块的输出会直接影响规划模块？",
+    "reference_answer": "因为预测模块会给出障碍物未来轨迹，这些结果会作为下游规划模块进行自车轨迹规划的重要输入。",
+    "answer": "Apollo 预测模块的输出会直接影响规划模块，是因为预测模块为规划模块提供了关键的环境信息和未来状态估计。具体原因如下：\n\n1. **环境感知与动态预测**：预测模块通过传感器数据（如激光雷达、摄像头、雷达等）对周围环境进行感知，并预测其他交通参与者（如车辆、行人、自行车等）的未来轨迹和行为。这些预测结果是规划模块做出决策的基础。\n\n2. **路径规划与避障**：基于预测模块提供的目标对象的运动趋势，规划模块可以提前计算出一条安全、可行的路径，避免潜在的碰撞风险，确保行驶的安全性。\n\n3. **实时性与准确性**：预测模块的输出具有较高的实时性和准确性，能够帮助规划模块在复杂动态环境中快速响应变化，提高自动驾驶系统的整体性能。\n\n因此，预测模块的输出是规划模块进行路径生成和决策的重要输入，直接影响其规划结果。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规划模块进行自车轨迹的规划。",
+        "source_id": "apollo-doc-007",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-019",
+    "question": "FusionAD 论文认为多模态融合对预测与规划任务带来了什么收益？",
+    "reference_answer": "FusionAD 认为多模态融合显著提升了预测和规划任务表现，并且相较仅依赖相机 BEV 的方法也改善了感知任务。",
+    "answer": "FusionAD 论文认为，多模态融合在预测与规划任务中带来了以下收益：\n\n1. **提升感知准确性**：通过融合来自不同传感器（如摄像头、激光雷达、雷达等）的数据，可以更全面地理解环境，减少单一传感器的局限性和误判。\n\n2. **增强鲁棒性**：多模态数据的融合能够提高系统对噪声和遮挡的鲁棒性，确保在复杂或恶劣环境下仍能保持较高的感知和决策性能。\n\n3. **改善预测效果**：融合多源信息有助于更准确地预测目标的轨迹和行为，从而为后续的路径规划和控制提供更可靠的输入。\n\n4. **支持更复杂的规划决策**：多模态融合提供的丰富环境信息有助于生成更安全、高效的路径规划方案，适应复杂的交通场景。\n\n综上，多模态融合在自动驾驶的预测与规划任务中起到了关键作用，显著提升了系统的整体性能和安全性。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end-to-end learning methods solely reliant on camera-based BEV .",
+        "source_id": "paper-006",
+        "locator": "p.7"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-020",
+    "question": "ADS 2.0 为什么要求系统具备转入 minimal risk condition 的文档化流程？",
+    "reference_answer": "因为在自动驾驶系统无法继续正常运行时，系统需要有明确流程安全地转入最小风险状态，并尽量减少异常驾驶行为。",
+    "answer": "ADS 2.0 要求系统具备转入 **minimal risk condition**（最低风险状态）的文档化流程，主要是为了确保在发生异常或紧急情况时，系统能够安全、可控地进入一个最低风险状态，以保障人员、设备和环境的安全。具体原因包括：\n\n1. **安全冗余**：通过明确的文档化流程，确保系统在出现故障或异常时能够按照预设的逻辑安全地过渡到最低风险状态，避免系统失控或引发更严重的事故。\n\n2. **可追溯性与合规性**：文档化的流程有助于满足监管要求，提供清晰的操作记录和责任追溯，便于后续审查和改进。\n\n3. **操作一致性**：标准化的流程可以确保所有相关人员在面对紧急情况时采取一致且正确的操作，减少人为错误的风险。\n\n4. **系统可靠性**：通过预先定义的最小风险状态转移机制，增强系统的可靠性和容错能力，提高整体安全性。\n\n综上，这一要求是 ADS 2.0 在安全设计中强调“安全第一”原则的重要体现。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Entities are encouraged to have a documented process for transitioning to a minimal risk condition.",
+        "source_id": "standard-002",
+        "locator": "p.14"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-021",
+    "question": "ADS 2.0 为什么把数据记录视为自动驾驶安全的重要组成部分？",
+    "reference_answer": "因为从事故数据中学习有助于复盘和改进系统，从而避免同类场景在其他 ADS 中再次发生。",
+    "answer": "ADS 2.0 将数据记录视为自动驾驶安全的重要组成部分，主要基于以下几个原因：\n\n1. **事故分析与责任认定**：数据记录能够提供事故发生时的详细信息，包括车辆状态、传感器数据、控制指令等，有助于准确分析事故原因，明确责任归属。\n\n2. **系统调试与优化**：通过记录运行数据，开发者可以发现系统在实际场景中的表现，识别潜在缺陷或漏洞，从而不断优化算法和系统性能。\n\n3. **合规与监管需求**：随着自动驾驶技术的发展，相关法律法规对数据记录提出了明确要求。数据记录是满足监管合规性的重要手段。\n\n4. **提升用户信任**：透明的数据记录机制有助于增强公众对自动驾驶技术的信任，展示技术的可靠性和安全性。\n\n综上所述，数据记录在保障自动驾驶安全、促进技术发展和满足法规要求方面具有不可替代的作用。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Learning from crash data is a central component to the safety potential of ADSs.",
+        "source_id": "standard-002",
+        "locator": "p.20"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-022",
+    "question": "UN R155 在型式批准前对网络安全措施提出了什么验证要求？",
+    "reference_answer": "车辆制造商在型式批准前需要进行适当且充分的测试，以验证所实施网络安全措施的有效性。",
+    "answer": "根据联合国欧洲经济委员会（UN ECE）法规第155号（R155），在型式批准前对网络安全措施的验证要求主要包括以下内容：\n\n1. **网络安全风险评估**：制造商需对车辆的网络安全风险进行全面评估，识别潜在的威胁和漏洞，并评估其对车辆功能和安全的影响。\n\n2. **网络安全措施的验证**：需验证所采取的网络安全措施是否能够有效应对已识别的风险。这包括但不限于加密、身份验证、访问控制等技术手段。\n\n3. **渗透测试**：通过模拟攻击的方式，测试车辆系统对网络攻击的防御能力，以确保其具备足够的安全性。\n\n4. **软件更新机制的安全性**：验证软件更新过程的安全性，确保更新过程不会被篡改或中断，防止恶意软件注入。\n\n5. **数据保护与隐私**：确保车辆收集和传输的数据得到适当的保护，防止未经授权的访问或泄露。\n\n6. **文档记录与可追溯性**：制造商需提供详细的网络安全验证文档，包括测试方法、结果和相关分析，以供监管机构审查。\n\n以上要求旨在确保车辆在设计和制造阶段即具备良好的网络安全防护能力，从而保障用户数据和车辆系统的安全。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "The vehicle manufacturer shall perform, prior to type approval, appropriate and sufficient testing to verify the effectiveness of the security measures implemented.",
+        "source_id": "standard-007",
+        "locator": "p.11"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-023",
+    "question": "UN R156 为什么要求软件更新流程评估其对车辆安全持续运行的影响？",
+    "reference_answer": "因为软件更新可能影响其他与车辆安全持续运行相关的系统，制造商必须识别、评估并记录这种影响。",
+    "answer": "根据联合国《道路车辆法规》（UN R156）的要求，软件更新流程需要评估其对车辆安全持续运行的影响，主要出于以下原因：\n\n1. **确保安全性**：软件更新可能涉及车辆关键系统的功能变更，如制动、动力系统或电子控制单元（ECU）。若未充分评估更新对安全的影响，可能导致潜在的安全风险。\n\n2. **防止意外故障**：软件更新可能引入新的缺陷或兼容性问题，影响车辆的正常运行。通过评估，可以识别并规避这些风险。\n\n3. **符合法规要求**：UN R156要求制造商在进行软件更新时，必须确保其不会对车辆的安全性产生负面影响，从而保障用户和公众的安全。\n\n4. **维护车辆生命周期内的安全性**：随着车辆使用时间的延长，软件更新可能是维持其安全性能的重要手段。评估过程有助于确保更新在整个车辆生命周期内保持安全水平。\n\n综上，UN R156强调对软件更新流程进行安全评估，是为了确保车辆在使用过程中始终符合安全标准，避免因软件变更引发的安全隐患。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "A process to assess, identify and record if a software update will affect any other system required for the safe and continued operation of the vehicle",
+        "source_id": "standard-008",
+        "locator": "p.8"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-024",
+    "question": "UN R157 对 ALKS 的激活道路条件有什么要求？",
+    "reference_answer": "ALKS 只能在禁止行人和自行车进入、并且有物理隔离分隔对向车流的道路条件下激活。",
+    "answer": "根据联合国《道路车辆法规》（UN R157）对自动紧急制动系统（AEBS）的要求，ALKS（自动车道保持系统）的激活道路条件主要包括以下几点：\n\n1. **道路类型**：ALKS 应在符合规定的道路上激活，通常包括高速公路、城市快速路等具有明确车道分隔线的道路。\n\n2. **车道标记**：道路应有清晰的车道标记，以便系统能够准确识别车道边界。\n\n3. **交通标志和标线**：道路应具备完整的交通标志和标线，确保系统能够正确判断行驶环境。\n\n4. **天气和光照条件**：在恶劣天气（如大雨、大雾）或低光照条件下，ALKS 可能无法正常工作，此时应避免激活。\n\n5. **车辆状态**：车辆应处于正常运行状态，且所有相关传感器（如摄像头、雷达）应正常工作。\n\n6. **驾驶员注意力**：驾驶员应在驾驶过程中保持注意力，不能完全依赖 ALKS 系统。\n\n以上条件旨在确保 ALKS 在安全、可控的环境下正常工作，以提高行车安全性。具体要求可能因不同国家或地区的法规实施细节而略有差异。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "ALKS can be activated under certain conditions on roads where pedestrians and cyclists are prohibited and which, by design, are equipped with a physical separation that divides the traffic moving in opposite directions",
+        "source_id": "standard-009",
+        "locator": "p.3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-025",
+    "question": "Apollo 感知融合为什么强调把摄像头、毫米波雷达和激光雷达结合起来？",
+    "reference_answer": "因为三种传感器各有优缺点，若能有效融合它们，就能在各种情况下获得更优的整体感知性能。",
+    "answer": "Apollo 感知融合强调将摄像头、毫米波雷达和激光雷达结合起来，主要是为了充分发挥每种传感器的优势，弥补其单独使用的不足，从而实现更全面、准确和可靠的环境感知。以下是具体原因：\n\n1. **互补性**：  \n   - **摄像头**擅长识别颜色、纹理和形状，适合识别交通标志、车道线等视觉信息；  \n   - **毫米波雷达**具有良好的穿透能力和远距离探测能力，适用于恶劣天气（如雨雪）下的目标检测；  \n   - **激光雷达**提供高精度的三维点云数据，能够精确测量物体的距离和形状，适合复杂场景下的障碍物识别。\n\n2. **鲁棒性**：  \n   单一传感器在特定环境下可能失效（如摄像头在强光或逆光下失明，激光雷达在雨雾中性能下降），通过多传感器融合可以增强系统的鲁棒性，提升自动驾驶的安全性和可靠性。\n\n3. **环境感知完整性**：  \n   多传感器融合能够覆盖更广泛的环境信息，例如摄像头识别静态物体，雷达检测动态目标，激光雷达构建高精度地图，三者结合可形成完整的环境模型，为路径规划和决策提供更丰富的数据支持。\n\n4. **提高感知精度**：  \n   通过数据融合算法（如卡尔曼滤波、深度学习等），可以对不同传感器的数据进行校准和优化，减少误差，提高整体感知精度。\n\n综上所述，Apollo 感知融合通过多传感器协同工作，实现了对复杂驾驶环境的全面感知，是实现高阶自动驾驶的重要技术基础。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-026",
+    "question": "Apollo 感知融合模块支持在什么层级上融合摄像头、毫米波雷达和激光雷达结果？",
+    "reference_answer": "它支持在目标级别对摄像头、毫米波雷达和激光雷达的感知结果进行融合。",
+    "answer": "Apollo 感知融合模块支持在**特征层**和**决策层**上融合摄像头、毫米波雷达和激光雷达的结果。\n\n1. **特征层融合**：在感知算法的早期阶段，对不同传感器采集的原始数据进行融合，提取共同的特征信息，以提高目标检测和识别的准确性。\n2. **决策层融合**：在感知算法的后期阶段，对各传感器的最终检测结果（如目标的类别、位置、速度等）进行融合，以提升整体系统的鲁棒性和可靠性。\n\n这种多层级融合机制能够有效弥补单一传感器的局限性，提升自动驾驶系统的环境感知能力。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-027",
+    "question": "Apollo 感知融合模块把各传感器结果汇入哪个统一输入 channel 作为源数据？",
+    "reference_answer": "各传感器感知结果会统一输出到 /perception/inner/PrefusedObjects 作为融合模块的源数据。",
+    "answer": "Apollo 感知融合模块将各传感器的结果汇入一个统一的输入通道，作为源数据供后续处理使用。该统一输入通道通常称为 **fusion_input** 或 **sensor_fusion_input**，具体名称可能因 Apollo 版本或实现细节而略有不同。\n\n在 Apollo 的感知系统中，多传感器数据（如激光雷达、摄像头、毫米波雷达等）经过预处理后，会被整合到这个统一的输入通道中，以便进行特征提取和目标检测等任务。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-028",
+    "question": "Apollo 感知融合模块的主要输出 channel 表达了什么信息？",
+    "reference_answer": "其主要输出 channel 会输出多传感器融合后的障碍物信息。",
+    "answer": "Apollo 感知融合模块的主要输出 channel 表达了多传感器数据融合后的联合置信度信息。具体来说，每个 channel 对应一个特定的物体或目标，其值表示该目标在不同传感器（如激光雷达、摄像头等）上的检测结果的一致性程度或置信水平。这种 channel 表达有助于后续模块（如轨迹预测、路径规划等）更准确地理解和处理环境信息。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "感知融合模块的主要输出channel。该channel 输出的是多传感器融合之后的障碍物信息。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-029",
+    "question": "FusionAD 论文为何认为多模态融合有助于下游预测与规划？",
+    "reference_answer": "因为多模态融合带来的 BEV 表征改进，不仅提升了预测和规划任务表现，也比只依赖相机 BEV 的方法更好。",
+    "answer": "FusionAD 论文认为多模态融合有助于下游预测与规划，主要是因为不同传感器（如激光雷达、摄像头、雷达等）能够提供互补的信息。通过融合多种模态的数据，可以更全面地感知环境，提高对复杂场景的理解能力。例如，激光雷达提供精确的几何结构信息，而摄像头能够捕捉丰富的语义信息。多模态融合能够有效弥补单一模态数据的局限性，增强系统的鲁棒性和准确性，从而提升自动驾驶中的目标检测、轨迹预测和路径规划等任务的性能。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end-to-end learning methods solely reliant on camera-based BEV .",
+        "source_id": "paper-006",
+        "locator": "p.7"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-030",
+    "question": "为什么 Apollo Channel 文档强调查看 /apollo/perception/obstacles 的消息格式？",
+    "reference_answer": "因为通道中的消息格式定义了最小数据单元，查看 /apollo/perception/obstacles 的消息类型可以明确障碍物数据的结构。",
+    "answer": "Apollo Channel 文档强调查看 `/apollo/perception/obstacles` 的消息格式，主要是因为该话题是 Apollo 自动驾驶系统中感知模块的重要输出之一。它包含了车辆周围障碍物的检测信息，如位置、速度、类别等关键数据，是路径规划、行为决策和控制模块的重要输入。\n\n通过了解该消息格式，开发者可以：\n\n1. **理解感知模块的输出内容**：明确系统如何识别和描述环境中的障碍物。\n2. **进行模块间通信调试**：确保感知模块与其他模块（如规划、控制）之间的数据传递正确无误。\n3. **开发或集成第三方感知模块**：根据该格式设计兼容的感知算法或接口。\n4. **实现可视化与监控**：用于实时监控障碍物信息，辅助调试和验证系统性能。\n\n因此，文档特别强调查看此消息格式，以帮助开发者更好地理解和使用 Apollo 系统的感知能力。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "MessageType字段展现的数据格式是本Channel通道里使用的最小数据单元，由消息格式(Message）定义。示例中 apollo.perception.PerceptionObstacles 是数据通道/apollo/perception/obstacles 的核心消息格式。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  }
+]

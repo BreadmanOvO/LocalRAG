@@ -89,6 +89,41 @@ class EvalRunnerTests(unittest.TestCase):
         self.assertEqual(summary["evidence_locator_hit_count"], 2)
         self.assertEqual(summary["evidence_locator_hit_ratio"], 0.667)
 
+    def test_summarize_predictions_adds_objective_metrics(self):
+        summary = summarize_predictions(
+            [
+                {
+                    "id": "sample-1",
+                    "reference_answer": "Apollo planning module",
+                    "answer": "Apollo planning module",
+                    "retrieved_context": "ctx-1",
+                    "retrieved_rows": [{"source_id": "doc-1", "locator": "p1"}, {"source_id": "doc-2", "locator": "p2"}],
+                    "retrieval_debug_candidates": [{"source_id": "doc-1"}, {"source_id": "doc-2"}],
+                    "evidence": [{"quote": "Apollo planning module", "source_id": "doc-1", "locator": "p1"}],
+                },
+                {
+                    "id": "sample-2",
+                    "reference_answer": "Perception safety report",
+                    "answer": " perception   safety report ",
+                    "retrieved_context": "",
+                    "retrieved_rows": [],
+                    "retrieval_debug_candidates": [],
+                    "evidence": [{"quote": "Perception safety report", "source_id": "doc-2", "locator": "p2"}],
+                },
+            ]
+        )
+
+        self.assertEqual(1, summary["exact_match_count"])
+        self.assertEqual(0.5, summary["exact_match_ratio"])
+        self.assertEqual(2, summary["normalized_exact_match_count"])
+        self.assertEqual(1.0, summary["normalized_exact_match_ratio"])
+        self.assertEqual(2, summary["retrieved_row_count"])
+        self.assertEqual(1.0, summary["avg_retrieved_row_count"])
+        self.assertEqual(2, summary["retrieval_debug_candidate_count"])
+        self.assertEqual(1.0, summary["avg_retrieval_debug_candidate_count"])
+        self.assertEqual(2, summary["reference_substring_hit_count"])
+        self.assertEqual(1.0, summary["reference_substring_hit_ratio"])
+
     def test_summarize_judgements_counts_winners_and_ties(self):
         summary = summarize_judgements(
             [
@@ -182,8 +217,71 @@ class EvalRunnerTests(unittest.TestCase):
             self.assertEqual("candidate", payload["rows"][0]["winner"])
             self.assertEqual("candidate answer uses better evidence", payload["rows"][0]["reason"])
             self.assertEqual("baseline", payload["rows"][1]["winner"])
-            mock_chat.assert_called_once_with(fake_runtime_config)
+            mock_chat.assert_called_once_with(fake_runtime_config, temperature=0)
             self.assertEqual(2, fake_chat_model.invoke.call_count)
+
+    def test_run_pairwise_judge_builds_model_with_deterministic_settings(self):
+        baseline_predictions = [{"id": "sample-1", "question": "Q1", "reference_answer": "R1", "answer": "b1", "retrieved_rows": [], "evidence": []}]
+        candidate_predictions = [{"id": "sample-1", "question": "Q1", "reference_answer": "R1", "answer": "c1", "retrieved_rows": [], "evidence": []}]
+        fake_runtime_config = types.SimpleNamespace(
+            provider="modelscope",
+            api_key="test-key",
+            base_url="https://api-inference.modelscope.cn/v1",
+            chat_model_name="Qwen/Qwen2.5-72B-Instruct",
+            embedding_model_name="Qwen/Qwen3-Embedding-8B",
+        )
+        fake_chat_model = mock.Mock()
+        fake_chat_model.invoke.return_value = '{"winner":"candidate","reason":"candidate is more accurate"}'
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir = Path(temp_dir)
+            baseline_path = temp_dir / "baseline.json"
+            candidate_path = temp_dir / "candidate.json"
+            output_path = temp_dir / "judgements.json"
+            baseline_path.write_text(json.dumps(baseline_predictions), encoding="utf-8")
+            candidate_path.write_text(json.dumps(candidate_predictions), encoding="utf-8")
+
+            with (
+                mock.patch.object(judge_runner, "load_runtime_config", return_value=fake_runtime_config),
+                mock.patch.object(judge_runner, "build_chat_model", return_value=fake_chat_model) as mock_chat,
+            ):
+                judge_runner.run_pairwise_judge(baseline_path, candidate_path, output_path)
+
+            mock_chat.assert_called_once_with(fake_runtime_config, temperature=0)
+
+    def test_run_pairwise_judge_accepts_wrapped_json_response(self):
+        baseline_predictions = [{"id": "sample-1", "question": "Q1", "reference_answer": "R1", "answer": "b1", "retrieved_rows": [], "evidence": []}]
+        candidate_predictions = [{"id": "sample-1", "question": "Q1", "reference_answer": "R1", "answer": "c1", "retrieved_rows": [], "evidence": []}]
+        fake_runtime_config = types.SimpleNamespace(
+            provider="modelscope",
+            api_key="test-key",
+            base_url="https://api-inference.modelscope.cn/v1",
+            chat_model_name="Qwen/Qwen2.5-72B-Instruct",
+            embedding_model_name="Qwen/Qwen3-Embedding-8B",
+        )
+        fake_chat_model = mock.Mock()
+        fake_chat_model.invoke.return_value = "裁判结果如下\n{\"winner\":\"candidate\",\"reason\":\"candidate is more faithful to the reference answer\"}\n谢谢"
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir = Path(temp_dir)
+            baseline_path = temp_dir / "baseline.json"
+            candidate_path = temp_dir / "candidate.json"
+            output_path = temp_dir / "judgements.json"
+            baseline_path.write_text(json.dumps(baseline_predictions), encoding="utf-8")
+            candidate_path.write_text(json.dumps(candidate_predictions), encoding="utf-8")
+
+            with (
+                mock.patch.object(judge_runner, "load_runtime_config", return_value=fake_runtime_config),
+                mock.patch.object(judge_runner, "build_chat_model", return_value=fake_chat_model),
+            ):
+                judge_runner.run_pairwise_judge(baseline_path, candidate_path, output_path)
+
+            payload = json.loads(output_path.read_text(encoding="utf-8"))
+            self.assertEqual("candidate", payload["rows"][0]["winner"])
+            self.assertEqual(
+                "candidate is more faithful to the reference answer",
+                payload["rows"][0]["reason"],
+            )
 
     def test_run_pairwise_judge_rejects_mismatched_ids(self):
         baseline_predictions = [{"id": "sample-1", "question": "Q1", "reference_answer": "R1", "answer": "b1"}]
@@ -204,6 +302,7 @@ class EvalRunnerTests(unittest.TestCase):
         baseline_predictions = [{"id": "sample-1", "question": "Q1", "reference_answer": "R1", "answer": "", "retrieved_rows": [], "evidence": [{"quote": "q1", "source_id": "doc-1", "locator": "p1"}]}]
         candidate_predictions = [{"id": "sample-1", "question": "Q1", "reference_answer": "R1", "answer": "c1", "retrieved_rows": [{"source_id": "doc-1", "locator": "p1"}], "evidence": [{"quote": "q1", "source_id": "doc-1", "locator": "p1"}]}]
         fake_runtime_config = types.SimpleNamespace(
+            provider="modelscope",
             api_key="test-key",
             base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
             chat_model_name="qwen3-max",
@@ -236,6 +335,9 @@ class EvalRunnerTests(unittest.TestCase):
             manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
             self.assertEqual("v1.1", manifest["contract_version"])
             self.assertEqual("judge_eval", manifest["pipeline"])
+            self.assertEqual("modelscope", manifest["provider"])
+            self.assertEqual("qwen3-max", manifest["chat_model_name"])
+            self.assertEqual("v1.1-pairwise-judge", manifest["judge_prompt_version"])
 
     def test_run_baseline_uses_distinct_session_ids_per_sample(self):
         samples = [
@@ -323,6 +425,13 @@ class EvalRunnerTests(unittest.TestCase):
                 "metadata": {"difficulty": "easy", "topic": "rag", "doc_type": "guide"},
             }
         ]
+        fake_runtime_config = types.SimpleNamespace(
+            provider="modelscope",
+            api_key="test-key",
+            base_url="https://api-inference.modelscope.cn/v1",
+            chat_model_name="Qwen/Qwen2.5-72B-Instruct",
+            embedding_model_name="Qwen/Qwen3-Embedding-8B",
+        )
 
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_dir = Path(temp_dir)
@@ -342,7 +451,7 @@ class EvalRunnerTests(unittest.TestCase):
 
             with (
                 mock.patch.dict(sys.modules, {"core.rag": fake_rag_module}),
-                mock.patch("eval.eval_ragas.load_runtime_config", return_value=None),
+                mock.patch("eval.eval_ragas.load_runtime_config", return_value=fake_runtime_config),
             ):
                 summary = ragas_runner.run_baseline_to_dir(dataset_path, out_dir)
 
@@ -360,6 +469,9 @@ class EvalRunnerTests(unittest.TestCase):
             self.assertEqual("v1.1", manifest["contract_version"])
             self.assertEqual("baseline_eval", manifest["pipeline"])
             self.assertEqual(str(dataset_path), manifest["dataset_path"])
+            self.assertEqual("modelscope", manifest["provider"])
+            self.assertEqual("Qwen/Qwen2.5-72B-Instruct", manifest["chat_model_name"])
+            self.assertEqual("Qwen/Qwen3-Embedding-8B", manifest["embedding_model_name"])
 
     def test_require_runtime_config_calls_runtime_config_loader(self):
         with mock.patch("eval.eval_ragas.load_runtime_config", return_value=None) as loader:

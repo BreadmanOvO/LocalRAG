@@ -12,6 +12,8 @@ from config.runtime_keys import load_runtime_config
 from config.provider_factory import build_chat_model
 from eval.eval_ragas import write_json
 
+JUDGE_PROMPT_VERSION = "v1.1-pairwise-judge"
+
 
 def load_predictions(path: Path) -> list[dict[str, Any]]:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -32,9 +34,9 @@ def summarize_judgements(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 
-def _build_judge_model():
+def _build_judge_model() -> tuple[Any, Any]:
     runtime_config = load_runtime_config()
-    return build_chat_model(runtime_config)
+    return build_chat_model(runtime_config, temperature=0), runtime_config
 
 
 
@@ -56,8 +58,9 @@ def _build_judge_prompt(baseline_row: dict[str, Any], candidate_row: dict[str, A
         "candidate": _serialize_prediction(candidate_row),
     }
     return (
-        "你是自动驾驶 RAG 评测裁判。请比较 baseline 和 candidate 的回答质量，"
-        "优先考虑答案是否更贴近 reference_answer、是否更好利用 evidence 与 retrieved_rows。"
+        "你是自动驾驶 RAG 的 pairwise 裁判。请只依据 question、reference_answer、retrieved_rows、evidence 和 answer 做判断。"
+        "优先比较：1) 是否更接近 reference_answer；2) 是否更忠于 evidence/retrieved_rows；3) 是否更少出现无依据扩写。"
+        "不要奖励更长的答案；只有在两边质量无法区分时才输出 tie。"
         "只输出一个 JSON 对象，不要输出 markdown，不要输出额外解释。"
         "JSON 结构必须是 {\"winner\":\"baseline|candidate|tie\",\"reason\":\"...\"}。\n\n"
         f"{json.dumps(payload, ensure_ascii=False, indent=2)}"
@@ -80,15 +83,30 @@ def _extract_response_text(response: Any) -> str:
 
 
 
+def _extract_json_payload(response_text: str) -> dict[str, Any]:
+    decoder = json.JSONDecoder()
+    for index, char in enumerate(response_text):
+        if char != "{":
+            continue
+        try:
+            payload, _ = decoder.raw_decode(response_text[index:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(payload, dict):
+            return payload
+    raise ValueError("judge response must contain a JSON object")
+
+
+
 def _parse_judge_response(response_text: str) -> tuple[str, str]:
-    payload = json.loads(response_text)
+    payload = _extract_json_payload(response_text)
     winner = payload.get("winner", "tie")
     if winner not in {"baseline", "candidate", "tie"}:
         raise ValueError(f"invalid judge winner: {winner}")
     reason = payload.get("reason", "")
-    if not isinstance(reason, str):
-        raise ValueError("judge reason must be a string")
-    return winner, reason
+    if not isinstance(reason, str) or not reason.strip():
+        raise ValueError("judge reason must be a non-empty string")
+    return winner, reason.strip()
 
 
 
@@ -120,7 +138,7 @@ def run_pairwise_judge(
     if set(baseline_by_id) != set(candidate_by_id):
         raise ValueError("baseline and candidate predictions must contain the same sample ids")
 
-    judge_model = _build_judge_model()
+    judge_model, _ = _build_judge_model()
     rows = []
     for sample_id in sorted(baseline_by_id):
         baseline_row = baseline_by_id[sample_id]
@@ -147,7 +165,13 @@ def build_run_id(baseline_predictions_path: Path, candidate_predictions_path: Pa
     return f"{baseline_predictions_path.stem}-vs-{candidate_predictions_path.stem}-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
 
-def build_manifest(*, run_id: str, baseline_predictions_path: Path, candidate_predictions_path: Path) -> dict[str, Any]:
+def build_manifest(
+    *,
+    run_id: str,
+    baseline_predictions_path: Path,
+    candidate_predictions_path: Path,
+    runtime_config: Any,
+) -> dict[str, Any]:
     return {
         "contract_version": "v1.1",
         "pipeline": "judge_eval",
@@ -156,6 +180,9 @@ def build_manifest(*, run_id: str, baseline_predictions_path: Path, candidate_pr
         "candidate_predictions_path": str(candidate_predictions_path),
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "runner_script": "eval/eval_llm_judge.py",
+        "provider": runtime_config.provider,
+        "chat_model_name": runtime_config.chat_model_name,
+        "judge_prompt_version": JUDGE_PROMPT_VERSION,
     }
 
 
@@ -167,6 +194,7 @@ def run_pairwise_judge_to_dir(
     baseline_predictions_path = Path(baseline_predictions_path)
     candidate_predictions_path = Path(candidate_predictions_path)
     out_dir = Path(out_dir)
+    runtime_config = load_runtime_config()
     run_id = build_run_id(baseline_predictions_path, candidate_predictions_path)
     run_dir = out_dir / run_id
     judgements_path = run_dir / "judgements.json"
@@ -182,6 +210,7 @@ def run_pairwise_judge_to_dir(
             run_id=run_id,
             baseline_predictions_path=baseline_predictions_path,
             candidate_predictions_path=candidate_predictions_path,
+            runtime_config=runtime_config,
         ),
     )
     return summary

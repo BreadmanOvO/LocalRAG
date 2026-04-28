@@ -134,5 +134,379 @@
       "topic": "planning_control",
       "doc_type": "official_doc"
     }
+  },
+  {
+    "id": "gold-009",
+    "question": "Apollo Cyber RT 如何组织自动驾驶系统中的模块依赖关系？",
+    "reference_answer": "Apollo Cyber RT 会从各个组件中提取依赖项，并通过 DAG 依赖关系图将它们连接起来。",
+    "evidence": [
+      {
+        "quote": "Apollo Cyber RT 框架建立在这些组件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。",
+        "source_id": "apollo-doc-002",
+        "locator": "p.2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-010",
+    "question": "Apollo Open Platform 中 Cyber RT 和 RTOS 的职责有什么区别？",
+    "reference_answer": "Cyber RT 负责管理模块间通信和任务调度，而 RTOS 负责处理时间要求极高的底层控制任务。",
+    "evidence": [
+      {
+        "quote": "Apollo Cyber RT 是 Apollo 自研的高性能运行时框架，用于管理模块间的通信和任务调度；RTOS（实时操作系统）则用于处理对时间要求极高的底层控制任务。",
+        "source_id": "apollo-doc-004",
+        "locator": "p.2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-011",
+    "question": "为什么 Apollo 学习路径把高精地图视为软件栈中的基础能力？",
+    "reference_answer": "因为高精地图支撑了软件栈中几乎所有其他部分，是理解 Apollo 架构的重要基础。",
+    "evidence": [
+      {
+        "quote": "Get to know how high-definition maps work, which underpin almost every other part of the software stack.",
+        "source_id": "apollo-doc-001",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-012",
+    "question": "Apollo Channel 文档如何描述组件、数据通道和消息格式之间的关系？",
+    "reference_answer": "Apollo 的模块以组件形式存在，组件之间通过数据通道通信，而消息格式定义了通道内最小的数据单元。",
+    "evidence": [
+      {
+        "quote": "Apollo的各个模块是以组件的形式存在的。组件之间利用数据通道进行通信。其中，最小的数据单元是消息格式定义的。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-013",
+    "question": "为什么 Apollo Open Platform 强调持续提升感知检测与识别能力？",
+    "reference_answer": "因为感知系统持续提升检测和识别能力，才能为其他自动驾驶模块提供准确、稳定、可靠的输入。",
+    "evidence": [
+      {
+        "quote": "Artificial intelligence and data-driven solutions combine to enable Apollo’s perception system to continuously improve its detection and recognition capabilities, which provide accurate, stable, and reliable input for other autonomous system modules.",
+        "source_id": "apollo-doc-004",
+        "locator": "p.3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-014",
+    "question": "Apollo 视觉感知算法在平台上主要覆盖哪三类应用场景？",
+    "reference_answer": "主要覆盖红绿灯检测、车道线检测和基于摄像头的障碍物检测三类场景。",
+    "evidence": [
+      {
+        "quote": "视觉感知算法在Apollo平台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。",
+        "source_id": "apollo-doc-006",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-015",
+    "question": "Apollo 预测模块为什么依赖感知模块提供障碍物状态信息？",
+    "reference_answer": "因为预测模块需要基于障碍物的位置、朝向、速度和加速度等状态信息来推断未来轨迹。",
+    "evidence": [
+      {
+        "quote": "感知模块作为预测模块的上游，提供障碍物的位置、朝向、速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹。",
+        "source_id": "apollo-doc-007",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-016",
+    "question": "Apollo 规划模块为什么采用 scenario-based 的实现方式？",
+    "reference_answer": "因为它要针对不同场景通过一系列独立任务组合完成轨迹规划，并允许开发者按场景调整任务配置。",
+    "evidence": [
+      {
+        "quote": "Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。",
+        "source_id": "apollo-doc-008",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-017",
+    "question": "Apollo 控制模块的核心执行目标是什么？",
+    "reference_answer": "控制模块的目标是依据规划轨迹和车辆状态生成方向盘、油门和刹车控制命令，并通过 canbus 下发给底层执行器。",
+    "evidence": [
+      {
+        "quote": "控制模块的目标是基于规划模块输出的目标轨迹和定位模块输出的车辆状态生成方向盘、油门、刹车控制命令，并通过canbus模块给车辆底层执行器。",
+        "source_id": "apollo-doc-009",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-018",
+    "question": "为什么 Apollo 预测模块的输出会直接影响规划模块？",
+    "reference_answer": "因为预测模块会给出障碍物未来轨迹，这些结果会作为下游规划模块进行自车轨迹规划的重要输入。",
+    "evidence": [
+      {
+        "quote": "预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规划模块进行自车轨迹的规划。",
+        "source_id": "apollo-doc-007",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-019",
+    "question": "FusionAD 论文认为多模态融合对预测与规划任务带来了什么收益？",
+    "reference_answer": "FusionAD 认为多模态融合显著提升了预测和规划任务表现，并且相较仅依赖相机 BEV 的方法也改善了感知任务。",
+    "evidence": [
+      {
+        "quote": "The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end-to-end learning methods solely reliant on camera-based BEV .",
+        "source_id": "paper-006",
+        "locator": "p.7"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-020",
+    "question": "ADS 2.0 为什么要求系统具备转入 minimal risk condition 的文档化流程？",
+    "reference_answer": "因为在自动驾驶系统无法继续正常运行时，系统需要有明确流程安全地转入最小风险状态，并尽量减少异常驾驶行为。",
+    "evidence": [
+      {
+        "quote": "Entities are encouraged to have a documented process for transitioning to a minimal risk condition.",
+        "source_id": "standard-002",
+        "locator": "p.14"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-021",
+    "question": "ADS 2.0 为什么把数据记录视为自动驾驶安全的重要组成部分？",
+    "reference_answer": "因为从事故数据中学习有助于复盘和改进系统，从而避免同类场景在其他 ADS 中再次发生。",
+    "evidence": [
+      {
+        "quote": "Learning from crash data is a central component to the safety potential of ADSs.",
+        "source_id": "standard-002",
+        "locator": "p.20"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-022",
+    "question": "UN R155 在型式批准前对网络安全措施提出了什么验证要求？",
+    "reference_answer": "车辆制造商在型式批准前需要进行适当且充分的测试，以验证所实施网络安全措施的有效性。",
+    "evidence": [
+      {
+        "quote": "The vehicle manufacturer shall perform, prior to type approval, appropriate and sufficient testing to verify the effectiveness of the security measures implemented.",
+        "source_id": "standard-007",
+        "locator": "p.11"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-023",
+    "question": "UN R156 为什么要求软件更新流程评估其对车辆安全持续运行的影响？",
+    "reference_answer": "因为软件更新可能影响其他与车辆安全持续运行相关的系统，制造商必须识别、评估并记录这种影响。",
+    "evidence": [
+      {
+        "quote": "A process to assess, identify and record if a software update will affect any other system required for the safe and continued operation of the vehicle",
+        "source_id": "standard-008",
+        "locator": "p.8"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-024",
+    "question": "UN R157 对 ALKS 的激活道路条件有什么要求？",
+    "reference_answer": "ALKS 只能在禁止行人和自行车进入、并且有物理隔离分隔对向车流的道路条件下激活。",
+    "evidence": [
+      {
+        "quote": "ALKS can be activated under certain conditions on roads where pedestrians and cyclists are prohibited and which, by design, are equipped with a physical separation that divides the traffic moving in opposite directions",
+        "source_id": "standard-009",
+        "locator": "p.3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-025",
+    "question": "Apollo 感知融合为什么强调把摄像头、毫米波雷达和激光雷达结合起来？",
+    "reference_answer": "因为三种传感器各有优缺点，若能有效融合它们，就能在各种情况下获得更优的整体感知性能。",
+    "evidence": [
+      {
+        "quote": "如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-026",
+    "question": "Apollo 感知融合模块支持在什么层级上融合摄像头、毫米波雷达和激光雷达结果？",
+    "reference_answer": "它支持在目标级别对摄像头、毫米波雷达和激光雷达的感知结果进行融合。",
+    "evidence": [
+      {
+        "quote": "Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-027",
+    "question": "Apollo 感知融合模块把各传感器结果汇入哪个统一输入 channel 作为源数据？",
+    "reference_answer": "各传感器感知结果会统一输出到 /perception/inner/PrefusedObjects 作为融合模块的源数据。",
+    "evidence": [
+      {
+        "quote": "各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-028",
+    "question": "Apollo 感知融合模块的主要输出 channel 表达了什么信息？",
+    "reference_answer": "其主要输出 channel 会输出多传感器融合后的障碍物信息。",
+    "evidence": [
+      {
+        "quote": "感知融合模块的主要输出channel。该channel 输出的是多传感器融合之后的障碍物信息。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-029",
+    "question": "FusionAD 论文为何认为多模态融合有助于下游预测与规划？",
+    "reference_answer": "因为多模态融合带来的 BEV 表征改进，不仅提升了预测和规划任务表现，也比只依赖相机 BEV 的方法更好。",
+    "evidence": [
+      {
+        "quote": "The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end-to-end learning methods solely reliant on camera-based BEV .",
+        "source_id": "paper-006",
+        "locator": "p.7"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-030",
+    "question": "为什么 Apollo Channel 文档强调查看 /apollo/perception/obstacles 的消息格式？",
+    "reference_answer": "因为通道中的消息格式定义了最小数据单元，查看 /apollo/perception/obstacles 的消息类型可以明确障碍物数据的结构。",
+    "evidence": [
+      {
+        "quote": "MessageType字段展现的数据格式是本Channel通道里使用的最小数据单元，由消息格式(Message）定义。示例中 apollo.perception.PerceptionObstacles 是数据通道/apollo/perception/obstacles 的核心消息格式。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
   }
 ]

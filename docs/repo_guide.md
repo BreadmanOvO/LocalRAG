@@ -13,7 +13,7 @@
 
 ## 实验/评测脚本
 - `eval/eval_ragas.py`：baseline 评测入口
-- `eval/eval_llm_judge.py`：规则式 pairwise judge 入口
+- `eval/eval_llm_judge.py`：pairwise LLM judge 入口
 - `eval/eval_chunking.py`：chunking 对比实验入口
 - `test/`：单元测试与实验验证脚本
 - `data/evaluation/`：评测数据与 source registry
@@ -22,7 +22,7 @@
 - `results/baseline_eval/<run_id>/`
   - `predictions.json`
   - `metrics.json`
-  - `manifest.json`
+  - `manifest.json`（包含 provider / model 等可复现实验元数据）
 - `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/`
   - `judgements.json`
   - `summary.json`
@@ -37,5 +37,5 @@
 
 ## 使用约定
 - 日常运行主系统时，优先看工程/运行文件。
-- 做对比实验时，优先看实验/评测脚本与 `results/` 下的对应 bundle。
+- 做对比实验时，优先看实验/评测脚本与 `results/` 下的对应 bundle，并以 bundle 中的 metrics / manifest 作为结果口径。
 - 新增实验脚本或结果目录时，同步更新本文件和 `README.md`。

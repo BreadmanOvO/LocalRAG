@@ -55,8 +55,26 @@ class EvalSchemaTests(unittest.TestCase):
         path = REPO_ROOT / "data" / "evaluation" / "gold" / "gold_set.json"
         records = json.loads(path.read_text(encoding="utf-8"))
 
-        self.assertGreaterEqual(len(records), 5)
+        self.assertGreaterEqual(len(records), 30)
         validate_dataset(records)
+
+    def test_gold_set_covers_core_topics_and_report_doc_type(self):
+        path = REPO_ROOT / "data" / "evaluation" / "gold" / "gold_set.json"
+        records = json.loads(path.read_text(encoding="utf-8"))
+
+        topics = {record["metadata"]["topic"] for record in records}
+        doc_types = {record["metadata"]["doc_type"] for record in records}
+
+        self.assertTrue(
+            {
+                "system_architecture",
+                "perception",
+                "planning_control",
+                "safety",
+                "sensor_fusion",
+            }.issubset(topics)
+        )
+        self.assertIn("report", doc_types)
 
     def test_validate_dataset_accepts_synthetic_dataset_file(self):
         path = REPO_ROOT / "data" / "evaluation" / "synthetic" / "synthetic_dataset.json"

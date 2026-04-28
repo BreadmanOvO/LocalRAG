@@ -25,12 +25,22 @@
 - `evidence`
 - `metadata`
 
-当前 metrics 包含基础统计与 evidence 命中统计：
+当前 metrics 包含基础统计、客观答案指标与 evidence 命中统计：
 - `sample_count`
 - `answered_count`
 - `answered_ratio`
 - `context_hit_count`
 - `context_hit_ratio`
+- `retrieved_row_count`
+- `avg_retrieved_row_count`
+- `retrieval_debug_candidate_count`
+- `avg_retrieval_debug_candidate_count`
+- `exact_match_count`
+- `exact_match_ratio`
+- `normalized_exact_match_count`
+- `normalized_exact_match_ratio`
+- `reference_substring_hit_count`
+- `reference_substring_hit_ratio`
 - `evidence_source_hit_count`
 - `evidence_source_hit_ratio`
 - `evidence_locator_hit_count`
@@ -47,7 +57,9 @@
 当前实现状态：
 - 读取 baseline 与 candidate 两份 predictions
 - 校验两侧 sample id 完全一致
-- 基于 answer 是否非空、evidence source hit、evidence locator hit 做 deterministic pairwise 判分
+- 调用真实 LLM 做 pairwise judgement，并固定 `temperature=0`
+- 使用版本化 prompt rubric，比对 reference answer、retrieved_rows、evidence 与 answer
+- 从模型返回文本中提取严格 JSON contract：`{"winner":"baseline|candidate|tie","reason":"..."}`
 - 会落盘 `judgements.json`、`summary.json`、`manifest.json`
 
 当前 summary 包含：
@@ -57,9 +69,9 @@
 - `tie_count`
 
 当前限制：
-- `winner` 已不再是全 tie 占位逻辑，但仍属于规则式 judge，而不是真实 LLM-as-a-Judge
-- `reason` 当前记录的是规则式打分依据，不是自然语言评审结论
-- 尚未接入真实 LLM-as-a-Judge 判分标准
+- 当前不是完整 Ragas pipeline，baseline_eval 仍以轻量客观指标为主
+- Judge 已接入真实 LLM-as-a-Judge，但仍依赖本地 provider / model 配置
+- pairwise 结论已可用于回归比较，但仍受具体模型能力与本地运行时配置影响
 
 结果目录合同：
 - `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/judgements.json`
@@ -109,10 +121,10 @@
 - `doc_type`
 
 当前 schema 测试还约束：
-- Gold Set 至少 8 条
-- Synthetic Set 至少 14 条
-- 合并后需覆盖核心主题：`system_architecture`、`perception`、`planning_control`、`safety`、`sensor_fusion`
-- 合并后必须至少包含一种 `report` 类型样本
+- Gold Set 至少 30 条
+- Synthetic Set 至少 10 条
+- Gold Set 自身需覆盖核心主题：`system_architecture`、`perception`、`planning_control`、`safety`、`sensor_fusion`
+- Gold Set 自身必须至少包含一种 `report` 类型样本
 
 ## 当前口径下的指标解释
 
@@ -128,11 +140,10 @@
 - 版本之间是否存在显著主观质量差异
 
 ### judge_eval
-当前只适合验证：
-- pairwise 输入输出合同是否稳定
-- 后续接入真实 Judge 时目录与数据结构是否可复用
-
-它暂时不能作为真实版本胜负结论。
+当前适合用于：
+- 进行 baseline / candidate 的 pairwise 回归比较
+- 复用稳定的 judge artifact contract 与 `judge_prompt_version`
+- 对候选版本做小规模真实 LLM 裁判验证
 
 ### chunking_eval
 当前最适合用于：
@@ -141,10 +152,9 @@
 - 观察不同 `doc_type` 的切分收益差异
 
 ## 与目标态的差距
-以下能力仍是 v1.1 的收尾项或 v1.2 之前的准备项：
-- 为 baseline_eval 接入更完整的客观指标
-- 为 judge_eval 接入真实 LLM 判分逻辑
-- 继续扩充 Gold / Synthetic 数据集
+以下能力仍是 v1.2 之前的延展方向：
+- 如有需要，为 baseline_eval 接入更完整的 Ragas 风格指标
+- 继续扩充 Gold / Synthetic 数据集，增强版本闸门强度
 - 用统一 artifact contract 支撑后续 hybrid retrieval / reranker 消融实验
 
 ## 运行前提

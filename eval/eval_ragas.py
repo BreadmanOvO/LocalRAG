@@ -30,10 +30,36 @@ def _normalize_locator(locator: str | None) -> str:
 
 
 
+def _normalize_text(value: str | None) -> str:
+    if not value:
+        return ""
+    return " ".join(str(value).strip().lower().split())
+
+
+
 def summarize_predictions(predictions: list[dict[str, Any]]) -> dict[str, Any]:
     sample_count = len(predictions)
     answered_count = sum(1 for row in predictions if row.get("answer", "").strip())
     context_count = sum(1 for row in predictions if row.get("retrieved_context", "").strip())
+    retrieved_row_count = sum(len(row.get("retrieved_rows", [])) for row in predictions)
+    retrieval_debug_candidate_count = sum(
+        len(row.get("retrieval_debug_candidates", [])) for row in predictions
+    )
+    exact_match_count = sum(
+        1 for row in predictions if row.get("answer", "") == row.get("reference_answer", "")
+    )
+    normalized_exact_match_count = sum(
+        1
+        for row in predictions
+        if _normalize_text(row.get("answer", ""))
+        and _normalize_text(row.get("answer", "")) == _normalize_text(row.get("reference_answer", ""))
+    )
+    reference_substring_hit_count = sum(
+        1
+        for row in predictions
+        if _normalize_text(row.get("reference_answer", ""))
+        and _normalize_text(row.get("reference_answer", "")) in _normalize_text(row.get("answer", ""))
+    )
     evidence_source_hit_count = 0
     evidence_locator_hit_count = 0
 
@@ -53,6 +79,16 @@ def summarize_predictions(predictions: list[dict[str, Any]]) -> dict[str, Any]:
         "answered_ratio": round(answered_count / sample_count, 3) if sample_count else 0.0,
         "context_hit_count": context_count,
         "context_hit_ratio": round(context_count / sample_count, 3) if sample_count else 0.0,
+        "retrieved_row_count": retrieved_row_count,
+        "avg_retrieved_row_count": round(retrieved_row_count / sample_count, 3) if sample_count else 0.0,
+        "retrieval_debug_candidate_count": retrieval_debug_candidate_count,
+        "avg_retrieval_debug_candidate_count": round(retrieval_debug_candidate_count / sample_count, 3) if sample_count else 0.0,
+        "exact_match_count": exact_match_count,
+        "exact_match_ratio": round(exact_match_count / sample_count, 3) if sample_count else 0.0,
+        "normalized_exact_match_count": normalized_exact_match_count,
+        "normalized_exact_match_ratio": round(normalized_exact_match_count / sample_count, 3) if sample_count else 0.0,
+        "reference_substring_hit_count": reference_substring_hit_count,
+        "reference_substring_hit_ratio": round(reference_substring_hit_count / sample_count, 3) if sample_count else 0.0,
         "evidence_source_hit_count": evidence_source_hit_count,
         "evidence_source_hit_ratio": round(evidence_source_hit_count / sample_count, 3) if sample_count else 0.0,
         "evidence_locator_hit_count": evidence_locator_hit_count,
@@ -113,7 +149,13 @@ def build_run_id(dataset_path: Path) -> str:
     return f"{dataset_path.stem}-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
 
-def build_manifest(*, run_id: str, dataset_path: Path, runner_script: str) -> dict[str, Any]:
+def build_manifest(
+    *,
+    run_id: str,
+    dataset_path: Path,
+    runner_script: str,
+    runtime_config: Any,
+) -> dict[str, Any]:
     return {
         "contract_version": "v1.1",
         "pipeline": "baseline_eval",
@@ -121,12 +163,16 @@ def build_manifest(*, run_id: str, dataset_path: Path, runner_script: str) -> di
         "dataset_path": str(dataset_path),
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "runner_script": runner_script,
+        "provider": runtime_config.provider,
+        "chat_model_name": runtime_config.chat_model_name,
+        "embedding_model_name": runtime_config.embedding_model_name,
     }
 
 
 def run_baseline_to_dir(dataset_path: Path | str, out_dir: Path | str) -> dict[str, Any]:
     dataset_path = Path(dataset_path)
     out_dir = Path(out_dir)
+    runtime_config = load_runtime_config()
     run_id = build_run_id(dataset_path)
     run_dir = out_dir / run_id
     summary = run_baseline(
@@ -140,6 +186,7 @@ def run_baseline_to_dir(dataset_path: Path | str, out_dir: Path | str) -> dict[s
             run_id=run_id,
             dataset_path=dataset_path,
             runner_script="eval/eval_ragas.py",
+            runtime_config=runtime_config,
         ),
     )
     return summary

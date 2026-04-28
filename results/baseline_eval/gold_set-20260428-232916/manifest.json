@@ -1,0 +1,11 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "baseline_eval",
+  "run_id": "gold_set-20260428-232916",
+  "dataset_path": "data/evaluation/gold/gold_set.json",
+  "created_at": "2026-04-28T23:30:42",
+  "runner_script": "eval/eval_ragas.py",
+  "provider": "local_embedding",
+  "chat_model_name": "Qwen/Qwen3-8B",
+  "embedding_model_name": "local-hash-embedding"
+}
