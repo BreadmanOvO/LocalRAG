@@ -19,7 +19,21 @@
       "Bash(PYTHONPATH=\"C:/Users/zhuyu/.config/superpowers/worktrees/LocalRAG/source-cleaning-registry\" python:*)",
       "mcp__plugin_context7_context7__resolve-library-id",
       "mcp__plugin_context7_context7__query-docs",
-      "Bash(pip install *)"
+      "Bash(pip install *)",
+      "Bash(claude *)",
+      "Skill(update-config)",
+      "Bash(python *)",
+      "Bash(cp -f \"/root/workspace/LocalRAG/.claude/worktrees/v1-1-parallel-implementation/README.md\" \"/root/workspace/LocalRAG/README.md\")",
+      "Bash(cp -f \"/root/workspace/LocalRAG/.claude/worktrees/v1-1-parallel-implementation/docs/evaluation.md\" \"/root/workspace/LocalRAG/docs/evaluation.md\")",
+      "Bash(cp -f \"/root/workspace/LocalRAG/.claude/worktrees/v1-1-parallel-implementation/docs/repo_guide.md\" \"/root/workspace/LocalRAG/docs/repo_guide.md\")",
+      "Bash(cp -f \"/root/workspace/LocalRAG/.claude/worktrees/v1-1-parallel-implementation/docs/resume_notes.md\" \"/root/workspace/LocalRAG/docs/resume_notes.md\")",
+      "Bash(cp -f \"/root/workspace/LocalRAG/.claude/worktrees/v1-1-parallel-implementation/docs/roadmap.md\" \"/root/workspace/LocalRAG/docs/roadmap.md\")",
+      "Bash(cp -f \"/root/workspace/LocalRAG/.claude/worktrees/v1-1-parallel-implementation/config/runtime_keys.py\" \"/root/workspace/LocalRAG/config/runtime_keys.py\")",
+      "Bash(cp -f \"/root/workspace/LocalRAG/.claude/worktrees/v1-1-parallel-implementation/.gitignore\" \"/root/workspace/LocalRAG/.gitignore\")",
+      "Bash(cp -f \"/root/workspace/LocalRAG/.claude/worktrees/v1-1-parallel-implementation/TODO.md\" \"/root/workspace/LocalRAG/TODO.md\")",
+      "Skill(commit-commands:commit)",
+      "Bash(cp \"/root/workspace/LocalRAG/config/runtime_models.json\" \"/root/workspace/LocalRAG/.claude/worktrees/v1-1-closeout/config/runtime_models.json\")",
+      "Bash(python -)"
     ]
   }
 }
