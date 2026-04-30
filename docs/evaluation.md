@@ -78,6 +78,17 @@
 - `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/summary.json`
 - `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/manifest.json`
 
+### 2.1 judge_formal_run
+入口：`eval/eval_judge_formal_run.py`
+
+当前用于 formal judge 结果整理：
+- 读取既有 `judge_eval` run bundle
+- 汇总关键判断结果与结论
+- 输出面向验收的 `test_report.md`
+
+结果目录合同补充：
+- `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/test_report.md`
+
 ### 3. chunking_eval
 入口：`eval/eval_chunking.py`
 

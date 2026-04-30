@@ -17,6 +17,7 @@
 - baseline 评测 runner：`eval/eval_ragas.py`
 - pairwise LLM judge：`eval/eval_llm_judge.py`
 - chunking 对比实验：`eval/eval_chunking.py`
+- formal judge 汇总：`eval/eval_judge_formal_run.py`
 
 ## 当前评测状态
 ### 1. baseline_eval
@@ -39,10 +40,16 @@
 - 通过严格 JSON contract 解析 `winner` 与 `reason`
 - 输出 `judgements.json`、`summary.json`、`manifest.json`
 
+`eval/eval_judge_formal_run.py` 用于整理 formal judge 流程：
+- 读取 judge run bundle
+- 汇总关键结果与结论
+- 输出 `test_report.md`
+
 结果目录约定：
 - `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/judgements.json`
 - `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/summary.json`
 - `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/manifest.json`
+- `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/test_report.md`
 
 ### 3. chunking_eval
 `eval/eval_chunking.py` 是当前最完整的评测链路：

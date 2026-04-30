@@ -635,13 +635,20 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
 
         self.assertIn("docs/repo_guide.md", readme_text)
         self.assertIn("eval_chunking.py", readme_text)
+        self.assertIn("eval_judge_formal_run.py", readme_text)
         self.assertIn("runtime_models.json", readme_text)
         self.assertNotIn("OPENAI_API_KEY", readme_text)
         self.assertIn("工程/运行文件", guide_text)
         self.assertIn("实验/评测脚本", guide_text)
+        self.assertIn("eval_judge_formal_run.py", guide_text)
+        self.assertIn("test_report.md", guide_text)
         self.assertIn("results/chunking_eval/<run_id>/", guide_text)
         self.assertIn("results/baseline_eval/<run_id>/", guide_text)
         self.assertIn("results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/", guide_text)
+        self.assertIn(
+            "eval_judge_formal_run.py",
+            (repo_root / "docs" / "evaluation.md").read_text(encoding="utf-8"),
+        )
 
 
 if __name__ == "__main__":

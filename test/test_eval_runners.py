@@ -1,4 +1,8 @@
+import ast
 import json
+import re
+import shlex
+import subprocess
 import sys
 import tempfile
 import types
@@ -7,8 +11,11 @@ from pathlib import Path
 from unittest import mock
 
 from eval import eval_chunking
+from eval import eval_judge_formal_run as judge_formal_run
 from eval import eval_llm_judge as judge_runner
 from eval import eval_ragas as ragas_runner
+
+formal_runner = judge_formal_run
 from eval.eval_llm_judge import summarize_judgements
 from eval.eval_ragas import (
     build_prediction_record,
@@ -18,6 +25,312 @@ from eval.eval_ragas import (
     summarize_predictions,
     write_json,
 )
+
+
+class JudgeFormalRunTests(unittest.TestCase):
+    def test_build_judge_formal_run_returns_paths_for_all_bundles(self):
+        paths = judge_formal_run.build_judge_formal_run(
+            dataset_path=Path('data/evaluation/gold/gold_set.json'),
+            baseline_run_dir=Path('results/baseline_eval/gold_set-20260429-120000'),
+            chunking_run_dir=Path('results/chunking_eval/gold_set-20260429-120100'),
+            judge_run_dir=Path('results/judge_eval/predictions-vs-predictions-20260429-120200'),
+        )
+
+        self.assertEqual(paths['dataset_path'], Path('data/evaluation/gold/gold_set.json'))
+        self.assertEqual(
+            paths['baseline_predictions_path'],
+            Path('results/baseline_eval/gold_set-20260429-120000/predictions.json'),
+        )
+        self.assertEqual(
+            paths['candidate_predictions_path'],
+            Path('results/chunking_eval/gold_set-20260429-120100/doc_type_aware/predictions.json'),
+        )
+        self.assertEqual(
+            paths['report_path'],
+            Path('results/judge_eval/predictions-vs-predictions-20260429-120200/test_report.md'),
+        )
+
+    def test_run_formal_judge_pipeline_calls_existing_runners(self):
+        root = Path('/tmp/formal-run')
+        dataset_path = root / 'gold_set.json'
+        baseline_out_dir = root / 'baseline_eval'
+        chunking_out_dir = root / 'chunking_eval'
+        judge_out_dir = root / 'judge_eval'
+        baseline_existing_run_dir = baseline_out_dir / 'baseline-old'
+        baseline_run_dir = baseline_out_dir / 'baseline-run'
+        chunking_existing_run_dir = chunking_out_dir / 'chunking-old'
+        chunking_run_dir = chunking_out_dir / 'chunking-run'
+        judge_existing_run_dir = judge_out_dir / 'judge-old'
+        judge_run_dir = judge_out_dir / 'judge-run'
+
+        baseline_summary = {'sample_count': 2}
+        chunking_summary = {'sample_count': 2}
+        judge_summary = {'sample_count': 2}
+
+        with (
+            mock.patch.object(formal_runner, 'list_run_dirs') as list_run_dirs,
+            mock.patch.object(formal_runner.ragas_runner, 'run_baseline_to_dir', return_value=baseline_summary) as baseline_run,
+            mock.patch.object(formal_runner.eval_chunking, 'main', return_value=chunking_summary) as chunking_main,
+            mock.patch.object(formal_runner.judge_runner, 'run_pairwise_judge_to_dir', return_value=judge_summary) as judge_run,
+            mock.patch.object(formal_runner, 'write_test_report') as write_report,
+            mock.patch.object(formal_runner, 'verify_formal_run_artifacts', return_value=[]),
+            mock.patch.object(Path, 'exists', return_value=True),
+        ):
+            list_run_dirs.side_effect = [
+                [baseline_existing_run_dir],
+                [baseline_existing_run_dir, baseline_run_dir],
+                [chunking_existing_run_dir],
+                [chunking_existing_run_dir, chunking_run_dir],
+                [judge_existing_run_dir],
+                [judge_existing_run_dir, judge_run_dir],
+            ]
+            result = formal_runner.run_formal_judge_pipeline(
+                dataset_path=dataset_path,
+                baseline_out_dir=baseline_out_dir,
+                chunking_out_dir=chunking_out_dir,
+                judge_out_dir=judge_out_dir,
+            )
+
+        baseline_run.assert_called_once_with(dataset_path, baseline_out_dir)
+        chunking_main.assert_called_once_with()
+        judge_run.assert_called_once()
+        write_report.assert_called_once()
+        self.assertEqual(result['baseline_summary'], baseline_summary)
+        self.assertEqual(result['chunking_summary'], chunking_summary)
+        self.assertEqual(result['judge_summary'], judge_summary)
+        self.assertEqual(result['verification_failures'], [])
+        self.assertEqual(result['run']['judge_run_dir'], judge_run_dir)
+
+    def test_list_run_dirs_ignores_non_run_directories(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            parent = Path(temp_dir)
+            stores_dir = parent / 'stores'
+            stores_dir.mkdir()
+            (stores_dir / 'nested').mkdir()
+            run_dir = parent / 'gold_set-20260430-161506'
+            run_dir.mkdir()
+            (run_dir / 'manifest.json').write_text('{}', encoding='utf-8')
+
+            self.assertEqual([run_dir], formal_runner.list_run_dirs(parent))
+
+    def test_discover_new_run_dir_returns_only_new_directory(self):
+        parent = Path('/tmp/run-parent')
+        previous_run_dirs = [parent / 'older-run']
+
+        with mock.patch.object(
+            formal_runner,
+            'list_run_dirs',
+            return_value=[parent / 'older-run', parent / 'fresh-run'],
+        ):
+            result = formal_runner.discover_new_run_dir(parent, previous_run_dirs)
+
+        self.assertEqual(parent / 'fresh-run', result)
+
+    def test_discover_new_run_dir_raises_when_new_directory_count_is_not_one(self):
+        parent = Path('/tmp/run-parent')
+
+        with mock.patch.object(formal_runner, 'list_run_dirs', return_value=[parent / 'older-run']):
+            with self.assertRaisesRegex(ValueError, r'Expected exactly one new run directory'):
+                formal_runner.discover_new_run_dir(parent, [parent / 'older-run'])
+
+    def test_eval_judge_formal_run_main_returns_pipeline_summary(self):
+        expected_summary = {
+            'baseline_summary': {'sample_count': 30},
+            'chunking_summary': {'sample_count': 30},
+            'judge_summary': {'sample_count': 30, 'candidate_win_count': 12},
+            'verification_failures': [],
+            'run': {'judge_run_dir': Path('/tmp/judge-run')},
+        }
+
+        with (
+            mock.patch.object(formal_runner, 'run_formal_judge_pipeline', return_value=expected_summary) as run_pipeline,
+            mock.patch.object(
+                sys,
+                'argv',
+                [
+                    'eval_judge_formal_run.py',
+                    '--dataset',
+                    'custom-data.json',
+                    '--baseline-out-dir',
+                    'baseline-results',
+                    '--chunking-out-dir',
+                    'chunking-results',
+                    '--judge-out-dir',
+                    'judge-results',
+                ],
+            ),
+        ):
+            result = formal_runner.main()
+
+        run_pipeline.assert_called_once_with(
+            dataset_path=Path('custom-data.json'),
+            baseline_out_dir=Path('baseline-results'),
+            chunking_out_dir=Path('chunking-results'),
+            judge_out_dir=Path('judge-results'),
+        )
+        self.assertEqual(expected_summary['judge_summary'], result['judge_summary'])
+
+    def test_verify_formal_run_artifacts_checks_required_files_and_sample_count(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir = Path(temp_dir)
+            run = judge_formal_run.build_judge_formal_run(
+                dataset_path=temp_dir / 'gold_set.json',
+                baseline_run_dir=temp_dir / 'baseline_eval' / 'baseline-run',
+                chunking_run_dir=temp_dir / 'chunking_eval' / 'chunking-run',
+                judge_run_dir=temp_dir / 'judge_eval' / 'judge-run',
+            )
+
+            missing_failures = judge_formal_run.verify_formal_run_artifacts(run)
+            self.assertEqual(
+                missing_failures,
+                [
+                    f"missing baseline predictions: {run['baseline_predictions_path']}",
+                    f"missing baseline metrics: {run['baseline_metrics_path']}",
+                    f"missing baseline manifest: {run['baseline_manifest_path']}",
+                    f"missing candidate predictions: {run['candidate_predictions_path']}",
+                    f"missing candidate metrics: {run['candidate_metrics_path']}",
+                    f"missing chunking manifest: {run['chunking_manifest_path']}",
+                    f"missing chunking comparison summary: {run['chunking_summary_path']}",
+                    f"missing judge judgements: {run['judge_judgements_path']}",
+                    f"missing judge summary: {run['judge_summary_path']}",
+                    f"missing judge manifest: {run['judge_manifest_path']}",
+                ],
+            )
+
+            for key in (
+                'baseline_predictions_path',
+                'baseline_metrics_path',
+                'baseline_manifest_path',
+                'candidate_predictions_path',
+                'candidate_metrics_path',
+                'chunking_manifest_path',
+                'chunking_summary_path',
+                'judge_judgements_path',
+            ):
+                run[key].parent.mkdir(parents=True, exist_ok=True)
+                run[key].write_text('{}', encoding='utf-8')
+
+            run['judge_summary_path'].write_text(json.dumps({'sample_count': 29}), encoding='utf-8')
+            run['judge_manifest_path'].write_text(
+                json.dumps(
+                    {
+                        'judge_prompt_version': 'stale-version',
+                        'baseline_predictions_path': str(temp_dir / 'wrong-baseline.json'),
+                        'candidate_predictions_path': str(temp_dir / 'wrong-candidate.json'),
+                    }
+                ),
+                encoding='utf-8',
+            )
+
+            failures = judge_formal_run.verify_formal_run_artifacts(run)
+            self.assertEqual(
+                failures,
+                [
+                    'judge summary sample_count must be 30',
+                    'judge manifest must include the current judge_prompt_version',
+                    'judge manifest baseline_predictions_path must point to the fresh baseline run',
+                    'judge manifest candidate_predictions_path must point to the fresh candidate run',
+                ],
+            )
+
+            run['judge_summary_path'].write_text(json.dumps({'sample_count': 30}), encoding='utf-8')
+            run['judge_manifest_path'].write_text(
+                json.dumps(
+                    {
+                        'judge_prompt_version': judge_runner.JUDGE_PROMPT_VERSION,
+                        'baseline_predictions_path': str(run['baseline_predictions_path']),
+                        'candidate_predictions_path': str(run['candidate_predictions_path']),
+                    }
+                ),
+                encoding='utf-8',
+            )
+
+            self.assertEqual([], judge_formal_run.verify_formal_run_artifacts(run))
+
+    def test_write_test_report_outputs_shell_safe_replay_commands_and_verification_result(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            run = formal_runner.build_judge_formal_run(
+                dataset_path=Path('data/evaluation/gold set.json'),
+                baseline_run_dir=root / 'baseline eval' / 'gold_set-20260429-120000',
+                chunking_run_dir=root / 'chunking eval' / 'gold_set-20260429-120100',
+                judge_run_dir=root / 'judge eval' / 'predictions-vs-predictions-20260429-120200',
+            )
+
+            report_path = formal_runner.write_test_report(
+                run=run,
+                baseline_summary={'sample_count': 30, 'answered_ratio': 1.0},
+                chunking_summary={
+                    'run_id': 'gold_set-20260429-120100',
+                    'baseline': {'evidence_source_hit_ratio': 0.4},
+                    'doc_type_aware': {'evidence_source_hit_ratio': 0.6},
+                },
+                judge_summary={'sample_count': 30, 'candidate_win_count': 12, 'baseline_win_count': 8, 'tie_count': 10},
+                verification_failures=['judge summary sample_count must be 30', 'missing judge manifest: /tmp/fake/manifest.json'],
+            )
+
+            report_text = run['report_path'].read_text(encoding='utf-8')
+            commands = re.findall(r"- `([^`]+)`", report_text)
+
+        self.assertEqual(run['report_path'], report_path)
+        self.assertIn('# Judge formal run test report', report_text)
+        self.assertIn('candidate_win_count', report_text)
+        self.assertEqual(3, len(commands))
+        self.assertIn(str(run['dataset_path'].resolve()), report_text)
+        self.assertIn(str(run['baseline_run_dir'].parent.resolve()), report_text)
+        self.assertIn(str(run['chunking_run_dir'].parent.resolve()), report_text)
+        self.assertIn(str(run['judge_run_dir'].parent.resolve()), report_text)
+        self.assertIn(str(run['candidate_predictions_path'].resolve()), report_text)
+        self.assertIn(run['baseline_run_dir'].name, report_text)
+        self.assertIn(run['chunking_run_dir'].name, report_text)
+        self.assertIn(run['judge_run_dir'].name, report_text)
+
+        expected_python_fragments = [
+            [
+                'from pathlib import Path',
+                'import eval.eval_ragas as module',
+                f"module.build_run_id = lambda *_: {run['baseline_run_dir'].name!r}",
+                f"Path({str(run['dataset_path'].resolve())!r})",
+                f"Path({str(run['baseline_run_dir'].parent.resolve())!r})",
+                'module.run_baseline_to_dir',
+            ],
+            [
+                'from eval import eval_chunking as module',
+                f"module.build_run_id = lambda *_: {run['chunking_run_dir'].name!r}",
+                f"sys.argv = {repr(['eval_chunking.py', '--dataset', str(run['dataset_path'].resolve()), '--out-dir', str(run['chunking_run_dir'].parent.resolve())])}",
+                'module.main()',
+            ],
+            [
+                'from pathlib import Path',
+                'import eval.eval_llm_judge as module',
+                f"module.build_run_id = lambda *_: {run['judge_run_dir'].name!r}",
+                f"Path({str(run['baseline_predictions_path'].resolve())!r})",
+                f"Path({str(run['candidate_predictions_path'].resolve())!r})",
+                f"Path({str(run['judge_run_dir'].parent.resolve())!r})",
+                'module.run_pairwise_judge_to_dir',
+            ],
+        ]
+
+        expected_interpreter = str(Path(sys.executable))
+        for command, expected_fragments in zip(commands, expected_python_fragments, strict=True):
+            subprocess.run(
+                ['bash', '-n', '-c', command],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            parts = shlex.split(command)
+            self.assertEqual(['cd', str(formal_runner.REPO_ROOT), '&&', expected_interpreter, '-c'], parts[:5])
+            self.assertEqual(6, len(parts))
+            python_snippet = parts[5]
+            ast.parse(python_snippet)
+            for fragment in expected_fragments:
+                self.assertIn(fragment, python_snippet)
+
+        self.assertIn('Result: **FAIL**', report_text)
+        self.assertIn('- Failures:', report_text)
+        self.assertIn('  - judge summary sample_count must be 30', report_text)
+        self.assertIn('  - missing judge manifest: /tmp/fake/manifest.json', report_text)
 
 
 class EvalRunnerTests(unittest.TestCase):

@@ -15,6 +15,7 @@
 - `eval/eval_ragas.py`：baseline 评测入口
 - `eval/eval_llm_judge.py`：pairwise LLM judge 入口
 - `eval/eval_chunking.py`：chunking 对比实验入口
+- `eval/eval_judge_formal_run.py`：formal judge 结果汇总入口
 - `test/`：单元测试与实验验证脚本
 - `data/evaluation/`：评测数据与 source registry
 
@@ -27,6 +28,7 @@
   - `judgements.json`
   - `summary.json`
   - `manifest.json`
+  - `test_report.md`
 - `results/chunking_eval/<run_id>/`
   - `baseline/`
   - `doc_type_aware/`
