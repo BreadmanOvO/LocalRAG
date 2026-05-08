@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-SUPPORTED_PROVIDERS = ("bailian", "modelscope", "local_embedding")
+SUPPORTED_PROVIDERS = ("bailian", "modelscope", "local_embedding", "local_sentence_transformer")
 UNIFIED_REQUIRED_FIELDS = (
     "provider",
     "api_key",

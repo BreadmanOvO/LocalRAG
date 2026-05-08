@@ -1,0 +1,10 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "retrieval_eval",
+  "run_id": "gold_set_100-20260508-001430",
+  "alpha": 0.5,
+  "final_top_k": 5,
+  "use_reranker": true,
+  "reranker_model": "BAAI/bge-reranker-base",
+  "store_dir": "results\\chunking_eval\\stores\\gold_set-100-20260507\\doc_type_aware"
+}

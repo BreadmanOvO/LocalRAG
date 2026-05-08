@@ -1,0 +1,34 @@
+{
+  "run_id": "gold_set-20260505-110329",
+  "alpha": 0.3,
+  "dense_only": {
+    "sample_count": 30,
+    "answered_count": 30,
+    "answered_ratio": 1.0,
+    "retrieved_row_count": 150,
+    "evidence_source_hit_count": 7,
+    "evidence_source_hit_ratio": 0.233,
+    "evidence_locator_hit_count": 0,
+    "evidence_locator_hit_ratio": 0.0
+  },
+  "sparse_only": {
+    "sample_count": 30,
+    "answered_count": 30,
+    "answered_ratio": 1.0,
+    "retrieved_row_count": 150,
+    "evidence_source_hit_count": 20,
+    "evidence_source_hit_ratio": 0.667,
+    "evidence_locator_hit_count": 0,
+    "evidence_locator_hit_ratio": 0.0
+  },
+  "hybrid": {
+    "sample_count": 30,
+    "answered_count": 30,
+    "answered_ratio": 1.0,
+    "retrieved_row_count": 150,
+    "evidence_source_hit_count": 20,
+    "evidence_source_hit_ratio": 0.667,
+    "evidence_locator_hit_count": 0,
+    "evidence_locator_hit_ratio": 0.0
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "baseline_eval",
+  "runner_variant": "v1_0_compatible_baseline",
+  "created_at": "2026-05-01T18:59:58",
+  "runner_script": "/root/workspace/LocalRAG/.worktrees/v1-0-vs-v1-1-report/scripts/run_v1_0_compatible_baseline.py",
+  "worktree_root": "/root/workspace/LocalRAG/.worktrees/v1-0-vs-v1-1-report",
+  "dataset_path": "/root/workspace/LocalRAG/.claude/worktrees/v1-0-report-baseline/data/evaluation/gold/gold_set.json",
+  "output_dir": "/root/workspace/LocalRAG/results/baseline_eval/v1_0_reconstructed-gold_set",
+  "sample_count": 5,
+  "compatibility_clarification": {
+    "not_true_v1_0_runtime_reproduction": "This artifact is NOT a true v1.0 runtime reproduction.",
+    "comparison_scope": "It reuses the historical v1.0 question set and comparison scope.",
+    "runtime_interface": "Execution runs through the current v1.1 runtime interface: core.rag.RagService.answer_with_retrieval.",
+    "retrieval_metrics_limitation": "Interpret retrieval metrics cautiously; they are limited for this compatibility run, especially when retrieval counters are zero."
+  },
+  "runtime": {
+    "provider": "local_embedding",
+    "chat_model_name": "Qwen/Qwen3-8B",
+    "embedding_model_name": "local-hash-embedding"
+  },
+  "artifacts": {
+    "predictions": "/root/workspace/LocalRAG/results/baseline_eval/v1_0_reconstructed-gold_set/predictions.json",
+    "metrics": "/root/workspace/LocalRAG/results/baseline_eval/v1_0_reconstructed-gold_set/metrics.json",
+    "manifest": "/root/workspace/LocalRAG/results/baseline_eval/v1_0_reconstructed-gold_set/manifest.local.json"
+  }
+}

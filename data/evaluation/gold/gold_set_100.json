@@ -1,0 +1,1702 @@
+[
+  {
+    "id": "gold-001",
+    "question": "Apollo Cyber RT 的核心作用是什么？",
+    "reference_answer": "Apollo Cyber RT 负责提供自动驾驶系统中的通信、调度和组件协作基础能力。",
+    "evidence": [
+      {
+        "quote": "Cyber RT is the core framework for Apollo runtime communication and scheduling.",
+        "source_id": "apollo-doc-002",
+        "locator": "chapter=1/overview"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-002",
+    "question": "感知融合为什么对自动驾驶很重要？",
+    "reference_answer": "感知融合能综合不同传感器的互补信息，从而提升目标检测与环境理解的稳定性。",
+    "evidence": [
+      {
+        "quote": "Fusion combines semantic cues with geometric robustness.",
+        "source_id": "apollo-doc-005",
+        "locator": "chapter=2/section=2.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-003",
+    "question": "UN R155 主要关注什么类型的安全问题？",
+    "reference_answer": "UN R155 主要关注车辆网络安全管理体系和网络攻击风险。",
+    "evidence": [
+      {
+        "quote": "The regulation addresses cyber security and cyber security management systems.",
+        "source_id": "standard-007",
+        "locator": "section=scope"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-004",
+    "question": "为什么预测模块与规划模块需要紧密协同？",
+    "reference_answer": "因为预测结果直接影响规划决策，只有保持时序和接口一致，才能减少决策偏差。",
+    "evidence": [
+      {
+        "quote": "Prediction output feeds downstream planning decisions.",
+        "source_id": "apollo-doc-007",
+        "locator": "chapter=3/section=3.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-005",
+    "question": "BEV 感知在自动驾驶系统中有什么优势？",
+    "reference_answer": "BEV 感知能够统一多源信息到鸟瞰空间表示，提升空间一致性和下游规划理解能力。",
+    "evidence": [
+      {
+        "quote": "BEV representation helps normalize spatial scale across the scene.",
+        "source_id": "paper-001",
+        "locator": "page=4/paragraph=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-006",
+    "question": "Waymo Open Dataset 报告为什么强调数据集的多样性？",
+    "reference_answer": "因为自动驾驶系统需要在不同真实环境中泛化，数据集覆盖越多样，越有助于对感知系统做更贴近真实场景的评估。",
+    "evidence": [
+      {
+        "quote": "Existing self-driving datasets are limited in the scale and variation of the environments they capture, even though generalization within and between operating regions is crucial to the overall viability of the technology.",
+        "source_id": "paper-004",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "report"
+    }
+  },
+  {
+    "id": "gold-007",
+    "question": "Apollo 视觉感知模块为什么要重视高精确率和高稳定性？",
+    "reference_answer": "因为摄像头容易受环境影响且缺乏深度信息，只有高精确率和高稳定性的视觉感知算法才能支撑自动驾驶感知模块可靠运行。",
+    "evidence": [
+      {
+        "quote": "但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。",
+        "source_id": "apollo-doc-006",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-008",
+    "question": "Apollo Channel 文档如何描述规划模块的职责？",
+    "reference_answer": "规划模块负责对主车行为进行决策，并实时生成车辆规划线。",
+    "evidence": [
+      {
+        "quote": "规划(Plamring) 对主车行为进行决策，实时生成车辆规划线。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-009",
+    "question": "Apollo Cyber RT 如何组织自动驾驶系统中的模块依赖关系？",
+    "reference_answer": "Apollo Cyber RT 会从各个组件中提取依赖项，并通过 DAG 依赖关系图将它们连接起来。",
+    "evidence": [
+      {
+        "quote": "Apollo Cyber RT 框架建立在这些组件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。",
+        "source_id": "apollo-doc-002",
+        "locator": "p.2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-010",
+    "question": "Apollo Open Platform 中 Cyber RT 和 RTOS 的职责有什么区别？",
+    "reference_answer": "Cyber RT 负责管理模块间通信和任务调度，而 RTOS 负责处理时间要求极高的底层控制任务。",
+    "evidence": [
+      {
+        "quote": "Apollo Cyber RT 是 Apollo 自研的高性能运行时框架，用于管理模块间的通信和任务调度；RTOS（实时操作系统）则用于处理对时间要求极高的底层控制任务。",
+        "source_id": "apollo-doc-004",
+        "locator": "p.2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-011",
+    "question": "为什么 Apollo 学习路径把高精地图视为软件栈中的基础能力？",
+    "reference_answer": "因为高精地图支撑了软件栈中几乎所有其他部分，是理解 Apollo 架构的重要基础。",
+    "evidence": [
+      {
+        "quote": "Get to know how high-definition maps work, which underpin almost every other part of the software stack.",
+        "source_id": "apollo-doc-001",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-012",
+    "question": "Apollo Channel 文档如何描述组件、数据通道和消息格式之间的关系？",
+    "reference_answer": "Apollo 的模块以组件形式存在，组件之间通过数据通道通信，而消息格式定义了通道内最小的数据单元。",
+    "evidence": [
+      {
+        "quote": "Apollo的各个模块是以组件的形式存在的。组件之间利用数据通道进行通信。其中，最小的数据单元是消息格式定义的。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-013",
+    "question": "为什么 Apollo Open Platform 强调持续提升感知检测与识别能力？",
+    "reference_answer": "因为感知系统持续提升检测和识别能力，才能为其他自动驾驶模块提供准确、稳定、可靠的输入。",
+    "evidence": [
+      {
+        "quote": "Artificial intelligence and data-driven solutions combine to enable Apollo’s perception system to continuously improve its detection and recognition capabilities, which provide accurate, stable, and reliable input for other autonomous system modules.",
+        "source_id": "apollo-doc-004",
+        "locator": "p.3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-014",
+    "question": "Apollo 视觉感知算法在平台上主要覆盖哪三类应用场景？",
+    "reference_answer": "主要覆盖红绿灯检测、车道线检测和基于摄像头的障碍物检测三类场景。",
+    "evidence": [
+      {
+        "quote": "视觉感知算法在Apollo平台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。",
+        "source_id": "apollo-doc-006",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-015",
+    "question": "Apollo 预测模块为什么依赖感知模块提供障碍物状态信息？",
+    "reference_answer": "因为预测模块需要基于障碍物的位置、朝向、速度和加速度等状态信息来推断未来轨迹。",
+    "evidence": [
+      {
+        "quote": "感知模块作为预测模块的上游，提供障碍物的位置、朝向、速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹。",
+        "source_id": "apollo-doc-007",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-016",
+    "question": "Apollo 规划模块为什么采用 scenario-based 的实现方式？",
+    "reference_answer": "因为它要针对不同场景通过一系列独立任务组合完成轨迹规划，并允许开发者按场景调整任务配置。",
+    "evidence": [
+      {
+        "quote": "Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。",
+        "source_id": "apollo-doc-008",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-017",
+    "question": "Apollo 控制模块的核心执行目标是什么？",
+    "reference_answer": "控制模块的目标是依据规划轨迹和车辆状态生成方向盘、油门和刹车控制命令，并通过 canbus 下发给底层执行器。",
+    "evidence": [
+      {
+        "quote": "控制模块的目标是基于规划模块输出的目标轨迹和定位模块输出的车辆状态生成方向盘、油门、刹车控制命令，并通过canbus模块给车辆底层执行器。",
+        "source_id": "apollo-doc-009",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-018",
+    "question": "为什么 Apollo 预测模块的输出会直接影响规划模块？",
+    "reference_answer": "因为预测模块会给出障碍物未来轨迹，这些结果会作为下游规划模块进行自车轨迹规划的重要输入。",
+    "evidence": [
+      {
+        "quote": "预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规划模块进行自车轨迹的规划。",
+        "source_id": "apollo-doc-007",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-019",
+    "question": "FusionAD 论文认为多模态融合对预测与规划任务带来了什么收益？",
+    "reference_answer": "FusionAD 认为多模态融合显著提升了预测和规划任务表现，并且相较仅依赖相机 BEV 的方法也改善了感知任务。",
+    "evidence": [
+      {
+        "quote": "The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end-to-end learning methods solely reliant on camera-based BEV .",
+        "source_id": "paper-006",
+        "locator": "p.7"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-020",
+    "question": "ADS 2.0 为什么要求系统具备转入 minimal risk condition 的文档化流程？",
+    "reference_answer": "因为在自动驾驶系统无法继续正常运行时，系统需要有明确流程安全地转入最小风险状态，并尽量减少异常驾驶行为。",
+    "evidence": [
+      {
+        "quote": "Entities are encouraged to have a documented process for transitioning to a minimal risk condition.",
+        "source_id": "standard-002",
+        "locator": "p.14"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-021",
+    "question": "ADS 2.0 为什么把数据记录视为自动驾驶安全的重要组成部分？",
+    "reference_answer": "因为从事故数据中学习有助于复盘和改进系统，从而避免同类场景在其他 ADS 中再次发生。",
+    "evidence": [
+      {
+        "quote": "Learning from crash data is a central component to the safety potential of ADSs.",
+        "source_id": "standard-002",
+        "locator": "p.20"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-022",
+    "question": "UN R155 在型式批准前对网络安全措施提出了什么验证要求？",
+    "reference_answer": "车辆制造商在型式批准前需要进行适当且充分的测试，以验证所实施网络安全措施的有效性。",
+    "evidence": [
+      {
+        "quote": "The vehicle manufacturer shall perform, prior to type approval, appropriate and sufficient testing to verify the effectiveness of the security measures implemented.",
+        "source_id": "standard-007",
+        "locator": "p.11"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-023",
+    "question": "UN R156 为什么要求软件更新流程评估其对车辆安全持续运行的影响？",
+    "reference_answer": "因为软件更新可能影响其他与车辆安全持续运行相关的系统，制造商必须识别、评估并记录这种影响。",
+    "evidence": [
+      {
+        "quote": "A process to assess, identify and record if a software update will affect any other system required for the safe and continued operation of the vehicle",
+        "source_id": "standard-008",
+        "locator": "p.8"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-024",
+    "question": "UN R157 对 ALKS 的激活道路条件有什么要求？",
+    "reference_answer": "ALKS 只能在禁止行人和自行车进入、并且有物理隔离分隔对向车流的道路条件下激活。",
+    "evidence": [
+      {
+        "quote": "ALKS can be activated under certain conditions on roads where pedestrians and cyclists are prohibited and which, by design, are equipped with a physical separation that divides the traffic moving in opposite directions",
+        "source_id": "standard-009",
+        "locator": "p.3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-025",
+    "question": "Apollo 感知融合为什么强调把摄像头、毫米波雷达和激光雷达结合起来？",
+    "reference_answer": "因为三种传感器各有优缺点，若能有效融合它们，就能在各种情况下获得更优的整体感知性能。",
+    "evidence": [
+      {
+        "quote": "如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-026",
+    "question": "Apollo 感知融合模块支持在什么层级上融合摄像头、毫米波雷达和激光雷达结果？",
+    "reference_answer": "它支持在目标级别对摄像头、毫米波雷达和激光雷达的感知结果进行融合。",
+    "evidence": [
+      {
+        "quote": "Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-027",
+    "question": "Apollo 感知融合模块把各传感器结果汇入哪个统一输入 channel 作为源数据？",
+    "reference_answer": "各传感器感知结果会统一输出到 /perception/inner/PrefusedObjects 作为融合模块的源数据。",
+    "evidence": [
+      {
+        "quote": "各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-028",
+    "question": "Apollo 感知融合模块的主要输出 channel 表达了什么信息？",
+    "reference_answer": "其主要输出 channel 会输出多传感器融合后的障碍物信息。",
+    "evidence": [
+      {
+        "quote": "感知融合模块的主要输出channel。该channel 输出的是多传感器融合之后的障碍物信息。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-029",
+    "question": "FusionAD 论文为何认为多模态融合有助于下游预测与规划？",
+    "reference_answer": "因为多模态融合带来的 BEV 表征改进，不仅提升了预测和规划任务表现，也比只依赖相机 BEV 的方法更好。",
+    "evidence": [
+      {
+        "quote": "The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end-to-end learning methods solely reliant on camera-based BEV .",
+        "source_id": "paper-006",
+        "locator": "p.7"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-030",
+    "question": "为什么 Apollo Channel 文档强调查看 /apollo/perception/obstacles 的消息格式？",
+    "reference_answer": "因为通道中的消息格式定义了最小数据单元，查看 /apollo/perception/obstacles 的消息类型可以明确障碍物数据的结构。",
+    "evidence": [
+      {
+        "quote": "MessageType字段展现的数据格式是本Channel通道里使用的最小数据单元，由消息格式(Message）定义。示例中 apollo.perception.PerceptionObstacles 是数据通道/apollo/perception/obstacles 的核心消息格式。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-031",
+    "question": "Apollo激光雷达感知模块的流水线架构分为哪三个主要阶段？",
+    "reference_answer": "Apollo激光雷达感知模块采用流水线架构，整体分为数据预处理、特征提取与检测、后处理三个主要阶段。",
+    "evidence": [
+      {
+        "quote": "Apollo激光雷达感知模块采用流水线（Pipeline）架构，整体分为数据预处理、特征提取与检测、后处理三个主要阶段。",
+        "source_id": "apollo-doc-011",
+        "locator": "section=架构设计"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-032",
+    "question": "Apollo激光雷达感知模块中体素化操作的典型参数设置是多少？",
+    "reference_answer": "体素大小通常设置为0.1m x 0.1m x 0.15m，在精度和计算效率之间取得平衡。",
+    "evidence": [
+      {
+        "quote": "体素大小通常设置为0.1m x 0.1m x 0.15m，在精度和计算效率之间取得平衡。",
+        "source_id": "apollo-doc-011",
+        "locator": "section=点云预处理器"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-033",
+    "question": "Apollo激光雷达感知模块的目标跟踪器使用什么算法进行数据关联？",
+    "reference_answer": "目标跟踪器采用匈牙利算法（Hungarian Algorithm）或GNN（Global Nearest Neighbor）方法，将当前帧检测结果与已有轨迹进行匹配。",
+    "evidence": [
+      {
+        "quote": "数据关联（Data Association）：采用匈牙利算法（Hungarian Algorithm）或GNN（Global Nearest Neighbor）方法，将当前帧检测结果与已有轨迹进行匹配。",
+        "source_id": "apollo-doc-011",
+        "locator": "section=目标跟踪器"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-034",
+    "question": "Apollo激光雷达感知模块的输出延迟和检测精度分别是多少？",
+    "reference_answer": "激光雷达感知模块的输出延迟通常在50-80ms之间，检测精度（AP@0.7 IoU）在标准benchmark上达到80%以上。",
+    "evidence": [
+      {
+        "quote": "激光雷达感知模块的输出延迟通常在50-80ms之间，检测精度（AP@0.7 IoU）在标准benchmark上达到80%以上",
+        "source_id": "apollo-doc-011",
+        "locator": "section=与其他模块的交互"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-035",
+    "question": "Apollo摄像头感知模块支持哪两种配置模式？",
+    "reference_answer": "Apollo的摄像头感知模块支持单目（Monocular）和多目（Multi-camera）两种配置模式。",
+    "evidence": [
+      {
+        "quote": "Apollo的摄像头感知模块支持单目（Monocular）和多目（Multi-camera）两种配置模式。",
+        "source_id": "apollo-doc-012",
+        "locator": "section=概述"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-036",
+    "question": "Apollo摄像头感知模块中BEV感知方法的核心思想是什么？",
+    "reference_answer": "BEV感知方法的核心思想是\"显式建模深度\"，通过预测每个像素的深度分布来建立2D到3D的对应关系。",
+    "evidence": [
+      {
+        "quote": "该方法的核心思想是\"显式建模深度\"，通过预测每个像素的深度分布来建立2D到3D的对应关系。",
+        "source_id": "apollo-doc-012",
+        "locator": "section=图像到BEV转换"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-037",
+    "question": "Apollo摄像头感知模块的多任务学习框架中，总损失函数由哪些部分组成？",
+    "reference_answer": "损失函数采用加权和形式：L_total = λ_1 * L_det + λ_2 * L_lane + λ_3 * L_tl，分别对应检测损失、车道线分割损失和信号灯分类损失。",
+    "evidence": [
+      {
+        "quote": "损失函数（Loss Function）设计采用加权和形式：L_total = λ_1 * L_det + λ_2 * L_lane + λ_3 * L_tl",
+        "source_id": "apollo-doc-012",
+        "locator": "section=多任务学习框架"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-038",
+    "question": "Apollo摄像头感知模块在恶劣天气条件下与激光雷达相比有何特点？",
+    "reference_answer": "摄像头感知模块在恶劣天气（雨雪雾）和极端光照（逆光、夜间）条件下性能会显著下降，因此在Apollo系统中通常作为激光雷达感知的补充而非替代。",
+    "evidence": [
+      {
+        "quote": "摄像头感知模块在良好光照条件下的检测精度接近激光雷达，但在恶劣天气（雨雪雾）和极端光照（逆光、夜间）条件下性能会显著下降，因此在Apollo系统中通常作为激光雷达感知的补充而非替代。",
+        "source_id": "apollo-doc-012",
+        "locator": "section=与其他模块的交互"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-039",
+    "question": "Apollo雷达感知模块中毫米波雷达的工作频段是多少？它有哪些独特优势？",
+    "reference_answer": "毫米波雷达通常工作在77GHz频段，具有全天候工作能力（不受雨雪雾等恶劣天气影响）、可直接测速、成本较低等优势。",
+    "evidence": [
+      {
+        "quote": "毫米波雷达通过发射和接收毫米波段（通常为77GHz）的电磁波，能够直接测量目标的距离、方位角和径向速度（Radial Velocity），具有全天候工作能力（不受雨雪雾等恶劣天气影响）、可直接测速、成本较低等优势。",
+        "source_id": "apollo-doc-013",
+        "locator": "section=概述"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-040",
+    "question": "Apollo雷达感知模块使用什么聚类算法来处理目标聚类？",
+    "reference_answer": "Apollo采用DBSCAN聚类（Density-Based Spatial Clustering）和欧几里得聚类（Euclidean Clustering）两种方法。",
+    "evidence": [
+      {
+        "quote": "DBSCAN聚类（Density-Based Spatial Clustering）：基于密度的聚类算法，能够自动发现任意形状的聚类，对噪声具有鲁棒性。",
+        "source_id": "apollo-doc-013",
+        "locator": "section=目标聚类器"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-041",
+    "question": "Apollo雷达感知模块中目标跟踪器采用什么滤波算法？UKF相比EKF有什么优势？",
+    "reference_answer": "雷达目标跟踪器采用扩展卡尔曼滤波（EKF）或无迹卡尔曼滤波（UKF）。UKF通过sigma点采样避免了EKF中的雅可比矩阵计算，在非线性系统中具有更好的估计精度。",
+    "evidence": [
+      {
+        "quote": "采用扩展卡尔曼滤波（EKF）或无迹卡尔曼滤波（UKF, Unscented Kalman Filter）进行状态更新。UKF通过sigma点采样避免了EKF中的雅可比矩阵（Jacobian Matrix）计算，在非线性系统中具有更好的估计精度。",
+        "source_id": "apollo-doc-013",
+        "locator": "section=目标跟踪器"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-042",
+    "question": "Apollo预测模块的四个核心子模块分别是什么？",
+    "reference_answer": "Apollo预测模块由信息容器（Container）、场景选择器（Scenario）、评估器（Evaluator）和预测器（Predictor）四个核心子模块组成。",
+    "evidence": [
+      {
+        "quote": "Apollo预测模块采用模块化架构，由四个核心子模块组成：信息容器（Container）、场景选择器（Scenario）、评估器（Evaluator）和预测器（Predictor）。",
+        "source_id": "apollo-doc-014",
+        "locator": "section=架构设计"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-043",
+    "question": "Apollo预测模块中CVAE（条件变分自编码器）的损失函数包含哪些部分？",
+    "reference_answer": "CVAE的损失函数包括重构损失（Reconstruction Loss）和KL散度（KL Divergence）：L = E[||τ - τ̂||²] + β * KL(q(z|τ) || p(z))，其中β为平衡系数。",
+    "evidence": [
+      {
+        "quote": "损失函数包括重构损失（Reconstruction Loss）和KL散度（KL Divergence）：L = E[||τ - τ̂||²] + β * KL(q(z|τ) || p(z))，其中β为平衡系数。",
+        "source_id": "apollo-doc-014",
+        "locator": "section=多模态轨迹预测"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-044",
+    "question": "Apollo预测模块使用哪些指标来评估预测质量？",
+    "reference_answer": "Apollo预测模块使用最小平均位移误差（minADE）、最小终点位移误差（minFDE）、碰撞率（Collision Rate）和意图分类准确率（Intent Classification Accuracy）等指标。",
+    "evidence": [
+      {
+        "quote": "最小平均位移误差（minADE, Minimum Average Displacement Error）：多条预测轨迹中与真实轨迹最接近的那条的平均位移误差；最小终点位移误差（minFDE, Minimum Final Displacement Error）：预测轨迹终点与真实轨迹终点的最小距离",
+        "source_id": "apollo-doc-014",
+        "locator": "section=预测评估指标"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-045",
+    "question": "Apollo规划模块采用什么坐标系来实现Lattice规划算法？",
+    "reference_answer": "Lattice规划器将全局坐标系转换为以参考线（Reference Line）为基准的Frenet坐标系，使用纵向位移s和横向位移l描述车辆位置。",
+    "evidence": [
+      {
+        "quote": "坐标系转换：将全局坐标系转换为以参考线（Reference Line）为基准的Frenet坐标系。Frenet坐标系使用纵向位移s和横向位移l描述车辆位置，将复杂的二维规划问题分解为两个一维问题。",
+        "source_id": "apollo-doc-015",
+        "locator": "section=Lattice规划算法"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-046",
+    "question": "Apollo规划模块的分层架构包含哪三个层次？",
+    "reference_answer": "Apollo规划模块采用分层架构，从上到下分为场景层、任务层和优化层三个层次。",
+    "evidence": [
+      {
+        "quote": "Apollo规划模块采用分层架构，从上到下分为场景层、任务层和优化层三个层次。",
+        "source_id": "apollo-doc-015",
+        "locator": "section=架构设计"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-047",
+    "question": "Apollo规划模块的更新频率通常是多少？为什么高速场景需要更高频率？",
+    "reference_answer": "规划模块的更新频率通常为10Hz（100ms一帧），在高速场景下需要更高的更新频率以保证安全性。",
+    "evidence": [
+      {
+        "quote": "规划模块的更新频率通常为10Hz（100ms一帧），在高速场景下需要更高的更新频率以保证安全性。",
+        "source_id": "apollo-doc-015",
+        "locator": "section=概述"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-048",
+    "question": "Apollo规划模块中速度规划器有哪几种主要方法？",
+    "reference_answer": "Apollo规划模块的速度规划器包括基于DP的速度规划、基于QP的速度优化和基于MPC的速度规划三种主要方法。",
+    "evidence": [
+      {
+        "quote": "基于DP的速度规划（Dynamic Programming-based Speed Planning）；基于QP的速度优化（QP-based Speed Optimization）；基于MPC的速度规划（Model Predictive Control-based Speed Planning）",
+        "source_id": "apollo-doc-015",
+        "locator": "section=速度规划器"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-049",
+    "question": "DETR3D的核心创新机制是什么？",
+    "reference_answer": "DETR3D提出了3D-to-2D Query机制，模型首先在3D空间中生成reference points，然后通过相机内外参数将这些3D点投影到各视角的2D图像上采样对应的图像特征。",
+    "evidence": [
+      {
+        "quote": "3D-to-2D Query机制：提出了一种新颖的从3D空间到2D图像平面的投影采样机制。模型首先在3D空间中生成reference points，然后通过相机内外参数将这些3D点投影到各视角的2D图像上，从而采样对应的图像特征",
+        "source_id": "paper-008",
+        "locator": "section=核心贡献"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-050",
+    "question": "DETR3D在nuScenes val set上取得了多少NDS和mAP成绩？",
+    "reference_answer": "DETR3D在nuScenes val set上达到了30.3% NDS和34.9% mAP。",
+    "evidence": [
+      {
+        "quote": "在nuScenes val set上，DETR3D达到了30.3% NDS（nuScenes Detection Score）和34.9% mAP",
+        "source_id": "paper-008",
+        "locator": "section=实验结果"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-051",
+    "question": "DETR3D相比传统方法的主要局限性有哪些？",
+    "reference_answer": "DETR3D的主要局限性包括：训练收敛慢（需要24个epoch）、对相机参数依赖、小目标检测能力有限、缺乏时序信息融合。",
+    "evidence": [
+      {
+        "quote": "训练收敛慢：受DETR本身特性影响，DETR3D需要较长的训练周期（通常需要24个epoch）才能收敛；对相机参数的依赖；小目标检测能力有限；缺乏时序信息融合",
+        "source_id": "paper-008",
+        "locator": "section=局限性与讨论"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-052",
+    "question": "PETRv2相比原始PETR引入了哪些关键改进？",
+    "reference_answer": "PETRv2引入了时序对齐的位置编码、特征引导的位置编码（FGPE）、多任务统一架构和改进的收敛策略四项关键改进。",
+    "evidence": [
+      {
+        "quote": "时序对齐的位置编码（Temporal-Aligned Position Encoding）；特征引导的位置编码（Feature-Guided Position Encoding, FGPE）；多任务统一架构；改进的收敛策略",
+        "source_id": "paper-009",
+        "locator": "section=核心贡献"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-053",
+    "question": "PETRv2在nuScenes val set上取得了多少NDS成绩？相比原始PETR提升了多少？",
+    "reference_answer": "PETRv2在nuScenes val set上达到38.1% NDS和40.4% mAP，相比原始PETR（34.8% NDS）提升了3.3个百分点。",
+    "evidence": [
+      {
+        "quote": "在nuScenes val set上，PETRv2达到38.1% NDS和40.4% mAP，相比原始PETR（34.8% NDS）提升了3.3个百分点。",
+        "source_id": "paper-009",
+        "locator": "section=实验结果"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-054",
+    "question": "PETRv2的多任务解码头支持哪三项任务？",
+    "reference_answer": "PETRv2的多任务解码头支持3D目标检测、BEV语义分割和3D车道线检测三项任务。",
+    "evidence": [
+      {
+        "quote": "PETRv2在统一的Transformer架构下同时支持3D目标检测、BEV语义分割和3D车道线检测三项任务",
+        "source_id": "paper-009",
+        "locator": "section=核心贡献"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-055",
+    "question": "PointPillars的核心创新是什么？",
+    "reference_answer": "PointPillars的核心创新是将无序的3D点云组织为垂直柱状（Pillar）结构，通过高效的2D卷积网络进行特征提取和目标检测，在保持与主流方法可比精度的同时实现了远超同期方法的推理速度。",
+    "evidence": [
+      {
+        "quote": "该方法的核心创新在于将无序的3D点云组织为垂直柱状（Pillar）结构，并通过高效的2D卷积网络进行特征提取和目标检测，在保持与主流方法可比精度的同时，实现了远超同期方法的推理速度。",
+        "source_id": "paper-010",
+        "locator": "section=概述"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-056",
+    "question": "PointPillars的推理速度是多少？与SECOND和VoxelNet相比如何？",
+    "reference_answer": "PointPillars的推理速度达到约62 FPS（单帧约16ms），远快于SECOND（约20 FPS）和VoxelNet（约3 FPS）。",
+    "evidence": [
+      {
+        "quote": "更重要的是，其推理速度达到约62 FPS（单帧约16ms），远快于SECOND（约20 FPS）和VoxelNet（约3 FPS）。",
+        "source_id": "paper-010",
+        "locator": "section=实验结果"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-057",
+    "question": "PointPillars的高度信息压缩有什么局限性？",
+    "reference_answer": "PointPillars对Z轴不做离散化，而是通过Max Pooling聚合高度信息，这可能导致垂直方向上的信息损失，对于具有复杂高度结构的物体（如桥梁下方的车辆）检测能力有限。",
+    "evidence": [
+      {
+        "quote": "高度信息压缩：Pillar编码器对Z轴不做离散化，而是通过Max Pooling聚合高度信息，这可能导致垂直方向上的信息损失，对于具有复杂高度结构的物体（如桥梁下方的车辆）检测能力有限。",
+        "source_id": "paper-010",
+        "locator": "section=局限性与讨论"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-058",
+    "question": "CenterPoint的两阶段精炼框架是如何工作的？",
+    "reference_answer": "第一阶段通过CenterNet风格的编码器-解码器网络预测粗略的中心点和属性；第二阶段从第一阶段的预测中心点处提取精确的体素特征，对3D框参数进行精炼。",
+    "evidence": [
+      {
+        "quote": "两阶段精炼框架：第一阶段通过CenterNet风格的编码器-解码器网络预测粗略的中心点和属性；第二阶段从第一阶段的预测中心点处提取精确的体素特征，对3D框参数进行精炼，显著提升了定位精度。",
+        "source_id": "paper-011",
+        "locator": "section=核心贡献"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-059",
+    "question": "CenterPoint在nuScenes数据集上取得了多少NDS成绩？",
+    "reference_answer": "CenterPoint（基于VoxelNet Backbone）在nuScenes数据集上取得了67.3% NDS和60.3% mAP，加入第二阶段精炼后NDS进一步提升至68.4%。",
+    "evidence": [
+      {
+        "quote": "在nuScenes数据集上，CenterPoint（基于VoxelNet Backbone）取得了67.3% NDS和60.3% mAP，大幅超越了PointPillars（45.3% NDS）和SECOND等方法。加入第二阶段精炼后，NDS进一步提升至68.4%。",
+        "source_id": "paper-011",
+        "locator": "section=实验结果"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-060",
+    "question": "CenterPoint的跟踪模块是如何实现目标关联的？",
+    "reference_answer": "CenterPoint的跟踪模块利用第一阶段预测的速度向量将当前帧的检测中心点传播到下一帧的预测位置，然后通过贪心最近邻匹配建立帧间目标关联。",
+    "evidence": [
+      {
+        "quote": "速度传播：利用第一阶段预测的速度向量，将当前帧的检测中心点传播到下一帧的预测位置。最近邻关联：对于传播后的预测位置与下一帧的检测结果，计算两两之间的L2距离，通过贪心最近邻匹配建立帧间目标关联。",
+        "source_id": "paper-011",
+        "locator": "section=跟踪模块"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-061",
+    "question": "TransFusion的热力图初始化查询策略有什么优势？",
+    "reference_answer": "热力图初始化查询策略使得查询能够自适应地关注3D空间中的有效位置，显著提升了融合效率和检测精度，相比随机初始化提升了约1.5% NDS。",
+    "evidence": [
+      {
+        "quote": "热力图初始化查询策略：创新性地使用LiDAR BEV热力图的峰值位置来初始化Transformer的object queries，使得查询能够自适应地关注3D空间中的有效位置，显著提升了融合效率和检测精度。",
+        "source_id": "paper-012",
+        "locator": "section=核心贡献"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-062",
+    "question": "TransFusion在nuScenes数据集上的LiDAR-Camera融合版本取得了多少NDS成绩？",
+    "reference_answer": "TransFusion的LiDAR-Camera融合版本在nuScenes数据集上取得了71.3% NDS和67.5% mAP。",
+    "evidence": [
+      {
+        "quote": "LiDAR-Camera融合版本（TransFusion）：71.3% NDS，67.5% mAP，相比纯LiDAR版本提升了2.4% NDS和6.2% mAP",
+        "source_id": "paper-012",
+        "locator": "section=实验结果"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-063",
+    "question": "TransFusion相比基于硬投影的融合方法有什么鲁棒性优势？",
+    "reference_answer": "由于采用了软关联机制，TransFusion在传感器缺失或退化场景下仍能保持相对稳定的性能。在极端情况下（仅保留2个相机视角），TransFusion仍能保持约69% NDS的性能。",
+    "evidence": [
+      {
+        "quote": "在模拟相机输入缺失的场景下（随机丢弃部分相机视角），TransFusion的性能下降幅度远小于基于硬投影的融合方法，验证了软关联机制的鲁棒性。在极端情况下（仅保留2个相机视角），TransFusion仍能保持约69% NDS的性能。",
+        "source_id": "paper-012",
+        "locator": "section=实验结果"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-064",
+    "question": "ISO 26262标准的核心目标是什么？",
+    "reference_answer": "ISO 26262的核心目标是确保电子电气系统在出现故障时能够进入安全状态或维持安全运行，从而避免因系统故障导致的不合理人身伤害风险。",
+    "evidence": [
+      {
+        "quote": "该标准的核心目标是确保电子电气系统在出现故障时能够进入安全状态或维持安全运行，从而避免因系统故障导致的不合理人身伤害风险。",
+        "source_id": "standard-010",
+        "locator": "section=概述"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-065",
+    "question": "ISO 26262中ASIL等级通过哪三个因素综合确定？",
+    "reference_answer": "ASIL等级通过严重性（Severity）、暴露概率（Exposure）和可控性（Controllability）三个因素综合确定。",
+    "evidence": [
+      {
+        "quote": "ASIL 等级通过以下三个因素综合确定：严重性（Severity）事故后果的严重程度；暴露概率（Exposure）危险场景发生的可能性；可控性（Controllability）驾驶员控制危险情况的能力",
+        "source_id": "standard-010",
+        "locator": "section=安全等级定义"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-066",
+    "question": "ISO 26262中ASIL D等级对硬件架构度量指标的要求是什么？",
+    "reference_answer": "ASIL D要求单点故障度量（SPFM）≥ 99%，潜伏故障度量（LFM）≥ 90%，随机硬件失效概率目标（PMHF）< 10 FIT。",
+    "evidence": [
+      {
+        "quote": "单点故障度量（SPFM, Single Point Fault Metric）：衡量系统对单点故障的容忍能力，ASIL D 要求 ≥ 99%；潜伏故障度量（LFM, Latent Fault Metric）：衡量系统对潜伏故障的检测能力，ASIL D 要求 ≥ 90%；随机硬件失效概率目标（PMHF）：ASIL D 要求 < 10 FIT",
+        "source_id": "standard-010",
+        "locator": "section=硬件架构度量指标"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-067",
+    "question": "ISO 26262与ISO 21448（SOTIF）的主要区别是什么？",
+    "reference_answer": "ISO 26262关注系统故障导致的安全问题，而ISO 21448关注系统在无故障情况下因功能不足或人员误用导致的安全风险。",
+    "evidence": [
+      {
+        "quote": "ISO 26262 关注系统故障导致的安全问题，而 ISO 21448 关注系统在无故障情况下因功能不足或人员误用导致的安全风险。",
+        "source_id": "standard-010",
+        "locator": "section=与其他标准的关系"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-068",
+    "question": "ISO 21448（SOTIF）的四区域分析模型包含哪四个区域？",
+    "reference_answer": "四区域分析模型包含：已知安全场景、已知不安全场景、未知安全场景和未知不安全场景。",
+    "evidence": [
+      {
+        "quote": "已知安全场景（Known Safe Scenarios）；已知不安全场景（Known Unsafe Scenarios）；未知安全场景（Unknown Safe Scenarios）；未知不安全场景（Unknown Unsafe Scenarios）",
+        "source_id": "standard-011",
+        "locator": "section=SOTIF分析框架"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-069",
+    "question": "ISO 21448中SOTIF的核心目标是什么？",
+    "reference_answer": "SOTIF的核心目标是通过系统化的分析和验证，将未知不安全场景转化为已知不安全场景，然后通过设计改进将其转化为已知安全场景，最终使未知不安全场景的数量和风险降低到可接受的水平。",
+    "evidence": [
+      {
+        "quote": "SOTIF 的核心目标是通过系统化的分析和验证，将未知不安全场景（Area 3）转化为已知不安全场景（Area 2），然后通过设计改进将其转化为已知安全场景（Area 1），最终使未知不安全场景的数量和风险降低到可接受的水平。",
+        "source_id": "standard-011",
+        "locator": "section=SOTIF分析框架"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-070",
+    "question": "ISO 21448要求对哪些类型的触发条件进行系统化识别？",
+    "reference_answer": "标准要求对环境因素、交通参与者行为、传感器干扰和系统边界条件四类触发条件进行系统化识别。",
+    "evidence": [
+      {
+        "quote": "环境因素：极端天气、光照条件、道路特征；交通参与者行为：异常驾驶行为、弱势道路使用者的不可预测行为、混合交通流；传感器干扰：传感器遮挡、污损、多路径反射、电磁干扰；系统边界条件：计算资源不足、通信延迟、定位精度下降",
+        "source_id": "standard-011",
+        "locator": "section=触发条件与危害场景识别"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-071",
+    "question": "UL 4600标准的核心创新理念是什么？",
+    "reference_answer": "UL 4600的核心创新在于其\"技术中立\"的安全评估理念，不规定具体的技术实现方案，而是要求开发者构建一个逻辑严密的论证体系，证明其自动驾驶产品在预期运行条件下的安全性。",
+    "evidence": [
+      {
+        "quote": "UL 4600 的核心创新在于其\"技术中立\"的安全评估理念。与规定具体技术要求的传统标准不同，UL 4600 要求开发者识别其系统特有的安全挑战，并展示如何通过合理的设计和验证措施来应对这些挑战。",
+        "source_id": "standard-012",
+        "locator": "section=概述"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-072",
+    "question": "UL 4600的安全论证框架包含哪些关键要素？",
+    "reference_answer": "UL 4600的安全论证框架包含安全声明（Safety Claims）、支撑证据（Supporting Evidence）、论证逻辑（Argumentation）和完整性论证（Completeness Argument）四个关键要素。",
+    "evidence": [
+      {
+        "quote": "安全声明（Safety Claims）：明确系统在哪些条件下可以安全运行；支撑证据（Supporting Evidence）：为每个安全声明提供充分的技术证据；论证逻辑（Argumentation）：展示证据如何支撑安全声明的逻辑链条；完整性论证（Completeness Argument）：证明安全论证覆盖了所有相关的危害和风险场景",
+        "source_id": "standard-012",
+        "locator": "section=安全论证框架"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-073",
+    "question": "UL 4600中最小风险状态（MRC）策略的含义是什么？",
+    "reference_answer": "最小风险状态（MRC）策略是指当系统无法继续安全运行时，应能自动将车辆引导至安全状态。",
+    "evidence": [
+      {
+        "quote": "最小风险状态（MRC, Minimum Risk Condition）策略：当系统无法继续安全运行时，应能自动将车辆引导至安全状态",
+        "source_id": "standard-012",
+        "locator": "section=系统安全要求"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-074",
+    "question": "SAE J3016标准中L3级别为什么被认为是安全性设计的关键转折点？",
+    "reference_answer": "因为从L3开始，系统承担环境监控职责，驾驶员不再需要持续关注驾驶环境，这对系统的安全可靠性提出了前所未有的要求。",
+    "evidence": [
+      {
+        "quote": "SAE J3016 的 L3 级别被认为是安全性设计的关键转折点，因为从 L3 开始，系统承担环境监控职责，驾驶员不再需要持续关注驾驶环境，这对系统的安全可靠性提出了前所未有的要求。",
+        "source_id": "standard-013",
+        "locator": "section=安全等级定义"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-075",
+    "question": "SAE J3016标准中L4和L5级别在ODD范围上有什么区别？",
+    "reference_answer": "L4级别在有限的ODD范围内运行，而L5级别在无限制的ODD范围内运行，即L5可以在任何条件下运行。",
+    "evidence": [
+      {
+        "quote": "L4 高度自动化 系统 系统 系统 有限；L5 完全自动化 系统 系统 系统 无限制",
+        "source_id": "standard-013",
+        "locator": "section=SAE J3016自动驾驶分级要求"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-076",
+    "question": "ANSI/ATA标准体系的核心特征是什么？",
+    "reference_answer": "ANSI/ATA标准体系的核心特征是基于性能（Performance-based）而非基于规定（Prescriptive）的方法，即关注系统应达到的安全性能目标，而非规定具体的技术实现路径。",
+    "evidence": [
+      {
+        "quote": "该标准体系的核心特征是基于性能（Performance-based）而非基于规定（Prescriptive）的方法，即关注系统应达到的安全性能目标，而非规定具体的技术实现路径。",
+        "source_id": "standard-013",
+        "locator": "section=概述"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-077",
+    "question": "中国自动驾驶标准体系的\"三横两纵\"架构分别指什么？",
+    "reference_answer": "\"三横\"指基础通用标准、整车与系统标准、信息交互标准三个技术层级；\"两纵\"指单车智能标准和网联协同标准两个应用场景。",
+    "evidence": [
+      {
+        "quote": "三横（技术层级）：基础通用标准；整车与系统标准；信息交互标准。两纵（应用场景）：单车智能标准；网联协同标准",
+        "source_id": "standard-014",
+        "locator": "section=智能网联汽车标准体系架构"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-078",
+    "question": "中国自动驾驶标准体系建立了什么样的安全保障框架？",
+    "reference_answer": "中国标准体系建立了\"功能安全+预期功能安全+网络安全\"三位一体的安全保障框架，这是区别于其他国家标准体系的重要特征。",
+    "evidence": [
+      {
+        "quote": "中国标准体系还建立了\"功能安全+预期功能安全+网络安全\"三位一体的安全保障框架，这是区别于其他国家标准体系的重要特征。",
+        "source_id": "standard-014",
+        "locator": "section=安全等级定义"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-079",
+    "question": "中国自动驾驶测试验证体系的四个阶段分别是什么？",
+    "reference_answer": "中国建立了分层递进的测试验证体系，包含封闭场地测试、开放道路测试、示范应用和商业化试点四个阶段。",
+    "evidence": [
+      {
+        "quote": "1. 封闭场地测试：在国家智能网联汽车测试示范区进行标准化测试；2. 开放道路测试：在批准的测试区域进行真实交通环境测试；3. 示范应用：在特定区域开展载人载物示范运营；4. 商业化试点：在满足安全要求后开展商业化运营试点",
+        "source_id": "standard-014",
+        "locator": "section=测试验证要求"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-080",
+    "question": "Apollo激光雷达感知模块中PointPillars检测网络的原理是什么？",
+    "reference_answer": "PointPillars将点云组织为柱状体（Pillar），通过PointNet提取特征后生成伪图像（Pseudo Image），再使用2D卷积网络进行检测，该方法推理速度快，适合实时部署。",
+    "evidence": [
+      {
+        "quote": "PointPillars：将点云组织为柱状体（Pillar），通过PointNet提取特征后生成伪图像（Pseudo Image），再使用2D卷积网络进行检测。该方法推理速度快，适合实时部署。",
+        "source_id": "apollo-doc-011",
+        "locator": "section=三维检测网络"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-081",
+    "question": "Apollo激光雷达感知模块中CenterPoint检测网络有什么特点？",
+    "reference_answer": "CenterPoint是基于中心点检测的无锚框（Anchor-Free）方法，通过预测目标中心点的热力图（Heatmap）和回归偏移量来定位目标，避免了锚框设计的先验假设。",
+    "evidence": [
+      {
+        "quote": "CenterPoint：基于中心点检测的无锚框（Anchor-Free）方法，通过预测目标中心点的热力图（Heatmap）和回归偏移量来定位目标，避免了锚框设计的先验假设。",
+        "source_id": "apollo-doc-011",
+        "locator": "section=三维检测网络"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-082",
+    "question": "Apollo摄像头感知模块中交通信号灯检测器的级联检测流程包含哪些阶段？",
+    "reference_answer": "交通信号灯检测是级联检测流程，包含粗检测阶段（利用高精地图裁剪ROI）、精细分类阶段（识别信号灯状态）和状态矫正阶段（通过时序矫正减少误识别）。",
+    "evidence": [
+      {
+        "quote": "粗检测阶段（Coarse Detection）：利用高精地图提供的信号灯位置先验，从图像中裁剪出包含信号灯的感兴趣区域（ROI）；精细分类阶段（Fine Classification）：对裁剪出的ROI区域，使用轻量级分类网络识别信号灯的状态；状态矫正（State Correction）：针对识别置信度不高的情况，通过查询前几帧的检测状态对当前信号灯颜色进行时序矫正",
+        "source_id": "apollo-doc-012",
+        "locator": "section=交通信号灯检测器"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-083",
+    "question": "Apollo雷达感知模块中静态目标过滤使用什么方法？",
+    "reference_answer": "Apollo使用速度阈值法和多帧一致性检查来过滤静态杂波，对于自车运动补偿需要将目标速度与自车速度进行合成计算绝对速度。",
+    "evidence": [
+      {
+        "quote": "静态目标过滤（Static Target Filtering）：Apollo使用速度阈值法和多帧一致性检查来过滤静态杂波。对于自车运动补偿（Ego-motion Compensation），需要将目标速度与自车速度进行合成，计算目标在世界坐标系下的绝对速度。",
+        "source_id": "apollo-doc-013",
+        "locator": "section=目标过滤器"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-084",
+    "question": "Apollo预测模块中场景选择器如何管理场景切换？",
+    "reference_answer": "场景选择器通过有限状态机（Finite State Machine）管理场景切换，根据当前驾驶场景（如巡航、路口、汇入等）选择相应的预测策略。",
+    "evidence": [
+      {
+        "quote": "场景选择器（Scenario）根据当前驾驶场景（如巡航Cruising、路口Intersection、汇入Merging等）选择相应的预测策略。场景选择器通过有限状态机（Finite State Machine）管理场景切换。",
+        "source_id": "apollo-doc-014",
+        "locator": "section=架构设计"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-085",
+    "question": "Apollo规划模块中轨迹拼接（Trajectory Stitching）的目的是什么？",
+    "reference_answer": "轨迹拼接的目的是将当前帧的规划轨迹与上一帧的轨迹进行拼接，保证轨迹的连续性，避免频繁的轨迹跳变。",
+    "evidence": [
+      {
+        "quote": "轨迹拼接（Trajectory Stitching）：将当前帧的规划轨迹与上一帧的轨迹进行拼接，保证轨迹的连续性。拼接点通常选择在自车当前位置前方一定距离处，避免频繁的轨迹跳变。",
+        "source_id": "apollo-doc-015",
+        "locator": "section=轨迹优化器"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-086",
+    "question": "DETR3D采用什么方法建立预测框与真值框之间的匹配关系？",
+    "reference_answer": "DETR3D采用匈牙利匹配算法（Hungarian Matching）建立predicted boxes与ground truth之间的最优一对一匹配。",
+    "evidence": [
+      {
+        "quote": "DETR3D采用匈牙利匹配算法（Hungarian Matching）建立predicted boxes与ground truth之间的最优一对一匹配，然后基于匹配结果计算损失。",
+        "source_id": "paper-008",
+        "locator": "section=损失函数"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-087",
+    "question": "PETRv2的特征引导位置编码（FGPE）相比原始PETR的位置编码有什么改进？",
+    "reference_answer": "FGPE额外引入了图像特征图的全局信息，通过轻量级卷积网络提取特征描述子与几何位置编码相加，生成包含语义信息的动态位置编码，使模型能够根据场景内容自适应调整位置编码。",
+    "evidence": [
+      {
+        "quote": "FGPE额外引入了图像特征图的全局信息，通过一个轻量级的卷积网络提取特征描述子，与几何位置编码进行逐元素相加，生成包含语义信息的动态位置编码。这使得模型能够根据场景内容自适应调整位置编码",
+        "source_id": "paper-009",
+        "locator": "section=位置编码生成"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-088",
+    "question": "PointPillars的Pillar编码器中点特征增强包含哪些属性？",
+    "reference_answer": "每个Pillar内的点除了原始的（x, y, z, intensity, elongation）属性外，还计算该点相对于Pillar中心的偏移量（xc, yc, zc）以及该点与Pillar内所有点均值的偏移量，形成9维的增强点特征。",
+    "evidence": [
+      {
+        "quote": "对于每个Pillar内的点，除了原始的（x, y, z, intensity, elongation）等属性外，还计算该点相对于Pillar中心的偏移量（xc, yc, zc）以及该点与Pillar内所有点均值的偏移量，形成9维的增强点特征。",
+        "source_id": "paper-010",
+        "locator": "section=Pillar编码器"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-089",
+    "question": "CenterPoint第一阶段预测的属性回归包含哪些内容？",
+    "reference_answer": "属性回归包括中心偏移（offset）、Z轴高度（z）、3D尺寸（size）、朝向角（rotation，使用sin/cos编码）和速度（velocity，X和Y方向的速度分量）。",
+    "evidence": [
+      {
+        "quote": "中心偏移（offset）：目标中心点相对于网格坐标的亚像素偏移；Z轴高度（z）：目标中心点的Z坐标；3D尺寸（size）：长、宽、高；朝向角（rotation）：使用sin/cos编码的朝向角；速度（velocity）：目标在X和Y方向上的速度分量",
+        "source_id": "paper-011",
+        "locator": "section=第一阶段：中心点检测"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-090",
+    "question": "TransFusion的渐进式两阶段融合是如何设计的？",
+    "reference_answer": "第一阶段仅使用LiDAR数据进行粗检测，生成高质量的候选查询；第二阶段将这些查询与相机特征通过cross-attention融合进行精炼。",
+    "evidence": [
+      {
+        "quote": "渐进式两阶段融合：第一阶段仅使用LiDAR数据进行粗检测，生成高质量的候选查询；第二阶段将这些查询与相机特征通过cross-attention融合进行精炼。这种渐进式设计使模型能够充分利用LiDAR的空间精度和相机的语义丰富性。",
+        "source_id": "paper-012",
+        "locator": "section=核心贡献"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-091",
+    "question": "ISO 26262的适用范围包括哪些关键领域？",
+    "reference_answer": "ISO 26262适用于电子控制单元（ECU）、传感器与执行器、软件组件、电气布线系统以及自动驾驶相关系统（ADAS、自动驾驶决策与控制系统）。",
+    "evidence": [
+      {
+        "quote": "电子控制单元（ECU）；传感器与执行器：雷达、摄像头、激光雷达（LiDAR）等感知系统；软件组件：嵌入式软件、控制算法、决策逻辑；电气布线系统；自动驾驶相关系统：ADAS、自动驾驶决策与控制系统",
+        "source_id": "standard-010",
+        "locator": "section=适用范围"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-092",
+    "question": "ISO 21448中降级策略（Degradation Strategy）包含哪些措施？",
+    "reference_answer": "降级策略包括当系统检测到功能不足时自动降低运行速度、缩小运行范围或请求驾驶员接管。",
+    "evidence": [
+      {
+        "quote": "降级策略（Degradation Strategy）：当系统检测到功能不足时，自动降低运行速度、缩小运行范围或请求驾驶员接管",
+        "source_id": "standard-011",
+        "locator": "section=安全要求与设计措施"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-093",
+    "question": "UL 4600适用于哪些类型的自动驾驶产品？",
+    "reference_answer": "UL 4600适用于SAE L3至L5级别的自动驾驶车辆（包括Robotaxi、自动驾驶货运卡车等）、自动驾驶功能组件、运行基础设施和混合运行模式。",
+    "evidence": [
+      {
+        "quote": "SAE L3 至 L5 级别的自动驾驶车辆：包括限定区域运行的自动驾驶出租车（Robotaxi）、自动驾驶货运卡车、最后一公里配送车辆；自动驾驶功能组件；运行基础设施：远程监控系统、高精地图系统、V2X通信系统；混合运行模式",
+        "source_id": "standard-012",
+        "locator": "section=适用范围"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-094",
+    "question": "UL 4600中影子模式（Shadow Mode）运行的含义是什么？",
+    "reference_answer": "影子模式运行是指在人工驾驶的同时运行自动驾驶算法，对比两者决策差异，用于持续验证自动驾驶系统。",
+    "evidence": [
+      {
+        "quote": "影子模式（Shadow Mode）运行：在人工驾驶的同时运行自动驾驶算法，对比两者决策差异",
+        "source_id": "standard-012",
+        "locator": "section=持续验证机制"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-095",
+    "question": "SAE J3016标准定义了哪六个自动化等级？",
+    "reference_answer": "SAE J3016定义了L0（无自动化）、L1（驾驶辅助）、L2（部分自动化）、L3（条件自动化）、L4（高度自动化）和L5（完全自动化）六个等级。",
+    "evidence": [
+      {
+        "quote": "L0 无自动化；L1 驾驶辅助；L2 部分自动化；L3 条件自动化；L4 高度自动化；L5 完全自动化",
+        "source_id": "standard-013",
+        "locator": "section=SAE J3016自动驾驶分级要求"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-096",
+    "question": "中国自动驾驶标准体系特别关注哪些中国特色的交通环境？",
+    "reference_answer": "中国标准体系特别关注高度混合的交通流（机动车、非机动车、行人混合通行）、复杂的城市交通组织形式（如环形交叉口、潮汐车道）、多样的道路基础设施条件和特殊的气候地理条件。",
+    "evidence": [
+      {
+        "quote": "高度混合的交通流（机动车、非机动车、行人混合通行）；复杂的城市交通组织形式（如环形交叉口、潮汐车道）；多样的道路基础设施条件（城市道路、高速公路、农村道路）；特殊的气候和地理条件（严寒地区、高原地区、沿海地区）",
+        "source_id": "standard-014",
+        "locator": "section=适用范围"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-097",
+    "question": "Apollo激光雷达感知模块中子流形稀疏卷积的作用是什么？",
+    "reference_answer": "对于稀疏体素，Apollo使用子流形稀疏卷积（Submanifold Sparse Convolution）避免在空白区域进行无效计算，显著提升推理效率。",
+    "evidence": [
+      {
+        "quote": "对于稀疏体素，Apollo使用子流形稀疏卷积（Submanifold Sparse Convolution）避免在空白区域进行无效计算，显著提升推理效率。",
+        "source_id": "apollo-doc-011",
+        "locator": "section=体素特征编码"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-098",
+    "question": "Apollo预测模块在nuScenes预测benchmark上的minADE指标和意图分类准确率分别是多少？",
+    "reference_answer": "Apollo预测模块在nuScenes预测benchmark上的minADE指标达到1.2米以下（3秒预测时域），意图分类准确率达到90%以上。",
+    "evidence": [
+      {
+        "quote": "Apollo预测模块在nuScenes预测benchmark上的minADE指标达到1.2米以下（3秒预测时域），意图分类准确率达到90%以上。",
+        "source_id": "apollo-doc-014",
+        "locator": "section=与其他模块的交互"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-099",
+    "question": "TransFusion中查询去噪使用什么策略处理冗余预测？",
+    "reference_answer": "TransFusion使用soft-NMS或center-based suppression策略，基于中心距离的软抑制机制对冗余预测进行抑制，保留最优的预测结果。",
+    "evidence": [
+      {
+        "quote": "模型采用了soft-NMS或center-based suppression策略对冗余预测进行抑制。与传统硬NMS不同，TransFusion使用基于中心距离的软抑制机制，根据预测中心点的距离对置信度进行衰减，保留最优的预测结果。",
+        "source_id": "paper-012",
+        "locator": "section=查询去噪与冗余处理"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-100",
+    "question": "中国自动驾驶标准体系中GB/T 40429与SAE J3016的关系是什么？",
+    "reference_answer": "GB/T 40429《汽车驾驶自动化分级》将驾驶自动化分为L0至L5六个等级，与SAE J3016对标，但在安全员角色定义和远程操作员要求方面有中国化的调整。",
+    "evidence": [
+      {
+        "quote": "GB/T 40429《汽车驾驶自动化分级》将驾驶自动化分为 L0 至 L5 六个等级，与 SAE J3016 对标",
+        "source_id": "standard-014",
+        "locator": "section=安全等级定义"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  }
+]

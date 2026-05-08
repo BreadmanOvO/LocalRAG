@@ -8,7 +8,21 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from config.runtime_keys import RuntimeProviderConfig
 
-OPENAI_COMPATIBLE_PROVIDERS = {"bailian", "modelscope", "local_embedding"}
+OPENAI_COMPATIBLE_PROVIDERS = {"bailian", "modelscope", "local_embedding", "local_sentence_transformer"}
+
+
+class LocalSentenceTransformerEmbeddings:
+    def __init__(self, model_name: str = "BAAI/bge-m3") -> None:
+        from sentence_transformers import SentenceTransformer
+        self.model = SentenceTransformer(model_name)
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        embeddings = self.model.encode(texts, normalize_embeddings=True)
+        return [e.tolist() for e in embeddings]
+
+    def embed_query(self, text: str) -> list[float]:
+        embedding = self.model.encode([text], normalize_embeddings=True)
+        return embedding[0].tolist()
 
 
 class LocalHashEmbeddings:
@@ -40,7 +54,7 @@ def build_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
         "api_key": runtime_config.api_key,
         "base_url": runtime_config.base_url,
     }
-    if runtime_config.provider == "local_embedding" and runtime_config.chat_model_name.startswith("Qwen/Qwen3"):
+    if runtime_config.provider in {"local_embedding", "modelscope"} and runtime_config.chat_model_name.startswith("Qwen/Qwen3"):
         options["extra_body"] = {"enable_thinking": False}
     options.update(overrides)
     return ChatOpenAI(**options)
@@ -58,9 +72,16 @@ def build_embedding_model(runtime_config: RuntimeProviderConfig):
             model=runtime_config.embedding_model_name,
             api_key=runtime_config.api_key,
             base_url=runtime_config.base_url,
+            model_kwargs={"encoding_format": "float"},
+            max_retries=5,
+            retry_min_seconds=2,
+            retry_max_seconds=30,
         )
 
     if runtime_config.provider == "local_embedding":
         return LocalHashEmbeddings()
+
+    if runtime_config.provider == "local_sentence_transformer":
+        return LocalSentenceTransformerEmbeddings(model_name=runtime_config.embedding_model_name)
 
     raise ValueError(f"Unsupported runtime provider: {runtime_config.provider}")

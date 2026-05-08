@@ -1,0 +1,62 @@
+[
+  {
+    "id": "gold-006",
+    "question": "Waymo Open Dataset 报告为什么强调数据集的多样性？",
+    "baseline_answered": true,
+    "doc_type_aware_answered": true,
+    "baseline_source_hit": true,
+    "doc_type_aware_source_hit": false,
+    "baseline_locator_hit": false,
+    "doc_type_aware_locator_hit": false
+  },
+  {
+    "id": "gold-011",
+    "question": "为什么 Apollo 学习路径把高精地图视为软件栈中的基础能力？",
+    "baseline_answered": true,
+    "doc_type_aware_answered": true,
+    "baseline_source_hit": false,
+    "doc_type_aware_source_hit": true,
+    "baseline_locator_hit": false,
+    "doc_type_aware_locator_hit": false
+  },
+  {
+    "id": "gold-012",
+    "question": "Apollo Channel 文档如何描述组件、数据通道和消息格式之间的关系？",
+    "baseline_answered": true,
+    "doc_type_aware_answered": true,
+    "baseline_source_hit": false,
+    "doc_type_aware_source_hit": true,
+    "baseline_locator_hit": false,
+    "doc_type_aware_locator_hit": false
+  },
+  {
+    "id": "gold-014",
+    "question": "Apollo 视觉感知算法在平台上主要覆盖哪三类应用场景？",
+    "baseline_answered": true,
+    "doc_type_aware_answered": true,
+    "baseline_source_hit": false,
+    "doc_type_aware_source_hit": true,
+    "baseline_locator_hit": false,
+    "doc_type_aware_locator_hit": false
+  },
+  {
+    "id": "gold-015",
+    "question": "Apollo 预测模块为什么依赖感知模块提供障碍物状态信息？",
+    "baseline_answered": true,
+    "doc_type_aware_answered": true,
+    "baseline_source_hit": false,
+    "doc_type_aware_source_hit": true,
+    "baseline_locator_hit": false,
+    "doc_type_aware_locator_hit": false
+  },
+  {
+    "id": "gold-017",
+    "question": "Apollo 控制模块的核心执行目标是什么？",
+    "baseline_answered": true,
+    "doc_type_aware_answered": true,
+    "baseline_source_hit": false,
+    "doc_type_aware_source_hit": true,
+    "baseline_locator_hit": false,
+    "doc_type_aware_locator_hit": false
+  }
+]

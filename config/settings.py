@@ -26,6 +26,11 @@ doc_type_chunking = {
     "report": {"chunk_size": 700, "chunk_overlap": 80},
 }
 
+# Semantic chunking 参数
+semantic_chunk_threshold = 0.5  # 相邻句子余弦相似度断点阈值
+semantic_max_chunk_size = 1000  # 语义段最大字符数，超长则二次拆分
+semantic_embedding_model = "BAAI/bge-m3"  # 用于语义分块的嵌入模型
+
 # VectorStoreService 参数
 similarity_top_k = 5 # 相似度top k
 retrieval_debug_top_k = 10 # 调试/实验分析使用的候选召回 top k

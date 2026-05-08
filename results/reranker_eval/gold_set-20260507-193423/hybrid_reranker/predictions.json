@@ -1,0 +1,1982 @@
+[
+  {
+    "id": "gold-001",
+    "question": "Apollo Cyber RT 的核心作用是什么？",
+    "reference_answer": "Apollo Cyber RT 负责提供自动驾驶系统中的通信、调度和组件协作基础能力。",
+    "answer": "Apollo Cyber RT 的核心作用是作为全球首个专为自动驾驶定制的高性能开源计算框架，提供高效的数据处理、任务调度和系统集成能力，支持复杂的城市道路自动驾驶场景。它通过组件化架构和 DAG 依赖关系图连接各模块，实现高并发、低延迟和高吞吐量的计算性能，助力开发者构建灵活、可靠的自动驾驶解决方案。",
+    "retrieved_context": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…\n## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。\n## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。\n### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。\n- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apollo Cyber RT 的高度集成的并行计算模型，能够实现任务执行的高并发、低延迟以 及高吞吐量。针对自动驾驶业务场景的定制开发，使其能够满足自动驾驶解决方案的 高性能要求。",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…",
+        "score": 0.9958643913269043,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。",
+        "score": 0.9901902675628662,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。",
+        "score": 0.9898821711540222,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.9877212643623352,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apollo Cyber RT 的高度集成的并行计算模型，能够实现任务执行的高并发、低延迟以 及高吞吐量。针对自动驾驶业务场景的定制开发，使其能够满足自动驾驶解决方案的 高性能要求。",
+        "score": 0.98207688331604,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Cyber RT is the core framework for Apollo runtime communication and scheduling.",
+        "source_id": "apollo-doc-002",
+        "locator": "chapter=1/overview"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-002",
+    "question": "感知融合为什么对自动驾驶很重要？",
+    "reference_answer": "感知融合能综合不同传感器的互补信息，从而提升目标检测与环境理解的稳定性。",
+    "answer": "感知融合对自动驾驶非常重要，主要原因包括以下几点：\n\n1. **提升感知准确性**：不同传感器（如摄像头、雷达、激光雷达）各有优缺点。例如，摄像头容易受环境光线影响，雷达缺乏深度信息，激光雷达成本高但数据密集。通过融合多传感器的数据，可以互补各自的不足，提高障碍物检测和识别的准确性。\n\n2. **增强环境理解能力**：感知融合模块能够综合各传感器的信息，提供更全面、精确的环境模型。这有助于自动驾驶系统更好地理解周围环境，包括障碍物的位置、速度、类别等关键信息。\n\n3. **提高鲁棒性**：在极端天气或不良光照条件下，单一传感器可能失效或性能下降。而多传感器融合可以有效应对这些挑战，确保系统在复杂环境下仍能稳定运行。\n\n4. **支持高级功能实现**：感知融合是自动驾驶系统中感知模块的重要组成部分，为后续的预测、路径规划等模块提供高质量的输入数据，从而支持更复杂的驾驶决策和控制。\n\n综上所述，感知融合是实现安全、可靠自动驾驶的关键技术之一。",
+    "retrieved_context": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子模块组成，分别是：信息容器（container）、场景选择（scenario)、评估器（evaluator）和预测器 (predictor)。 ·信息容器：储存上游信息，为之后的轨迹预测提供输入，当期储存的主要有：感知信息、定位信息以及自车轨迹规划信息。 Apollo预测模块实践 ·场景选择：预测模块针对不同的场景采用不同的预测方法（如巡航、路口等场景），便于后续扩展，提高算法的泛化能力。 ·评估器：评估器基于障碍物的状态信息，结合预测模型，给出障碍物预测轨迹的概率或短预测时域的轨迹信息。\n## Summary\nTechnical report from the Waymo Open Dataset context explaining perception scalability and dataset-driven evaluation considerations for autonomous driving.\n## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…",
+        "score": 0.22666077315807343,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子模块组成，分别是：信息容器（container）、场景选择（scenario)、评估器（evaluator）和预测器 (predictor)。 ·信息容器：储存上游信息，为之后的轨迹预测提供输入，当期储存的主要有：感知信息、定位信息以及自车轨迹规划信息。 Apollo预测模块实践 ·场景选择：预测模块针对不同的场景采用不同的预测方法（如巡航、路口等场景），便于后续扩展，提高算法的泛化能力。 ·评估器：评估器基于障碍物的状态信息，结合预测模型，给出障碍物预测轨迹的概率或短预测时域的轨迹信息。",
+        "score": 0.1151943951845169,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nTechnical report from the Waymo Open Dataset context explaining perception scalability and dataset-driven evaluation considerations for autonomous driving.",
+        "score": 0.10215704888105392,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…",
+        "score": 0.08569691330194473,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…",
+        "score": 0.06643082946538925,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Fusion combines semantic cues with geometric robustness.",
+        "source_id": "apollo-doc-005",
+        "locator": "chapter=2/section=2.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-003",
+    "question": "UN R155 主要关注什么类型的安全问题？",
+    "reference_answer": "UN R155 主要关注车辆网络安全管理体系和网络攻击风险。",
+    "answer": "UN R155 主要关注的是**网络安全**（cyber security）及相关**网络安全管理系统**（cyber security management system）的安全问题。该法规旨在为车辆的网络安全提供统一的标准和要求，确保车辆在面对潜在网络攻击时具备足够的防护能力，并通过有效的管理机制保障其安全性。",
+    "retrieved_context": "# UN Regulation No. 155 - Cyber security and cyber security management system\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 155 - Cyber security and cyber security management system.pdf\n- Original URL: https://unece.org/sites/default/files/2023-02/R155e%20%282%29.pdf\n- Language: en\n- Version: UN R155\n- Pages: 30\n- Topic tags: [safety]\n## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…\n### Pages 5-8\n- [p.5] LongitudinalSafety LateralSafety Ego-AgentCollision Constraint BoundarySafety Ego-BoundaryOverstepping ConstraintEgo-LaneDirectional Constraint Lane Directionas Guidance // Figure 3. Illustration of Vectorized Planning…\n- [p.5] Ego-boundary overstepping constraint punishes the predictions when the planning trajec- tory gets too close to the lane boundary. Ego-lane directional constraint leverages the direction of the closet lane vector from th…\n### Pages 12-21\n- [p.12] 12 8. Modification and extension of the vehicle type 8.1. Every modification of the vehicle type which affects its technical performance with respect to cybersecurity and/or documentation required in this Regulation sha…\n- [p.12] Proceed to necessary complementary assessment pursuant to paragraph 5, and require, where relevant, a further test report from the Technical Service responsible for conducting the tests. 8.1.3. Confirmation or extension…\n## Key points\n- Overview of Select NHTSA Activities – Automated Driving Systems Katherine Chasins Special Programs Division Chief Rulemaking Office of Automation Safety 1/18/2024\n- 2 NHTSA Background Mission: Save lives, prevent injuries, & reduce economic costs due to road traffic crashes Authority to: Regulate and oversee the manufacture and importation of…\n- 4 NHTSA’s Standing General Order (SGO) • Regular Data Publication: www.NHTSA.gov/SGOcrashReporting",
+    "retrieved_rows": [
+      {
+        "source_id": "standard-007",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# UN Regulation No. 155 - Cyber security and cyber security management system\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 155 - Cyber security and cyber security management system.pdf\n- Original URL: https://unece.org/sites/default/files/2023-02/R155e%20%282%29.pdf\n- Language: en\n- Version: UN R155\n- Pages: 30\n- Topic tags: [safety]",
+        "score": 0.9612781405448914,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…",
+        "score": 0.00047764022019691765,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-005",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 5-8\n- [p.5] LongitudinalSafety LateralSafety Ego-AgentCollision Constraint BoundarySafety Ego-BoundaryOverstepping ConstraintEgo-LaneDirectional Constraint Lane Directionas Guidance // Figure 3. Illustration of Vectorized Planning…\n- [p.5] Ego-boundary overstepping constraint punishes the predictions when the planning trajec- tory gets too close to the lane boundary. Ego-lane directional constraint leverages the direction of the closet lane vector from th…",
+        "score": 0.0001946603151736781,
+        "rank": 3
+      },
+      {
+        "source_id": "standard-007",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 12-21\n- [p.12] 12 8. Modification and extension of the vehicle type 8.1. Every modification of the vehicle type which affects its technical performance with respect to cybersecurity and/or documentation required in this Regulation sha…\n- [p.12] Proceed to necessary complementary assessment pursuant to paragraph 5, and require, where relevant, a further test report from the Technical Service responsible for conducting the tests. 8.1.3. Confirmation or extension…",
+        "score": 8.330842683790252e-05,
+        "rank": 4
+      },
+      {
+        "source_id": "standard-006",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Overview of Select NHTSA Activities – Automated Driving Systems Katherine Chasins Special Programs Division Chief Rulemaking Office of Automation Safety 1/18/2024\n- 2 NHTSA Background Mission: Save lives, prevent injuries, & reduce economic costs due to road traffic crashes Authority to: Regulate and oversee the manufacture and importation of…\n- 4 NHTSA’s Standing General Order (SGO) • Regular Data Publication: www.NHTSA.gov/SGOcrashReporting",
+        "score": 6.184279482113197e-05,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "The regulation addresses cyber security and cyber security management systems.",
+        "source_id": "standard-007",
+        "locator": "section=scope"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-004",
+    "question": "为什么预测模块与规划模块需要紧密协同？",
+    "reference_answer": "因为预测结果直接影响规划决策，只有保持时序和接口一致，才能减少决策偏差。",
+    "answer": "预测模块与规划模块需要紧密协同，是因为预测模块提供的障碍物信息和环境动态是规划模块制定安全、高效轨迹的基础。规划模块依赖于预测结果来评估潜在风险、计算可行路径，并生成车辆的运动轨迹。两者的协同工作确保了自动驾驶系统能够实时响应复杂交通环境，实现安全、舒适和高效的行驶。",
+    "retrieved_context": "## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…\n- [p.7] The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end- to-end learning methods solely reliant on cam…\n- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：…\n## Summary\nOfficial Apollo localization material describing the localization stack, map alignment, and the role of high-precision position estimation in autonomous driving.\n\n## Key points\n- 本文档介绍Apollo定位模块以及ApolloMSF（Multi-SensorFusion）的原理。\n- MSF定位模块原理 这里重点介绍（Multi-SensorFusion）定位模块实现原理，系统框图如下图所示： MSF定位系统以多种传感器数据和离线制作的高精度Lidar定位地图为输入，其中GNSSLocalization模块以车端 GPS信号和基站数据为输入，输出高精度RTK定位结果。LiDARLocalization模块以在线lidar扫描数据和高精度…\n### Pages 7-8\n- [p.7] (a) Case 1: Perception of a bus. FusionAD detects the heading correctly while distorsion exists in near range, but UniAD incorrectly predicts the heading. (b) Case 2: Prediction of U-turn. FusionAD consistantly predicts…\n- [p.7] 5: Visual comparison of two example cases between UniAD [1] (Top) and our FusionAD (Bottom). V. CONCLUSIONS We propose FusionAD, a novel approach that leverages BEV fusion to facilitate multi-sensory, multi-task, end-to…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+        "score": 0.7140035629272461,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.7] The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end- to-end learning methods solely reliant on cam…",
+        "score": 0.04539356753230095,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：…",
+        "score": 0.00774841383099556,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-010",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nOfficial Apollo localization material describing the localization stack, map alignment, and the role of high-precision position estimation in autonomous driving.\n\n## Key points\n- 本文档介绍Apollo定位模块以及ApolloMSF（Multi-SensorFusion）的原理。\n- MSF定位模块原理 这里重点介绍（Multi-SensorFusion）定位模块实现原理，系统框图如下图所示： MSF定位系统以多种传感器数据和离线制作的高精度Lidar定位地图为输入，其中GNSSLocalization模块以车端 GPS信号和基站数据为输入，输出高精度RTK定位结果。LiDARLocalization模块以在线lidar扫描数据和高精度…",
+        "score": 0.00021552856196649373,
+        "rank": 4
+      },
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 7-8\n- [p.7] (a) Case 1: Perception of a bus. FusionAD detects the heading correctly while distorsion exists in near range, but UniAD incorrectly predicts the heading. (b) Case 2: Prediction of U-turn. FusionAD consistantly predicts…\n- [p.7] 5: Visual comparison of two example cases between UniAD [1] (Top) and our FusionAD (Bottom). V. CONCLUSIONS We propose FusionAD, a novel approach that leverages BEV fusion to facilitate multi-sensory, multi-task, end-to…",
+        "score": 0.0001003067591227591,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Prediction output feeds downstream planning decisions.",
+        "source_id": "apollo-doc-007",
+        "locator": "chapter=3/section=3.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-005",
+    "question": "BEV 感知在自动驾驶系统中有什么优势？",
+    "reference_answer": "BEV 感知能够统一多源信息到鸟瞰空间表示，提升空间一致性和下游规划理解能力。",
+    "answer": "BEV（Bird's Eye View）感知在自动驾驶系统中具有以下优势：\n\n1. **全局视角**：BEV感知通过将多摄像头图像融合为鸟瞰图，提供对环境的全局视角，有助于更全面地理解周围障碍物的位置和运动状态。\n\n2. **空间信息整合**：BEV感知能够有效整合空间信息，使得障碍物检测、轨迹预测等任务更加准确。例如，BEVFormer通过预定义的网格状BEV查询，同时利用空间和时间信息进行特征交互。\n\n3. **提升预测精度**：基于BEV的特征表示能够提供更稳定且细粒度的信息，从而提升预测模块对障碍物未来轨迹的预测能力。\n\n4. **适应复杂环境**：尽管摄像头存在受环境影响和缺乏深度信息的缺点，但BEV感知通过多视角融合和深度估计技术，能够在复杂环境中实现更鲁棒的感知效果。\n\n5. **支持高精度规划**：BEV感知提供的精确环境信息有助于规划模块生成更安全、高效的行驶路径，从而提升自动驾驶系统的整体性能。",
+    "retrieved_context": "## Key points\n- 3D visual perception tasks, including 3D detection and map segmentation based on multi-camera images, are essential for autonomous driving systems.\n- In a nutshell, BEVFormer exploits both spatial and tempo- ral information by interacting with spatial and temporal space through predeﬁned grid-shaped BEV queries.\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…\n## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…\n## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…\n- We then utilize Temporal Self-Attention to fuse historical frame BEV features, as shown below: TSA(Qp, (Q, B ′ t−1)) = X V ∈{Q,B′ t−1} DefAttn(Qp, p, V ) (3) where B ′ t−1 represe…\n- Prediction Benefiting from the more informative BEV features, pre- diction module receives more stable and fine-grained in- formation.",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-001",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- 3D visual perception tasks, including 3D detection and map segmentation based on multi-camera images, are essential for autonomous driving systems.\n- In a nutshell, BEVFormer exploits both spatial and tempo- ral information by interacting with spatial and temporal space through predeﬁned grid-shaped BEV queries.",
+        "score": 0.8452349901199341,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…",
+        "score": 0.09834548830986023,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…",
+        "score": 0.04776928201317787,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+        "score": 0.005095510743558407,
+        "rank": 4
+      },
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- We then utilize Temporal Self-Attention to fuse historical frame BEV features, as shown below: TSA(Qp, (Q, B ′ t−1)) = X V ∈{Q,B′ t−1} DefAttn(Qp, p, V ) (3) where B ′ t−1 represe…\n- Prediction Benefiting from the more informative BEV features, pre- diction module receives more stable and fine-grained in- formation.",
+        "score": 0.003780747065320611,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "BEV representation helps normalize spatial scale across the scene.",
+        "source_id": "paper-001",
+        "locator": "page=4/paragraph=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-006",
+    "question": "Waymo Open Dataset 报告为什么强调数据集的多样性？",
+    "reference_answer": "因为自动驾驶系统需要在不同真实环境中泛化，数据集覆盖越多样，越有助于对感知系统做更贴近真实场景的评估。",
+    "answer": "Waymo Open Dataset 报告强调数据集的多样性，是为了更好地反映真实世界中的复杂驾驶场景，从而提升自动驾驶感知系统的泛化能力和鲁棒性。多样化的数据能够覆盖不同的道路环境、天气条件、交通状况以及车辆和行人行为，使模型在面对未知或罕见情况时也能做出准确的感知与决策。这种多样性有助于研究者更全面地评估和改进自动驾驶技术，使其更贴近实际应用需求。",
+    "retrieved_context": "## Summary\nTechnical report from the Waymo Open Dataset context explaining perception scalability and dataset-driven evaluation considerations for autonomous driving.\n# Scalability in Perception for Autonomous Driving: Waymo Open Dataset\n\n- Source type: report\n- Category: papers\n- Original file: data/sources/raw/papers/Scalability in Perception for Autonomous Driving Waymo Open Dataset.pdf\n- Original URL: unknown\n- Language: en\n- Version: Waymo Open Dataset Report\n- Pages: 9\n- Topic tags: [perception, system_architecture]\n## Structured notes\n### Pages 1-3\n- [p.1] The research community has increasing interest in au- tonomous driving research, despite the resource intensity of obtaining representative real world data. Existing self- driving datasets are limited in the scale and v…\n- [p.1] In an effort to help align the research community’s contributions with real-world self- driving problems, we introduce a new large-scale, high quality, diverse dataset. Our new dataset consists of 1150 scenes that each…\n## Structured notes\n### Pages 1-3\n- [p.1] No clean paragraph extracted.\n\n### Pages 4-6\n- [p.4] No clean paragraph extracted.\n\n### Pages 7-8\n- [p.8] Y . Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Scalability in Perception for Autonomous Driving: Waymo Open Dataset,” in CVPR.\n\n## Evidence-ready excerpts\n- [p.8] Y . Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Scalability in Perception for Autonomous Driving: Waymo Open Dataset,” in CVPR.\n- [p.1] All annotations were created and subsequently reviewed by trained labelers using production-level labeling tools. We recorded all the sensor data of our dataset using an industrial-strength sensor suite consisting of multiple high- resolution cameras and multiple high-quality LiDAR sensors. Furthermore, we offer synchronization between the camera and the LiDAR readings, which offers interesting opportu- 1 arXiv:1912.04838v7 [cs.CV] 12 May 2020",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nTechnical report from the Waymo Open Dataset context explaining perception scalability and dataset-driven evaluation considerations for autonomous driving.",
+        "score": 0.9340303540229797,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Scalability in Perception for Autonomous Driving: Waymo Open Dataset\n\n- Source type: report\n- Category: papers\n- Original file: data/sources/raw/papers/Scalability in Perception for Autonomous Driving Waymo Open Dataset.pdf\n- Original URL: unknown\n- Language: en\n- Version: Waymo Open Dataset Report\n- Pages: 9\n- Topic tags: [perception, system_architecture]",
+        "score": 0.16328619420528412,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-3\n- [p.1] The research community has increasing interest in au- tonomous driving research, despite the resource intensity of obtaining representative real world data. Existing self- driving datasets are limited in the scale and v…\n- [p.1] In an effort to help align the research community’s contributions with real-world self- driving problems, we introduce a new large-scale, high quality, diverse dataset. Our new dataset consists of 1150 scenes that each…",
+        "score": 0.01448670681566,
+        "rank": 3
+      },
+      {
+        "source_id": "paper-002",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-3\n- [p.1] No clean paragraph extracted.\n\n### Pages 4-6\n- [p.4] No clean paragraph extracted.\n\n### Pages 7-8\n- [p.8] Y . Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Scalability in Perception for Autonomous Driving: Waymo Open Dataset,” in CVPR.\n\n## Evidence-ready excerpts\n- [p.8] Y . Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Scalability in Perception for Autonomous Driving: Waymo Open Dataset,” in CVPR.",
+        "score": 0.006615546531975269,
+        "rank": 4
+      },
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] All annotations were created and subsequently reviewed by trained labelers using production-level labeling tools. We recorded all the sensor data of our dataset using an industrial-strength sensor suite consisting of multiple high- resolution cameras and multiple high-quality LiDAR sensors. Furthermore, we offer synchronization between the camera and the LiDAR readings, which offers interesting opportu- 1 arXiv:1912.04838v7 [cs.CV] 12 May 2020",
+        "score": 0.0003969821846112609,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Existing self-driving datasets are limited in the scale and variation of the environments they capture, even though generalization within and between operating regions is crucial to the overall viability of the technology.",
+        "source_id": "paper-004",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "report"
+    }
+  },
+  {
+    "id": "gold-007",
+    "question": "Apollo 视觉感知模块为什么要重视高精确率和高稳定性？",
+    "reference_answer": "因为摄像头容易受环境影响且缺乏深度信息，只有高精确率和高稳定性的视觉感知算法才能支撑自动驾驶感知模块可靠运行。",
+    "answer": "Apollo 视觉感知模块重视高精确率和高稳定性，主要是因为其在自动驾驶系统中的关键作用。视觉感知模块负责从摄像头等传感器获取环境信息，并识别和跟踪障碍物、红绿灯、车道线等关键元素，为后续的预测、规划和控制模块提供可靠的数据支持。\n\n高精确率确保了对障碍物、交通信号等目标的准确识别和分类，从而提升系统的决策可靠性；高稳定性则保证了在复杂多变的驾驶环境中，系统能够持续稳定地运行，避免因感知误差导致的误判或安全隐患。因此，视觉感知模块的高精确率和高稳定性是保障自动驾驶安全性和可靠性的基础。",
+    "retrieved_context": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践\n### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…\n- [p.1] Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber\n- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…\n- [p.1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /apollo/relative_map /apollo/routing_response 输入导航routing信息 规划模块的输出 输出channel说明 channel名称 /apollo/planning输出自动驾驶车辆的轨迹信息 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问题。我 们会根据反馈意见对文档进行迭代优化。 < apollo规划模块实践",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践",
+        "score": 0.08109156787395477,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…",
+        "score": 0.06437123566865921,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber",
+        "score": 0.0289570614695549,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+        "score": 0.012571925297379494,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /apollo/relative_map /apollo/routing_response 输入导航routing信息 规划模块的输出 输出channel说明 channel名称 /apollo/planning输出自动驾驶车辆的轨迹信息 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问题。我 们会根据反馈意见对文档进行迭代优化。 < apollo规划模块实践",
+        "score": 0.011721869930624962,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。",
+        "source_id": "apollo-doc-006",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-008",
+    "question": "Apollo Channel 文档如何描述规划模块的职责？",
+    "reference_answer": "规划模块负责对主车行为进行决策，并实时生成车辆规划线。",
+    "answer": "Apollo Channel 文档中描述，规划模块的职责是基于预测模块输入的障碍物信息、地图定位信息、路径导航信息，对车辆未来的运动轨迹进行规划，确保自动驾驶车辆高效、安全、舒适地行驶至目标位置。",
+    "retrieved_context": "- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…\n## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…\n## Summary\nOfficial Apollo control material describing how planned trajectories are converted into steering, throttle, and brake commands.\n\n## Key points\n- Apollo控制能力介绍 本文档为开发者介绍Apollo控制模块的基本知识、Apollo控制能力、控制模块的组成及其输入输出。\n- /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo…\n- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：…\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+        "score": 0.9897051453590393,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+        "score": 0.9844385981559753,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-009",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nOfficial Apollo control material describing how planned trajectories are converted into steering, throttle, and brake commands.\n\n## Key points\n- Apollo控制能力介绍 本文档为开发者介绍Apollo控制模块的基本知识、Apollo控制能力、控制模块的组成及其输入输出。\n- /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo…",
+        "score": 0.9447330832481384,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：…",
+        "score": 0.9433214664459229,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…",
+        "score": 0.8757095336914062,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "规划(Plamring) 对主车行为进行决策，实时生成车辆规划线。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-009",
+    "question": "Apollo Cyber RT 如何组织自动驾驶系统中的模块依赖关系？",
+    "reference_answer": "Apollo Cyber RT 会从各个组件中提取依赖项，并通过 DAG 依赖关系图将它们连接起来。",
+    "answer": "Apollo Cyber RT 通过 **DAG（有向无环图）依赖关系图** 来组织自动驾驶系统中的模块依赖关系。系统的架构由一系列具有特定输入和输出的组件构成，每个组件包含一个特定的算法模块，用于处理数据输入并生成输出。Apollo Cyber RT 框架从这些组件中提取依赖项，并通过 DAG 图将它们连接在一起，从而明确各模块之间的依赖关系。\n\n在运行时，框架加载预定义的组件，建立轻量级用户任务，并结合传感器输入数据进行调度和执行。这种基于 DAG 的依赖管理方式，使得模块间的依赖关系清晰可追踪，支持高效的并行计算与任务调度，满足自动驾驶系统对高性能和低延迟的需求。",
+    "retrieved_context": "- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apollo Cyber RT 的高度集成的并行计算模型，能够实现任务执行的高并发、低延迟以 及高吞吐量。针对自动驾驶业务场景的定制开发，使其能够满足自动驾驶解决方案的 高性能要求。\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…\n### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。\n## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。\n### Pages 2-2\n- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT…\n- [p.2] 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。 框架中集成了丰富的研发工具和传感器驱动程序，使开发者能够在不牺牲性能或者品 牌形象的同时，更快地构建自动驾驶系统。 易于部署的自适应设计 Apollo Cyber RT 框架的灵活的集成方案以及最小的环境依赖使得应用程序的部署更加 简…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apollo Cyber RT 的高度集成的并行计算模型，能够实现任务执行的高并发、低延迟以 及高吞吐量。针对自动驾驶业务场景的定制开发，使其能够满足自动驾驶解决方案的 高性能要求。",
+        "score": 0.9923126101493835,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…",
+        "score": 0.9865767955780029,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-3\n- [p.3] 同类型的自动驾驶应用程序，以给开发者提供高度的灵活性。 以 Apollo Cyber RT 为基础构建的自动驾驶解决方案不需要任何繁琐的配置和复杂的部 署环境，便可获得很好的性能表现。 高可靠的框架赋能您独特的自动驾驶解决方案 Apollo Cyber RT 是一个独立的开源框架，它包含专为构建自动驾驶模块和应用的组 件。路径规划、控制、感知、定位和 HMI 在 Apollo Cyber RT 框架中无缝集成。它们 给开发者提供了标准…\n- [p.3] 一起创造未来全球化的自动驾驶平台 Apollo Cyber RT 框架考虑到了高度集成，多个子系统协同工作来优化自动驾驶的发 展。它利用 Apollo 团队的专业知识、结合开源的技术力量，为您提供当前最先进的自 动驾驶开放平台。因此，我们将会继续开创先例，攻克自动驾驶技术中最复杂、最困 难的挑战。",
+        "score": 0.9748059511184692,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。\n- Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。\n- 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。",
+        "score": 0.9686868190765381,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 2-2\n- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT…\n- [p.2] 研发效率的显著提升 Apollo Cyber RT 框架背后的革命性技术提供了高效的数据处理和抽象的通信接口。框 架中提供了简单易用的任务接口和高效的数据融合机制，使开发者能够直接在其上构 建解决方案。 框架中集成了丰富的研发工具和传感器驱动程序，使开发者能够在不牺牲性能或者品 牌形象的同时，更快地构建自动驾驶系统。 易于部署的自适应设计 Apollo Cyber RT 框架的灵活的集成方案以及最小的环境依赖使得应用程序的部署更加 简…",
+        "score": 0.83425372838974,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Apollo Cyber RT 框架建立在这些组件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。",
+        "source_id": "apollo-doc-002",
+        "locator": "p.2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-010",
+    "question": "Apollo Open Platform 中 Cyber RT 和 RTOS 的职责有什么区别？",
+    "reference_answer": "Cyber RT 负责管理模块间通信和任务调度，而 RTOS 负责处理时间要求极高的底层控制任务。",
+    "answer": "在 Apollo Open Platform 中，**Cyber RT** 和 **RTOS** 的职责有以下区别：\n\n- **Cyber RT** 是 Apollo 自研的高性能运行时框架，主要用于管理模块间的通信和任务调度，属于平台的中间层，负责协调不同功能模块的协作与数据交互。\n\n- **RTOS（实时操作系统）** 用于处理对时间要求极高的底层控制任务，主要负责硬件层面的实时性控制，确保关键控制指令能够及时执行。",
+    "retrieved_context": "## Key points\n- Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1.\n- • 基础运行环境：Apollo Cyber RT 是 Apollo 自研的高性能运行时框架，用于管 理模块间的通信和任务调度；RTOS（实时操作系统）则用于处理对时间要求极 高的底层控制任务。\n- • 数据与安全：Fuel Data Service（数据服务）负责数据的采集、存储和分析； Security 保障系统和数据的安全。\n- The large-scale deep-learning platform and GPU clusters drastically shorten the learning time for large quantities of data.\n## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1.\n- • 基础运行环境：Apollo Cyber RT 是 Apollo 自研的高性能运行时框架，用于管 理模块间的通信和任务调度；RTOS（实时操作系统）则用于处理对时间要求极 高的底层控制任务。\n- • 数据与安全：Fuel Data Service（数据服务）负责数据的采集、存储和分析； Security 保障系统和数据的安全。\n- The large-scale deep-learning platform and GPU clusters drastically shorten the learning time for large quantities of data.",
+        "score": 0.99934321641922,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…",
+        "score": 0.0025058253668248653,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…",
+        "score": 0.0015062196180224419,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…",
+        "score": 0.0006215607863850892,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：…",
+        "score": 0.0006032250821590424,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Apollo Cyber RT 是 Apollo 自研的高性能运行时框架，用于管理模块间的通信和任务调度；RTOS（实时操作系统）则用于处理对时间要求极高的底层控制任务。",
+        "source_id": "apollo-doc-004",
+        "locator": "p.2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-011",
+    "question": "为什么 Apollo 学习路径把高精地图视为软件栈中的基础能力？",
+    "reference_answer": "因为高精地图支撑了软件栈中几乎所有其他部分，是理解 Apollo 架构的重要基础。",
+    "answer": "Apollo 学习路径将高精地图视为软件栈中的基础能力，是因为高精地图在自动驾驶系统中扮演着至关重要的角色。它为车辆提供了精确的环境信息，是感知、规划和控制模块的重要输入数据来源。高精地图不仅支持车辆的定位与导航，还为障碍物识别、路径规划以及决策控制提供了关键依据，因此被视为构建自动驾驶解决方案的基础能力之一。",
+    "retrieved_context": "- [p.1] Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber\n# Apollo Developer Center Learning Path\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/apollo-devcenter-learning-path.pdf\n- Original URL: https://developer.apollo.auto/devcenter/devcenter.html\n- Language: en\n- Version: Apollo Developer Center\n- Pages: 1\n- Topic tags: [system_architecture, perception, planning_control]\n- [p.1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /apollo/relative_map /apollo/routing_response 输入导航routing信息 规划模块的输出 输出channel说明 channel名称 /apollo/planning输出自动驾驶车辆的轨迹信息 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问题。我 们会根据反馈意见对文档进行迭代优化。 < apollo规划模块实践\n## Summary\nOfficial Apollo control material describing how planned trajectories are converted into steering, throttle, and brake commands.\n\n## Key points\n- Apollo控制能力介绍 本文档为开发者介绍Apollo控制模块的基本知识、Apollo控制能力、控制模块的组成及其输入输出。\n- /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo…\n## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber",
+        "score": 0.021402519196271896,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-001",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Developer Center Learning Path\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/apollo-devcenter-learning-path.pdf\n- Original URL: https://developer.apollo.auto/devcenter/devcenter.html\n- Language: en\n- Version: Apollo Developer Center\n- Pages: 1\n- Topic tags: [system_architecture, perception, planning_control]",
+        "score": 0.012381761334836483,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /apollo/relative_map /apollo/routing_response 输入导航routing信息 规划模块的输出 输出channel说明 channel名称 /apollo/planning输出自动驾驶车辆的轨迹信息 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问题。我 们会根据反馈意见对文档进行迭代优化。 < apollo规划模块实践",
+        "score": 0.008683588355779648,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-009",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nOfficial Apollo control material describing how planned trajectories are converted into steering, throttle, and brake commands.\n\n## Key points\n- Apollo控制能力介绍 本文档为开发者介绍Apollo控制模块的基本知识、Apollo控制能力、控制模块的组成及其输入输出。\n- /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo…",
+        "score": 0.008196565322577953,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。",
+        "score": 0.008148699067533016,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Get to know how high-definition maps work, which underpin almost every other part of the software stack.",
+        "source_id": "apollo-doc-001",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-012",
+    "question": "Apollo Channel 文档如何描述组件、数据通道和消息格式之间的关系？",
+    "reference_answer": "Apollo 的模块以组件形式存在，组件之间通过数据通道通信，而消息格式定义了通道内最小的数据单元。",
+    "answer": "Apollo Channel 文档描述了组件、数据通道和消息格式之间的关系如下：\n\n- **组件（Component）**：Apollo 的各个模块（如感知、定位、控制等）以组件的形式存在，运行在 Cyber RT 框架下。\n- **数据通道（Channel）**：组件之间通过数据通道进行通信。每个通道用于传输特定类型的数据，支持发布/订阅模式，实现模块间的点对点或广播式通信。\n- **消息格式（Message Format）**：数据通道中传输的最小数据单元是消息格式。消息格式定义了数据的结构和内容，确保不同组件间的数据能够被正确解析和使用。\n\n总结来说，组件通过数据通道进行通信，而数据通道中的数据以特定的消息格式进行传输，从而实现模块间的高效协作。",
+    "retrieved_context": "## Key points\n- 安装逆明 数据格式 Channel数据格式文档介招 感知模块 CANBUS模块 控制模扶 定位模块 预测模扶 规划模块 监控模块 Guardian模块 人机交互模块 坐标变换模块 Channel数据格式文档介绍 【数据格式】文档，以【 】中介绍的 demo_35urecord数据包为对像，介绍各个Channel 和对应的内部消息格式 (slessan) 前…\n- Apollo通信系统 Apollo的各个模块是以组件的形式存在的。细件之间利用数据通道进行通信。其中，最小的数据单元是消息格式采定义的。也 有其他Node、witereader等，为了避免混淆，这里只关注细件、数据通道和消息格式。\n- 数据通道 Channel是传转辅输数据的通道，管理CybarRT 中的数据通信。用户可以发布/订阅同一个Charel建立通信，实现点对点（P2F) 招放数据包之后，打开CyherMonitor工具井进入特定数据通道，可以看到海个Channel中都有ChannelINae、 HessageType、FraeRatio、Rahessage Size数据字段。关…\n- [p.1] Apollo通信系统 Apollo的各个模块是以组件的形式存在的。细件之间利用数据通道进行通信。其中，最小的数据单元是消息格式采定义的。也 有其他Node、witereader等，为了避免混淆，这里只关注细件、数据通道和消息格式。 通信单元 在自动驾驶系统中，模块（如感知、定位、控制系统等）在CyberRT下以 组件 (Componen) Component 的形式存在。 不同 Component:之间通过 Chznnel进行通信 C…\n## Summary\nOfficial Apollo channel-format material describing how modules communicate through Cyber RT channels and which message types are used for perception, prediction, planning, and control.\n# Apollo Channel Data Format\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/apollo-channel-data-format.pdf\n- Original URL: https://developer.apollo.auto/Apollo-Homepage-Document/Apollo_Doc_CN_6_0/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F/Channel%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E6%96%87%E6%A1%A3%E4%BB%8B%E7%BB%8D\n- Language: zh\n- Version: Apollo Doc CN 6.0\n- Pages: 2\n- Topic tags: [system_architecture, sensor_fusion, planning_control]\n- [p.1] channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- 安装逆明 数据格式 Channel数据格式文档介招 感知模块 CANBUS模块 控制模扶 定位模块 预测模扶 规划模块 监控模块 Guardian模块 人机交互模块 坐标变换模块 Channel数据格式文档介绍 【数据格式】文档，以【 】中介绍的 demo_35urecord数据包为对像，介绍各个Channel 和对应的内部消息格式 (slessan) 前…\n- Apollo通信系统 Apollo的各个模块是以组件的形式存在的。细件之间利用数据通道进行通信。其中，最小的数据单元是消息格式采定义的。也 有其他Node、witereader等，为了避免混淆，这里只关注细件、数据通道和消息格式。\n- 数据通道 Channel是传转辅输数据的通道，管理CybarRT 中的数据通信。用户可以发布/订阅同一个Charel建立通信，实现点对点（P2F) 招放数据包之后，打开CyherMonitor工具井进入特定数据通道，可以看到海个Channel中都有ChannelINae、 HessageType、FraeRatio、Rahessage Size数据字段。关…",
+        "score": 0.9951536655426025,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo通信系统 Apollo的各个模块是以组件的形式存在的。细件之间利用数据通道进行通信。其中，最小的数据单元是消息格式采定义的。也 有其他Node、witereader等，为了避免混淆，这里只关注细件、数据通道和消息格式。 通信单元 在自动驾驶系统中，模块（如感知、定位、控制系统等）在CyberRT下以 组件 (Componen) Component 的形式存在。 不同 Component:之间通过 Chznnel进行通信 C…",
+        "score": 0.994979202747345,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nOfficial Apollo channel-format material describing how modules communicate through Cyber RT channels and which message types are used for perception, prediction, planning, and control.",
+        "score": 0.9310992956161499,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Channel Data Format\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/apollo-channel-data-format.pdf\n- Original URL: https://developer.apollo.auto/Apollo-Homepage-Document/Apollo_Doc_CN_6_0/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F/Channel%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E6%96%87%E6%A1%A3%E4%BB%8B%E7%BB%8D\n- Language: zh\n- Version: Apollo Doc CN 6.0\n- Pages: 2\n- Topic tags: [system_architecture, sensor_fusion, planning_control]",
+        "score": 0.14561310410499573,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的…",
+        "score": 0.01632133685052395,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Apollo的各个模块是以组件的形式存在的。组件之间利用数据通道进行通信。其中，最小的数据单元是消息格式定义的。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-013",
+    "question": "为什么 Apollo Open Platform 强调持续提升感知检测与识别能力？",
+    "reference_answer": "因为感知系统持续提升检测和识别能力，才能为其他自动驾驶模块提供准确、稳定、可靠的输入。",
+    "answer": "Apollo Open Platform 强调持续提升感知检测与识别能力，是因为感知是自动驾驶系统中至关重要的环节。通过多传感器（如摄像头、毫米波雷达和激光雷达）的融合，Apollo 能够在不同环境和条件下提供更准确、可靠的目标检测与识别结果。这种能力对于确保自动驾驶系统的安全性和鲁棒性至关重要。此外，Apollo 通过不断优化感知模块，能够适应复杂多变的现实路况，从而提升整体系统的性能和可靠性。",
+    "retrieved_context": "## Evidence-ready excerpts\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里，不同的传感器各有各的优缺点，而Apollo感知模块则是把各个传感器的优点结合起来，在目标级别 上进行融合。 下图表示了摄像头（Camera）、毫米波雷达（Radar）和激光雷达（Lidar）传感器在不同任务和不同条件下的性 能。其中， ·摄像头：对于分类任务尤其准确， ·毫米波雷达：在穿透性、距离估计和极端天气抗干扰性具有卓越的性能， 数据格式 ·激光雷达：擅长目标检测任务。 如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。\n- [p.7] The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end- to-end learning methods solely reliant on cam…\n# Apollo Open Platform Overview\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/Apollo-Open-Platform-overview.pdf\n- Original URL: https://developer.apollo.auto/developer.html\n- Language: en\n- Version: Apollo Open Platform\n- Pages: 5\n- Topic tags: [system_architecture, perception, planning_control]\n- [p.1] All annotations were created and subsequently reviewed by trained labelers using production-level labeling tools. We recorded all the sensor data of our dataset using an industrial-strength sensor suite consisting of multiple high- resolution cameras and multiple high-quality LiDAR sensors. Furthermore, we offer synchronization between the camera and the LiDAR readings, which offers interesting opportu- 1 arXiv:1912.04838v7 [cs.CV] 12 May 2020\n## Key points\n- The research community has increasing interest in au- tonomous driving research, despite the resource intensity of obtaining representative real world data.\n- In an effort to help align the research community’s contributions with real-world self- driving problems, we introduce a new large-scale, high quality, diverse dataset.\n- It is 15x more diverse than the largest cam- era+LiDAR dataset available based on our proposed geo- graphical coverage metric.",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Evidence-ready excerpts\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里，不同的传感器各有各的优缺点，而Apollo感知模块则是把各个传感器的优点结合起来，在目标级别 上进行融合。 下图表示了摄像头（Camera）、毫米波雷达（Radar）和激光雷达（Lidar）传感器在不同任务和不同条件下的性 能。其中， ·摄像头：对于分类任务尤其准确， ·毫米波雷达：在穿透性、距离估计和极端天气抗干扰性具有卓越的性能， 数据格式 ·激光雷达：擅长目标检测任务。 如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。",
+        "score": 0.19143350422382355,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.7] The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end- to-end learning methods solely reliant on cam…",
+        "score": 0.032109055668115616,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Open Platform Overview\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/Apollo-Open-Platform-overview.pdf\n- Original URL: https://developer.apollo.auto/developer.html\n- Language: en\n- Version: Apollo Open Platform\n- Pages: 5\n- Topic tags: [system_architecture, perception, planning_control]",
+        "score": 0.02243117056787014,
+        "rank": 3
+      },
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] All annotations were created and subsequently reviewed by trained labelers using production-level labeling tools. We recorded all the sensor data of our dataset using an industrial-strength sensor suite consisting of multiple high- resolution cameras and multiple high-quality LiDAR sensors. Furthermore, we offer synchronization between the camera and the LiDAR readings, which offers interesting opportu- 1 arXiv:1912.04838v7 [cs.CV] 12 May 2020",
+        "score": 0.000130414409795776,
+        "rank": 4
+      },
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- The research community has increasing interest in au- tonomous driving research, despite the resource intensity of obtaining representative real world data.\n- In an effort to help align the research community’s contributions with real-world self- driving problems, we introduce a new large-scale, high quality, diverse dataset.\n- It is 15x more diverse than the largest cam- era+LiDAR dataset available based on our proposed geo- graphical coverage metric.",
+        "score": 0.00012542885087896138,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Artificial intelligence and data-driven solutions combine to enable Apollo’s perception system to continuously improve its detection and recognition capabilities, which provide accurate, stable, and reliable input for other autonomous system modules.",
+        "source_id": "apollo-doc-004",
+        "locator": "p.3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-014",
+    "question": "Apollo 视觉感知算法在平台上主要覆盖哪三类应用场景？",
+    "reference_answer": "主要覆盖红绿灯检测、车道线检测和基于摄像头的障碍物检测三类场景。",
+    "answer": "Apollo 视觉感知算法在平台上主要覆盖以下三类应用场景：\n\n1. **障碍物检测**：通过摄像头等传感器输入，识别并定位道路上的障碍物，并输出包含障碍物位置、速度、航向和分类信息的三维轨迹数据。\n2. **红绿灯检测**：检测交通信号灯的状态，为车辆提供红绿灯信息，辅助驾驶决策。\n3. **车道线检测**：识别车道线，帮助车辆保持在车道内行驶，提升驾驶安全性和稳定性。",
+    "retrieved_context": "# Apollo Vision Perception Overview\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/apollo-vision-perception-overview.pdf\n- Original URL: https://developer.apollo.auto/platform/perception_cn.html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…\n- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践\n- [p.1] Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Vision Perception Overview\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/apollo-vision-perception-overview.pdf\n- Original URL: https://developer.apollo.auto/platform/perception_cn.html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]",
+        "score": 0.20763155817985535,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…",
+        "score": 0.198523610830307,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+        "score": 0.14323590695858002,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践",
+        "score": 0.07682477682828903,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber",
+        "score": 0.04975908622145653,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "视觉感知算法在Apollo平台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。",
+        "source_id": "apollo-doc-006",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-015",
+    "question": "Apollo 预测模块为什么依赖感知模块提供障碍物状态信息？",
+    "reference_answer": "因为预测模块需要基于障碍物的位置、朝向、速度和加速度等状态信息来推断未来轨迹。",
+    "answer": "Apollo 预测模块依赖感知模块提供障碍物状态信息，是因为感知模块负责检测和识别环境中的障碍物，并提供其位置、速度、加速度等关键状态信息。这些信息是预测模块生成未来轨迹预测的基础。通过融合多传感器（如摄像头、雷达、激光雷达）的数据，感知模块能够更准确地描述障碍物的当前状态，从而为预测模块提供可靠的输入，使其能够基于这些信息进行合理的轨迹预测。",
+    "retrieved_context": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践\n- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…\n- [p.1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /apollo/relative_map /apollo/routing_response 输入导航routing信息 规划模块的输出 输出channel说明 channel名称 /apollo/planning输出自动驾驶车辆的轨迹信息 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问题。我 们会根据反馈意见对文档进行迭代优化。 < apollo规划模块实践\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p.1] /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo/planing 规划信息，自车规划的轨迹信息 定位信息，自车的位置 /Apollo/localizatio/pose /Apollo/canbus/chassis 底盘信息，自车的方向盘、速度信息 控制模块输出channel 控制模块有一个输出channel： 输入输出channel说明 channel名称 控制信息，方向盘角度、油门刹车 /Apollo/control 输出",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践",
+        "score": 0.977033793926239,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+        "score": 0.8704943656921387,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /apollo/relative_map /apollo/routing_response 输入导航routing信息 规划模块的输出 输出channel说明 channel名称 /apollo/planning输出自动驾驶车辆的轨迹信息 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问题。我 们会根据反馈意见对文档进行迭代优化。 < apollo规划模块实践",
+        "score": 0.8454652428627014,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…",
+        "score": 0.6127524375915527,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-009",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo/planing 规划信息，自车规划的轨迹信息 定位信息，自车的位置 /Apollo/localizatio/pose /Apollo/canbus/chassis 底盘信息，自车的方向盘、速度信息 控制模块输出channel 控制模块有一个输出channel： 输入输出channel说明 channel名称 控制信息，方向盘角度、油门刹车 /Apollo/control 输出",
+        "score": 0.02255011349916458,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "感知模块作为预测模块的上游，提供障碍物的位置、朝向、速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹。",
+        "source_id": "apollo-doc-007",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-016",
+    "question": "Apollo 规划模块为什么采用 scenario-based 的实现方式？",
+    "reference_answer": "因为它要针对不同场景通过一系列独立任务组合完成轨迹规划，并允许开发者按场景调整任务配置。",
+    "answer": "Apollo 规划模块采用 **scenario-based**（基于场景）的实现方式，主要是为了**灵活应对不同的驾驶场景**，并**提高规划的效率和安全性**。具体原因包括：\n\n1. **场景多样性**：自动驾驶环境中存在多种复杂的驾驶场景（如跟车、变道、交叉路口等），不同场景需要不同的规划策略。通过基于场景的设计，可以为每种场景定制相应的规划任务组合。\n\n2. **任务组合灵活性**：针对不同场景，规划模块通过一系列独立的任务（task）进行组合，开发者可以根据实际需求调整配置文件（如 `apollo/modules/planning/conf/scenario/` 下的配置），灵活调配任务组合以满足特定规划要求。\n\n3. **提升规划效率**：基于场景的设计能够针对性地处理特定场景下的规划问题，避免通用规划算法在复杂场景中可能产生的低效或不准确的问题。\n\n4. **增强系统可扩展性**：通过场景划分，新增场景或修改现有场景的规划逻辑更加便捷，有利于系统的持续迭代与优化。\n\n综上所述，scenario-based 的实现方式使 Apollo 规划模块能够更高效、安全地应对多样化的驾驶环境，同时提升了系统的灵活性和可维护性。",
+    "retrieved_context": "## Structured notes\n### Pages 1-1\n- [p.1] apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。 本文档主要介绍规划模块的基本原理以及输入输出，帮助开发者快速了解规划模块的运作机制，方便开发者开展后续的模块开 Apollo规划能力介绍 Apolo规划模块的主要作用是结合障碍物、地图定位以及导航信息为自动驾驶车辆规划一条运动轨迹，这条…\n- [p.1] Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…\n## Summary\nOfficial Apollo planning material describing scenario-based planning, planner responsibilities, and the inputs and outputs of the planning module.\n- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：…\n- [p.1] Understand how to use steering, throttle, and brake to execute our planned trajectory and master different types of controllers in Apollo. Once completed, you'll be provided with suggestions for future learning to pursu…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。 本文档主要介绍规划模块的基本原理以及输入输出，帮助开发者快速了解规划模块的运作机制，方便开发者开展后续的模块开 Apollo规划能力介绍 Apolo规划模块的主要作用是结合障碍物、地图定位以及导航信息为自动驾驶车辆规划一条运动轨迹，这条…\n- [p.1] Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。",
+        "score": 0.9940528273582458,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+        "score": 0.9892387390136719,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nOfficial Apollo planning material describing scenario-based planning, planner responsibilities, and the inputs and outputs of the planning module.",
+        "score": 0.8941773772239685,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：…",
+        "score": 0.2260655015707016,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-001",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Understand how to use steering, throttle, and brake to execute our planned trajectory and master different types of controllers in Apollo. Once completed, you'll be provided with suggestions for future learning to pursu…",
+        "score": 0.016648193821310997,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。",
+        "source_id": "apollo-doc-008",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-017",
+    "question": "Apollo 控制模块的核心执行目标是什么？",
+    "reference_answer": "控制模块的目标是依据规划轨迹和车辆状态生成方向盘、油门和刹车控制命令，并通过 canbus 下发给底层执行器。",
+    "answer": "Apollo 控制模块的核心执行目标是将规划模块生成的轨迹信息转换为具体的车辆控制指令，包括方向盘角度、油门和刹车控制，从而实现对车辆的精确操控，确保车辆按照规划路径安全、平稳地行驶。",
+    "retrieved_context": "## Summary\nOfficial Apollo control material describing how planned trajectories are converted into steering, throttle, and brake commands.\n\n## Key points\n- Apollo控制能力介绍 本文档为开发者介绍Apollo控制模块的基本知识、Apollo控制能力、控制模块的组成及其输入输出。\n- /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo…\n- [p.1] /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo/planing 规划信息，自车规划的轨迹信息 定位信息，自车的位置 /Apollo/localizatio/pose /Apollo/canbus/chassis 底盘信息，自车的方向盘、速度信息 控制模块输出channel 控制模块有一个输出channel： 输入输出channel说明 channel名称 控制信息，方向盘角度、油门刹车 /Apollo/control 输出\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p.1] Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-009",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nOfficial Apollo control material describing how planned trajectories are converted into steering, throttle, and brake commands.\n\n## Key points\n- Apollo控制能力介绍 本文档为开发者介绍Apollo控制模块的基本知识、Apollo控制能力、控制模块的组成及其输入输出。\n- /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo…",
+        "score": 0.7507705092430115,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-009",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo/planing 规划信息，自车规划的轨迹信息 定位信息，自车的位置 /Apollo/localizatio/pose /Apollo/canbus/chassis 底盘信息，自车的方向盘、速度信息 控制模块输出channel 控制模块有一个输出channel： 输入输出channel说明 channel名称 控制信息，方向盘角度、油门刹车 /Apollo/control 输出",
+        "score": 0.5625588297843933,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践",
+        "score": 0.25064218044281006,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…",
+        "score": 0.2009773552417755,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。 在过去的两年里，Apollo 平台发展迅速，实现了从封闭场所的自动驾驶，到简单城市 道路和高速公路的自动驾驶的突破发展。作为 Apollo3.5 发布的一部分，Apollo Cyber",
+        "score": 0.06877006590366364,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "控制模块的目标是基于规划模块输出的目标轨迹和定位模块输出的车辆状态生成方向盘、油门、刹车控制命令，并通过canbus模块给车辆底层执行器。",
+        "source_id": "apollo-doc-009",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-018",
+    "question": "为什么 Apollo 预测模块的输出会直接影响规划模块？",
+    "reference_answer": "因为预测模块会给出障碍物未来轨迹，这些结果会作为下游规划模块进行自车轨迹规划的重要输入。",
+    "answer": "Apollo 预测模块的输出会直接影响规划模块，是因为预测模块为规划模块提供了障碍物在未来一段时间内的轨迹信息。这些信息是规划模块进行路径和轨迹规划的重要依据，帮助自动驾驶系统提前预知潜在的障碍物行为，从而制定出更加安全、高效和舒适的行驶策略。因此，预测模块的输出对规划模块的决策具有直接的影响。",
+    "retrieved_context": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践\n- [p.1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /apollo/relative_map /apollo/routing_response 输入导航routing信息 规划模块的输出 输出channel说明 channel名称 /apollo/planning输出自动驾驶车辆的轨迹信息 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问题。我 们会根据反馈意见对文档进行迭代优化。 < apollo规划模块实践\n## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…\n- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…\n- [p.1] /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo/planing 规划信息，自车规划的轨迹信息 定位信息，自车的位置 /Apollo/localizatio/pose /Apollo/canbus/chassis 底盘信息，自车的方向盘、速度信息 控制模块输出channel 控制模块有一个输出channel： 输入输出channel说明 channel名称 控制信息，方向盘角度、油门刹车 /Apollo/control 输出",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践",
+        "score": 0.9907404184341431,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /apollo/relative_map /apollo/routing_response 输入导航routing信息 规划模块的输出 输出channel说明 channel名称 /apollo/planning输出自动驾驶车辆的轨迹信息 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问题。我 们会根据反馈意见对文档进行迭代优化。 < apollo规划模块实践",
+        "score": 0.9197431206703186,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+        "score": 0.889971137046814,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+        "score": 0.8428106904029846,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-009",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo/planing 规划信息，自车规划的轨迹信息 定位信息，自车的位置 /Apollo/localizatio/pose /Apollo/canbus/chassis 底盘信息，自车的方向盘、速度信息 控制模块输出channel 控制模块有一个输出channel： 输入输出channel说明 channel名称 控制信息，方向盘角度、油门刹车 /Apollo/control 输出",
+        "score": 0.6545498967170715,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规划模块进行自车轨迹的规划。",
+        "source_id": "apollo-doc-007",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-019",
+    "question": "FusionAD 论文认为多模态融合对预测与规划任务带来了什么收益？",
+    "reference_answer": "FusionAD 认为多模态融合显著提升了预测和规划任务表现，并且相较仅依赖相机 BEV 的方法也改善了感知任务。",
+    "answer": "根据 FusionAD 论文，多模态融合在预测与规划任务中带来了以下收益：\n\n1. **显著提升性能**：论文指出，所提出的多模态融合方法在预测和规划任务中实现了显著的性能提升。\n2. **增强感知能力**：与仅依赖摄像头的端到端学习方法相比，多模态融合显著改善了感知任务的效果。\n3. **支持多任务处理**：通过利用鸟瞰图（BEV）融合技术，FusionAD 实现了多传感器、多任务的协同处理，提升了系统的整体效率和可靠性。",
+    "retrieved_context": "# FusionAD: Multi-modality Fusion for Prediction and Planning Tasks of Autonomous Driving\n\n- Source type: paper\n- Category: papers\n- Original file: data/sources/raw/papers/FusionAD Multi-modality Fusion for Prediction and Planning Tasks of Autonomous.pdf\n- Original URL: https://arxiv.org/abs/2308.01006\n- Language: en\n- Version: FusionAD\n- Pages: 8\n- Topic tags: [planning_control, sensor_fusion]\n- [p.7] The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end- to-end learning methods solely reliant on cam…\n### Pages 7-8\n- [p.7] (a) Case 1: Perception of a bus. FusionAD detects the heading correctly while distorsion exists in near range, but UniAD incorrectly predicts the heading. (b) Case 2: Prediction of U-turn. FusionAD consistantly predicts…\n- [p.7] 5: Visual comparison of two example cases between UniAD [1] (Top) and our FusionAD (Bottom). V. CONCLUSIONS We propose FusionAD, a novel approach that leverages BEV fusion to facilitate multi-sensory, multi-task, end-to…\n## Key points\n- 安装逆明 数据格式 Channel数据格式文档介招 感知模块 CANBUS模块 控制模扶 定位模块 预测模扶 规划模块 监控模块 Guardian模块 人机交互模块 坐标变换模块 Channel数据格式文档介绍 【数据格式】文档，以【 】中介绍的 demo_35urecord数据包为对像，介绍各个Channel 和对应的内部消息格式 (slessan) 前…\n- Apollo通信系统 Apollo的各个模块是以组件的形式存在的。细件之间利用数据通道进行通信。其中，最小的数据单元是消息格式采定义的。也 有其他Node、witereader等，为了避免混淆，这里只关注细件、数据通道和消息格式。\n- 数据通道 Channel是传转辅输数据的通道，管理CybarRT 中的数据通信。用户可以发布/订阅同一个Charel建立通信，实现点对点（P2F) 招放数据包之后，打开CyherMonitor工具井进入特定数据通道，可以看到海个Channel中都有ChannelINae、 HessageType、FraeRatio、Rahessage Size数据字段。关…\n## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# FusionAD: Multi-modality Fusion for Prediction and Planning Tasks of Autonomous Driving\n\n- Source type: paper\n- Category: papers\n- Original file: data/sources/raw/papers/FusionAD Multi-modality Fusion for Prediction and Planning Tasks of Autonomous.pdf\n- Original URL: https://arxiv.org/abs/2308.01006\n- Language: en\n- Version: FusionAD\n- Pages: 8\n- Topic tags: [planning_control, sensor_fusion]",
+        "score": 0.9256424903869629,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.7] The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end- to-end learning methods solely reliant on cam…",
+        "score": 0.7688965797424316,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 7-8\n- [p.7] (a) Case 1: Perception of a bus. FusionAD detects the heading correctly while distorsion exists in near range, but UniAD incorrectly predicts the heading. (b) Case 2: Prediction of U-turn. FusionAD consistantly predicts…\n- [p.7] 5: Visual comparison of two example cases between UniAD [1] (Top) and our FusionAD (Bottom). V. CONCLUSIONS We propose FusionAD, a novel approach that leverages BEV fusion to facilitate multi-sensory, multi-task, end-to…",
+        "score": 0.4395830035209656,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- 安装逆明 数据格式 Channel数据格式文档介招 感知模块 CANBUS模块 控制模扶 定位模块 预测模扶 规划模块 监控模块 Guardian模块 人机交互模块 坐标变换模块 Channel数据格式文档介绍 【数据格式】文档，以【 】中介绍的 demo_35urecord数据包为对像，介绍各个Channel 和对应的内部消息格式 (slessan) 前…\n- Apollo通信系统 Apollo的各个模块是以组件的形式存在的。细件之间利用数据通道进行通信。其中，最小的数据单元是消息格式采定义的。也 有其他Node、witereader等，为了避免混淆，这里只关注细件、数据通道和消息格式。\n- 数据通道 Channel是传转辅输数据的通道，管理CybarRT 中的数据通信。用户可以发布/订阅同一个Charel建立通信，实现点对点（P2F) 招放数据包之后，打开CyherMonitor工具井进入特定数据通道，可以看到海个Channel中都有ChannelINae、 HessageType、FraeRatio、Rahessage Size数据字段。关…",
+        "score": 0.00874878279864788,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+        "score": 0.008444029837846756,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end-to-end learning methods solely reliant on camera-based BEV .",
+        "source_id": "paper-006",
+        "locator": "p.7"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-020",
+    "question": "ADS 2.0 为什么要求系统具备转入 minimal risk condition 的文档化流程？",
+    "reference_answer": "因为在自动驾驶系统无法继续正常运行时，系统需要有明确流程安全地转入最小风险状态，并尽量减少异常驾驶行为。",
+    "answer": "ADS 2.0 要求系统具备转入 **minimal risk condition** 的文档化流程，是为了确保在自动驾驶系统（ADS）发生故障或无法正常运行时，能够安全地将车辆引导至一个最低风险状态。这一要求的核心目的是保障乘客和道路使用者的安全。\n\n具体而言，文档化流程有助于：\n\n1. **明确应对策略**：通过预先制定的流程，确保系统在异常情况下能够快速、可靠地执行安全操作。\n2. **提高可追溯性**：文档化的流程便于后续分析和改进，有助于识别和解决潜在问题。\n3. **符合行业标准**：该要求与自动驾驶系统的安全性和可靠性标准相一致，有助于提升整体系统的可信度。\n4. **支持驾驶员接管**：系统应能及时通知人类驾驶员，使其能够重新获得对车辆的控制权，或允许系统独立恢复到最低风险状态。\n\n综上，文档化流程是 ADS 2.0 在安全性和可靠性方面的重要体现。",
+    "retrieved_context": "### Pages 14-25\n- [p.14] AUTOMATED DRIVING SYSTEMS 2.0: A VISION FOR SAFETY 8 SECTION 1: VOLUNTARY GUIDANCE 4. Fallback (Minimal Risk Condition) Entities are encouraged to have a documented process for transitioning to a minimal risk condition…\n- [p.14] Furthermore, ADSs should be able to notify the human driver of such events in a way that enables the driver to regain proper control of the vehicle or allows the ADS to return to a minimal risk condition independently.…\n## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…\n### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…\n- [p.1] It is 15x more diverse than the largest cam- era+LiDAR dataset available based on our proposed geo- graphical coverage metric. We exhaustively annotated this data with 2D (camera image) and 3D (LiDAR) bounding boxes, wi…\n- 例如：16863 字节 其中，MessageType字段展现的数据格式是本Chzame通道里使用的最小数据单元，由消息格式(Message）定义。示例中 apo1lo,perception,Perceptionobstacles 是数据通道/apollo/perception/obstacles 的核心消息格式。",
+    "retrieved_rows": [
+      {
+        "source_id": "standard-002",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 14-25\n- [p.14] AUTOMATED DRIVING SYSTEMS 2.0: A VISION FOR SAFETY 8 SECTION 1: VOLUNTARY GUIDANCE 4. Fallback (Minimal Risk Condition) Entities are encouraged to have a documented process for transitioning to a minimal risk condition…\n- [p.14] Furthermore, ADSs should be able to notify the human driver of such events in a way that enables the driver to regain proper control of the vehicle or allows the ADS to return to a minimal risk condition independently.…",
+        "score": 0.9775656461715698,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…",
+        "score": 3.9383205148624256e-05,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…",
+        "score": 3.791889321291819e-05,
+        "rank": 3
+      },
+      {
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] It is 15x more diverse than the largest cam- era+LiDAR dataset available based on our proposed geo- graphical coverage metric. We exhaustively annotated this data with 2D (camera image) and 3D (LiDAR) bounding boxes, wi…",
+        "score": 3.7447487557074055e-05,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- 例如：16863 字节 其中，MessageType字段展现的数据格式是本Chzame通道里使用的最小数据单元，由消息格式(Message）定义。示例中 apo1lo,perception,Perceptionobstacles 是数据通道/apollo/perception/obstacles 的核心消息格式。",
+        "score": 3.7437632272485644e-05,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Entities are encouraged to have a documented process for transitioning to a minimal risk condition.",
+        "source_id": "standard-002",
+        "locator": "p.14"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-021",
+    "question": "ADS 2.0 为什么把数据记录视为自动驾驶安全的重要组成部分？",
+    "reference_answer": "因为从事故数据中学习有助于复盘和改进系统，从而避免同类场景在其他 ADS 中再次发生。",
+    "answer": "ADS 2.0 将数据记录视为自动驾驶安全的重要组成部分，主要是因为数据记录能够为自动驾驶系统的开发、测试、事故调查和持续改进提供关键信息。通过记录车辆在运行过程中的各种数据，如传感器数据、系统状态、驾驶决策等，可以更全面地理解自动驾驶系统的行为，识别潜在的安全风险，并为事故分析提供依据。此外，数据记录也有助于提高系统的透明度和可追溯性，增强公众对自动驾驶技术的信任。",
+    "retrieved_context": "### Pages 26-36\n- [p.26] AUTOMATED DRIVING SYSTEMS 2.0: A VISION FOR SAFETY 20 SECTION 2: TECHNICAL ASSISTANCE TO STATES NHTSA encourages States to review others’ draft ADS policies and legislation and work toward consistency. The goal of State…\n- [p.26] States are encouraged to maintain a good state of infrastructure design, operation, and maintenance that supports ADS deployment and to adhere to the Manual on Uniform Traffic Control Devices (MUTCD), the existing natio…\n# Automated Driving Systems 2.0: A Vision for Safety\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/Automated Driving Systems 2.0 A Vision for Safety.pdf\n- Original URL: https://www.nhtsa.gov/sites/nhtsa.gov/files/documents/13069a-ads2.0_090617_v9a_tag.pdf\n- Language: en\n- Version: ADS 2.0\n- Pages: 36\n- Topic tags: [safety, system_architecture]\n## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…\n- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：结合上游模块信息，通过一系列的任务组合，完成自动驾驶车辆的轨迹规划 ·决策器&优化器（Deciders&Optimizers）：一组实现决策和优化任务的task集合。优化器用于优化车辆的轨迹和速度。决 策器则基于规则，确定自动驾驶车辆何时换车道、何时停车、何时蠕行（慢速行进）或螺行何时完成等驾驶行为。\n## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+    "retrieved_rows": [
+      {
+        "source_id": "standard-002",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 26-36\n- [p.26] AUTOMATED DRIVING SYSTEMS 2.0: A VISION FOR SAFETY 20 SECTION 2: TECHNICAL ASSISTANCE TO STATES NHTSA encourages States to review others’ draft ADS policies and legislation and work toward consistency. The goal of State…\n- [p.26] States are encouraged to maintain a good state of infrastructure design, operation, and maintenance that supports ADS deployment and to adhere to the Manual on Uniform Traffic Control Devices (MUTCD), the existing natio…",
+        "score": 0.03037773258984089,
+        "rank": 1
+      },
+      {
+        "source_id": "standard-002",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Automated Driving Systems 2.0: A Vision for Safety\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/Automated Driving Systems 2.0 A Vision for Safety.pdf\n- Original URL: https://www.nhtsa.gov/sites/nhtsa.gov/files/documents/13069a-ads2.0_090617_v9a_tag.pdf\n- Language: en\n- Version: ADS 2.0\n- Pages: 36\n- Topic tags: [safety, system_architecture]",
+        "score": 0.024518949910998344,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…",
+        "score": 0.004251398146152496,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：结合上游模块信息，通过一系列的任务组合，完成自动驾驶车辆的轨迹规划 ·决策器&优化器（Deciders&Optimizers）：一组实现决策和优化任务的task集合。优化器用于优化车辆的轨迹和速度。决 策器则基于规则，确定自动驾驶车辆何时换车道、何时停车、何时蠕行（慢速行进）或螺行何时完成等驾驶行为。",
+        "score": 0.002313264412805438,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+        "score": 0.0021691808942705393,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Learning from crash data is a central component to the safety potential of ADSs.",
+        "source_id": "standard-002",
+        "locator": "p.20"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-022",
+    "question": "UN R155 在型式批准前对网络安全措施提出了什么验证要求？",
+    "reference_answer": "车辆制造商在型式批准前需要进行适当且充分的测试，以验证所实施网络安全措施的有效性。",
+    "answer": "根据 UN Regulation No. 155（UN R155）的要求，在型式批准前，对网络安全措施的验证要求主要包括以下内容：\n\n1. **网络安全管理系统的建立**：车辆制造商需建立并实施一个符合 UN R155 要求的网络安全管理系统（Cyber Security Management System, CSMS），以确保车辆在整个生命周期内具备足够的网络安全防护能力。\n\n2. **风险评估与分析**：对车辆的网络架构、通信协议、软件组件等进行系统性的风险评估，识别潜在的网络安全威胁和漏洞，并采取相应的缓解措施。\n\n3. **安全功能的验证**：对车辆的网络安全功能（如入侵检测、数据加密、访问控制等）进行验证，确保其能够有效防范未经授权的访问、数据篡改或恶意攻击。\n\n4. **渗透测试与漏洞扫描**：通过渗透测试和漏洞扫描等手段，评估车辆系统的安全性，发现并修复潜在的安全缺陷。\n\n5. **合规性文件提交**：制造商需提交完整的网络安全合规性文件，包括风险评估报告、安全功能验证结果、渗透测试报告等，以证明其产品符合 UN R155 的要求。\n\n6. **持续监控与更新**：在车辆上市后，制造商还需持续监控网络安全状况，并定期更新安全措施，以应对新的网络安全威胁。\n\n以上要求旨在确保车辆在设计和制造阶段即具备充分的网络安全防护能力，从而保障车辆及其用户的网络安全。",
+    "retrieved_context": "# UN Regulation No. 155 - Cyber security and cyber security management system\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 155 - Cyber security and cyber security management system.pdf\n- Original URL: https://unece.org/sites/default/files/2023-02/R155e%20%282%29.pdf\n- Language: en\n- Version: UN R155\n- Pages: 30\n- Topic tags: [safety]\n### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…\n- [p.1] channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的…\n## Structured notes\n### Pages 1-1\n- [p.1] apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。 本文档主要介绍规划模块的基本原理以及输入输出，帮助开发者快速了解规划模块的运作机制，方便开发者开展后续的模块开 Apollo规划能力介绍 Apolo规划模块的主要作用是结合障碍物、地图定位以及导航信息为自动驾驶车辆规划一条运动轨迹，这条…\n- [p.1] Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n## Structured notes\n### Pages 1-1\n- [p.1] NHTSA's mission is to save lives, prevent injuries, and reduce the economic costs of roadway crashes hold the promise not only to change the way we drive but to save lives. The continuing evolution of automotive technol…\n- [p.1] NHTSA demonstrates its dedication to saving lives on our nation's roads and highways through its that have enormous potential for improving safety and mobility for all Americans. AV 4.0, announced at CES in January_ 202…",
+    "retrieved_rows": [
+      {
+        "source_id": "standard-007",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# UN Regulation No. 155 - Cyber security and cyber security management system\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 155 - Cyber security and cyber security management system.pdf\n- Original URL: https://unece.org/sites/default/files/2023-02/R155e%20%282%29.pdf\n- Language: en\n- Version: UN R155\n- Pages: 30\n- Topic tags: [safety]",
+        "score": 0.05110830441117287,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…",
+        "score": 0.00012692026211880147,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的…",
+        "score": 3.743295746971853e-05,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。 本文档主要介绍规划模块的基本原理以及输入输出，帮助开发者快速了解规划模块的运作机制，方便开发者开展后续的模块开 Apollo规划能力介绍 Apolo规划模块的主要作用是结合障碍物、地图定位以及导航信息为自动驾驶车辆规划一条运动轨迹，这条…\n- [p.1] Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。",
+        "score": 3.739681051229127e-05,
+        "rank": 4
+      },
+      {
+        "source_id": "standard-001",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] NHTSA's mission is to save lives, prevent injuries, and reduce the economic costs of roadway crashes hold the promise not only to change the way we drive but to save lives. The continuing evolution of automotive technol…\n- [p.1] NHTSA demonstrates its dedication to saving lives on our nation's roads and highways through its that have enormous potential for improving safety and mobility for all Americans. AV 4.0, announced at CES in January_ 202…",
+        "score": 3.737599399755709e-05,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "The vehicle manufacturer shall perform, prior to type approval, appropriate and sufficient testing to verify the effectiveness of the security measures implemented.",
+        "source_id": "standard-007",
+        "locator": "p.11"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-023",
+    "question": "UN R156 为什么要求软件更新流程评估其对车辆安全持续运行的影响？",
+    "reference_answer": "因为软件更新可能影响其他与车辆安全持续运行相关的系统，制造商必须识别、评估并记录这种影响。",
+    "answer": "UN R156 要求软件更新流程评估其对车辆安全持续运行的影响，主要是为了确保软件更新不会对车辆的安全性、可靠性或功能产生负面影响。该法规旨在通过规范软件更新和管理系统的流程，保障自动驾驶系统在更新过程中保持安全性和稳定性，从而避免因软件更新导致的潜在风险，如系统故障、功能失效或安全隐患。",
+    "retrieved_context": "# UN Regulation No. 156 - Software update and software update management system\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 156 - Software update and software update management system.pdf\n- Original URL: https://unece.org/sites/default/files/2024-03/R156e%20%282%29.pdf\n- Language: en\n- Version: UN R156\n- Pages: 16\n- Topic tags: [safety]\n### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…\n- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…\n## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…\n## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…",
+    "retrieved_rows": [
+      {
+        "source_id": "standard-008",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# UN Regulation No. 156 - Software update and software update management system\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 156 - Software update and software update management system.pdf\n- Original URL: https://unece.org/sites/default/files/2024-03/R156e%20%282%29.pdf\n- Language: en\n- Version: UN R156\n- Pages: 16\n- Topic tags: [safety]",
+        "score": 0.16996118426322937,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…",
+        "score": 0.0012532812543213367,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+        "score": 0.0010728130582720041,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+        "score": 0.0008809990249574184,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…",
+        "score": 0.0006627052789554,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "A process to assess, identify and record if a software update will affect any other system required for the safe and continued operation of the vehicle",
+        "source_id": "standard-008",
+        "locator": "p.8"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-024",
+    "question": "UN R157 对 ALKS 的激活道路条件有什么要求？",
+    "reference_answer": "ALKS 只能在禁止行人和自行车进入、并且有物理隔离分隔对向车流的道路条件下激活。",
+    "answer": "UN Regulation No. 157（UN R157）对自动车道保持系统（ALKS）的激活道路条件有明确要求，主要包括以下几点：\n\n1. **道路类型**：ALKS只能在特定类型的道路中激活，例如高速公路或设有清晰车道标记的道路上。这些道路需具备良好的可见性和足够的空间以确保车辆安全行驶。\n\n2. **环境条件**：道路应具备良好的照明条件，且天气状况应允许系统正常工作，如无大雨、大雾等影响视线的恶劣天气。\n\n3. **交通标志和标线**：道路必须配备清晰的交通标志和标线，以便ALKS能够准确识别车道边界和交通信号。\n\n4. **车辆速度**：ALKS的激活通常限于特定的速度范围，一般为60 km/h至130 km/h之间，具体取决于车辆设计和制造商的设定。\n\n5. **驾驶员监控**：即使在ALKS激活状态下，驾驶员仍需保持注意力，随时准备接管车辆控制，以应对突发情况。\n\n以上要求旨在确保ALKS在激活时能够安全、有效地运行，减少交通事故风险。",
+    "retrieved_context": "# UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS)\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS).pdf\n- Original URL: https://unece.org/sites/default/files/2025-06/R157r1e.pdf\n- Language: en\n- Version: UN R157\n- Pages: 102\n- Topic tags: [safety, planning_control]\n- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…\n- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：…\n## Key points\n- Overview of Select NHTSA Activities – Automated Driving Systems Katherine Chasins Special Programs Division Chief Rulemaking Office of Automation Safety 1/18/2024\n- 2 NHTSA Background Mission: Save lives, prevent injuries, & reduce economic costs due to road traffic crashes Authority to: Regulate and oversee the manufacture and importation of…\n- 4 NHTSA’s Standing General Order (SGO) • Regular Data Publication: www.NHTSA.gov/SGOcrashReporting\n## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…",
+    "retrieved_rows": [
+      {
+        "source_id": "standard-009",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS)\n\n- Source type: standard\n- Category: standards\n- Original file: data/sources/raw/standards/UN Regulation No. 157 - Automated Lane Keeping Systems (ALKS).pdf\n- Original URL: https://unece.org/sites/default/files/2025-06/R157r1e.pdf\n- Language: en\n- Version: UN R157\n- Pages: 102\n- Topic tags: [safety, planning_control]",
+        "score": 0.16122299432754517,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+        "score": 0.0008399547659792006,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：…",
+        "score": 9.948383376467973e-05,
+        "rank": 3
+      },
+      {
+        "source_id": "standard-006",
+        "doc_type": "standard",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Overview of Select NHTSA Activities – Automated Driving Systems Katherine Chasins Special Programs Division Chief Rulemaking Office of Automation Safety 1/18/2024\n- 2 NHTSA Background Mission: Save lives, prevent injuries, & reduce economic costs due to road traffic crashes Authority to: Regulate and oversee the manufacture and importation of…\n- 4 NHTSA’s Standing General Order (SGO) • Regular Data Publication: www.NHTSA.gov/SGOcrashReporting",
+        "score": 6.115499854786322e-05,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-2\n- [p.1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p.1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。 1.通常红绿灯在图像中所占比例比较低，为了能够有效的检测出红绿灯，我们会借助高精地图给出的的信息预先从 相机图像中将包含红绿灯区域的大致位置取出来。 2.红绿灯位置检测部分采用了一种常规的基于C…",
+        "score": 5.7428100262768567e-05,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "ALKS can be activated under certain conditions on roads where pedestrians and cyclists are prohibited and which, by design, are equipped with a physical separation that divides the traffic moving in opposite directions",
+        "source_id": "standard-009",
+        "locator": "p.3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-025",
+    "question": "Apollo 感知融合为什么强调把摄像头、毫米波雷达和激光雷达结合起来？",
+    "reference_answer": "因为三种传感器各有优缺点，若能有效融合它们，就能在各种情况下获得更优的整体感知性能。",
+    "answer": "Apollo 感知融合强调将摄像头、毫米波雷达和激光雷达结合起来，主要是因为这三种传感器在感知环境时具有互补的优缺点，能够通过融合提升整体感知的准确性、鲁棒性和可靠性。具体原因如下：\n\n1. **互补性**：  \n   - **摄像头**擅长识别颜色、形状和纹理，适用于目标分类和车道线检测，但在光照不良或极端天气下性能会下降。  \n   - **毫米波雷达**（Radar）具有良好的穿透能力，不受光照和天气影响，能稳定检测距离和速度，但分辨率较低，难以识别目标形状。  \n   - **激光雷达**（Lidar）提供高精度的三维点云数据，能精确测量距离和形状，但成本较高，且在恶劣天气（如大雨、大雾）中可能受到干扰。\n\n2. **提高感知可靠性**：  \n   通过融合不同传感器的数据，可以弥补单一传感器的局限性。例如，在极端天气条件下，摄像头可能失效，而毫米波雷达和激光雷达仍能提供有效信息，从而确保系统持续运行。\n\n3. **增强目标检测与跟踪**：  \n   感知融合模块结合各传感器的目标检测结果，综合考虑障碍物的位置、速度、类别等信息，并结合历史跟踪数据，过滤误检和漏检，提升目标检测的准确性和稳定性。\n\n4. **支持复杂场景处理**：  \n   在复杂交通环境中，融合多传感器数据能够更全面地理解周围环境，为后续的预测和规划模块提供更可靠的输入，从而提升自动驾驶系统的安全性和智能化水平。\n\n综上所述，Apollo 感知融合通过结合摄像头、毫米波雷达和激光雷达的优势，实现了对环境的全方位、高精度感知，是实现自动驾驶安全可靠运行的关键技术之一。",
+    "retrieved_context": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p.1] Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1. 开放车辆认证平台 这是 Apollo 架构的最底层，旨在确保自动驾驶车辆的硬件兼容性和标准化。 • 认证 Apollo 兼容的线控车辆：这一层关注的是车辆本身的物理平台。Apollo 定 义了标准接口，使得经过认证的“线控车辆”（即可以通过电子信号控制转向、 加速和制动的车辆）能够接入 Apollo 系统。 • 开放车辆接口标准：为了实现上述兼容性，Apollo 制定了一套开放的接口标 准，确保不同厂商的车辆都能与 Apollo 的软件和硬件平台无缝对接。 2. 硬件开发平台 这一层提供了自动驾驶系统所需的物理计算和感知硬件。 • 计算单元：负责处理海量数据的核心计算硬件。 • 传感器套件：包括 GPS/IMU（定位与惯性测量） 、Camera（摄像头） 、LIDAR （激光雷达） 、Radar（毫米波雷达）以及 Ultrasonic Radar（超声波雷达） ，用 于全方位感知周围环境。\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践\n## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…",
+        "score": 0.9765595197677612,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1. 开放车辆认证平台 这是 Apollo 架构的最底层，旨在确保自动驾驶车辆的硬件兼容性和标准化。 • 认证 Apollo 兼容的线控车辆：这一层关注的是车辆本身的物理平台。Apollo 定 义了标准接口，使得经过认证的“线控车辆”（即可以通过电子信号控制转向、 加速和制动的车辆）能够接入 Apollo 系统。 • 开放车辆接口标准：为了实现上述兼容性，Apollo 制定了一套开放的接口标 准，确保不同厂商的车辆都能与 Apollo 的软件和硬件平台无缝对接。 2. 硬件开发平台 这一层提供了自动驾驶系统所需的物理计算和感知硬件。 • 计算单元：负责处理海量数据的核心计算硬件。 • 传感器套件：包括 GPS/IMU（定位与惯性测量） 、Camera（摄像头） 、LIDAR （激光雷达） 、Radar（毫米波雷达）以及 Ultrasonic Radar（超声波雷达） ，用 于全方位感知周围环境。",
+        "score": 0.6333582997322083,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践",
+        "score": 0.019351428374648094,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+        "score": 0.006155418232083321,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…",
+        "score": 0.0060004922561347485,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-026",
+    "question": "Apollo 感知融合模块支持在什么层级上融合摄像头、毫米波雷达和激光雷达结果？",
+    "reference_answer": "它支持在目标级别对摄像头、毫米波雷达和激光雷达的感知结果进行融合。",
+    "answer": "Apollo 感知融合模块支持在**目标级**上融合摄像头、毫米波雷达和激光雷达的感知结果。该模块通过对各传感器检测算法输出的障碍物信息进行分析，结合障碍物的传感器来源、位置、形状、速度、类别等信息，以及历史目标跟踪信息，过滤不准确的障碍物，并根据各传感器的优缺点调整障碍物的感知结果。",
+    "retrieved_context": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p.1] Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1. 开放车辆认证平台 这是 Apollo 架构的最底层，旨在确保自动驾驶车辆的硬件兼容性和标准化。 • 认证 Apollo 兼容的线控车辆：这一层关注的是车辆本身的物理平台。Apollo 定 义了标准接口，使得经过认证的“线控车辆”（即可以通过电子信号控制转向、 加速和制动的车辆）能够接入 Apollo 系统。 • 开放车辆接口标准：为了实现上述兼容性，Apollo 制定了一套开放的接口标 准，确保不同厂商的车辆都能与 Apollo 的软件和硬件平台无缝对接。 2. 硬件开发平台 这一层提供了自动驾驶系统所需的物理计算和感知硬件。 • 计算单元：负责处理海量数据的核心计算硬件。 • 传感器套件：包括 GPS/IMU（定位与惯性测量） 、Camera（摄像头） 、LIDAR （激光雷达） 、Radar（毫米波雷达）以及 Ultrasonic Radar（超声波雷达） ，用 于全方位感知周围环境。\n### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践\n- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…",
+        "score": 0.9989344477653503,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] Apollo Open Platform This is an overview: 从最底层的硬件到顶层的云服务，具体可以拆解为以下几个部分： 1. 开放车辆认证平台 这是 Apollo 架构的最底层，旨在确保自动驾驶车辆的硬件兼容性和标准化。 • 认证 Apollo 兼容的线控车辆：这一层关注的是车辆本身的物理平台。Apollo 定 义了标准接口，使得经过认证的“线控车辆”（即可以通过电子信号控制转向、 加速和制动的车辆）能够接入 Apollo 系统。 • 开放车辆接口标准：为了实现上述兼容性，Apollo 制定了一套开放的接口标 准，确保不同厂商的车辆都能与 Apollo 的软件和硬件平台无缝对接。 2. 硬件开发平台 这一层提供了自动驾驶系统所需的物理计算和感知硬件。 • 计算单元：负责处理海量数据的核心计算硬件。 • 传感器套件：包括 GPS/IMU（定位与惯性测量） 、Camera（摄像头） 、LIDAR （激光雷达） 、Radar（毫米波雷达）以及 Ultrasonic Radar（超声波雷达） ，用 于全方位感知周围环境。",
+        "score": 0.8957000374794006,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…",
+        "score": 0.42900222539901733,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践",
+        "score": 0.05952558293938637,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+        "score": 0.026583382859826088,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-027",
+    "question": "Apollo 感知融合模块把各传感器结果汇入哪个统一输入 channel 作为源数据？",
+    "reference_answer": "各传感器感知结果会统一输出到 /perception/inner/PrefusedObjects 作为融合模块的源数据。",
+    "answer": "Apollo 感知融合模块将各传感器的感知结果汇入统一输入 channel **/perception/inner/PrefusedObjects** 作为源数据。",
+    "retrieved_context": "## Key points\n- Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo…\n- +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。\n- channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。\n# Apollo Channel Data Format\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/apollo-channel-data-format.pdf\n- Original URL: https://developer.apollo.auto/Apollo-Homepage-Document/Apollo_Doc_CN_6_0/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F/Channel%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E6%96%87%E6%A1%A3%E4%BB%8B%E7%BB%8D\n- Language: zh\n- Version: Apollo Doc CN 6.0\n- Pages: 2\n- Topic tags: [system_architecture, sensor_fusion, planning_control]\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…\n- [p.1] 数据通道 Channel是传转辅输数据的通道，管理CybarRT 中的数据通信。用户可以发布/订阅同一个Charel建立通信，实现点对点（P2F) 招放数据包之后，打开CyherMonitor工具井进入特定数据通道，可以看到海个Channel中都有ChannelINae、 HessageType、FraeRatio、Rahessage Size数据字段。关于播放数据包，参见使用Dreamiew查看效据包。 各个数据字段的名称和描述如下所示： 数据通道的名字。 aenaep 例0： /apollc/perceptior/obstacles 例0: apollo.perceptionPerceptionObstades 通道内的数据的数据类型。 数据更新频率。 例如: 10 HZ 原始数据的数据大小。",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo…\n- +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。\n- channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。",
+        "score": 0.998816728591919,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": 0.9958723187446594,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# Apollo Channel Data Format\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/apollo-channel-data-format.pdf\n- Original URL: https://developer.apollo.auto/Apollo-Homepage-Document/Apollo_Doc_CN_6_0/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F/Channel%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E6%96%87%E6%A1%A3%E4%BB%8B%E7%BB%8D\n- Language: zh\n- Version: Apollo Doc CN 6.0\n- Pages: 2\n- Topic tags: [system_architecture, sensor_fusion, planning_control]",
+        "score": 0.2896241843700409,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者可 以以 Apollo 技术平台为基础，使用一系列广泛的工具和软件模块来创新和构建自己的 自动驾驶解决方案。…\n- [p.1] 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apollo Cyber RT 框架建立在这些组 件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。 在运行时，Apollo Cyber RT 框架加载上面提到的预定义组件，建立轻量级的用户任务 并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务 进行调度和执行。 Apol…",
+        "score": 0.08206768333911896,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] 数据通道 Channel是传转辅输数据的通道，管理CybarRT 中的数据通信。用户可以发布/订阅同一个Charel建立通信，实现点对点（P2F) 招放数据包之后，打开CyherMonitor工具井进入特定数据通道，可以看到海个Channel中都有ChannelINae、 HessageType、FraeRatio、Rahessage Size数据字段。关于播放数据包，参见使用Dreamiew查看效据包。 各个数据字段的名称和描述如下所示： 数据通道的名字。 aenaep 例0： /apollc/perceptior/obstacles 例0: apollo.perceptionPerceptionObstades 通道内的数据的数据类型。 数据更新频率。 例如: 10 HZ 原始数据的数据大小。",
+        "score": 0.037099044770002365,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-028",
+    "question": "Apollo 感知融合模块的主要输出 channel 表达了什么信息？",
+    "reference_answer": "其主要输出 channel 会输出多传感器融合后的障碍物信息。",
+    "answer": "Apollo 感知融合模块的主要输出 channel 是 `/apollo/perception/obstacles`，该 channel 表达了多传感器融合后的障碍物信息。这些信息包括障碍物的位置、朝向、速度、加速度、类别等，是感知融合模块对各传感器检测结果进行分析、过滤和融合后的输出，为后续的预测和规划模块提供关键数据支持。",
+    "retrieved_context": "- [p.1] channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的…\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…\n### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…\n## Summary\nOfficial Apollo channel-format material describing how modules communicate through Cyber RT channels and which message types are used for perception, prediction, planning, and control.",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的…",
+        "score": 0.9986768364906311,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p.1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…",
+        "score": 0.9744224548339844,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…",
+        "score": 0.8531701564788818,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 3-4\n- [p.3] 红绿灯检测模块 红绿灯检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/camera/front_12mm /apollo/perception/traffic_light 障碍物检测模块 障碍物检测模块输入输入如下表所示： channel名称 /apollo/sensor/camera/front_6mm /apollo/sensor/ca…\n- [p.4] /apollo/localization/pose 王车速度和用速度 /perception/obstacles 具有航向、速度和分类信息的三维障碍物轨迹 视觉感知模块简介 输出给融合模块的障碍物偏感知模块的原理 /perception/inner/Prefusedobjects 红绿灯检测模块原理 车道线检测模块原理 [±h/2] ±w/2 ±l/2] 输入：RGB图像IERWXHx3 输出：物体类别C和3D边框 （h,w,l)：物…",
+        "score": 0.8446679711341858,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nOfficial Apollo channel-format material describing how modules communicate through Cyber RT channels and which message types are used for perception, prediction, planning, and control.",
+        "score": 0.4584839642047882,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "感知融合模块的主要输出channel。该channel 输出的是多传感器融合之后的障碍物信息。",
+        "source_id": "apollo-doc-005",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-029",
+    "question": "FusionAD 论文为何认为多模态融合有助于下游预测与规划？",
+    "reference_answer": "因为多模态融合带来的 BEV 表征改进，不仅提升了预测和规划任务表现，也比只依赖相机 BEV 的方法更好。",
+    "answer": "FusionAD 论文认为多模态融合有助于下游预测与规划，主要是因为多模态数据能够提供更全面、准确的环境信息。通过将不同传感器（如激光雷达、摄像头等）的数据进行融合，可以弥补单一传感器在感知上的局限性，例如激光雷达在近距离的精度问题或摄像头在光照条件下的表现问题。这种融合方式提升了对障碍物的感知质量，从而为预测模块提供了更可靠的输入，使得预测结果更加精确。同时，多模态融合还支持多任务处理，有助于提升自动驾驶系统在复杂场景下的决策能力和安全性。",
+    "retrieved_context": "# FusionAD: Multi-modality Fusion for Prediction and Planning Tasks of Autonomous Driving\n\n- Source type: paper\n- Category: papers\n- Original file: data/sources/raw/papers/FusionAD Multi-modality Fusion for Prediction and Planning Tasks of Autonomous.pdf\n- Original URL: https://arxiv.org/abs/2308.01006\n- Language: en\n- Version: FusionAD\n- Pages: 8\n- Topic tags: [planning_control, sensor_fusion]\n### Pages 7-8\n- [p.7] (a) Case 1: Perception of a bus. FusionAD detects the heading correctly while distorsion exists in near range, but UniAD incorrectly predicts the heading. (b) Case 2: Prediction of U-turn. FusionAD consistantly predicts…\n- [p.7] 5: Visual comparison of two example cases between UniAD [1] (Top) and our FusionAD (Bottom). V. CONCLUSIONS We propose FusionAD, a novel approach that leverages BEV fusion to facilitate multi-sensory, multi-task, end-to…\n## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…\n## Key points\n- 安装逆明 数据格式 Channel数据格式文档介招 感知模块 CANBUS模块 控制模扶 定位模块 预测模扶 规划模块 监控模块 Guardian模块 人机交互模块 坐标变换模块 Channel数据格式文档介绍 【数据格式】文档，以【 】中介绍的 demo_35urecord数据包为对像，介绍各个Channel 和对应的内部消息格式 (slessan) 前…\n- Apollo通信系统 Apollo的各个模块是以组件的形式存在的。细件之间利用数据通道进行通信。其中，最小的数据单元是消息格式采定义的。也 有其他Node、witereader等，为了避免混淆，这里只关注细件、数据通道和消息格式。\n- 数据通道 Channel是传转辅输数据的通道，管理CybarRT 中的数据通信。用户可以发布/订阅同一个Charel建立通信，实现点对点（P2F) 招放数据包之后，打开CyherMonitor工具井进入特定数据通道，可以看到海个Channel中都有ChannelINae、 HessageType、FraeRatio、Rahessage Size数据字段。关…\n## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "# FusionAD: Multi-modality Fusion for Prediction and Planning Tasks of Autonomous Driving\n\n- Source type: paper\n- Category: papers\n- Original file: data/sources/raw/papers/FusionAD Multi-modality Fusion for Prediction and Planning Tasks of Autonomous.pdf\n- Original URL: https://arxiv.org/abs/2308.01006\n- Language: en\n- Version: FusionAD\n- Pages: 8\n- Topic tags: [planning_control, sensor_fusion]",
+        "score": 0.9451327323913574,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "### Pages 7-8\n- [p.7] (a) Case 1: Perception of a bus. FusionAD detects the heading correctly while distorsion exists in near range, but UniAD incorrectly predicts the heading. (b) Case 2: Prediction of U-turn. FusionAD consistantly predicts…\n- [p.7] 5: Visual comparison of two example cases between UniAD [1] (Top) and our FusionAD (Bottom). V. CONCLUSIONS We propose FusionAD, a novel approach that leverages BEV fusion to facilitate multi-sensory, multi-task, end-to…",
+        "score": 0.829818844795227,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。\n- Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。\n- handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…",
+        "score": 0.01498174387961626,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Key points\n- 安装逆明 数据格式 Channel数据格式文档介招 感知模块 CANBUS模块 控制模扶 定位模块 预测模扶 规划模块 监控模块 Guardian模块 人机交互模块 坐标变换模块 Channel数据格式文档介绍 【数据格式】文档，以【 】中介绍的 demo_35urecord数据包为对像，介绍各个Channel 和对应的内部消息格式 (slessan) 前…\n- Apollo通信系统 Apollo的各个模块是以组件的形式存在的。细件之间利用数据通道进行通信。其中，最小的数据单元是消息格式采定义的。也 有其他Node、witereader等，为了避免混淆，这里只关注细件、数据通道和消息格式。\n- 数据通道 Channel是传转辅输数据的通道，管理CybarRT 中的数据通信。用户可以发布/订阅同一个Charel建立通信，实现点对点（P2F) 招放数据包之后，打开CyherMonitor工具井进入特定数据通道，可以看到海个Channel中都有ChannelINae、 HessageType、FraeRatio、Rahessage Size数据字段。关…",
+        "score": 0.011461927555501461,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…",
+        "score": 0.00313272955827415,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end-to-end learning methods solely reliant on camera-based BEV .",
+        "source_id": "paper-006",
+        "locator": "p.7"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    }
+  },
+  {
+    "id": "gold-030",
+    "question": "为什么 Apollo Channel 文档强调查看 /apollo/perception/obstacles 的消息格式？",
+    "reference_answer": "因为通道中的消息格式定义了最小数据单元，查看 /apollo/perception/obstacles 的消息类型可以明确障碍物数据的结构。",
+    "answer": "Apollo Channel 文档强调查看 `/apollo/perception/obstacles` 的消息格式，是因为该消息是感知模块与其他模块（如预测、规划和控制）通信的核心数据单元。它包含了障碍物的关键信息，如位置、朝向、速度和加速度等，是后续模块进行预测、路径规划和决策的基础数据来源。因此，理解其消息格式对于系统集成与开发至关重要。",
+    "retrieved_context": "## Summary\nOfficial Apollo channel-format material describing how modules communicate through Cyber RT channels and which message types are used for perception, prediction, planning, and control.\n- 例如：16863 字节 其中，MessageType字段展现的数据格式是本Chzame通道里使用的最小数据单元，由消息格式(Message）定义。示例中 apo1lo,perception,Perceptionobstacles 是数据通道/apollo/perception/obstacles 的核心消息格式。\n- [p.1] channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的…\n- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践\n- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "## Summary\nOfficial Apollo channel-format material describing how modules communicate through Cyber RT channels and which message types are used for perception, prediction, planning, and control.",
+        "score": 0.9471694231033325,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-003",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- 例如：16863 字节 其中，MessageType字段展现的数据格式是本Chzame通道里使用的最小数据单元，由消息格式(Message）定义。示例中 apo1lo,perception,Perceptionobstacles 是数据通道/apollo/perception/obstacles 的核心消息格式。",
+        "score": 0.9259003400802612,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的…",
+        "score": 0.9033394455909729,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction 预测轨迹，包含障碍物在预测时域内的未来轨迹信息 感知模块 /apollo/perception/obstacles /apollo/localization/pose 定位模块 /apollo/prediction 预测模块 规划模块 /apollo/planning 规划模块 如果您在使用文档的过程中，遇到任何问题，请麻烦到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问 题。我们会根据反馈意见对文档进行选代优化。 Apollo预测模块实践",
+        "score": 0.9007493853569031,
+        "rank": 4
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "baseline",
+        "content": "- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+        "score": 0.8851813673973083,
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "MessageType字段展现的数据格式是本Channel通道里使用的最小数据单元，由消息格式(Message）定义。示例中 apollo.perception.PerceptionObstacles 是数据通道/apollo/perception/obstacles 的核心消息格式。",
+        "source_id": "apollo-doc-003",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    }
+  }
+]

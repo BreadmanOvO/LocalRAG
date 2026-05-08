@@ -1,0 +1,461 @@
+[
+  {
+    "query": "Apollo Cyber RT 的核心作用是什么？",
+    "dense_results": [
+      {
+        "rank": 1,
+        "score": 1.0,
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.1] All annotations were created and subsequently reviewed by trained labelers using production-level labeling tools. We recorded all the sensor data of our dataset using an industrial-strength se"
+      },
+      {
+        "rank": 2,
+        "score": 0.9943,
+        "source_id": "standard-006",
+        "doc_type": "standard",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Key points\n- Overview of Select NHTSA Activities – Automated Driving Systems Katherine Chasins Special Programs Division Chief Rulemaking Office of Automation Safety 1/18/2024\n- 2 NHTSA Background "
+      },
+      {
+        "rank": 3,
+        "score": 0.9748,
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "# Apollo Open Platform Overview\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/Apollo-Open-Platform-overview.pdf\n- Original URL: https://developer.apollo.auto"
+      },
+      {
+        "rank": 4,
+        "score": 0.9708,
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Structured notes\n### Pages 1-3\n- [p.1] The research community has increasing interest in au- tonomous driving research, despite the resource intensity of obtaining representative real world data. E"
+      },
+      {
+        "rank": 5,
+        "score": 0.9324,
+        "source_id": "standard-001",
+        "doc_type": "standard",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Structured notes\n### Pages 1-1\n- [p.1] NHTSA's mission is to save lives, prevent injuries, and reduce the economic costs of roadway crashes hold the promise not only to change the way we drive but "
+      }
+    ],
+    "sparse_results": [
+      {
+        "rank": 1,
+        "score": 1.0,
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "### Pages 2-2\n- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特"
+      },
+      {
+        "rank": 2,
+        "score": 1.0,
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据"
+      },
+      {
+        "rank": 3,
+        "score": 0.9695,
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Key points\n- Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。\n- 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据的输入并生成一组输出。Apo"
+      },
+      {
+        "rank": 4,
+        "score": 0.9487,
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者"
+      },
+      {
+        "rank": 5,
+        "score": 0.9461,
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "# Apollo Cyber RT Framework\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/Apollo-Cyber-RT-framework.pdf\n- Original URL: https://developer.apollo.auto/cyber.h"
+      }
+    ],
+    "merged_results": [
+      {
+        "rank": 1,
+        "score": 0.5,
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.1] All annotations were created and subsequently reviewed by trained labelers using production-level labeling tools. We recorded all the sensor data of our dataset using an industrial-strength se"
+      },
+      {
+        "rank": 2,
+        "score": 0.5,
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "### Pages 2-2\n- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特"
+      },
+      {
+        "rank": 3,
+        "score": 0.5,
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.2] RT 框架将 Apollo 平台推向了一个新的高度。 专为自动驾驶打造的最先进开源运行框架 由于自动驾驶技术本身会遇到意想不到的情况和极具挑战的场景，开发者需要一个有 着高计算性能的可靠框架来支持和处理复杂的城市道路自动驾驶。而 Apollo Cyber RT 正为此提供了解决方案。 系统的架构是由一系列具有特定输入和输出的组件构成，每一个组件包含一个特定的 算法模块来处理一组数据"
+      },
+      {
+        "rank": 4,
+        "score": 0.4971,
+        "source_id": "standard-006",
+        "doc_type": "standard",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Key points\n- Overview of Select NHTSA Activities – Automated Driving Systems Katherine Chasins Special Programs Division Chief Rulemaking Office of Automation Safety 1/18/2024\n- 2 NHTSA Background "
+      },
+      {
+        "rank": 5,
+        "score": 0.4874,
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "# Apollo Open Platform Overview\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/Apollo-Open-Platform-overview.pdf\n- Original URL: https://developer.apollo.auto"
+      }
+    ],
+    "sample_id": "gold-001",
+    "reference_answer": "Apollo Cyber RT 负责提供自动驾驶系统中的通信、调度和组件协作基础能力。",
+    "evidence": [
+      {
+        "quote": "Cyber RT is the core framework for Apollo runtime communication and scheduling.",
+        "source_id": "apollo-doc-002",
+        "locator": "chapter=1/overview"
+      }
+    ]
+  },
+  {
+    "query": "Waymo Open Dataset 报告为什么强调数据集的多样性？",
+    "dense_results": [
+      {
+        "rank": 1,
+        "score": 1.0,
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Structured notes\n### Pages 1-3\n- [p.1] The research community has increasing interest in au- tonomous driving research, despite the resource intensity of obtaining representative real world data. E"
+      },
+      {
+        "rank": 2,
+        "score": 0.9075,
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出chan"
+      },
+      {
+        "rank": 3,
+        "score": 0.8373,
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.1] channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。 如果您在使用文档"
+      },
+      {
+        "rank": 4,
+        "score": 0.8134,
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.7] The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end- to-end learning me"
+      },
+      {
+        "rank": 5,
+        "score": 0.8083,
+        "source_id": "apollo-doc-001",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.1] Understand how to use steering, throttle, and brake to execute our planned trajectory and master different types of controllers in Apollo. Once completed, you'll be provided with suggestions f"
+      }
+    ],
+    "sparse_results": [
+      {
+        "rank": 1,
+        "score": 1.0,
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "# Scalability in Perception for Autonomous Driving: Waymo Open Dataset\n\n- Source type: report\n- Category: papers\n- Original file: data/sources/raw/papers/Scalability in Perception for Autonomous Drivi"
+      },
+      {
+        "rank": 2,
+        "score": 0.8783,
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Summary\nTechnical report from the Waymo Open Dataset context explaining perception scalability and dataset-driven evaluation considerations for autonomous driving."
+      },
+      {
+        "rank": 3,
+        "score": 0.7412,
+        "source_id": "paper-002",
+        "doc_type": "paper",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Structured notes\n### Pages 1-3\n- [p.1] No clean paragraph extracted.\n\n### Pages 4-6\n- [p.4] No clean paragraph extracted.\n\n### Pages 7-8\n- [p.8] Y . Zhang, J. Shlens, Z. Chen, and D. Anguelov, “Sca"
+      },
+      {
+        "rank": 4,
+        "score": 0.5948,
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- Find data, code and more up-to-date information at http://www.waymo.com/open."
+      },
+      {
+        "rank": 5,
+        "score": 0.2994,
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "# Apollo Open Platform Overview\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/Apollo-Open-Platform-overview.pdf\n- Original URL: https://developer.apollo.auto"
+      }
+    ],
+    "merged_results": [
+      {
+        "rank": 1,
+        "score": 0.6096,
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Structured notes\n### Pages 1-3\n- [p.1] The research community has increasing interest in au- tonomous driving research, despite the resource intensity of obtaining representative real world data. E"
+      },
+      {
+        "rank": 2,
+        "score": 0.5363,
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "# Apollo Open Platform Overview\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/Apollo-Open-Platform-overview.pdf\n- Original URL: https://developer.apollo.auto"
+      },
+      {
+        "rank": 3,
+        "score": 0.5,
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "# Scalability in Perception for Autonomous Driving: Waymo Open Dataset\n\n- Source type: report\n- Category: papers\n- Original file: data/sources/raw/papers/Scalability in Perception for Autonomous Drivi"
+      },
+      {
+        "rank": 4,
+        "score": 0.4538,
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Structured notes\n### Pages 1-1\n- [p.1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出chan"
+      },
+      {
+        "rank": 5,
+        "score": 0.4392,
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Summary\nTechnical report from the Waymo Open Dataset context explaining perception scalability and dataset-driven evaluation considerations for autonomous driving."
+      }
+    ],
+    "sample_id": "gold-006",
+    "reference_answer": "因为自动驾驶系统需要在不同真实环境中泛化，数据集覆盖越多样，越有助于对感知系统做更贴近真实场景的评估。",
+    "evidence": [
+      {
+        "quote": "Existing self-driving datasets are limited in the scale and variation of the environments they capture, even though generalization within and between operating regions is crucial to the overall viability of the technology.",
+        "source_id": "paper-004",
+        "locator": "p.1"
+      }
+    ]
+  },
+  {
+    "query": "为什么 Apollo 学习路径把高精地图视为软件栈中的基础能力？",
+    "dense_results": [
+      {
+        "rank": 1,
+        "score": 1.0,
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.7] The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end- to-end learning me"
+      },
+      {
+        "rank": 2,
+        "score": 0.9189,
+        "source_id": "standard-006",
+        "doc_type": "standard",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Key points\n- Overview of Select NHTSA Activities – Automated Driving Systems Katherine Chasins Special Programs Division Chief Rulemaking Office of Automation Safety 1/18/2024\n- 2 NHTSA Background "
+      },
+      {
+        "rank": 3,
+        "score": 0.9039,
+        "source_id": "standard-001",
+        "doc_type": "standard",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Structured notes\n### Pages 1-1\n- [p.1] NHTSA's mission is to save lives, prevent injuries, and reduce the economic costs of roadway crashes hold the promise not only to change the way we drive but "
+      },
+      {
+        "rank": 4,
+        "score": 0.8984,
+        "source_id": "paper-005",
+        "doc_type": "paper",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "### Pages 5-8\n- [p.5] LongitudinalSafety LateralSafety Ego-AgentCollision Constraint BoundarySafety Ego-BoundaryOverstepping ConstraintEgo-LaneDirectional Constraint Lane Directionas Guidance // Figur"
+      },
+      {
+        "rank": 5,
+        "score": 0.8838,
+        "source_id": "paper-004",
+        "doc_type": "report",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Structured notes\n### Pages 1-3\n- [p.1] The research community has increasing interest in au- tonomous driving research, despite the resource intensity of obtaining representative real world data. E"
+      }
+    ],
+    "sparse_results": [
+      {
+        "rank": 1,
+        "score": 1.0,
+        "source_id": "apollo-doc-009",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.1] /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo/planing 规划信息"
+      },
+      {
+        "rank": 2,
+        "score": 0.9923,
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /ap"
+      },
+      {
+        "rank": 3,
+        "score": 0.9909,
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者"
+      },
+      {
+        "rank": 4,
+        "score": 0.9832,
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自"
+      },
+      {
+        "rank": 5,
+        "score": 0.9802,
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…"
+      }
+    ],
+    "merged_results": [
+      {
+        "rank": 1,
+        "score": 0.9898,
+        "source_id": "apollo-doc-009",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.1] /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo/planing 规划信息"
+      },
+      {
+        "rank": 2,
+        "score": 0.9031,
+        "source_id": "apollo-doc-004",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "# Apollo Open Platform Overview\n\n- Source type: official_doc\n- Category: apollo\n- Original file: data/sources/raw/apollo/Apollo-Open-Platform-overview.pdf\n- Original URL: https://developer.apollo.auto"
+      },
+      {
+        "rank": 3,
+        "score": 0.5,
+        "source_id": "paper-006",
+        "doc_type": "paper",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.7] The proposed approach has yielded substantial performance improvements in both prediction and planning tasks, and has notably improved perception tasks when compared to end- to-end learning me"
+      },
+      {
+        "rank": 4,
+        "score": 0.4961,
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "- [p.1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /ap"
+      },
+      {
+        "rank": 5,
+        "score": 0.4955,
+        "source_id": "apollo-doc-002",
+        "doc_type": "official_doc",
+        "chunk_strategy": "baseline",
+        "locator": "",
+        "content_preview": "## Evidence-ready excerpts\n- [p.1] Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。 Apollo 项目于 2017 年 7 月首次推出，标志着汽车行业演进的一个巨大飞跃，开发者"
+      }
+    ],
+    "sample_id": "gold-011",
+    "reference_answer": "因为高精地图支撑了软件栈中几乎所有其他部分，是理解 Apollo 架构的重要基础。",
+    "evidence": [
+      {
+        "quote": "Get to know how high-definition maps work, which underpin almost every other part of the software stack.",
+        "source_id": "apollo-doc-001",
+        "locator": "p.1"
+      }
+    ]
+  }
+]

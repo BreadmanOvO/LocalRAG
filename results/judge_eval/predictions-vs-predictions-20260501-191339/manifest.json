@@ -1,0 +1,12 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "judge_eval",
+  "run_id": "predictions-vs-predictions-20260501-191339",
+  "baseline_predictions_path": "/root/workspace/LocalRAG/results/baseline_eval/gold_set-20260501-190804/predictions.json",
+  "candidate_predictions_path": "/root/workspace/LocalRAG/results/chunking_eval/gold_set-20260501-190943/doc_type_aware/predictions.json",
+  "created_at": "2026-05-01T19:14:16",
+  "runner_script": "eval/eval_llm_judge.py",
+  "provider": "local_embedding",
+  "chat_model_name": "Qwen/Qwen3-8B",
+  "judge_prompt_version": "v1.1-pairwise-judge"
+}

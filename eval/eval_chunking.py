@@ -20,6 +20,8 @@ from config.runtime_keys import load_runtime_config
 REGISTRY_PATH = Path("data/evaluation/shared/source_registry.json")
 STRATEGY_BASELINE = "baseline"
 STRATEGY_DOC_TYPE_AWARE = "doc_type_aware"
+STRATEGY_SEMANTIC = "semantic"
+ALL_STRATEGIES = [STRATEGY_BASELINE, STRATEGY_DOC_TYPE_AWARE, STRATEGY_SEMANTIC]
 
 
 def _empty_summary() -> dict[str, Any]:
@@ -338,48 +340,86 @@ def main() -> dict[str, Any]:
     parser.add_argument("--dataset", required=True, type=Path)
     parser.add_argument("--out-dir", default=Path("results/chunking_eval"), type=Path)
     parser.add_argument("--registry", default=REGISTRY_PATH, type=Path)
+    parser.add_argument(
+        "--strategies", nargs="+", default=ALL_STRATEGIES,
+        help="Chunking strategies to evaluate (default: baseline doc_type_aware semantic)",
+    )
     args = parser.parse_args()
 
     require_runtime_config()
     dataset = load_dataset(args.dataset)
     run_id = build_run_id(args.dataset)
     stores_dir = args.out_dir / "stores" / run_id
-    baseline_store_path = stores_dir / STRATEGY_BASELINE
-    candidate_store_path = stores_dir / STRATEGY_DOC_TYPE_AWARE
 
-    build_source_documents(baseline_store_path, STRATEGY_BASELINE, registry_path=args.registry)
-    build_source_documents(candidate_store_path, STRATEGY_DOC_TYPE_AWARE, registry_path=args.registry)
+    # Build stores and evaluate all strategies
+    all_metrics: dict[str, dict[str, Any]] = {}
+    all_predictions: dict[str, list[dict[str, Any]]] = {}
 
-    baseline_predictions = run_strategy_evaluation(dataset, baseline_store_path)
-    candidate_predictions = run_strategy_evaluation(dataset, candidate_store_path)
-    baseline_metrics = summarize_chunking_predictions(baseline_predictions)
-    candidate_metrics = summarize_chunking_predictions(candidate_predictions)
-    comparison = build_comparison_artifacts(
-        baseline_predictions,
-        candidate_predictions,
-        baseline_metrics,
-        candidate_metrics,
-        run_id=run_id,
-    )
-    report = render_chunking_report(
-        run_id=run_id,
-        dataset_path=args.dataset,
-        baseline_store_path=baseline_store_path,
-        candidate_store_path=candidate_store_path,
-        comparison=comparison,
-    )
+    for strategy in args.strategies:
+        store_path = stores_dir / strategy
+        print(f"\n{'='*50}")
+        print(f"Building store: {strategy}")
+        build_source_documents(store_path, strategy, registry_path=args.registry)
+        print(f"Evaluating: {strategy}")
+        predictions = run_strategy_evaluation(dataset, store_path)
+        metrics = summarize_chunking_predictions(predictions)
+        all_metrics[strategy] = metrics
+        all_predictions[strategy] = predictions
+        print(f"  {strategy}: source_hit={metrics['evidence_source_hit_ratio']:.3f}")
+
+    # Pairwise comparison: baseline vs each candidate
     run_dir = args.out_dir / run_id
-    write_chunking_run_artifacts(
-        run_dir,
-        baseline_predictions,
-        baseline_metrics,
-        candidate_predictions,
-        candidate_metrics,
-        comparison,
-        report,
-    )
-    print(json.dumps(comparison["summary"], ensure_ascii=False, indent=2))
-    return comparison["summary"]
+    comparisons = {}
+    for strategy in args.strategies:
+        if strategy == STRATEGY_BASELINE:
+            continue
+        comparison = build_comparison_artifacts(
+            all_predictions[STRATEGY_BASELINE],
+            all_predictions[strategy],
+            all_metrics[STRATEGY_BASELINE],
+            all_metrics[strategy],
+            run_id=run_id,
+        )
+        comparisons[strategy] = comparison
+
+        # Write pairwise artifacts
+        candidate_dir = run_dir / strategy
+        candidate_dir.mkdir(parents=True, exist_ok=True)
+        write_json(candidate_dir / "predictions.json", all_predictions[strategy])
+        write_json(candidate_dir / "metrics.json", all_metrics[strategy])
+
+    # Write baseline artifacts
+    baseline_dir = run_dir / STRATEGY_BASELINE
+    baseline_dir.mkdir(parents=True, exist_ok=True)
+    write_json(baseline_dir / "predictions.json", all_predictions[STRATEGY_BASELINE])
+    write_json(baseline_dir / "metrics.json", all_metrics[STRATEGY_BASELINE])
+
+    # Write combined summary
+    summary = {
+        "run_id": run_id,
+        "strategies": {s: all_metrics[s] for s in args.strategies},
+    }
+    write_json(run_dir / "comparison" / "summary.json", summary)
+    for strategy, comparison in comparisons.items():
+        write_json(run_dir / "comparison" / f"vs_{strategy}.json", comparison["summary"])
+
+    write_json(run_dir / "manifest.json", {
+        "contract_version": "v1.1",
+        "pipeline": "chunking_eval",
+        "run_id": run_id,
+        "strategies": args.strategies,
+    })
+
+    # Print summary table
+    print(f"\n{'='*60}")
+    print(f"{'Strategy':<20} {'Source Hit':>10} {'Locator Hit':>12}")
+    print(f"{'-'*60}")
+    for strategy in args.strategies:
+        m = all_metrics[strategy]
+        print(f"{strategy:<20} {m['evidence_source_hit_ratio']:>10.3f} {m['evidence_locator_hit_ratio']:>12.3f}")
+    print(f"{'='*60}")
+
+    return summary
 
 
 if __name__ == "__main__":

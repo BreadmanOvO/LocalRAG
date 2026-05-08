@@ -1,0 +1,7 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "hybrid_eval",
+  "run_id": "gold_set-20260505-105507",
+  "alpha": 0.7,
+  "store_dir": "results/chunking_eval/stores/gold_set-20260505-104419/baseline"
+}

@@ -1,0 +1,107 @@
+[
+  {
+    "id": "gold-001",
+    "question": "Apollo Cyber RT 的核心作用是什么？",
+    "reference_answer": "Apollo Cyber RT 负责提供自动驾驶系统中的通信、调度和组件协作基础能力。",
+    "answer": "Apollo Cyber RT 的核心作用是为自动驾驶系统提供一个**高实时性、高性能、高可靠性的开源运行时框架**，作为 Apollo 自动驾驶平台的“操作系统级”基础架构。\n\n其主要作用包括：\n\n1. **任务调度与资源管理**  \n   通过有向无环图（DAG）管理组件间的依赖关系，在运行时动态加载并调度任务，实现高并发、低延迟的执行。\n\n2. **高效通信机制**  \n   基于共享内存和零拷贝技术的发布-订阅模型，减少数据传输延迟，提升系统吞吐量。\n\n3. **模块化开发支持**  \n   提供标准化的组件模型，支持感知、定位、规划、控制等模块的即插即用式开发与集成。\n\n4. **确定性执行保障**  \n   确保关键任务（如传感器数据融合、路径规划）的时间触发与实时响应，满足车规级安全要求。\n\n5. **提升研发效率**  \n   提供抽象通信接口、高效数据融合机制及丰富的开发工具链，简化自动驾驶系统的构建与部署。\n\n**简而言之，Apollo Cyber RT 是自动驾驶软件系统的“中枢神经系统”，负责协调所有软硬件资源，确保环境感知、决策规划与控制执行的高效、安全闭环。**",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Cyber RT is the core framework for Apollo runtime communication and scheduling.",
+        "source_id": "apollo-doc-002",
+        "locator": "chapter=1/overview"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-002",
+    "question": "感知融合为什么对自动驾驶很重要？",
+    "reference_answer": "感知融合能综合不同传感器的互补信息，从而提升目标检测与环境理解的稳定性。",
+    "answer": "感知融合对自动驾驶非常重要，主要体现在以下几个方面：\n\n1. **弥补传感器局限性**  \n   自动驾驶系统依赖多种传感器（如摄像头、激光雷达、毫米波雷达）获取环境信息。每种传感器都有其优缺点：例如，摄像头在光照变化下可能失效，激光雷达在雨雾中性能下降，毫米波雷达分辨率较低。通过感知融合，系统可以综合各传感器的优势，弥补单一传感器的不足，提升整体感知能力。\n\n2. **提高环境感知的准确性和鲁棒性**  \n   感知融合模块通过融合多源数据（如目标位置、速度、类别、形状等），结合历史跟踪信息，过滤误检和漏检，输出更稳定、精确的环境模型。这有助于车辆更准确地识别障碍物、行人、车道线等关键信息，从而做出更安全的决策。\n\n3. **增强系统在复杂场景下的适应能力**  \n   在极端天气（如大雨、浓雾）、低光照或强光干扰等环境下，单一传感器可能无法正常工作。而多传感器融合能够有效应对这些挑战，确保系统在各种复杂场景下仍能保持可靠的感知能力，实现全天候运行。\n\n4. **满足高阶自动驾驶的安全与法规要求**  \n   高级别自动驾驶（如L3及以上）对感知系统的可靠性提出了更高要求。感知融合是实现功能安全（如ISO 26262）和符合国际标准（如UN R157）的关键技术，为自动驾驶提供持续、稳定的环境感知支持。\n\n**总结**：感知融合是自动驾驶系统实现安全、可靠、高效运行的核心技术，通过多传感器协同工作，全面提升环境感知能力，为后续的路径规划、控制决策提供高质量输入。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Fusion combines semantic cues with geometric robustness.",
+        "source_id": "apollo-doc-005",
+        "locator": "chapter=2/section=2.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-003",
+    "question": "UN R155 主要关注什么类型的安全问题？",
+    "reference_answer": "UN R155 主要关注车辆网络安全管理体系和网络攻击风险。",
+    "answer": "UN R155 主要关注**车辆网络安全（Cybersecurity）**问题。该法规要求汽车制造商建立并实施**网络安全管理体系（CSMS）**，以系统性地识别、评估和应对车辆在整个生命周期中可能面临的网络威胁和攻击，确保车辆电子系统和相关功能的安全性与完整性。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "The regulation addresses cyber security and cyber security management systems.",
+        "source_id": "standard-007",
+        "locator": "section=scope"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    }
+  },
+  {
+    "id": "gold-004",
+    "question": "为什么预测模块与规划模块需要紧密协同？",
+    "reference_answer": "因为预测结果直接影响规划决策，只有保持时序和接口一致，才能减少决策偏差。",
+    "answer": "预测模块与规划模块需要紧密协同，是因为自动驾驶系统必须在动态、不确定的环境中做出安全、高效且符合人类预期的实时决策。二者的协同本质上是将“未来可能发生什么”与“我们应该怎么做”这两个核心问题统一解决。\n\n具体原因包括：\n\n1. **信息闭环与决策一致性**  \n   - 预测模块提供周围障碍物（如车辆、行人）的未来轨迹及不确定性估计，规划模块基于这些信息生成自车的安全、合理轨迹。\n   - 若二者脱节，可能导致危险行为（如误判前车意图而盲目跟车）或效率低下（如过早停车造成拥堵）。\n   - 协同作用体现在：规划模块可将自车潜在行为反馈给预测模块，使预测考虑交互影响，形成更贴近现实的交互式预测。\n\n2. **处理交互性场景**  \n   - 在城市道路中，交通参与者行为相互影响（如车道合并、无保护左转）。单纯的“预测-反应”式规划可能过于被动或激进。\n   - 协同示例：在路口转弯时，预测模块评估对方车辆是否让行，规划模块根据预测置信度决定是否主动通过或等待。\n\n3. **优化系统性能与舒适性**  \n   - 规划模块需了解预测结果的置信度（如行人80%概率停留），以制定风险规避策略（如略微减速而非急刹）。\n   - 规划意图（如打转向灯）可能改变其他交通参与者行为，预测模块需据此动态更新预测，避免“自我实现的错误预测”。\n\n4. **适应复杂场景与边缘案例**  \n   - 在突发状况（如障碍物突然出现）或规则冲突场景（如交通管制与导航路线矛盾）中，预测与规划需联合推理，确保决策合理。\n\n5. **工程实现与系统效率**  \n   - 若预测与规划接口定义松散，可能导致信息滞后或状态不一致。\n   - 常见技术方案包括：联合优化、闭环迭代等，确保信息实时同步与逻辑一致。\n\n**总结**：预测与规划的紧密协同是自动驾驶从“孤立感知”迈向“协同决策”的关键，是实现安全、效率与舒适性的核心保障。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "Prediction output feeds downstream planning decisions.",
+        "source_id": "apollo-doc-007",
+        "locator": "chapter=3/section=3.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    }
+  },
+  {
+    "id": "gold-005",
+    "question": "BEV 感知在自动驾驶系统中有什么优势？",
+    "reference_answer": "BEV 感知能够统一多源信息到鸟瞰空间表示，提升空间一致性和下游规划理解能力。",
+    "answer": "BEV（Bird's Eye View，鸟瞰图）感知在自动驾驶系统中的主要优势包括：\n\n1. **统一空间表示**：将多传感器数据（如摄像头、激光雷达）映射到自车上方的俯视坐标系中，形成一致的空间表征，便于多模态信息融合。\n\n2. **支持多任务协同**：BEV 表示可同时用于 3D 目标检测、地图分割、轨迹预测等任务，提升系统整体效率与一致性。\n\n3. **增强时空建模能力**：通过历史帧 BEV 特征的融合（如 Temporal Self-Attention），能够更好地建模动态环境，提升对遮挡和复杂场景的理解。\n\n4. **适配下游模块需求**：BEV 输出直接符合路径规划、行为预测等模块所需的坐标系，减少坐标转换，提高实时性和准确性。\n\n5. **推动端到端学习**：基于 BEV 的深度学习模型（如 BEVFormer）可实现从原始传感器输入到 BEV 特征的端到端处理，简化系统架构并提升性能。\n\n综上，BEV 感知为自动驾驶系统提供了高效、结构化且可扩展的环境理解方式，是当前主流的感知技术路线之一。",
+    "retrieved_context": "",
+    "retrieved_rows": [],
+    "retrieval_debug_candidates": [],
+    "evidence": [
+      {
+        "quote": "BEV representation helps normalize spatial scale across the scene.",
+        "source_id": "paper-001",
+        "locator": "page=4/paragraph=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    }
+  }
+]

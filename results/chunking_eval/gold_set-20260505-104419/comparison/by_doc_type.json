@@ -1,0 +1,86 @@
+{
+  "baseline": {
+    "official_doc": {
+      "sample_count": 20,
+      "answered_count": 20,
+      "answered_ratio": 1.0,
+      "retrieved_row_count": 100,
+      "evidence_source_hit_count": 6,
+      "evidence_source_hit_ratio": 0.3,
+      "evidence_locator_hit_count": 0,
+      "evidence_locator_hit_ratio": 0.0
+    },
+    "standard": {
+      "sample_count": 6,
+      "answered_count": 6,
+      "answered_ratio": 1.0,
+      "retrieved_row_count": 30,
+      "evidence_source_hit_count": 0,
+      "evidence_source_hit_ratio": 0.0,
+      "evidence_locator_hit_count": 0,
+      "evidence_locator_hit_ratio": 0.0
+    },
+    "paper": {
+      "sample_count": 3,
+      "answered_count": 3,
+      "answered_ratio": 1.0,
+      "retrieved_row_count": 15,
+      "evidence_source_hit_count": 0,
+      "evidence_source_hit_ratio": 0.0,
+      "evidence_locator_hit_count": 0,
+      "evidence_locator_hit_ratio": 0.0
+    },
+    "report": {
+      "sample_count": 1,
+      "answered_count": 1,
+      "answered_ratio": 1.0,
+      "retrieved_row_count": 5,
+      "evidence_source_hit_count": 1,
+      "evidence_source_hit_ratio": 1.0,
+      "evidence_locator_hit_count": 0,
+      "evidence_locator_hit_ratio": 0.0
+    }
+  },
+  "doc_type_aware": {
+    "official_doc": {
+      "sample_count": 20,
+      "answered_count": 20,
+      "answered_ratio": 1.0,
+      "retrieved_row_count": 100,
+      "evidence_source_hit_count": 11,
+      "evidence_source_hit_ratio": 0.55,
+      "evidence_locator_hit_count": 0,
+      "evidence_locator_hit_ratio": 0.0
+    },
+    "standard": {
+      "sample_count": 6,
+      "answered_count": 6,
+      "answered_ratio": 1.0,
+      "retrieved_row_count": 30,
+      "evidence_source_hit_count": 0,
+      "evidence_source_hit_ratio": 0.0,
+      "evidence_locator_hit_count": 0,
+      "evidence_locator_hit_ratio": 0.0
+    },
+    "paper": {
+      "sample_count": 3,
+      "answered_count": 3,
+      "answered_ratio": 1.0,
+      "retrieved_row_count": 15,
+      "evidence_source_hit_count": 0,
+      "evidence_source_hit_ratio": 0.0,
+      "evidence_locator_hit_count": 0,
+      "evidence_locator_hit_ratio": 0.0
+    },
+    "report": {
+      "sample_count": 1,
+      "answered_count": 1,
+      "answered_ratio": 1.0,
+      "retrieved_row_count": 5,
+      "evidence_source_hit_count": 0,
+      "evidence_source_hit_ratio": 0.0,
+      "evidence_locator_hit_count": 0,
+      "evidence_locator_hit_ratio": 0.0
+    }
+  }
+}

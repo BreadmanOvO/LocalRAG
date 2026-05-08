@@ -16,6 +16,11 @@
 - `eval/eval_llm_judge.py`：pairwise LLM judge 入口
 - `eval/eval_chunking.py`：chunking 对比实验入口
 - `eval/eval_judge_formal_run.py`：formal judge 结果汇总入口
+- `eval/eval_retrieval_only.py`：纯检索评测（不经过 LLM 生成）
+- `eval/eval_hybrid.py`：hybrid retrieval 对比实验
+- `eval/eval_reranker.py`：reranker 效果评估
+- `eval/eval_sparse_compare.py`：sparse retrieval 对比实验
+- `eval/eval_inspection.py`：手动检索检查
 - `test/`：单元测试与实验验证脚本
 - `data/evaluation/`：评测数据与 source registry
 
@@ -35,6 +40,23 @@
   - `comparison/`
   - `report.md`
   - `manifest.json`
+- `results/retrieval_eval/<run_id>/`
+  - `predictions.json`
+  - `metrics.json`
+  - `manifest.json`
+- `results/hybrid_eval/<run_id>/`
+  - `predictions.json`
+  - `metrics.json`
+  - `manifest.json`
+- `results/reranker_eval/<run_id>/`
+  - `predictions.json`
+  - `metrics.json`
+  - `manifest.json`
+- `results/sparse_compare/<run_id>/`
+  - `predictions.json`
+  - `metrics.json`
+  - `manifest.json`
+- `results/inspection/<run_id>/`
 - `results/chunking_eval/stores/`：实验运行时生成的本地向量库缓存，不提交到仓库
 
 ## 使用约定

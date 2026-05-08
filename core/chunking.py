@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any
 import re
 
+import numpy as np
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from config import settings as config
@@ -116,6 +117,8 @@ def build_doc_type_splitter(doc_type: str) -> RecursiveCharacterTextSplitter:
 
 
 def choose_chunking_strategy(doc_type: str, requested_strategy: str | None) -> str:
+    if requested_strategy == "semantic":
+        return "semantic"
     if requested_strategy != "doc_type_aware":
         return "baseline"
     if doc_type in {"official_doc", "standard", "paper", "report"}:
@@ -198,4 +201,93 @@ def chunk_text_doc_type_aware(text: str, *, source_metadata: dict[str, Any]) -> 
                 )
             )
             chunk_order += 1
+    return records
+
+
+def _split_sentences(text: str) -> list[str]:
+    """Split text into sentences by Chinese/English punctuation."""
+    # Split on sentence-ending punctuation, keeping the delimiter attached
+    parts = re.split(r"(?<=[。！？.!?])\s*", text)
+    return [p.strip() for p in parts if p.strip()]
+
+
+def chunk_text_semantic(
+    text: str,
+    *,
+    source_metadata: dict[str, Any],
+    threshold: float | None = None,
+    max_chunk_size: int | None = None,
+    model_name: str | None = None,
+) -> list[ChunkRecord]:
+    """Semantic chunking: split at semantic boundaries using embedding similarity.
+
+    1. Split text into sentences
+    2. Encode each sentence with SentenceTransformer
+    3. Compute cosine similarity between consecutive sentences
+    4. Break where similarity < threshold
+    5. Sub-split oversized segments with RecursiveCharacterTextSplitter
+    """
+    threshold = threshold or getattr(config, "semantic_chunk_threshold", 0.5)
+    max_chunk_size = max_chunk_size or getattr(config, "semantic_max_chunk_size", 1000)
+    model_name = model_name or getattr(config, "semantic_embedding_model", "BAAI/bge-m3")
+
+    sentences = _split_sentences(text)
+    if len(sentences) <= 1:
+        return [
+            ChunkRecord(
+                text=text,
+                metadata=build_chunk_metadata(
+                    source_metadata=source_metadata,
+                    chunk_order=0,
+                    chunk_strategy="semantic",
+                ),
+            )
+        ]
+
+    # Encode all sentences
+    from sentence_transformers import SentenceTransformer
+    model = SentenceTransformer(model_name)
+    embeddings = model.encode(sentences, normalize_embeddings=True)
+
+    # Compute consecutive cosine similarities (dot product since normalized)
+    sims = np.array([
+        np.dot(embeddings[i], embeddings[i + 1])
+        for i in range(len(embeddings) - 1)
+    ])
+
+    # Find breakpoints where similarity drops below threshold
+    breakpoints = [0]
+    for i, sim in enumerate(sims):
+        if sim < threshold:
+            breakpoints.append(i + 1)  # split after sentence i
+    breakpoints.append(len(sentences))
+
+    # Build semantic segments
+    segments: list[str] = []
+    for start, end in zip(breakpoints[:-1], breakpoints[1:]):
+        segment = " ".join(sentences[start:end])
+        if segment.strip():
+            segments.append(segment.strip())
+
+    # Sub-split oversized segments
+    sub_splitter = build_baseline_splitter(chunk_size=max_chunk_size, chunk_overlap=50)
+    min_split_length = getattr(config, "min_split_length", 0)
+
+    records: list[ChunkRecord] = []
+    chunk_order = 0
+    for segment in segments:
+        parts = sub_splitter.split_text(segment) if len(segment) > min_split_length else [segment]
+        for part in parts:
+            records.append(
+                ChunkRecord(
+                    text=part,
+                    metadata=build_chunk_metadata(
+                        source_metadata=source_metadata,
+                        chunk_order=chunk_order,
+                        chunk_strategy="semantic",
+                    ),
+                )
+            )
+            chunk_order += 1
+
     return records

@@ -10,3 +10,5 @@ dashscope
 pypdf
 pymupdf
 rapidocr-onnxruntime
+sentence-transformers
+rank-bm25

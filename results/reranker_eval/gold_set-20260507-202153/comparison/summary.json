@@ -1,0 +1,28 @@
+{
+  "run_id": "gold_set-20260507-202153",
+  "reranker_type": "cross-encoder",
+  "reranker_model": "BAAI/bge-reranker-base",
+  "alpha": 0.5,
+  "retrieve_top_k": 20,
+  "final_top_k": 5,
+  "hybrid_only": {
+    "sample_count": 30,
+    "answered_count": 30,
+    "answered_ratio": 1.0,
+    "retrieved_row_count": 150,
+    "evidence_source_hit_count": 21,
+    "evidence_source_hit_ratio": 0.7,
+    "evidence_locator_hit_count": 0,
+    "evidence_locator_hit_ratio": 0.0
+  },
+  "hybrid_reranker": {
+    "sample_count": 30,
+    "answered_count": 30,
+    "answered_ratio": 1.0,
+    "retrieved_row_count": 150,
+    "evidence_source_hit_count": 29,
+    "evidence_source_hit_ratio": 0.967,
+    "evidence_locator_hit_count": 0,
+    "evidence_locator_hit_ratio": 0.0
+  }
+}

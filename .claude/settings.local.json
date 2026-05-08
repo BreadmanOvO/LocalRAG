@@ -33,7 +33,26 @@
       "Bash(cp -f \"/root/workspace/LocalRAG/.claude/worktrees/v1-1-parallel-implementation/TODO.md\" \"/root/workspace/LocalRAG/TODO.md\")",
       "Skill(commit-commands:commit)",
       "Bash(cp \"/root/workspace/LocalRAG/config/runtime_models.json\" \"/root/workspace/LocalRAG/.claude/worktrees/v1-1-closeout/config/runtime_models.json\")",
-      "Bash(python -)"
+      "Bash(python -)",
+      "Bash(git worktree *)",
+      "Bash(git branch *)",
+      "Bash([ -d \"$project_root/.worktrees\" ])",
+      "Bash([ -d \"$project_root/worktrees\" ])",
+      "Bash(PYTHONPATH=\"/root/workspace/LocalRAG/.worktrees/judge-formal-run\" python *)",
+      "mcp__plugin_oh-my-claudecode_t__state_list_active",
+      "mcp__plugin_oh-my-claudecode_t__state_get_status",
+      "mcp__plugin_oh-my-claudecode_t__state_clear",
+      "Bash(python \"/root/workspace/LocalRAG/.worktrees/v1-0-vs-v1-1-report/scripts/run_v1_0_compatible_baseline.py\")",
+      "Bash(/opt/aiext/bin/python *)",
+      "Bash(/opt/aiext/bin/pip list *)",
+      "Bash(/opt/aiext/bin/pip install *)",
+      "Bash(nvidia-smi)",
+      "Bash(curl -s -X POST https://api-inference.modelscope.cn/v1/embeddings -H 'Authorization: Bearer ms-ae2fc8a1-07cf-443d-b2b8-64eab689eeb5' -H 'Content-Type: application/json' -d '{\"model\":\"BAAI/bge-m3\",\"input\":\"test\"}')",
+      "Bash(echo \"exit: $?\")",
+      "PowerShell(if \\(-not \\(Test-Path \"D:\\\\Code\\\\Learn\\\\LLM\\\\LocalRAG\\\\data\\\\sources\\\\papers\\\\\"\\)\\) { Write-Host \"Directory does not exist\" } else { Write-Host \"Directory exists\" })",
+      "PowerShell(New-Item *)",
+      "PowerShell(Get-Content *)",
+      "Bash(rm *)"
     ]
   }
 }

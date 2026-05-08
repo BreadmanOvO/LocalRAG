@@ -4,7 +4,7 @@ import sys
 import sqlite3
 import datetime
 from config import settings as config
-from core.chunking import choose_chunking_strategy, chunk_text_baseline, chunk_text_doc_type_aware
+from core.chunking import choose_chunking_strategy, chunk_text_baseline, chunk_text_doc_type_aware, chunk_text_semantic
 from config.runtime_keys import load_runtime_config
 from config.provider_factory import build_embedding_model
 
@@ -75,6 +75,8 @@ class KnowledgeBaseService(object):
         )
         if chunk_strategy == "doc_type_aware":
             return chunk_text_doc_type_aware(data, source_metadata=source_metadata)
+        if chunk_strategy == "semantic":
+            return chunk_text_semantic(data, source_metadata=source_metadata)
         return chunk_text_baseline(data, source_metadata=source_metadata)
 
     def _add_chunk_records(self, chunk_records):
