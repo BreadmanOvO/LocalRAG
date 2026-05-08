@@ -1,5 +1,5 @@
 ############################################################
-version = "1.1.1"
+version = "1.2.0"
 author = "breadman"
 email = "gluweinzhu@hotmail.com"
 description = "A local RAG system"
