@@ -1,103 +1,23 @@
 # 自动驾驶感知算法 LocalRAG
 
-## 项目简介
-这是一个面向自动驾驶感知算法场景的垂直领域 RAG 项目，v1.1 已完成数据、评测与文档收口，当前进入 v1.2 检索层实验规划阶段。
+面向自动驾驶感知算法场景的垂直领域 RAG 系统，支持多种检索策略、分块策略与评测流水线。
 
-## 当前定位
-- 项目状态：v1.1 已收口，v1.2 规划中
-- 当前最高优先级：在稳定评测合同基础上推进检索层实验设计
-- v1.2 状态：尚未进入实现阶段，当前仅保留检索层实验规划
+## 快速开始
 
-## 当前已落地能力
-- Agent 问答入口：`app_qa.py` + `agent/react_agent.py`
-- 文件上传与入库入口：`app_file_uploader.py`
-- 核心 RAG 服务：`core/rag.py`
-- 知识库入库与 chunk 写入：`core/knowledge_base.py`
-- chunking 与 locator / provenance metadata：`core/chunking.py`
-- baseline 评测 runner：`eval/eval_ragas.py`
-- pairwise LLM judge：`eval/eval_llm_judge.py`
-- chunking 对比实验：`eval/eval_chunking.py`
-- formal judge 汇总：`eval/eval_judge_formal_run.py`
+### 1. 安装依赖
 
-## 当前评测状态
-### 1. baseline_eval
-`eval/eval_ragas.py` 已升级为 retrieval-aware baseline runner：
-- 调用 `RagService.answer_with_retrieval()`
-- 预测结果包含：`answer`、`retrieved_context`、`retrieved_rows`、`retrieval_debug_candidates`、`evidence`、`metadata`
-- 当前 metrics 已包含 answered/context 命中、retrieved row / retrieval candidate 统计，以及 exact match / normalized exact match / reference substring / evidence source/locator 命中统计
-- 支持按 run bundle 输出结果目录
+```bash
+pip install -r requirements.txt
+```
 
-结果目录约定：
-- `results/baseline_eval/<run_id>/predictions.json`
-- `results/baseline_eval/<run_id>/metrics.json`
-- `results/baseline_eval/<run_id>/manifest.json`
+### 2. 配置运行时
 
-### 2. judge_eval
-`eval/eval_llm_judge.py` 当前是 pairwise LLM judge：
-- 输入 baseline / candidate 两份 predictions
-- 校验 sample id 集合一致
-- 使用 temperature=0 的真实 judge model 做 pairwise 判分
-- 通过严格 JSON contract 解析 `winner` 与 `reason`
-- 输出 `judgements.json`、`summary.json`、`manifest.json`
+复制示例配置并填写真实值：
 
-`eval/eval_judge_formal_run.py` 用于整理 formal judge 流程：
-- 读取 judge run bundle
-- 汇总关键结果与结论
-- 输出 `test_report.md`
+```bash
+cp config/runtime_models.example.json config/runtime_models.json
+```
 
-结果目录约定：
-- `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/judgements.json`
-- `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/summary.json`
-- `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/manifest.json`
-- `results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/test_report.md`
-
-### 3. chunking_eval
-`eval/eval_chunking.py` 是当前最完整的评测链路：
-- 支持 baseline 与 `doc_type_aware` 两套切分策略对比
-- 统计 `answered_ratio`、`evidence_source_hit_ratio`、`evidence_locator_hit_ratio`
-- 输出 comparison bundle 与 `report.md`
-
-结果目录约定：
-- `results/chunking_eval/<run_id>/baseline/`
-- `results/chunking_eval/<run_id>/doc_type_aware/`
-- `results/chunking_eval/<run_id>/comparison/`
-- `results/chunking_eval/<run_id>/report.md`
-- `results/chunking_eval/<run_id>/manifest.json`
-
-## 数据集状态
-当前仓库已包含可通过 schema 校验的评测数据集：
-- `data/evaluation/gold/gold_set.json`
-- `data/evaluation/synthetic/synthetic_dataset.json`
-- `data/evaluation/shared/source_registry.json`
-- `data/evaluation/shared/eval_schema.py`
-
-样本结构统一要求：
-- 顶层字段：`id`、`question`、`reference_answer`、`evidence`、`metadata`
-- `evidence` 字段：`quote`、`source_id`、`locator`
-- `metadata` 字段：`difficulty`、`topic`、`doc_type`
-
-## 当前限制与后续方向
-- `eval/eval_ragas.py` 仍是 baseline runner，而不是完整 Ragas pipeline
-- `judge_eval` 已是可复现的真实 LLM judge，但仍依赖本地 provider / model 配置
-- Gold Set 已扩到 30 题并作为当前版本闸门；Synthetic Set 保持为辅助覆盖集
-- v1.2 的 hybrid retrieval、reranker、HyDE、hierarchical index 仍处于规划状态
-
-## 运行说明
-### 环境依赖
-- 主运行依赖见 `requirements.txt`
-- 文档清洗专项依赖见 `requirements-source-cleaning.txt`
-
-### 运行时配置
-运行时配置统一从 `config/runtime_models.json` 加载；如本地仍保留旧 `config/key.json`，当前实现会仅作为兼容输入读取，但公开入口以 `config/runtime_models.json` 为准。
-
-推荐字段：
-- `provider`
-- `api_key`
-- `base_url`
-- `chat_model_name`
-- `embedding_model_name`
-
-示例：
 ```json
 {
   "provider": "modelscope",
@@ -108,16 +28,90 @@
 }
 ```
 
-仓库提供了可提交的示例文件 `config/runtime_models.example.json`；本地使用时请复制为 `config/runtime_models.json` 后再填写真实值。
+### 3. 启动问答服务
 
-该文件仅用于本地运行，不应提交到仓库。
+```bash
+python app_qa.py
+```
 
-## 文档导航
-- 评估框架与指标：`docs/evaluation.md`
-- 仓库使用说明：`docs/repo_guide.md`
-- 其余规划与资料文档由仓库外层文档映射维护
+### 4. 上传文档入库
 
-## 下一步迭代
-1. 进入 v1.2 检索层消融实验，实现 hybrid retrieval、reranker、HyDE、hierarchical index
-2. 在现有 artifact contract 上继续做 retrieval-side ablation
-3. 如有需要，再补充更完整的 Ragas 风格指标
+```bash
+python app_file_uploader.py
+```
+
+## 项目结构
+
+```
+LocalRAG/
+├── app_qa.py                  # 问答入口（Streamlit）
+├── app_file_uploader.py       # 文件上传入库入口
+├── agent/
+│   └── react_agent.py         # ReAct Agent（3 工具：rag_search / show_sources / clarify_question）
+├── core/
+│   ├── rag.py                 # RAG 服务核心
+│   ├── knowledge_base.py      # 知识库入库与 chunk 写入
+│   ├── chunking.py            # 分块策略（baseline / doc_type_aware / semantic）
+│   ├── hybrid_retriever.py    # Hybrid Retrieval（dense + BM25 sparse）
+│   └── reranker.py            # Cross-Encoder Reranker
+├── config/
+│   ├── runtime_models.json    # 运行时配置（不提交）
+│   ├── runtime_keys.py        # 配置加载器
+│   └── settings.py            # 全局设置
+├── eval/                      # 评测脚本
+├── data/
+│   ├── evaluation/            # 评测数据集（gold / synthetic）
+│   └── sources/               # 知识源文档（41 篇）
+├── results/                   # 评测结果
+└── scripts/                   # 工具脚本
+```
+
+## 评测
+
+### 运行评测
+
+```bash
+# Baseline 评测
+python eval/eval_ragas.py
+
+# 分块策略对比（baseline / doc_type_aware / semantic）
+python eval/eval_chunking.py
+
+# 纯检索评测（dense / sparse / hybrid）
+python eval/eval_retrieval_only.py
+
+# Hybrid Retrieval 对比
+python eval/eval_hybrid.py
+
+# Reranker 效果评估
+python eval/eval_reranker.py
+
+# Pairwise LLM Judge
+python eval/eval_llm_judge.py
+```
+
+### 最新评测结果（100 题，bge-m3，41 篇文档）
+
+| 分块策略 | Reranker | Hit@5 | MRR | Hit@1 | Hit@3 |
+|---------|:--------:|:-----:|:---:|:-----:|:-----:|
+| baseline | No | 0.960 | 0.865 | 0.790 | 0.940 |
+| baseline | Yes | 0.960 | 0.899 | 0.850 | 0.950 |
+| doc_type_aware | No | 0.940 | 0.870 | 0.830 | 0.900 |
+| doc_type_aware | Yes | 0.960 | 0.904 | 0.860 | 0.950 |
+| **semantic** | No | **0.970** | 0.864 | 0.800 | 0.920 |
+| **semantic** | Yes | **0.980** | 0.897 | 0.840 | 0.950 |
+
+最优配置：semantic chunking + reranker = 98% Hit@5，0.897 MRR。
+
+## 文档
+
+- [评估框架与指标](docs/evaluation.md) — 评测体系、指标口径、结果目录合同
+- [仓库使用说明](docs/repo_guide.md) — 详细模块说明与使用方式
+
+## 版本
+
+| 版本 | 核心目标 | 状态 |
+|------|---------|------|
+| v1.0 | 评估基线（Gold Set + baseline runner + judge 骨架） | 已完成 |
+| v1.1 | 数据层（文档采集、chunk、metadata、formal judge） | 已完成 |
+| v1.2 | 检索层（hybrid retrieval + reranker + semantic chunking） | 已完成 |
