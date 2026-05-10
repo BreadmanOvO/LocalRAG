@@ -54,7 +54,7 @@ def build_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
         "api_key": runtime_config.api_key,
         "base_url": runtime_config.base_url,
     }
-    if runtime_config.provider in {"local_embedding", "modelscope"} and runtime_config.chat_model_name.startswith("Qwen/Qwen3"):
+    if runtime_config.provider in {"local_embedding", "modelscope", "local_sentence_transformer"} and runtime_config.chat_model_name.startswith("Qwen/Qwen3"):
         options["extra_body"] = {"enable_thinking": False}
     options.update(overrides)
     return ChatOpenAI(**options)

@@ -1,0 +1,14 @@
+{
+  "pipeline": "ragas_eval",
+  "contract_version": "v1.1",
+  "run_id": "ragas-20260511-012042",
+  "predictions_path": "results\\ragas_eval\\predictions.json",
+  "metrics": [
+    "faithfulness",
+    "answer_relevancy",
+    "context_precision",
+    "context_recall"
+  ],
+  "provider": "local_sentence_transformer",
+  "chat_model_name": "Qwen/Qwen3-8B"
+}
