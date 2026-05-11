@@ -29,7 +29,7 @@ doc_type_chunking = {
 # Semantic chunking 参数
 semantic_chunk_threshold = 0.5  # 相邻句子余弦相似度断点阈值
 semantic_max_chunk_size = 1000  # 语义段最大字符数，超长则二次拆分
-semantic_embedding_model = "BAAI/bge-m3"  # 用于语义分块的嵌入模型
+semantic_embedding_model = "models/bge-m3"  # 本地模型路径，fallback 到 HuggingFace
 
 # VectorStoreService 参数
 similarity_top_k = 5 # 相似度top k

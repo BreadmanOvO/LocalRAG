@@ -6,15 +6,16 @@ import math
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
+from config.model_paths import get_bge_m3_path
 from config.runtime_keys import RuntimeProviderConfig
 
 OPENAI_COMPATIBLE_PROVIDERS = {"bailian", "modelscope", "local_embedding", "local_sentence_transformer"}
 
 
 class LocalSentenceTransformerEmbeddings:
-    def __init__(self, model_name: str = "BAAI/bge-m3") -> None:
+    def __init__(self, model_name: str | None = None) -> None:
         from sentence_transformers import SentenceTransformer
-        self.model = SentenceTransformer(model_name)
+        self.model = SentenceTransformer(model_name or get_bge_m3_path())
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
         embeddings = self.model.encode(texts, normalize_embeddings=True)

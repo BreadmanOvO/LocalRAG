@@ -79,7 +79,8 @@ def init_evaluator_embeddings():
     from ragas.embeddings import LangchainEmbeddingsWrapper
     from sentence_transformers import SentenceTransformer
 
-    model = SentenceTransformer("BAAI/bge-m3", local_files_only=True)
+    from config.model_paths import get_bge_m3_path
+    model = SentenceTransformer(get_bge_m3_path(), local_files_only=True)
 
     class LocalBgeEmbeddings(Embeddings):
         def embed_documents(self, texts: list[str]) -> list[list[float]]:

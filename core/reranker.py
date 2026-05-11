@@ -31,13 +31,14 @@ class CrossEncoderReranker:
 
     def __init__(
         self,
-        model_name: str = "BAAI/bge-reranker-base",
+        model_name: str | None = None,
         *,
         max_length: int = 512,
         device: str | None = None,
     ) -> None:
         from sentence_transformers import CrossEncoder
-        self.model = CrossEncoder(model_name, max_length=max_length, device=device)
+        from config.model_paths import get_bge_reranker_path
+        self.model = CrossEncoder(model_name or get_bge_reranker_path(), max_length=max_length, device=device)
 
     def rerank(
         self,

@@ -27,7 +27,7 @@ def evaluate_retrieval(
     *,
     final_top_k: int = 5,
     use_reranker: bool = False,
-    reranker_model: str = "BAAI/bge-reranker-base",
+    reranker_model: str | None = None,
 ) -> dict[str, Any]:
     """Evaluate retrieval quality by checking if evidence sources are in top-k."""
     retriever = _build_hybrid_retriever(store_path, alpha=alpha, final_top_k=20)
@@ -105,7 +105,7 @@ def main() -> None:
     parser.add_argument("--alpha", type=float, default=0.5)
     parser.add_argument("--final-top-k", type=int, default=5)
     parser.add_argument("--use-reranker", action="store_true", help="Use cross-encoder reranker")
-    parser.add_argument("--reranker-model", default="BAAI/bge-reranker-base")
+    parser.add_argument("--reranker-model", default=None)
     parser.add_argument("--out-dir", default=Path("results/retrieval_eval"), type=Path)
     args = parser.parse_args()
 

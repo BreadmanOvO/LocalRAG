@@ -229,7 +229,8 @@ def chunk_text_semantic(
     """
     threshold = threshold or getattr(config, "semantic_chunk_threshold", 0.5)
     max_chunk_size = max_chunk_size or getattr(config, "semantic_max_chunk_size", 1000)
-    model_name = model_name or getattr(config, "semantic_embedding_model", "BAAI/bge-m3")
+    from config.model_paths import get_bge_m3_path
+    model_name = model_name or getattr(config, "semantic_embedding_model", None) or get_bge_m3_path()
 
     sentences = _split_sentences(text)
     if len(sentences) <= 1:

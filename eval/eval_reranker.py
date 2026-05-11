@@ -143,8 +143,8 @@ def main() -> None:
         help="Reranker type: cross-encoder (local, fast) or llm (API-based, slow)",
     )
     parser.add_argument(
-        "--reranker-model", default="BAAI/bge-reranker-base",
-        help="Cross-encoder model name (only used with --reranker cross-encoder)",
+        "--reranker-model", default=None,
+        help="Cross-encoder model name (only used with --reranker cross-encoder), defaults to local bge-reranker-base",
     )
     args = parser.parse_args()
 
