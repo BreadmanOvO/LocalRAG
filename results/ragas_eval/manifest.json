@@ -1,7 +1,7 @@
 {
   "pipeline": "ragas_eval",
   "contract_version": "v1.1",
-  "run_id": "ragas-20260511-012042",
+  "run_id": "ragas-20260512-052953",
   "predictions_path": "results\\ragas_eval\\predictions.json",
   "metrics": [
     "faithfulness",
@@ -9,6 +9,10 @@
     "context_precision",
     "context_recall"
   ],
-  "provider": "local_sentence_transformer",
-  "chat_model_name": "Qwen/Qwen3-8B"
+  "provider": "sensenova",
+  "chat_model_name": "sensenova-6.7-flash-lite",
+  "embedding_model_name": "BAAI/bge-m3",
+  "eval_model": "sensenova-6.7-flash-lite",
+  "base_url": "https://token.sensenova.cn/v1",
+  "note": "Unified SenseNova API for both RAG generation and Ragas evaluation"
 }

@@ -1,0 +1,1362 @@
+{
+  "sample_count": 100,
+  "hit_count": 94,
+  "hit_ratio": 0.94,
+  "mrr": 0.8701666666666666,
+  "hit_at_1": 0.83,
+  "hit_at_3": 0.9,
+  "hit_at_5": 0.94,
+  "details": [
+    {
+      "id": "gold-001",
+      "question": "Apollo Cyber RT 的核心作用是什么？",
+      "evidence_source_ids": [
+        "apollo-doc-002"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-002"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-002",
+      "question": "感知融合为什么对自动驾驶很重要？",
+      "evidence_source_ids": [
+        "apollo-doc-005"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-005",
+        "apollo-doc-006",
+        "apollo-doc-011",
+        "apollo-doc-012"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-003",
+      "question": "UN R155 主要关注什么类型的安全问题？",
+      "evidence_source_ids": [
+        "standard-007"
+      ],
+      "retrieved_source_ids": [
+        "standard-007",
+        "standard-008",
+        "standard-009",
+        "standard-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-004",
+      "question": "为什么预测模块与规划模块需要紧密协同？",
+      "evidence_source_ids": [
+        "apollo-doc-007"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-014",
+        "apollo-doc-015"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "gold-005",
+      "question": "BEV 感知在自动驾驶系统中有什么优势？",
+      "evidence_source_ids": [
+        "paper-001"
+      ],
+      "retrieved_source_ids": [
+        "paper-002",
+        "paper-005",
+        "paper-001"
+      ],
+      "hit": true,
+      "best_rank": 2
+    },
+    {
+      "id": "gold-006",
+      "question": "Waymo Open Dataset 报告为什么强调数据集的多样性？",
+      "evidence_source_ids": [
+        "paper-004"
+      ],
+      "retrieved_source_ids": [
+        "paper-004",
+        "paper-002",
+        "paper-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-007",
+      "question": "Apollo 视觉感知模块为什么要重视高精确率和高稳定性？",
+      "evidence_source_ids": [
+        "apollo-doc-006"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-009",
+        "apollo-doc-002",
+        "apollo-doc-012"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "gold-008",
+      "question": "Apollo Channel 文档如何描述规划模块的职责？",
+      "evidence_source_ids": [
+        "apollo-doc-003"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-009",
+        "apollo-doc-008",
+        "apollo-doc-003",
+        "apollo-doc-007"
+      ],
+      "hit": true,
+      "best_rank": 5
+    },
+    {
+      "id": "gold-009",
+      "question": "Apollo Cyber RT 如何组织自动驾驶系统中的模块依赖关系？",
+      "evidence_source_ids": [
+        "apollo-doc-002"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-002"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-010",
+      "question": "Apollo Open Platform 中 Cyber RT 和 RTOS 的职责有什么区别？",
+      "evidence_source_ids": [
+        "apollo-doc-004"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-004",
+        "apollo-doc-002"
+      ],
+      "hit": true,
+      "best_rank": 2
+    },
+    {
+      "id": "gold-011",
+      "question": "为什么 Apollo 学习路径把高精地图视为软件栈中的基础能力？",
+      "evidence_source_ids": [
+        "apollo-doc-001"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-004",
+        "apollo-doc-009",
+        "apollo-doc-002"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "gold-012",
+      "question": "Apollo Channel 文档如何描述组件、数据通道和消息格式之间的关系？",
+      "evidence_source_ids": [
+        "apollo-doc-003"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-004",
+        "apollo-doc-003",
+        "apollo-doc-007"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-013",
+      "question": "为什么 Apollo Open Platform 强调持续提升感知检测与识别能力？",
+      "evidence_source_ids": [
+        "apollo-doc-004"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-004",
+        "apollo-doc-002"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-014",
+      "question": "Apollo 视觉感知算法在平台上主要覆盖哪三类应用场景？",
+      "evidence_source_ids": [
+        "apollo-doc-006"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-004",
+        "apollo-doc-009",
+        "apollo-doc-002",
+        "apollo-doc-012"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "gold-015",
+      "question": "Apollo 预测模块为什么依赖感知模块提供障碍物状态信息？",
+      "evidence_source_ids": [
+        "apollo-doc-007"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-007",
+        "apollo-doc-009",
+        "apollo-doc-002",
+        "apollo-doc-012"
+      ],
+      "hit": true,
+      "best_rank": 3
+    },
+    {
+      "id": "gold-016",
+      "question": "Apollo 规划模块为什么采用 scenario-based 的实现方式？",
+      "evidence_source_ids": [
+        "apollo-doc-008"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-008",
+        "apollo-doc-015"
+      ],
+      "hit": true,
+      "best_rank": 2
+    },
+    {
+      "id": "gold-017",
+      "question": "Apollo 控制模块的核心执行目标是什么？",
+      "evidence_source_ids": [
+        "apollo-doc-009"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-009",
+        "apollo-doc-008",
+        "apollo-doc-002"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-018",
+      "question": "为什么 Apollo 预测模块的输出会直接影响规划模块？",
+      "evidence_source_ids": [
+        "apollo-doc-007"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-007",
+        "apollo-doc-009",
+        "apollo-doc-008",
+        "apollo-doc-002"
+      ],
+      "hit": true,
+      "best_rank": 4
+    },
+    {
+      "id": "gold-019",
+      "question": "FusionAD 论文认为多模态融合对预测与规划任务带来了什么收益？",
+      "evidence_source_ids": [
+        "paper-006"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-014",
+        "paper-012",
+        "paper-006"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-020",
+      "question": "ADS 2.0 为什么要求系统具备转入 minimal risk condition 的文档化流程？",
+      "evidence_source_ids": [
+        "standard-002"
+      ],
+      "retrieved_source_ids": [
+        "standard-002",
+        "standard-012"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-021",
+      "question": "ADS 2.0 为什么把数据记录视为自动驾驶安全的重要组成部分？",
+      "evidence_source_ids": [
+        "standard-002"
+      ],
+      "retrieved_source_ids": [
+        "standard-002",
+        "standard-013"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-022",
+      "question": "UN R155 在型式批准前对网络安全措施提出了什么验证要求？",
+      "evidence_source_ids": [
+        "standard-007"
+      ],
+      "retrieved_source_ids": [
+        "standard-007",
+        "standard-008",
+        "standard-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-023",
+      "question": "UN R156 为什么要求软件更新流程评估其对车辆安全持续运行的影响？",
+      "evidence_source_ids": [
+        "standard-008"
+      ],
+      "retrieved_source_ids": [
+        "standard-007",
+        "standard-008",
+        "standard-009"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-024",
+      "question": "UN R157 对 ALKS 的激活道路条件有什么要求？",
+      "evidence_source_ids": [
+        "standard-009"
+      ],
+      "retrieved_source_ids": [
+        "standard-009",
+        "standard-007"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-025",
+      "question": "Apollo 感知融合为什么强调把摄像头、毫米波雷达和激光雷达结合起来？",
+      "evidence_source_ids": [
+        "apollo-doc-005"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-005",
+        "apollo-doc-009",
+        "apollo-doc-002",
+        "apollo-doc-012"
+      ],
+      "hit": true,
+      "best_rank": 5
+    },
+    {
+      "id": "gold-026",
+      "question": "Apollo 感知融合模块支持在什么层级上融合摄像头、毫米波雷达和激光雷达结果？",
+      "evidence_source_ids": [
+        "apollo-doc-005"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-005",
+        "apollo-doc-009",
+        "apollo-doc-002",
+        "apollo-doc-012"
+      ],
+      "hit": true,
+      "best_rank": 5
+    },
+    {
+      "id": "gold-027",
+      "question": "Apollo 感知融合模块把各传感器结果汇入哪个统一输入 channel 作为源数据？",
+      "evidence_source_ids": [
+        "apollo-doc-005"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-008",
+        "apollo-doc-011",
+        "apollo-doc-003",
+        "apollo-doc-007"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "gold-028",
+      "question": "Apollo 感知融合模块的主要输出 channel 表达了什么信息？",
+      "evidence_source_ids": [
+        "apollo-doc-005"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-008",
+        "apollo-doc-011",
+        "apollo-doc-003",
+        "apollo-doc-007"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "gold-029",
+      "question": "FusionAD 论文为何认为多模态融合有助于下游预测与规划？",
+      "evidence_source_ids": [
+        "paper-006"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-014",
+        "paper-012",
+        "paper-006"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-030",
+      "question": "为什么 Apollo Channel 文档强调查看 /apollo/perception/obstacles 的消息格式？",
+      "evidence_source_ids": [
+        "apollo-doc-003"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-005",
+        "apollo-doc-006",
+        "apollo-doc-003",
+        "apollo-doc-007"
+      ],
+      "hit": true,
+      "best_rank": 2
+    },
+    {
+      "id": "gold-031",
+      "question": "Apollo激光雷达感知模块的流水线架构分为哪三个主要阶段？",
+      "evidence_source_ids": [
+        "apollo-doc-011"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-013",
+        "apollo-doc-011",
+        "apollo-doc-015"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-032",
+      "question": "Apollo激光雷达感知模块中体素化操作的典型参数设置是多少？",
+      "evidence_source_ids": [
+        "apollo-doc-011"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-005",
+        "apollo-doc-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-033",
+      "question": "Apollo激光雷达感知模块的目标跟踪器使用什么算法进行数据关联？",
+      "evidence_source_ids": [
+        "apollo-doc-011"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-013",
+        "apollo-doc-005",
+        "apollo-doc-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-034",
+      "question": "Apollo激光雷达感知模块的输出延迟和检测精度分别是多少？",
+      "evidence_source_ids": [
+        "apollo-doc-011"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-013",
+        "apollo-doc-005",
+        "apollo-doc-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-035",
+      "question": "Apollo摄像头感知模块支持哪两种配置模式？",
+      "evidence_source_ids": [
+        "apollo-doc-012"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-005",
+        "apollo-doc-011",
+        "apollo-doc-012"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-036",
+      "question": "Apollo摄像头感知模块中BEV感知方法的核心思想是什么？",
+      "evidence_source_ids": [
+        "apollo-doc-012"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-011",
+        "apollo-doc-012"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-037",
+      "question": "Apollo摄像头感知模块的多任务学习框架中，总损失函数由哪些部分组成？",
+      "evidence_source_ids": [
+        "apollo-doc-012"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-014",
+        "paper-008",
+        "apollo-doc-012"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-038",
+      "question": "Apollo摄像头感知模块在恶劣天气条件下与激光雷达相比有何特点？",
+      "evidence_source_ids": [
+        "apollo-doc-012"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-013",
+        "apollo-doc-005",
+        "apollo-doc-011",
+        "apollo-doc-012"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-039",
+      "question": "Apollo雷达感知模块中毫米波雷达的工作频段是多少？它有哪些独特优势？",
+      "evidence_source_ids": [
+        "apollo-doc-013"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-013",
+        "apollo-doc-005",
+        "apollo-doc-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-040",
+      "question": "Apollo雷达感知模块使用什么聚类算法来处理目标聚类？",
+      "evidence_source_ids": [
+        "apollo-doc-013"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-013",
+        "apollo-doc-005",
+        "apollo-doc-011",
+        "apollo-doc-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-041",
+      "question": "Apollo雷达感知模块中目标跟踪器采用什么滤波算法？UKF相比EKF有什么优势？",
+      "evidence_source_ids": [
+        "apollo-doc-013"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-013",
+        "apollo-doc-005",
+        "apollo-doc-011",
+        "apollo-doc-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-042",
+      "question": "Apollo预测模块的四个核心子模块分别是什么？",
+      "evidence_source_ids": [
+        "apollo-doc-014"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-014",
+        "apollo-doc-007"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-043",
+      "question": "Apollo预测模块中CVAE（条件变分自编码器）的损失函数包含哪些部分？",
+      "evidence_source_ids": [
+        "apollo-doc-014"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-044",
+      "question": "Apollo预测模块使用哪些指标来评估预测质量？",
+      "evidence_source_ids": [
+        "apollo-doc-014"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-014",
+        "apollo-doc-007"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-045",
+      "question": "Apollo规划模块采用什么坐标系来实现Lattice规划算法？",
+      "evidence_source_ids": [
+        "apollo-doc-015"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-008",
+        "apollo-doc-015"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-046",
+      "question": "Apollo规划模块的分层架构包含哪三个层次？",
+      "evidence_source_ids": [
+        "apollo-doc-015"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-014",
+        "apollo-doc-008",
+        "apollo-doc-015"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-047",
+      "question": "Apollo规划模块的更新频率通常是多少？为什么高速场景需要更高频率？",
+      "evidence_source_ids": [
+        "apollo-doc-015"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-008",
+        "apollo-doc-015"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-048",
+      "question": "Apollo规划模块中速度规划器有哪几种主要方法？",
+      "evidence_source_ids": [
+        "apollo-doc-015"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-015"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-049",
+      "question": "DETR3D的核心创新机制是什么？",
+      "evidence_source_ids": [
+        "paper-008"
+      ],
+      "retrieved_source_ids": [
+        "paper-008"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-050",
+      "question": "DETR3D在nuScenes val set上取得了多少NDS和mAP成绩？",
+      "evidence_source_ids": [
+        "paper-008"
+      ],
+      "retrieved_source_ids": [
+        "paper-009",
+        "paper-010",
+        "paper-008"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-051",
+      "question": "DETR3D相比传统方法的主要局限性有哪些？",
+      "evidence_source_ids": [
+        "paper-008"
+      ],
+      "retrieved_source_ids": [
+        "paper-008"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-052",
+      "question": "PETRv2相比原始PETR引入了哪些关键改进？",
+      "evidence_source_ids": [
+        "paper-009"
+      ],
+      "retrieved_source_ids": [
+        "paper-009",
+        "paper-008"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-053",
+      "question": "PETRv2在nuScenes val set上取得了多少NDS成绩？相比原始PETR提升了多少？",
+      "evidence_source_ids": [
+        "paper-009"
+      ],
+      "retrieved_source_ids": [
+        "paper-009",
+        "paper-008"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-054",
+      "question": "PETRv2的多任务解码头支持哪三项任务？",
+      "evidence_source_ids": [
+        "paper-009"
+      ],
+      "retrieved_source_ids": [
+        "paper-009",
+        "paper-008"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-055",
+      "question": "PointPillars的核心创新是什么？",
+      "evidence_source_ids": [
+        "paper-010"
+      ],
+      "retrieved_source_ids": [
+        "paper-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-056",
+      "question": "PointPillars的推理速度是多少？与SECOND和VoxelNet相比如何？",
+      "evidence_source_ids": [
+        "paper-010"
+      ],
+      "retrieved_source_ids": [
+        "paper-010",
+        "apollo-doc-011",
+        "paper-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-057",
+      "question": "PointPillars的高度信息压缩有什么局限性？",
+      "evidence_source_ids": [
+        "paper-010"
+      ],
+      "retrieved_source_ids": [
+        "paper-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-058",
+      "question": "CenterPoint的两阶段精炼框架是如何工作的？",
+      "evidence_source_ids": [
+        "paper-011"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-011",
+        "paper-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-059",
+      "question": "CenterPoint在nuScenes数据集上取得了多少NDS成绩？",
+      "evidence_source_ids": [
+        "paper-011"
+      ],
+      "retrieved_source_ids": [
+        "paper-010",
+        "paper-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-060",
+      "question": "CenterPoint的跟踪模块是如何实现目标关联的？",
+      "evidence_source_ids": [
+        "paper-011"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-011",
+        "paper-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-061",
+      "question": "TransFusion的热力图初始化查询策略有什么优势？",
+      "evidence_source_ids": [
+        "paper-012"
+      ],
+      "retrieved_source_ids": [
+        "paper-012",
+        "paper-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-062",
+      "question": "TransFusion在nuScenes数据集上的LiDAR-Camera融合版本取得了多少NDS成绩？",
+      "evidence_source_ids": [
+        "paper-012"
+      ],
+      "retrieved_source_ids": [
+        "paper-012"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-063",
+      "question": "TransFusion相比基于硬投影的融合方法有什么鲁棒性优势？",
+      "evidence_source_ids": [
+        "paper-012"
+      ],
+      "retrieved_source_ids": [
+        "paper-012"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-064",
+      "question": "ISO 26262标准的核心目标是什么？",
+      "evidence_source_ids": [
+        "standard-010"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-011",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-065",
+      "question": "ISO 26262中ASIL等级通过哪三个因素综合确定？",
+      "evidence_source_ids": [
+        "standard-010"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-011",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-066",
+      "question": "ISO 26262中ASIL D等级对硬件架构度量指标的要求是什么？",
+      "evidence_source_ids": [
+        "standard-010"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-011",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-067",
+      "question": "ISO 26262与ISO 21448（SOTIF）的主要区别是什么？",
+      "evidence_source_ids": [
+        "standard-010"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-011",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 3
+    },
+    {
+      "id": "gold-068",
+      "question": "ISO 21448（SOTIF）的四区域分析模型包含哪四个区域？",
+      "evidence_source_ids": [
+        "standard-011"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-011",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-069",
+      "question": "ISO 21448中SOTIF的核心目标是什么？",
+      "evidence_source_ids": [
+        "standard-011"
+      ],
+      "retrieved_source_ids": [
+        "standard-011",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-070",
+      "question": "ISO 21448要求对哪些类型的触发条件进行系统化识别？",
+      "evidence_source_ids": [
+        "standard-011"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-011",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-071",
+      "question": "UL 4600标准的核心创新理念是什么？",
+      "evidence_source_ids": [
+        "standard-012"
+      ],
+      "retrieved_source_ids": [
+        "standard-012",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-072",
+      "question": "UL 4600的安全论证框架包含哪些关键要素？",
+      "evidence_source_ids": [
+        "standard-012"
+      ],
+      "retrieved_source_ids": [
+        "standard-012",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-073",
+      "question": "UL 4600中最小风险状态（MRC）策略的含义是什么？",
+      "evidence_source_ids": [
+        "standard-012"
+      ],
+      "retrieved_source_ids": [
+        "standard-012",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-074",
+      "question": "SAE J3016标准中L3级别为什么被认为是安全性设计的关键转折点？",
+      "evidence_source_ids": [
+        "standard-013"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-012",
+        "standard-011",
+        "standard-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-075",
+      "question": "SAE J3016标准中L4和L5级别在ODD范围上有什么区别？",
+      "evidence_source_ids": [
+        "standard-013"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-076",
+      "question": "ANSI/ATA标准体系的核心特征是什么？",
+      "evidence_source_ids": [
+        "standard-013"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-012",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-077",
+      "question": "中国自动驾驶标准体系的\"三横两纵\"架构分别指什么？",
+      "evidence_source_ids": [
+        "standard-014"
+      ],
+      "retrieved_source_ids": [
+        "standard-010",
+        "standard-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-078",
+      "question": "中国自动驾驶标准体系建立了什么样的安全保障框架？",
+      "evidence_source_ids": [
+        "standard-014"
+      ],
+      "retrieved_source_ids": [
+        "standard-010",
+        "standard-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-079",
+      "question": "中国自动驾驶测试验证体系的四个阶段分别是什么？",
+      "evidence_source_ids": [
+        "standard-014"
+      ],
+      "retrieved_source_ids": [
+        "standard-012",
+        "standard-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-080",
+      "question": "Apollo激光雷达感知模块中PointPillars检测网络的原理是什么？",
+      "evidence_source_ids": [
+        "apollo-doc-011"
+      ],
+      "retrieved_source_ids": [
+        "paper-010",
+        "apollo-doc-011"
+      ],
+      "hit": true,
+      "best_rank": 2
+    },
+    {
+      "id": "gold-081",
+      "question": "Apollo激光雷达感知模块中CenterPoint检测网络有什么特点？",
+      "evidence_source_ids": [
+        "apollo-doc-011"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-011",
+        "paper-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-082",
+      "question": "Apollo摄像头感知模块中交通信号灯检测器的级联检测流程包含哪些阶段？",
+      "evidence_source_ids": [
+        "apollo-doc-012"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-005",
+        "apollo-doc-011",
+        "apollo-doc-012"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-083",
+      "question": "Apollo雷达感知模块中静态目标过滤使用什么方法？",
+      "evidence_source_ids": [
+        "apollo-doc-013"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-013",
+        "apollo-doc-005",
+        "apollo-doc-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-084",
+      "question": "Apollo预测模块中场景选择器如何管理场景切换？",
+      "evidence_source_ids": [
+        "apollo-doc-014"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-014",
+        "apollo-doc-015",
+        "apollo-doc-007"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-085",
+      "question": "Apollo规划模块中轨迹拼接（Trajectory Stitching）的目的是什么？",
+      "evidence_source_ids": [
+        "apollo-doc-015"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-014",
+        "apollo-doc-015"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-086",
+      "question": "DETR3D采用什么方法建立预测框与真值框之间的匹配关系？",
+      "evidence_source_ids": [
+        "paper-008"
+      ],
+      "retrieved_source_ids": [
+        "paper-010",
+        "paper-008"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-087",
+      "question": "PETRv2的特征引导位置编码（FGPE）相比原始PETR的位置编码有什么改进？",
+      "evidence_source_ids": [
+        "paper-009"
+      ],
+      "retrieved_source_ids": [
+        "paper-009",
+        "paper-006"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-088",
+      "question": "PointPillars的Pillar编码器中点特征增强包含哪些属性？",
+      "evidence_source_ids": [
+        "paper-010"
+      ],
+      "retrieved_source_ids": [
+        "paper-010",
+        "paper-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-089",
+      "question": "CenterPoint第一阶段预测的属性回归包含哪些内容？",
+      "evidence_source_ids": [
+        "paper-011"
+      ],
+      "retrieved_source_ids": [
+        "paper-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-090",
+      "question": "TransFusion的渐进式两阶段融合是如何设计的？",
+      "evidence_source_ids": [
+        "paper-012"
+      ],
+      "retrieved_source_ids": [
+        "paper-012"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-091",
+      "question": "ISO 26262的适用范围包括哪些关键领域？",
+      "evidence_source_ids": [
+        "standard-010"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-011",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-092",
+      "question": "ISO 21448中降级策略（Degradation Strategy）包含哪些措施？",
+      "evidence_source_ids": [
+        "standard-011"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-011",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-093",
+      "question": "UL 4600适用于哪些类型的自动驾驶产品？",
+      "evidence_source_ids": [
+        "standard-012"
+      ],
+      "retrieved_source_ids": [
+        "standard-012",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-094",
+      "question": "UL 4600中影子模式（Shadow Mode）运行的含义是什么？",
+      "evidence_source_ids": [
+        "standard-012"
+      ],
+      "retrieved_source_ids": [
+        "standard-012",
+        "standard-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-095",
+      "question": "SAE J3016标准定义了哪六个自动化等级？",
+      "evidence_source_ids": [
+        "standard-013"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-011",
+        "standard-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-096",
+      "question": "中国自动驾驶标准体系特别关注哪些中国特色的交通环境？",
+      "evidence_source_ids": [
+        "standard-014"
+      ],
+      "retrieved_source_ids": [
+        "standard-010",
+        "standard-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-097",
+      "question": "Apollo激光雷达感知模块中子流形稀疏卷积的作用是什么？",
+      "evidence_source_ids": [
+        "apollo-doc-011"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-013",
+        "apollo-doc-005",
+        "apollo-doc-011"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-098",
+      "question": "Apollo预测模块在nuScenes预测benchmark上的minADE指标和意图分类准确率分别是多少？",
+      "evidence_source_ids": [
+        "apollo-doc-014"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-014",
+        "paper-010"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-099",
+      "question": "TransFusion中查询去噪使用什么策略处理冗余预测？",
+      "evidence_source_ids": [
+        "paper-012"
+      ],
+      "retrieved_source_ids": [
+        "paper-012"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "gold-100",
+      "question": "中国自动驾驶标准体系中GB/T 40429与SAE J3016的关系是什么？",
+      "evidence_source_ids": [
+        "standard-014"
+      ],
+      "retrieved_source_ids": [
+        "standard-013",
+        "standard-010",
+        "standard-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    }
+  ]
+}

@@ -44,6 +44,10 @@ results/chunking_eval/stores/
 # Local model junctions (created by models/setup.ps1)
 models/bge-m3/
 models/bge-reranker-base/
+models/Qwen3-8B/
+
+# oh-my-claudecode state
+.omc/
 
 # Local secrets / env files
 .env

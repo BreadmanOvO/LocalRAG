@@ -3,13 +3,14 @@ from __future__ import annotations
 import hashlib
 import math
 
+import httpx
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from config.model_paths import get_bge_m3_path
 from config.runtime_keys import RuntimeProviderConfig
 
-OPENAI_COMPATIBLE_PROVIDERS = {"bailian", "modelscope", "local_embedding", "local_sentence_transformer"}
+OPENAI_COMPATIBLE_PROVIDERS = {"bailian", "modelscope", "sensenova", "local_embedding", "local_sentence_transformer"}
 
 
 class LocalSentenceTransformerEmbeddings:
@@ -57,6 +58,9 @@ def build_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
     }
     if runtime_config.provider in {"local_embedding", "modelscope", "local_sentence_transformer"} and runtime_config.chat_model_name.startswith("Qwen/Qwen3"):
         options["extra_body"] = {"enable_thinking": False}
+    if runtime_config.provider == "sensenova":
+        options["http_client"] = httpx.Client(verify=False)
+        options["http_async_client"] = httpx.AsyncClient(verify=False)
     options.update(overrides)
     return ChatOpenAI(**options)
 
@@ -82,7 +86,7 @@ def build_embedding_model(runtime_config: RuntimeProviderConfig):
     if runtime_config.provider == "local_embedding":
         return LocalHashEmbeddings()
 
-    if runtime_config.provider == "local_sentence_transformer":
+    if runtime_config.provider in ("local_sentence_transformer", "sensenova"):
         return LocalSentenceTransformerEmbeddings(model_name=runtime_config.embedding_model_name)
 
     raise ValueError(f"Unsupported runtime provider: {runtime_config.provider}")

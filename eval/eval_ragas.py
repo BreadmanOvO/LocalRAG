@@ -122,6 +122,8 @@ def require_runtime_config() -> None:
 def run_baseline(
     dataset_path: Path | str, predictions_path: Path | str, metrics_path: Path | str
 ) -> dict[str, Any]:
+    import time
+
     dataset_path = Path(dataset_path)
     predictions_path = Path(predictions_path)
     metrics_path = Path(metrics_path)
@@ -133,11 +135,28 @@ def run_baseline(
 
     rag_service = RagService()
     predictions = []
-    for sample in dataset:
-        result = rag_service.answer_with_retrieval(
-            str(sample["question"]), session_id=build_session_id(sample)
-        )
-        predictions.append(build_prediction_record(sample, result))
+    for i, sample in enumerate(dataset):
+        for attempt in range(5):
+            try:
+                result = rag_service.answer_with_retrieval(
+                    str(sample["question"]), session_id=build_session_id(sample)
+                )
+                predictions.append(build_prediction_record(sample, result))
+                print(f"  [{i+1}/{len(dataset)}] OK: {sample['id']}", flush=True)
+                time.sleep(2)  # Rate limit buffer between requests
+                break
+            except Exception as e:
+                wait = 2 ** attempt * 10
+                print(f"  [{i+1}/{len(dataset)}] Attempt {attempt+1} failed: {e}. Retrying in {wait}s...", flush=True)
+                time.sleep(wait)
+        else:
+            print(f"  [{i+1}/{len(dataset)}] FAILED after 5 attempts, skipping", flush=True)
+            predictions.append(build_prediction_record(sample, {
+                "answer": "",
+                "retrieved_context": "",
+                "retrieved_rows": [],
+                "retrieval_debug_candidates": [],
+            }))
 
     summary = summarize_predictions(predictions)
     write_json(predictions_path, predictions)

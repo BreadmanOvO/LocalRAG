@@ -1,0 +1,21 @@
+{
+  "sample_count": 100,
+  "answered_count": 100,
+  "answered_ratio": 1.0,
+  "context_hit_count": 100,
+  "context_hit_ratio": 1.0,
+  "retrieved_row_count": 500,
+  "avg_retrieved_row_count": 5.0,
+  "retrieval_debug_candidate_count": 1000,
+  "avg_retrieval_debug_candidate_count": 10.0,
+  "exact_match_count": 0,
+  "exact_match_ratio": 0.0,
+  "normalized_exact_match_count": 0,
+  "normalized_exact_match_ratio": 0.0,
+  "reference_substring_hit_count": 0,
+  "reference_substring_hit_ratio": 0.0,
+  "evidence_source_hit_count": 7,
+  "evidence_source_hit_ratio": 0.07,
+  "evidence_locator_hit_count": 0,
+  "evidence_locator_hit_ratio": 0.0
+}

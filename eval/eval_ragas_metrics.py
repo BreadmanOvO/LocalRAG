@@ -60,17 +60,10 @@ def build_ragas_samples(predictions: list[dict[str, Any]]) -> list:
 
 
 def init_evaluator_llm(config):
-    from langchain_openai import ChatOpenAI
+    from config.provider_factory import build_chat_model
     from ragas.llms import LangchainLLMWrapper
 
-    llm = ChatOpenAI(
-        model=config.chat_model_name,
-        api_key=config.api_key,
-        base_url=config.base_url,
-        temperature=0,
-        extra_body={"enable_thinking": False},
-        max_retries=10,
-    )
+    llm = build_chat_model(config, temperature=0, max_retries=10)
     return LangchainLLMWrapper(llm)
 
 
@@ -114,7 +107,7 @@ def run_ragas_evaluation(predictions_path: Path, out_dir: Path, eval_model: str 
         return {}
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    run_config = RunConfig(max_workers=3, max_retries=10, max_wait=120, timeout=180)
+    run_config = RunConfig(max_workers=1, max_retries=10, max_wait=120, timeout=180)
 
     evaluator_llm = init_evaluator_llm(config)
     evaluator_embeddings = init_evaluator_embeddings()
@@ -151,10 +144,17 @@ def run_ragas_evaluation(predictions_path: Path, out_dir: Path, eval_model: str 
             metric_scores = scores_df[metric_name].tolist()
             all_scores[metric_name] = metric_scores
             mean_score = round(float(scores_df[metric_name].mean()), 4)
-            print(f"  {metric_name}: {mean_score} (saved)")
+            import math as _m
+            nan_count = sum(1 for s in metric_scores if isinstance(s, float) and _m.isnan(s))
+            valid_scores = [s for s in metric_scores if not (isinstance(s, float) and _m.isnan(s))]
+            valid_mean = round(sum(valid_scores)/len(valid_scores), 4) if valid_scores else float("nan")
+            print(f"  {metric_name}: mean={mean_score}, valid_mean={valid_mean}, nan={nan_count}/{len(metric_scores)} (saved)")
 
-            # Save partial results after each metric
-            partial_summary = {k: round(float(sum(v)/len(v)), 4) for k, v in all_scores.items()}
+            # Save partial results after each metric (nanmean: exclude NaN)
+            def _nanmean(vals):
+                valid = [x for x in vals if not (isinstance(x, float) and _m.isnan(x))]
+                return round(sum(valid)/len(valid), 4) if valid else float("nan")
+            partial_summary = {k: _nanmean(v) for k, v in all_scores.items()}
             partial_summary["sample_count"] = len(samples)
             (out_dir / "ragas_summary.json").write_text(
                 json.dumps(partial_summary, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -171,7 +171,11 @@ def run_ragas_evaluation(predictions_path: Path, out_dir: Path, eval_model: str 
             row[metric_name] = all_scores[metric_name][i] if i < len(all_scores[metric_name]) else float("nan")
         per_sample.append(row)
 
-    summary = {k: round(float(sum(v)/len(v)), 4) for k, v in all_scores.items() if not all(float("nan") == x for x in v)}
+    import math as _math
+    def _nanmean(vals):
+        valid = [x for x in vals if not (isinstance(x, float) and _math.isnan(x))]
+        return round(sum(valid)/len(valid), 4) if valid else float("nan")
+    summary = {k: _nanmean(v) for k, v in all_scores.items() if not all(float("nan") == x for x in v)}
     summary["sample_count"] = len(samples)
 
     # Write final outputs
