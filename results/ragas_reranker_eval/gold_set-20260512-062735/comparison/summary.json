@@ -1,0 +1,49 @@
+{
+  "run_id": "gold_set-20260512-062735",
+  "reranker_type": "cross-encoder",
+  "reranker_model": null,
+  "alpha": 0.5,
+  "retrieve_top_k": 20,
+  "final_top_k": 5,
+  "ragas_comparison_summary_path": "results/ragas_reranker_eval/gold_set-20260512-062735/comparison/ragas_comparison_summary.json",
+  "ragas_metrics": {
+    "dense_only": {
+      "faithfulness": 0.2419,
+      "answer_relevancy": 0.7105,
+      "context_precision": 0.0558,
+      "context_recall": 0.0372
+    },
+    "hybrid_only": {
+      "faithfulness": 0.9361,
+      "answer_relevancy": 0.9083,
+      "context_precision": 0.6955,
+      "context_recall": 0.8267
+    },
+    "hybrid_reranker": {
+      "faithfulness": 0.9318,
+      "answer_relevancy": 0.9264,
+      "context_precision": 0.8474,
+      "context_recall": 0.9366
+    }
+  },
+  "hybrid_only": {
+    "sample_count": 100,
+    "answered_count": 100,
+    "answered_ratio": 1.0,
+    "retrieved_row_count": 500,
+    "evidence_source_hit_count": 96,
+    "evidence_source_hit_ratio": 0.96,
+    "evidence_locator_hit_count": 0,
+    "evidence_locator_hit_ratio": 0.0
+  },
+  "hybrid_reranker": {
+    "sample_count": 100,
+    "answered_count": 100,
+    "answered_ratio": 1.0,
+    "retrieved_row_count": 500,
+    "evidence_source_hit_count": 96,
+    "evidence_source_hit_ratio": 0.96,
+    "evidence_locator_hit_count": 0,
+    "evidence_locator_hit_ratio": 0.0
+  }
+}

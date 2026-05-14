@@ -1,0 +1,252 @@
+[
+  {
+    "id": "gold-051",
+    "sample_index": 50,
+    "context_recall": NaN
+  },
+  {
+    "id": "gold-052",
+    "sample_index": 51,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-053",
+    "sample_index": 52,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-054",
+    "sample_index": 53,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-055",
+    "sample_index": 54,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-056",
+    "sample_index": 55,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-057",
+    "sample_index": 56,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-058",
+    "sample_index": 57,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-059",
+    "sample_index": 58,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-060",
+    "sample_index": 59,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-061",
+    "sample_index": 60,
+    "context_recall": NaN
+  },
+  {
+    "id": "gold-062",
+    "sample_index": 61,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-063",
+    "sample_index": 62,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-064",
+    "sample_index": 63,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-065",
+    "sample_index": 64,
+    "context_recall": 0.0
+  },
+  {
+    "id": "gold-066",
+    "sample_index": 65,
+    "context_recall": 0.0
+  },
+  {
+    "id": "gold-067",
+    "sample_index": 66,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-068",
+    "sample_index": 67,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-069",
+    "sample_index": 68,
+    "context_recall": NaN
+  },
+  {
+    "id": "gold-070",
+    "sample_index": 69,
+    "context_recall": 0.0
+  },
+  {
+    "id": "gold-071",
+    "sample_index": 70,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-072",
+    "sample_index": 71,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-073",
+    "sample_index": 72,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-074",
+    "sample_index": 73,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-075",
+    "sample_index": 74,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-076",
+    "sample_index": 75,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-077",
+    "sample_index": 76,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-078",
+    "sample_index": 77,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-079",
+    "sample_index": 78,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-080",
+    "sample_index": 79,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-081",
+    "sample_index": 80,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-082",
+    "sample_index": 81,
+    "context_recall": 0.0
+  },
+  {
+    "id": "gold-083",
+    "sample_index": 82,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-084",
+    "sample_index": 83,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-085",
+    "sample_index": 84,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-086",
+    "sample_index": 85,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-087",
+    "sample_index": 86,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-088",
+    "sample_index": 87,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-089",
+    "sample_index": 88,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-090",
+    "sample_index": 89,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-091",
+    "sample_index": 90,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-092",
+    "sample_index": 91,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-093",
+    "sample_index": 92,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-094",
+    "sample_index": 93,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-095",
+    "sample_index": 94,
+    "context_recall": 0.0
+  },
+  {
+    "id": "gold-096",
+    "sample_index": 95,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-097",
+    "sample_index": 96,
+    "context_recall": 0.0
+  },
+  {
+    "id": "gold-098",
+    "sample_index": 97,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-099",
+    "sample_index": 98,
+    "context_recall": 1.0
+  },
+  {
+    "id": "gold-100",
+    "sample_index": 99,
+    "context_recall": 1.0
+  }
+]

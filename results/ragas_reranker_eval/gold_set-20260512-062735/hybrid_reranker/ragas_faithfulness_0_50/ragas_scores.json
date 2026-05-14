@@ -1,0 +1,252 @@
+[
+  {
+    "id": "gold-001",
+    "sample_index": 0,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-002",
+    "sample_index": 1,
+    "faithfulness": 0.9523809523809523
+  },
+  {
+    "id": "gold-003",
+    "sample_index": 2,
+    "faithfulness": NaN
+  },
+  {
+    "id": "gold-004",
+    "sample_index": 3,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-005",
+    "sample_index": 4,
+    "faithfulness": 0.8888888888888888
+  },
+  {
+    "id": "gold-006",
+    "sample_index": 5,
+    "faithfulness": 0.875
+  },
+  {
+    "id": "gold-007",
+    "sample_index": 6,
+    "faithfulness": 0.8333333333333334
+  },
+  {
+    "id": "gold-008",
+    "sample_index": 7,
+    "faithfulness": 0.9230769230769231
+  },
+  {
+    "id": "gold-009",
+    "sample_index": 8,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-010",
+    "sample_index": 9,
+    "faithfulness": 0.8571428571428571
+  },
+  {
+    "id": "gold-011",
+    "sample_index": 10,
+    "faithfulness": 0.5714285714285714
+  },
+  {
+    "id": "gold-012",
+    "sample_index": 11,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-013",
+    "sample_index": 12,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-014",
+    "sample_index": 13,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-015",
+    "sample_index": 14,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-016",
+    "sample_index": 15,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-017",
+    "sample_index": 16,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-018",
+    "sample_index": 17,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-019",
+    "sample_index": 18,
+    "faithfulness": 0.8571428571428571
+  },
+  {
+    "id": "gold-020",
+    "sample_index": 19,
+    "faithfulness": 0.7142857142857143
+  },
+  {
+    "id": "gold-021",
+    "sample_index": 20,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-022",
+    "sample_index": 21,
+    "faithfulness": 0.5
+  },
+  {
+    "id": "gold-023",
+    "sample_index": 22,
+    "faithfulness": 0.75
+  },
+  {
+    "id": "gold-024",
+    "sample_index": 23,
+    "faithfulness": 0.75
+  },
+  {
+    "id": "gold-025",
+    "sample_index": 24,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-026",
+    "sample_index": 25,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-027",
+    "sample_index": 26,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-028",
+    "sample_index": 27,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-029",
+    "sample_index": 28,
+    "faithfulness": 0.8888888888888888
+  },
+  {
+    "id": "gold-030",
+    "sample_index": 29,
+    "faithfulness": NaN
+  },
+  {
+    "id": "gold-031",
+    "sample_index": 30,
+    "faithfulness": NaN
+  },
+  {
+    "id": "gold-032",
+    "sample_index": 31,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-033",
+    "sample_index": 32,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-034",
+    "sample_index": 33,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-035",
+    "sample_index": 34,
+    "faithfulness": NaN
+  },
+  {
+    "id": "gold-036",
+    "sample_index": 35,
+    "faithfulness": 0.375
+  },
+  {
+    "id": "gold-037",
+    "sample_index": 36,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-038",
+    "sample_index": 37,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-039",
+    "sample_index": 38,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-040",
+    "sample_index": 39,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-041",
+    "sample_index": 40,
+    "faithfulness": 0.75
+  },
+  {
+    "id": "gold-042",
+    "sample_index": 41,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-043",
+    "sample_index": 42,
+    "faithfulness": 0.6
+  },
+  {
+    "id": "gold-044",
+    "sample_index": 43,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-045",
+    "sample_index": 44,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-046",
+    "sample_index": 45,
+    "faithfulness": 0.5
+  },
+  {
+    "id": "gold-047",
+    "sample_index": 46,
+    "faithfulness": 0.5
+  },
+  {
+    "id": "gold-048",
+    "sample_index": 47,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-049",
+    "sample_index": 48,
+    "faithfulness": 1.0
+  },
+  {
+    "id": "gold-050",
+    "sample_index": 49,
+    "faithfulness": 1.0
+  }
+]

@@ -1,0 +1,87 @@
+{
+  "run_id": "gold_set-20260512-062735",
+  "dataset": "data/evaluation/gold/gold_set_100.json",
+  "sample_count": 100,
+  "provider": "sensenova",
+  "chat_model_name": "sensenova-6.7-flash-lite",
+  "eval_model": "sensenova-6.7-flash-lite",
+  "embedding_model_name": "BAAI/bge-m3",
+  "retrieval_store": "results/chunking_eval/stores/gold_set-100-20260507/baseline",
+  "comparison_design": {
+    "dense_only": {
+      "description": "Baseline Ragas run generated through RagService dense ChromaDB retrieval, top-5 contexts.",
+      "result_dir": "results/ragas_eval"
+    },
+    "hybrid_only": {
+      "description": "Hybrid retrieval without reranker: dense + BM25 sparse retrieval, alpha=0.5, top-5 contexts.",
+      "result_dir": "results/ragas_reranker_eval/gold_set-20260512-062735/hybrid_only"
+    },
+    "hybrid_reranker": {
+      "description": "Hybrid retrieval top-20 candidates followed by BAAI/bge-reranker-base cross-encoder reranking to final top-5 contexts.",
+      "result_dir": "results/ragas_reranker_eval/gold_set-20260512-062735/hybrid_reranker"
+    }
+  },
+  "retrieval_settings": {
+    "alpha": 0.5,
+    "retrieve_top_k": 20,
+    "final_top_k": 5,
+    "reranker_type": "cross-encoder",
+    "reranker_model": "BAAI/bge-reranker-base"
+  },
+  "ragas_metrics": {
+    "dense_only": {
+      "faithfulness": 0.2419,
+      "answer_relevancy": 0.7105,
+      "context_precision": 0.0558,
+      "context_recall": 0.0372
+    },
+    "hybrid_only": {
+      "faithfulness": 0.9361,
+      "answer_relevancy": 0.9083,
+      "context_precision": 0.6955,
+      "context_recall": 0.8267
+    },
+    "hybrid_reranker": {
+      "faithfulness": 0.9318,
+      "answer_relevancy": 0.9264,
+      "context_precision": 0.8474,
+      "context_recall": 0.9366
+    }
+  },
+  "retrieval_metrics": {
+    "hybrid_only": {
+      "evidence_source_hit_count": 96,
+      "evidence_source_hit_ratio": 0.96
+    },
+    "hybrid_reranker": {
+      "evidence_source_hit_count": 96,
+      "evidence_source_hit_ratio": 0.96
+    }
+  },
+  "batch_evaluation": {
+    "reason": "SenseNova + Ragas faithfulness/context_precision can exceed per-sample timeout on standards-heavy table or metadata chunks, so metrics were evaluated in 50-sample batches and merged by averaging the two batch means.",
+    "run_config_timeout_seconds": 180,
+    "hybrid_reranker_batches": {
+      "faithfulness": [
+        "hybrid_reranker/ragas_faithfulness_0_50",
+        "hybrid_reranker/ragas_faithfulness_50_100"
+      ],
+      "answer_relevancy": [
+        "hybrid_reranker/ragas_answer_relevancy_0_50",
+        "hybrid_reranker/ragas_answer_relevancy_50_100"
+      ],
+      "context_precision": [
+        "hybrid_reranker/ragas_context_precision_0_50",
+        "hybrid_reranker/ragas_context_precision_50_100"
+      ],
+      "context_recall": [
+        "hybrid_reranker/ragas_context_recall_0_50",
+        "hybrid_reranker/ragas_context_recall_50_100"
+      ]
+    }
+  },
+  "interpretation": {
+    "dense_to_hybrid": "Hybrid retrieval validates the v1.2 retrieval optimization: all four Ragas metrics improve sharply over dense-only, especially context_recall and context_precision.",
+    "hybrid_to_reranker": "Reranker keeps the same source-level hit ratio as hybrid-only but substantially improves context_precision and context_recall. Faithfulness is nearly tied and slightly lower because reranking changes/narrows top-5 context and leads to longer, more specific answers with more claims for Ragas to verify."
+  }
+}

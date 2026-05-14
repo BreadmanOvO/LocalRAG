@@ -1,0 +1,11 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "reranker_eval",
+  "run_id": "gold_set-20260512-062735",
+  "reranker_type": "cross-encoder",
+  "reranker_model": null,
+  "alpha": 0.5,
+  "store_dir": "results\\chunking_eval\\stores\\gold_set-100-20260507\\baseline",
+  "retrieve_top_k": 20,
+  "final_top_k": 5
+}

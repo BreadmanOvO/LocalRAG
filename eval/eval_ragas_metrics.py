@@ -87,7 +87,14 @@ def init_evaluator_embeddings():
     return LangchainEmbeddingsWrapper(LocalBgeEmbeddings())
 
 
-def run_ragas_evaluation(predictions_path: Path, out_dir: Path, eval_model: str | None = None, run_metrics: list[str] | None = None) -> dict[str, Any]:
+def run_ragas_evaluation(
+    predictions_path: Path,
+    out_dir: Path,
+    eval_model: str | None = None,
+    run_metrics: list[str] | None = None,
+    sample_offset: int = 0,
+    sample_limit: int | None = None,
+) -> dict[str, Any]:
     from ragas import EvaluationDataset, evaluate
     from ragas.metrics import Faithfulness, AnswerRelevancy, ContextPrecision, ContextRecall
     from ragas.run_config import RunConfig
@@ -96,15 +103,23 @@ def run_ragas_evaluation(predictions_path: Path, out_dir: Path, eval_model: str 
     if eval_model:
         config = type(config)(**{**config.__dict__, "chat_model_name": eval_model})
     predictions = load_predictions(predictions_path)
+    batch_end = None if sample_limit is None else sample_offset + sample_limit
+    batch_predictions = predictions[sample_offset:batch_end]
 
     print(f"Loaded {len(predictions)} predictions from {predictions_path}")
+    print(f"Evaluating sample range [{sample_offset}:{batch_end or len(predictions)}]")
 
-    samples = build_ragas_samples(predictions)
-    print(f"Built {len(samples)} Ragas samples (skipped {len(predictions) - len(samples)} empty answers)")
+    samples = build_ragas_samples(batch_predictions)
+    print(f"Built {len(samples)} Ragas samples (skipped {len(batch_predictions) - len(samples)} empty answers)")
 
     if not samples:
         print("No valid samples. Exiting.")
         return {}
+
+    if sample_offset < 0:
+        raise ValueError("sample_offset must be non-negative")
+    if sample_limit is not None and sample_limit <= 0:
+        raise ValueError("sample_limit must be positive")
 
     out_dir.mkdir(parents=True, exist_ok=True)
     run_config = RunConfig(max_workers=1, max_retries=10, max_wait=120, timeout=180)
@@ -165,8 +180,9 @@ def run_ragas_evaluation(predictions_path: Path, out_dir: Path, eval_model: str 
 
     # Build final per-sample scores
     per_sample = []
-    for i, pred in enumerate(predictions[:len(samples)]):
-        row = {"id": pred.get("id", f"sample-{i}")}
+    for i, pred in enumerate(batch_predictions[:len(samples)]):
+        row = {"id": pred.get("id", f"sample-{sample_offset + i}")}
+        row["sample_index"] = sample_offset + i
         for metric_name in all_scores:
             row[metric_name] = all_scores[metric_name][i] if i < len(all_scores[metric_name]) else float("nan")
         per_sample.append(row)
@@ -192,6 +208,8 @@ def run_ragas_evaluation(predictions_path: Path, out_dir: Path, eval_model: str 
             "run_id": f"ragas-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
             "predictions_path": str(predictions_path),
             "metrics": ["faithfulness", "answer_relevancy", "context_precision", "context_recall"],
+            "sample_offset": sample_offset,
+            "sample_limit": sample_limit,
             "provider": config.provider,
             "chat_model_name": config.chat_model_name,
             "eval_model": eval_model or config.chat_model_name,
@@ -207,18 +225,26 @@ def main() -> None:
     parser.add_argument("--out-dir", default=Path("results/ragas_eval"), type=Path)
     parser.add_argument("--eval-model", default=None, help="Override model for Ragas evaluator LLM")
     parser.add_argument("--metrics", default=None, nargs="+", help="Run only specific metrics (e.g. context_precision context_recall)")
+    parser.add_argument("--sample-offset", default=0, type=int, help="Start index for batch evaluation")
+    parser.add_argument("--sample-limit", default=None, type=int, help="Maximum samples to evaluate in this batch")
     args = parser.parse_args()
 
-    summary = run_ragas_evaluation(args.predictions, args.out_dir, eval_model=args.eval_model, run_metrics=args.metrics)
+    summary = run_ragas_evaluation(
+        args.predictions,
+        args.out_dir,
+        eval_model=args.eval_model,
+        run_metrics=args.metrics,
+        sample_offset=args.sample_offset,
+        sample_limit=args.sample_limit,
+    )
 
     if summary:
         print(f"\n{'='*50}")
         print("Ragas Evaluation Results:")
-        print(f"  faithfulness:       {summary['faithfulness']:.4f}")
-        print(f"  answer_relevancy:   {summary['answer_relevancy']:.4f}")
-        print(f"  context_precision:  {summary['context_precision']:.4f}")
-        print(f"  context_recall:     {summary['context_recall']:.4f}")
-        print(f"  sample_count:       {summary['sample_count']}")
+        for metric_name in ["faithfulness", "answer_relevancy", "context_precision", "context_recall"]:
+            if metric_name in summary:
+                print(f"  {metric_name}: {summary[metric_name]:.4f}")
+        print(f"  sample_count: {summary['sample_count']}")
         print(f"{'='*50}")
 
 

@@ -1,0 +1,17 @@
+{
+  "pipeline": "ragas_eval",
+  "contract_version": "v1.1",
+  "run_id": "ragas-20260512-231254",
+  "predictions_path": "results\\ragas_reranker_eval\\gold_set-20260512-062735\\hybrid_reranker\\predictions.json",
+  "metrics": [
+    "faithfulness",
+    "answer_relevancy",
+    "context_precision",
+    "context_recall"
+  ],
+  "sample_offset": 50,
+  "sample_limit": 50,
+  "provider": "sensenova",
+  "chat_model_name": "sensenova-6.7-flash-lite",
+  "eval_model": "sensenova-6.7-flash-lite"
+}
