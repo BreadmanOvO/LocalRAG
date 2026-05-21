@@ -63,7 +63,7 @@ class FullSourceCatalogTests(unittest.TestCase):
     def test_category_counts_match_scope(self):
         self.assertEqual(10, len(documents_for_category("apollo")))
         self.assertEqual(9, len(documents_for_category("standards")))
-        self.assertEqual(7, len(documents_for_category("papers")))
+        self.assertEqual(81, len(documents_for_category("papers")))
 
     def test_registry_path_is_stable(self):
         self.assertEqual("data/evaluation/shared/source_registry.json", REGISTRY_REL_PATH)

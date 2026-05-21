@@ -60,8 +60,8 @@ LocalRAG/
 │   └── settings.py            # 全局设置
 ├── eval/                      # 评测脚本
 ├── data/
-│   ├── evaluation/            # 评测数据集（gold / synthetic）
-│   └── sources/               # 知识源文档（41 篇）
+│   ├── evaluation/            # 清洗后的评测/训练数据集
+│   └── sources/               # 知识源文档（100 篇：10 Apollo + 81 论文/报告 + 9 标准）
 ├── results/                   # 评测结果
 └── scripts/                   # 工具脚本
 ```
@@ -88,9 +88,12 @@ python eval/eval_reranker.py
 
 # Pairwise LLM Judge
 python eval/eval_llm_judge.py
+
+# Formal Judge 流水线汇总
+python eval/eval_judge_formal_run.py
 ```
 
-### 最新评测结果（100 题，bge-m3，41 篇文档）
+### 最新评测结果（100 题，bge-m3，100 篇文档 — 待重跑）
 
 | 分块策略 | Reranker | Hit@5 | MRR | Hit@1 | Hit@3 |
 |---------|:--------:|:-----:|:---:|:-----:|:-----:|
@@ -115,3 +118,4 @@ python eval/eval_llm_judge.py
 | v1.0 | 评估基线（Gold Set + baseline runner + judge 骨架） | 已完成 |
 | v1.1 | 数据层（文档采集、chunk、metadata、formal judge） | 已完成 |
 | v1.2 | 检索层（hybrid retrieval + reranker + semantic chunking） | 已完成 |
+| v1.3 | 数据扩充（源文档 41→100 篇）+ 评测集重建（eval 100 题 + train 203 题） | 已完成 |
