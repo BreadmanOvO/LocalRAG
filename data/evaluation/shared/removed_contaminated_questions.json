@@ -1,0 +1,798 @@
+{
+  "data/evaluation/gold/eval_set.json": {
+    "before": 100,
+    "after": 63,
+    "removed": [
+      {
+        "id": "eval-004",
+        "source_ids": [
+          "paper-071"
+        ],
+        "question": "论文中提出的pA碰撞核修饰方法如何推广了传统的核修饰共线部分子分布函数（nPDFs）方法？请说明其关键创新。"
+      },
+      {
+        "id": "eval-011",
+        "source_ids": [
+          "paper-060"
+        ],
+        "question": "相比传统的ReAct范式，ReWOO在哪些方面实现了效率提升？请列举具体数据。"
+      },
+      {
+        "id": "eval-017",
+        "source_ids": [
+          "paper-049"
+        ],
+        "question": "论文提出的全球-局部注意力模块（GLAM）包含哪四种形式的注意力？"
+      },
+      {
+        "id": "eval-026",
+        "source_ids": [
+          "paper-067"
+        ],
+        "question": "在CDPRE模型中，每条边尝试在哪个时间点打开？成功打开的条件是什么？"
+      },
+      {
+        "id": "eval-031",
+        "source_ids": [
+          "paper-019"
+        ],
+        "question": "在RAPS（Regularized Adaptive Prediction Sets）的实验结果中，QTC校准如何影响其在分布偏移下的覆盖率？请结合Figure 6描述其效果。"
+      },
+      {
+        "id": "eval-033",
+        "source_ids": [
+          "paper-021"
+        ],
+        "question": "根据文档，对于平衡完全二部图Kt,t，当n ≥ 3t-3时，wsat(Kn, Kt,t)的值是多少？请写出公式。"
+      },
+      {
+        "id": "eval-034",
+        "source_ids": [
+          "paper-041"
+        ],
+        "question": "MiniGPT-4 的架构由哪些主要组件构成？"
+      },
+      {
+        "id": "eval-036",
+        "source_ids": [
+          "paper-050"
+        ],
+        "question": "文档中提到的TALISMAN方法的主要作用是什么？"
+      },
+      {
+        "id": "eval-037",
+        "source_ids": [
+          "paper-035"
+        ],
+        "question": "DD3D在KITTI-3D和nuScenes基准上的关键性能指标是多少？它相比此前方法在什么方面有显著提升？"
+      },
+      {
+        "id": "eval-038",
+        "source_ids": [
+          "paper-046"
+        ],
+        "question": "与 All-in-One 网络相比，TransWeather 在架构上的主要区别是什么？"
+      },
+      {
+        "id": "eval-041",
+        "source_ids": [
+          "paper-045"
+        ],
+        "question": "在gloss-free设置下，直接联合训练视觉编码器和LLM会导致性能显著下降，文中给出了哪两个原因？"
+      },
+      {
+        "id": "eval-046",
+        "source_ids": [
+          "paper-078"
+        ],
+        "question": "根据Olofsson和Wittsten，在单位圆盘上，α-harmonic函数如何表示为Poisson型积分？"
+      },
+      {
+        "id": "eval-049",
+        "source_ids": [
+          "paper-034"
+        ],
+        "question": "该论文中用于定义分数阶算子的基础是什么？"
+      },
+      {
+        "id": "eval-052",
+        "source_ids": [
+          "paper-065"
+        ],
+        "question": "本文主要研究什么内容？"
+      },
+      {
+        "id": "eval-057",
+        "source_ids": [
+          "paper-044"
+        ],
+        "question": "LLM4VG benchmark 主要用于评估哪一类任务的性能？"
+      },
+      {
+        "id": "eval-060",
+        "source_ids": [
+          "paper-076"
+        ],
+        "question": "在 Causal-StoNet  StoNet 中，处理变量是如何被集成到网络结构中的？"
+      },
+      {
+        "id": "eval-061",
+        "source_ids": [
+          "paper-051"
+        ],
+        "question": "在实验中，作者如何验证模型对不完整源网格（incomplete source meshes）的鲁棒性？具体使用了什么操作和参数，结果如何？"
+      },
+      {
+        "id": "eval-062",
+        "source_ids": [
+          "paper-032"
+        ],
+        "question": "论文中模型(1.1)描述的观测变量 x(w,h) 在二维空间中被划分成几个不同的均值区域（象限）？"
+      },
+      {
+        "id": "eval-064",
+        "source_ids": [
+          "paper-023"
+        ],
+        "question": "本文提出的机器学习方法主要解决了什么问题？"
+      },
+      {
+        "id": "eval-065",
+        "source_ids": [
+          "paper-057"
+        ],
+        "question": "文档中定义的Pixton类P^j_g(A)的顶阶项P^g_g(A)与什么对象有关？该结论基于什么证据？"
+      },
+      {
+        "id": "eval-066",
+        "source_ids": [
+          "paper-037"
+        ],
+        "question": "Continuation KD方法如何解决传统知识蒸馏中教师-学生容量差距和教师输出噪声的问题？"
+      },
+      {
+        "id": "eval-067",
+        "source_ids": [
+          "paper-020"
+        ],
+        "question": "GOOD方法的核心思想是什么？它如何改进开放世界目标检测？"
+      },
+      {
+        "id": "eval-068",
+        "source_ids": [
+          "paper-085"
+        ],
+        "question": "什么是Segment Anything Model（SAM）的主要任务？"
+      },
+      {
+        "id": "eval-070",
+        "source_ids": [
+          "paper-022"
+        ],
+        "question": "文档中为了确保WLCM的可识别性，对观测响应矩阵的总体版本提出了什么条件？"
+      },
+      {
+        "id": "eval-073",
+        "source_ids": [
+          "paper-070"
+        ],
+        "question": "在iEvaLM的用户模拟器prompt中，对于自由形式闲聊（Free-Form Chit-Chat）模式，当系统推荐的物品列表中包含至少一个目标物品时，模拟用户应如何回应？当推荐的物品列表不包含任何目标物品时，模拟用户应如何回应？请分别用原"
+      },
+      {
+        "id": "eval-078",
+        "source_ids": [
+          "paper-055"
+        ],
+        "question": "这篇论文主要解决什么问题？"
+      },
+      {
+        "id": "eval-079",
+        "source_ids": [
+          "paper-052"
+        ],
+        "question": "根据 ponderomotive force 模型，脉冲 SEP 事件中元素丰度的质量依赖性分馏是如何从通常的FIP效应转变而来的？关键机制是什么？"
+      },
+      {
+        "id": "eval-080",
+        "source_ids": [
+          "paper-066"
+        ],
+        "question": "本文提出的一阶段检测器预测模块名称是什么？"
+      },
+      {
+        "id": "eval-081",
+        "source_ids": [
+          "paper-054"
+        ],
+        "question": "文档中关于网络模体分析中发现了什么样的特征差异？这一现象在什么情况下尤为显著？"
+      },
+      {
+        "id": "eval-082",
+        "source_ids": [
+          "paper-081"
+        ],
+        "question": "该方法在预测硬件资源时，具有哪些显著特点？请至少列出两点。"
+      },
+      {
+        "id": "eval-083",
+        "source_ids": [
+          "paper-029"
+        ],
+        "question": "文档中介绍了三种实现GKT中2D-to-BEV变换的方式，请列出它们的名称，并说明LUT Indexing方式相比其他方式的优势是什么。"
+      },
+      {
+        "id": "eval-085",
+        "source_ids": [
+          "paper-061"
+        ],
+        "question": "什么是Calibrated Explanations for Regression的主要贡献？"
+      },
+      {
+        "id": "eval-087",
+        "source_ids": [
+          "paper-039"
+        ],
+        "question": "命名实体识别（NER）任务在该场景中允许分析者做什么？"
+      },
+      {
+        "id": "eval-092",
+        "source_ids": [
+          "paper-069"
+        ],
+        "question": "作者如何将多任务学习中的公平性问题转化为数学上的构造？"
+      },
+      {
+        "id": "eval-093",
+        "source_ids": [
+          "paper-082"
+        ],
+        "question": "为什么论文认为DCR图特别适合建模智能合约？列举至少两个理由。"
+      },
+      {
+        "id": "eval-095",
+        "source_ids": [
+          "paper-059"
+        ],
+        "question": "FoundationPose如何桥接基于模型和无模型设置之间的差距？"
+      },
+      {
+        "id": "eval-100",
+        "source_ids": [
+          "paper-030"
+        ],
+        "question": "在nuScenes测试集上，CRN在离线设置下取得了多少NDS和mAP？"
+      }
+    ]
+  },
+  "data/evaluation/train/train_set.json": {
+    "before": 203,
+    "after": 128,
+    "removed": [
+      {
+        "id": "train-004",
+        "source_ids": [
+          "paper-029"
+        ],
+        "question": "GKT（Geometry-guided Kernel Transformer）在2D-to-BEV表示学习中具备哪两个关键特性？为什么这两个特性对自动驾驶系统非常重要？"
+      },
+      {
+        "id": "train-006",
+        "source_ids": [
+          "paper-052"
+        ],
+        "question": "在脉冲太阳高能粒子事件中，什么元素丰度异常是显著的？该异常主要由哪种力解释？"
+      },
+      {
+        "id": "train-007",
+        "source_ids": [
+          "paper-034"
+        ],
+        "question": "导数非线性薛定谔（DNLS）方程属于哪个可积系统？"
+      },
+      {
+        "id": "train-008",
+        "source_ids": [
+          "paper-039"
+        ],
+        "question": "该数据集由谁进行标注以确保高质量？"
+      },
+      {
+        "id": "train-010",
+        "source_ids": [
+          "paper-037"
+        ],
+        "question": "知识蒸馏（Knowledge Distillation, KD）的目标是什么？它通常涉及哪两个模型？"
+      },
+      {
+        "id": "train-012",
+        "source_ids": [
+          "paper-067"
+        ],
+        "question": "根据Theorem 3，对于中间模型在Z²上，当t < t*_c时存在常数c_t使得对于所有n≥1，eθ_n(t)满足什么不等式？并且该结论与Theorem 1有何关联？"
+      },
+      {
+        "id": "train-014",
+        "source_ids": [
+          "paper-035"
+        ],
+        "question": "DD3D的全称是什么？"
+      },
+      {
+        "id": "train-016",
+        "source_ids": [
+          "paper-076"
+        ],
+        "question": "Causal-StoNet 主要解决了哪些因果推断中的困难？"
+      },
+      {
+        "id": "train-018",
+        "source_ids": [
+          "paper-085"
+        ],
+        "question": "SAM模型包含哪三个核心组件？"
+      },
+      {
+        "id": "train-023",
+        "source_ids": [
+          "paper-060"
+        ],
+        "question": "ReWOO如何实现将大型语言模型的推理能力迁移到更小的模型？请说明具体示例。"
+      },
+      {
+        "id": "train-025",
+        "source_ids": [
+          "paper-039"
+        ],
+        "question": "在IR标注中，\"Type of high pressure gas\"属性是如何定义的？"
+      },
+      {
+        "id": "train-031",
+        "source_ids": [
+          "paper-059"
+        ],
+        "question": "在FoundationPose的无模型（few-shot）设置中，如何从训练集中选择参考图像？描述其选择过程。"
+      },
+      {
+        "id": "train-032",
+        "source_ids": [
+          "paper-061"
+        ],
+        "question": "根据文档，现有的局部解释方法存在哪些主要问题？"
+      },
+      {
+        "id": "train-041",
+        "source_ids": [
+          "paper-071"
+        ],
+        "question": "在pp和pA碰撞中，双喷注方位角退关联的研究目的是什么？"
+      },
+      {
+        "id": "train-043",
+        "source_ids": [
+          "paper-066"
+        ],
+        "question": "该预测模块模仿了两阶段检测器的哪两种机制？请简要说明每个机制在模块中的具体作用。"
+      },
+      {
+        "id": "train-046",
+        "source_ids": [
+          "paper-021"
+        ],
+        "question": "在证明wsat(Kℓ,m, Ks,t)的下界时，文档如何通过构造一个更大的二分图G'并利用已知的Kt,t弱饱和数来得到下界？请简要描述关键步骤。"
+      },
+      {
+        "id": "train-050",
+        "source_ids": [
+          "paper-057"
+        ],
+        "question": "根据文档，Witten-Kontsevich定理的主要内容是什么？"
+      },
+      {
+        "id": "train-052",
+        "source_ids": [
+          "paper-076"
+        ],
+        "question": "在 ACIC 实验的 Causal  StoNet 设置中，网络结构、修剪时机以及各阶段的训练 epoch 数分别是多少？"
+      },
+      {
+        "id": "train-059",
+        "source_ids": [
+          "paper-070"
+        ],
+        "question": "作者通过实验发现，ChatGPT在现有标准评估协议上表现不佳，主要失败原因是什么？传统评估协议存在哪两个主要问题？"
+      },
+      {
+        "id": "train-060",
+        "source_ids": [
+          "paper-054"
+        ],
+        "question": "根据文档，航空延误传播的成因可以分为哪两类？"
+      },
+      {
+        "id": "train-063",
+        "source_ids": [
+          "paper-019"
+        ],
+        "question": "QTC方法如何利用未标记数据对conformal predictor进行校准？它依赖于什么假设？"
+      },
+      {
+        "id": "train-065",
+        "source_ids": [
+          "paper-034"
+        ],
+        "question": "论文中如何表述并求解逆散射问题？"
+      },
+      {
+        "id": "train-070",
+        "source_ids": [
+          "paper-049"
+        ],
+        "question": "根据论文图1的架构描述，GLAM如何将输入特征图F转换为全局-局部注意力特征图Fgl？请简述四个注意力模块的作用流程。"
+      },
+      {
+        "id": "train-072",
+        "source_ids": [
+          "paper-046"
+        ],
+        "question": "TransWeather 中使用的“天气类型查询”（weather type queries）是如何在解码器中工作的？其设计目的是什么？"
+      },
+      {
+        "id": "train-073",
+        "source_ids": [
+          "paper-046"
+        ],
+        "question": "TransWeather 在解决图像退化问题时，针对的是哪几种不利天气条件？"
+      },
+      {
+        "id": "train-077",
+        "source_ids": [
+          "paper-069"
+        ],
+        "question": "本文主要关注哪种公平性定义？"
+      },
+      {
+        "id": "train-079",
+        "source_ids": [
+          "paper-045"
+        ],
+        "question": "FLa-LLM方法的核心创新是什么？"
+      },
+      {
+        "id": "train-086",
+        "source_ids": [
+          "paper-029"
+        ],
+        "question": "与基于几何的点变换方法相比，GKT为何在相机发生偏离时仍能保持鲁棒性？请结合其工作机制说明。"
+      },
+      {
+        "id": "train-087",
+        "source_ids": [
+          "paper-051"
+        ],
+        "question": "论文中提出的Transformer-based Deformation Networks（TD-Nets）是如何表示和预测变形的？请简述其核心架构。"
+      },
+      {
+        "id": "train-091",
+        "source_ids": [
+          "paper-061"
+        ],
+        "question": "Calibrated Explanations for Probabilistic Regression提供了哪些创新功能？"
+      },
+      {
+        "id": "train-092",
+        "source_ids": [
+          "paper-022"
+        ],
+        "question": "根据摘要，经典潜类模型（LCM）在处理何种响应数据方面存在局限性？"
+      },
+      {
+        "id": "train-093",
+        "source_ids": [
+          "paper-081"
+        ],
+        "question": "本文提出的路径结构化多边际Sinkhorn迭代算法的计算复杂度与哪些因素有关？请给出其线性/比例关系。"
+      },
+      {
+        "id": "train-105",
+        "source_ids": [
+          "paper-078"
+        ],
+        "question": "什么是α-harmonic mapping（α-调和映射）？"
+      },
+      {
+        "id": "train-107",
+        "source_ids": [
+          "paper-041"
+        ],
+        "question": "MiniGPT-4 在训练过程中使用了几个阶段的训练数据？分别是什么？第二阶段为何要收集 3,500 个详细图像描述对？"
+      },
+      {
+        "id": "train-108",
+        "source_ids": [
+          "paper-050"
+        ],
+        "question": "根据文档，基于LLM的基因集总结方法与标准富集分析相比有哪些主要局限性？"
+      },
+      {
+        "id": "train-109",
+        "source_ids": [
+          "paper-055"
+        ],
+        "question": "论文中提出的教师-学生网络训练过程做了哪些具体改进？"
+      },
+      {
+        "id": "train-110",
+        "source_ids": [
+          "paper-066"
+        ],
+        "question": "与以往方法相比，本文的预测模块在训练方式上提供了什么额外能力？为什么这一能力得益于该模块的设计？"
+      },
+      {
+        "id": "train-111",
+        "source_ids": [
+          "paper-069"
+        ],
+        "question": "本文提出的多任务公平性方法属于哪一类公平性处理策略？"
+      },
+      {
+        "id": "train-112",
+        "source_ids": [
+          "paper-044"
+        ],
+        "question": "论文中提到了哪些因素限制了“LLM+视觉模型”组合策略在视频定位上的性能？并简要说明这些因素如何影响性能。"
+      },
+      {
+        "id": "train-113",
+        "source_ids": [
+          "paper-078"
+        ],
+        "question": "陈述定理8（Theorem 8）关于Lipschitz连续性的条件和结论。"
+      },
+      {
+        "id": "train-115",
+        "source_ids": [
+          "paper-020"
+        ],
+        "question": "在COCO VOC到非VOC基准上，不同模态（RGB、边缘、深度、法线）对应的ARN指标如何？为什么基于RGB的伪标签表现较弱？"
+      },
+      {
+        "id": "train-117",
+        "source_ids": [
+          "paper-022"
+        ],
+        "question": "根据文档，加权潜类模型（WLCM）允许观测加权响应矩阵R的元素从何种分布生成？"
+      },
+      {
+        "id": "train-123",
+        "source_ids": [
+          "paper-065"
+        ],
+        "question": "在附录的网络架构表中，Dense Block（K16L6）所在层的具体输入输出分辨率、参数量以及卷积配置是什么？"
+      },
+      {
+        "id": "train-125",
+        "source_ids": [
+          "paper-060"
+        ],
+        "question": "ReWOO将增强语言模型分解为哪三个独立模块？"
+      },
+      {
+        "id": "train-130",
+        "source_ids": [
+          "paper-071"
+        ],
+        "question": "在几乎背对背区域（δϕ→0），为什么传统pQCD共线因子化会失效，而需要进行全阶重求和？"
+      },
+      {
+        "id": "train-139",
+        "source_ids": [
+          "paper-085"
+        ],
+        "question": "在SAM项目中，数据引擎如何迭代地辅助数据收集和模型改进？"
+      },
+      {
+        "id": "train-144",
+        "source_ids": [
+          "paper-065"
+        ],
+        "question": "根据特征重要性分析，气候仿真器的预测主要依赖于什么空间范围？这对气候动力学有何启示？"
+      },
+      {
+        "id": "train-146",
+        "source_ids": [
+          "paper-049"
+        ],
+        "question": "在GLAM中，局部注意力和全局注意力在处理特征元素时的核心区别是什么？"
+      },
+      {
+        "id": "train-147",
+        "source_ids": [
+          "paper-059"
+        ],
+        "question": "FoundationPose支持哪两种测试时设置？"
+      },
+      {
+        "id": "train-148",
+        "source_ids": [
+          "paper-057"
+        ],
+        "question": "文档中公式(5.公式(5.1)给出了什么积分结果？请说明其在μ=0时的特殊化所对应的经典公式。"
+      },
+      {
+        "id": "train-149",
+        "source_ids": [
+          "paper-067"
+        ],
+        "question": "文档中提到CDPRE模型缺少哪个重要性质，导致分析显著更加困难？请用原文中的例子说明该性质为何不成立。"
+      },
+      {
+        "id": "train-150",
+        "source_ids": [
+          "paper-070"
+        ],
+        "question": "本文提出的交互式评估方法叫什么？它的核心思想是什么？"
+      },
+      {
+        "id": "train-153",
+        "source_ids": [
+          "paper-023"
+        ],
+        "question": "根据文档，STC（spatio-temporal couplings）对超强激光脉冲有何影响？为什么其表征对实验重要？"
+      },
+      {
+        "id": "train-157",
+        "source_ids": [
+          "paper-035"
+        ],
+        "question": "与伪激光雷达（pseudo-lidar）方法相比，DD3D的训练流程有什么关键区别？"
+      },
+      {
+        "id": "train-160",
+        "source_ids": [
+          "paper-032"
+        ],
+        "question": "论文中理论分析中，为了在大压扩展条件下建立收敛性和渐近分布，论文要求满足的高维缩放条件是什么？请写出该条件的数学表达式。"
+      },
+      {
+        "id": "train-161",
+        "source_ids": [
+          "paper-032"
+        ],
+        "question": "论文中Figure 1将模型(1.1)等价地表示为什么结构，并以此连接了哪种机器学习工具？"
+      },
+      {
+        "id": "train-164",
+        "source_ids": [
+          "paper-081"
+        ],
+        "question": "本文提出的方法主要用于解决什么问题？"
+      },
+      {
+        "id": "train-165",
+        "source_ids": [
+          "paper-055"
+        ],
+        "question": "根据Table 7，在iCF数据集上使用64张训练图像时，预训练策略ST和SS相比N（无预训练）在检测性能上有多少提升？"
+      },
+      {
+        "id": "train-166",
+        "source_ids": [
+          "paper-051"
+        ],
+        "question": "根据论文，神经形状变形先验（Neural Shape Deformation Priors）的主要目标是什么？"
+      },
+      {
+        "id": "train-168",
+        "source_ids": [
+          "paper-059"
+        ],
+        "question": "FoundationPose支持哪两种测试时设置？"
+      },
+      {
+        "id": "train-176",
+        "source_ids": [
+          "paper-050"
+        ],
+        "question": "文档中描述的传统基因集推断方法（基于文献和数据库的开放探索分析）面临哪些挑战？为什么需要自动化方法？"
+      },
+      {
+        "id": "train-177",
+        "source_ids": [
+          "paper-059"
+        ],
+        "question": "FoundationPose如何桥接基于模型和无模型设置之间的差距？"
+      },
+      {
+        "id": "train-178",
+        "source_ids": [
+          "paper-082"
+        ],
+        "question": "这篇论文主要提出用什么工具来建模智能合约的高层设计模式？"
+      },
+      {
+        "id": "train-179",
+        "source_ids": [
+          "paper-052"
+        ],
+        "question": "论文将分馏区域定位于色球层而非日冕，是如何解决极端分馏情况下的“数量问题”的？并指出论文对3He加速与重离子加速的关系有何推测？"
+      },
+      {
+        "id": "train-183",
+        "source_ids": [
+          "paper-023"
+        ],
+        "question": "文中如何克服分析模型中潜在参数引起的偏差？请简要描述其方法。"
+      },
+      {
+        "id": "train-184",
+        "source_ids": [
+          "paper-082"
+        ],
+        "question": "论文识别并建模了两个尚未被研究文献正式提出的新智能合约设计模式，请写出它们的名称，并分别简要说明其作用。"
+      },
+      {
+        "id": "train-185",
+        "source_ids": [
+          "paper-021"
+        ],
+        "question": "弱饱和数的定义是什么？请简述一个图G是弱(F, H)-饱和的条件，并说明wsat(F, H)的含义。"
+      },
+      {
+        "id": "train-188",
+        "source_ids": [
+          "paper-044"
+        ],
+        "question": "根据论文中的实验，VidLLM（端到端视频LLM）在视频定位任务上的表现如何？与结合视觉描述模型的方法相比，结果如何？"
+      },
+      {
+        "id": "train-189",
+        "source_ids": [
+          "paper-037"
+        ],
+        "question": "与Mirzadeh等人(2019)和Jafari等人(2021)的知识蒸馏方法相比，Continuation KD在实现上有什么主要优势？请至少列举两点。"
+      },
+      {
+        "id": "train-190",
+        "source_ids": [
+          "paper-054"
+        ],
+        "question": "文档中采用了哪些方法构建和分析延误传播网络的模式？请列举至少两种具体方法。"
+      },
+      {
+        "id": "train-191",
+        "source_ids": [
+          "paper-020"
+        ],
+        "question": "在GOOD中，不同模态（如深度、法线、边缘等）的伪标签是如何被集成的？为什么这种多模态集成优于单一源的伪标签？"
+      },
+      {
+        "id": "train-195",
+        "source_ids": [
+          "paper-059"
+        ],
+        "question": "在FoundationPose的无模型（few-shot）设置中，如何从训练集中选择参考图像？请描述其选择过程。"
+      },
+      {
+        "id": "train-196",
+        "source_ids": [
+          "paper-019"
+        ],
+        "question": "什么是conformal predictor的有效预测集？请解释其数学定义。"
+      },
+      {
+        "id": "train-202",
+        "source_ids": [
+          "paper-030"
+        ],
+        "question": "CRN（Camera Radar Net）融合了哪两种传感器来实现3D感知？"
+      },
+      {
+        "id": "train-203",
+        "source_ids": [
+          "paper-030"
+        ],
+        "question": "在稀疏聚合（Sparse Aggregation）的消融实验中，使用4096个查询（Nk）相比使用全部查询（All），将多模态特征聚合（MFA）的延迟降低了多少百分比？同时，这种性能下降主要体现在哪些指标上？"
+      }
+    ]
+  }
+}

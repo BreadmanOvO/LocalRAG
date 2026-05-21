@@ -30,13 +30,13 @@ from eval.eval_ragas import (
 class JudgeFormalRunTests(unittest.TestCase):
     def test_build_judge_formal_run_returns_paths_for_all_bundles(self):
         paths = judge_formal_run.build_judge_formal_run(
-            dataset_path=Path('data/evaluation/gold/gold_set.json'),
+            dataset_path=Path('data/evaluation/gold/eval_set.json'),
             baseline_run_dir=Path('results/baseline_eval/gold_set-20260429-120000'),
             chunking_run_dir=Path('results/chunking_eval/gold_set-20260429-120100'),
             judge_run_dir=Path('results/judge_eval/predictions-vs-predictions-20260429-120200'),
         )
 
-        self.assertEqual(paths['dataset_path'], Path('data/evaluation/gold/gold_set.json'))
+        self.assertEqual(paths['dataset_path'], Path('data/evaluation/gold/eval_set.json'))
         self.assertEqual(
             paths['baseline_predictions_path'],
             Path('results/baseline_eval/gold_set-20260429-120000/predictions.json'),

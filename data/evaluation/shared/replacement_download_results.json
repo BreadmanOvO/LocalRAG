@@ -1,0 +1,606 @@
+[
+  {
+    "source_id": "paper-019",
+    "status": "ok",
+    "size": 4038193,
+    "pages": 7,
+    "match_ratio": 1.0,
+    "hits": [
+      "musda",
+      "multi",
+      "source",
+      "multi",
+      "modality",
+      "unsupervised",
+      "domain",
+      "adaptive"
+    ],
+    "title": "MUSDA: Multi-source Multi-modality Unsupervised Domain Adaptive 3D Object Detection for Autonomous Driving"
+  },
+  {
+    "source_id": "paper-020",
+    "status": "ok",
+    "size": 3627803,
+    "pages": 15,
+    "match_ratio": 1.0,
+    "hits": [
+      "4dlidaropen",
+      "open",
+      "fmcw",
+      "lidar",
+      "dataset",
+      "motion",
+      "aware"
+    ],
+    "title": "4DLidarOpen: An Open 4D FMCW Lidar Dataset for Motion-Aware Autonomous Driving"
+  },
+  {
+    "source_id": "paper-021",
+    "status": "ok",
+    "size": 890978,
+    "pages": 4,
+    "match_ratio": 1.0,
+    "hits": [
+      "ab3dmot",
+      "baseline",
+      "multi",
+      "tracking",
+      "evaluation",
+      "metrics"
+    ],
+    "title": "AB3DMOT: A Baseline for 3D Multi-Object Tracking and New Evaluation Metrics"
+  },
+  {
+    "source_id": "paper-022",
+    "status": "ok",
+    "size": 2841406,
+    "pages": 23,
+    "match_ratio": 1.0,
+    "hits": [
+      "henet",
+      "hybrid",
+      "encoding",
+      "multi",
+      "task",
+      "perception"
+    ],
+    "title": "HENet++: Hybrid Encoding and Multi-task Learning for 3D Perception and End-to-end Autonomous Driving"
+  },
+  {
+    "source_id": "paper-023",
+    "status": "ok",
+    "size": 1852741,
+    "pages": 11,
+    "match_ratio": 1.0,
+    "hits": [
+      "accurate",
+      "slice",
+      "attention",
+      "networks"
+    ],
+    "title": "BEV-SAN: Accurate BEV 3D Object Detection via Slice Attention Networks"
+  },
+  {
+    "source_id": "paper-029",
+    "status": "ok",
+    "size": 6037606,
+    "pages": 10,
+    "match_ratio": 1.0,
+    "hits": [
+      "clrnet",
+      "cross",
+      "layer",
+      "refinement",
+      "network",
+      "lane"
+    ],
+    "title": "CLRNet: Cross Layer Refinement Network for Lane Detection"
+  },
+  {
+    "source_id": "paper-030",
+    "status": "ok",
+    "size": 5209617,
+    "pages": 18,
+    "match_ratio": 1.0,
+    "hits": [
+      "camera",
+      "radar",
+      "accurate",
+      "robust",
+      "efficient",
+      "perception"
+    ],
+    "title": "CRN: Camera Radar Net for Accurate, Robust, Efficient 3D Perception"
+  },
+  {
+    "source_id": "paper-032",
+    "status": "ok",
+    "size": 6923792,
+    "pages": 14,
+    "match_ratio": 1.0,
+    "hits": [
+      "123d",
+      "unifying",
+      "multi",
+      "modal",
+      "data",
+      "scale"
+    ],
+    "title": "123D: Unifying Multi-Modal Autonomous Driving Data at Scale"
+  },
+  {
+    "source_id": "paper-034",
+    "status": "ok",
+    "size": 5932819,
+    "pages": 9,
+    "match_ratio": 1.0,
+    "hits": [
+      "rayd3d",
+      "distilling",
+      "depth",
+      "knowledge",
+      "along",
+      "robust",
+      "multi",
+      "view"
+    ],
+    "title": "RayD3D: Distilling Depth Knowledge Along the Ray for Robust Multi-View 3D Object Detection"
+  },
+  {
+    "source_id": "paper-035",
+    "status": "ok",
+    "size": 13863317,
+    "pages": 11,
+    "match_ratio": 1.0,
+    "hits": [
+      "semlt3d",
+      "semantic",
+      "guided",
+      "expert",
+      "distillation",
+      "camera",
+      "only",
+      "long",
+      "tailed"
+    ],
+    "title": "SemLT3D: Semantic-Guided Expert Distillation for Camera-only Long-Tailed 3D Object Detection"
+  },
+  {
+    "source_id": "paper-037",
+    "status": "ok",
+    "size": 7314607,
+    "pages": 16,
+    "match_ratio": 1.0,
+    "hits": [
+      "freqpde",
+      "rethinking",
+      "positional",
+      "depth",
+      "embedding",
+      "multi",
+      "view",
+      "transformers"
+    ],
+    "title": "FreqPDE: Rethinking Positional Depth Embedding for Multi-View 3D Object Detection Transformers",
+    "arxiv": "2510.15385"
+  },
+  {
+    "source_id": "paper-039",
+    "status": "ok",
+    "size": 17631231,
+    "pages": 15,
+    "match_ratio": 1.0,
+    "hits": [
+      "drivedreamer",
+      "towards",
+      "real",
+      "world",
+      "driven",
+      "world",
+      "models"
+    ],
+    "title": "DriveDreamer: Towards Real-world-driven World Models for Autonomous Driving"
+  },
+  {
+    "source_id": "paper-041",
+    "status": "ok",
+    "size": 7126482,
+    "pages": 12,
+    "match_ratio": 1.0,
+    "hits": [
+      "far3d",
+      "expanding",
+      "horizon",
+      "surround",
+      "view"
+    ],
+    "title": "Far3D: Expanding the Horizon for Surround-view 3D Object Detection"
+  },
+  {
+    "source_id": "paper-044",
+    "status": "ok",
+    "size": 2348946,
+    "pages": 18,
+    "match_ratio": 1.0,
+    "hits": [
+      "gameformer",
+      "game",
+      "theoretic",
+      "modeling",
+      "transformer",
+      "based",
+      "interactive",
+      "prediction",
+      "planning"
+    ],
+    "title": "GameFormer: Game-theoretic Modeling and Learning of Transformer-based Interactive Prediction and Planning for Autonomous Driving"
+  },
+  {
+    "source_id": "paper-045",
+    "status": "ok",
+    "size": 49065459,
+    "pages": 16,
+    "match_ratio": 1.0,
+    "hits": [
+      "gaussianocc",
+      "fully",
+      "self",
+      "supervised",
+      "efficient",
+      "occupancy",
+      "estimation",
+      "gaussian",
+      "splatting"
+    ],
+    "title": "GaussianOcc: Fully Self-supervised and Efficient 3D Occupancy Estimation with Gaussian Splatting"
+  },
+  {
+    "source_id": "paper-046",
+    "status": "ok",
+    "size": 13630989,
+    "pages": 7,
+    "match_ratio": 1.0,
+    "hits": [
+      "hdmapnet",
+      "online",
+      "construction",
+      "evaluation",
+      "framework"
+    ],
+    "title": "HDMapNet: An Online HD Map Construction and Evaluation Framework"
+  },
+  {
+    "source_id": "paper-049",
+    "status": "ok",
+    "size": 2396634,
+    "pages": 10,
+    "match_ratio": 1.0,
+    "hits": [
+      "monocular",
+      "region",
+      "proposal",
+      "network"
+    ],
+    "title": "M3D-RPN: Monocular 3D Region Proposal Network for Object Detection"
+  },
+  {
+    "source_id": "paper-050",
+    "status": "ok",
+    "size": 1681568,
+    "pages": 10,
+    "match_ratio": 1.0,
+    "hits": [
+      "motrv2",
+      "bootstrapping",
+      "multi",
+      "tracking",
+      "pretrained",
+      "detectors"
+    ],
+    "title": "MOTRv2: Bootstrapping End-to-End Multi-Object Tracking by Pretrained Object Detectors"
+  },
+  {
+    "source_id": "paper-051",
+    "status": "ok",
+    "size": 6424649,
+    "pages": 10,
+    "match_ratio": 1.0,
+    "hits": [
+      "mutr3d",
+      "multi",
+      "camera",
+      "tracking",
+      "framework",
+      "queries"
+    ],
+    "title": "MUTR3D: A Multi-camera Tracking Framework via 3D-to-2D Queries"
+  },
+  {
+    "source_id": "paper-052",
+    "status": "ok",
+    "size": 21491912,
+    "pages": 20,
+    "match_ratio": 1.0,
+    "hits": [
+      "magicdrive",
+      "street",
+      "view",
+      "generation",
+      "diverse",
+      "geometry",
+      "control"
+    ],
+    "title": "MagicDrive: Street View Generation with Diverse 3D Geometry Control"
+  },
+  {
+    "source_id": "paper-054",
+    "status": "ok",
+    "size": 16585597,
+    "pages": 33,
+    "match_ratio": 1.0,
+    "hits": [
+      "maptracker",
+      "tracking",
+      "strided",
+      "memory",
+      "fusion",
+      "consistent",
+      "vector",
+      "mapping"
+    ],
+    "title": "MapTracker: Tracking with Strided Memory Fusion for Consistent Vector HD Mapping"
+  },
+  {
+    "source_id": "paper-055",
+    "status": "ok",
+    "size": 14868174,
+    "pages": 15,
+    "match_ratio": 1.0,
+    "hits": [
+      "monodle",
+      "delving",
+      "localization",
+      "errors",
+      "monocular"
+    ],
+    "title": "MonoDLE: Delving into Localization Errors for Monocular 3D Object Detection"
+  },
+  {
+    "source_id": "paper-057",
+    "status": "ok",
+    "size": 6544624,
+    "pages": 10,
+    "match_ratio": 1.0,
+    "hits": [
+      "monoflex",
+      "objects",
+      "different",
+      "flexible",
+      "monocular"
+    ],
+    "title": "MonoFlex: Objects are Different: Flexible Monocular 3D Object Detection"
+  },
+  {
+    "source_id": "paper-059",
+    "status": "ok",
+    "size": 4143041,
+    "pages": 10,
+    "match_ratio": 1.0,
+    "hits": [
+      "neural",
+      "prior"
+    ],
+    "title": "Neural Map Prior for Autonomous Driving"
+  },
+  {
+    "source_id": "paper-060",
+    "status": "ok",
+    "size": 29450919,
+    "pages": 25,
+    "match_ratio": 1.0,
+    "hits": [
+      "occ3d",
+      "large",
+      "scale",
+      "occupancy",
+      "prediction",
+      "benchmark"
+    ],
+    "title": "Occ3D: A Large-Scale 3D Occupancy Prediction Benchmark for Autonomous Driving"
+  },
+  {
+    "source_id": "paper-061",
+    "status": "ok",
+    "size": 8630304,
+    "pages": 11,
+    "match_ratio": 1.0,
+    "hits": [
+      "occworld",
+      "occupancy",
+      "world",
+      "model"
+    ],
+    "title": "OccWorld: Learning a 3D Occupancy World Model for Autonomous Driving"
+  },
+  {
+    "source_id": "paper-065",
+    "status": "ok",
+    "size": 1812871,
+    "pages": 19,
+    "match_ratio": 1.0,
+    "hits": [
+      "rcnn",
+      "point",
+      "voxel",
+      "feature",
+      "abstraction",
+      "local",
+      "vector",
+      "representation"
+    ],
+    "title": "PV-RCNN++: Point-Voxel Feature Set Abstraction With Local Vector Representation for 3D Object Detection"
+  },
+  {
+    "source_id": "paper-066",
+    "status": "ok",
+    "size": 9335101,
+    "pages": 17,
+    "match_ratio": 1.0,
+    "hits": [
+      "part",
+      "part",
+      "aware",
+      "aggregation",
+      "neural",
+      "network",
+      "point",
+      "cloud"
+    ],
+    "title": "Part-A2 Net: 3D Part-Aware and Aggregation Neural Network for Object Detection from Point Cloud"
+  },
+  {
+    "source_id": "paper-067",
+    "status": "ok",
+    "size": 29876594,
+    "pages": 33,
+    "match_ratio": 1.0,
+    "hits": [
+      "persformer",
+      "lane",
+      "perspective",
+      "transformer",
+      "openlane",
+      "benchmark"
+    ],
+    "title": "PersFormer: 3D Lane Detection via Perspective Transformer and the OpenLane Benchmark"
+  },
+  {
+    "source_id": "paper-069",
+    "status": "ok",
+    "size": 896211,
+    "pages": 10,
+    "match_ratio": 1.0,
+    "hits": [
+      "rcbev",
+      "radar",
+      "camera",
+      "fusion",
+      "bird",
+      "view"
+    ],
+    "title": "RCBEV: Radar-Camera Fusion in Bird's Eye View for 3D Object Detection"
+  },
+  {
+    "source_id": "paper-070",
+    "status": "ok",
+    "size": 1985736,
+    "pages": 16,
+    "match_ratio": 1.0,
+    "hits": [
+      "radarnet",
+      "exploiting",
+      "radar",
+      "robust",
+      "perception",
+      "dynamic",
+      "objects"
+    ],
+    "title": "RadarNet: Exploiting Radar for Robust Perception of Dynamic Objects"
+  },
+  {
+    "source_id": "paper-071",
+    "status": "ok",
+    "size": 3304983,
+    "pages": 8,
+    "match_ratio": 1.0,
+    "hits": [
+      "renderocc",
+      "vision",
+      "centric",
+      "occupancy",
+      "prediction",
+      "rendering",
+      "supervision"
+    ],
+    "title": "RenderOcc: Vision-Centric 3D Occupancy Prediction with 2D Rendering Supervision"
+  },
+  {
+    "source_id": "paper-076",
+    "status": "ok",
+    "size": 17329775,
+    "pages": 16,
+    "match_ratio": 1.0,
+    "hits": [
+      "sparsedrive",
+      "sparse",
+      "scene",
+      "representation"
+    ],
+    "title": "SparseDrive: End-to-End Autonomous Driving via Sparse Scene Representation"
+  },
+  {
+    "source_id": "paper-078",
+    "status": "ok",
+    "size": 7478587,
+    "pages": 15,
+    "match_ratio": 1.0,
+    "hits": [
+      "streammapnet",
+      "streaming",
+      "mapping",
+      "network",
+      "vectorized",
+      "online",
+      "construction"
+    ],
+    "title": "StreamMapNet: Streaming Mapping Network for Vectorized Online HD Map Construction"
+  },
+  {
+    "source_id": "paper-081",
+    "status": "ok",
+    "size": 7881491,
+    "pages": 18,
+    "match_ratio": 1.0,
+    "hits": [
+      "unidepth",
+      "universal",
+      "monocular",
+      "metric",
+      "depth",
+      "estimation"
+    ],
+    "title": "UniDepth: Universal Monocular Metric Depth Estimation"
+  },
+  {
+    "source_id": "paper-082",
+    "status": "ok",
+    "size": 15318314,
+    "pages": 22,
+    "match_ratio": 1.0,
+    "hits": [
+      "unisim",
+      "neural",
+      "closed",
+      "loop",
+      "sensor",
+      "simulator"
+    ],
+    "title": "UniSim: A Neural Closed-Loop Sensor Simulator"
+  },
+  {
+    "source_id": "paper-085",
+    "status": "ok",
+    "size": 4972382,
+    "pages": 15,
+    "match_ratio": 1.0,
+    "hits": [
+      "vip3d",
+      "visual",
+      "trajectory",
+      "prediction",
+      "agent",
+      "queries"
+    ],
+    "title": "ViP3D: End-to-end Visual Trajectory Prediction via 3D Agent Queries"
+  }
+]

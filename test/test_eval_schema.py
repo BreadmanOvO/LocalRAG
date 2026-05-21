@@ -51,16 +51,29 @@ class EvalSchemaTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_dataset([record, dict(record)])
 
-    def test_validate_dataset_accepts_gold_set_file(self):
-        path = REPO_ROOT / "data" / "evaluation" / "gold" / "gold_set.json"
-        records = json.loads(path.read_text(encoding="utf-8"))
+    def test_validate_dataset_accepts_active_cleaned_dataset_files(self):
+        datasets = {
+            REPO_ROOT / "data" / "evaluation" / "gold" / "eval_set.json": 100,
+            REPO_ROOT / "data" / "evaluation" / "gold" / "gold_set_100.json": 100,
+            REPO_ROOT / "data" / "evaluation" / "gold" / "gold_set_extended.json": 100,
+            REPO_ROOT / "data" / "evaluation" / "train" / "train_set.json": 203,
+        }
 
-        self.assertGreaterEqual(len(records), 30)
-        validate_dataset(records)
+        for path, expected_count in datasets.items():
+            with self.subTest(path=path):
+                records = json.loads(path.read_text(encoding="utf-8"))
+                self.assertEqual(len(records), expected_count)
+                validate_dataset(records)
 
-    def test_gold_set_covers_core_topics_and_report_doc_type(self):
-        path = REPO_ROOT / "data" / "evaluation" / "gold" / "gold_set.json"
-        records = json.loads(path.read_text(encoding="utf-8"))
+    def test_clean_eval_sets_cover_core_topics_and_report_doc_type(self):
+        paths = [
+            REPO_ROOT / "data" / "evaluation" / "gold" / "eval_set.json",
+            REPO_ROOT / "data" / "evaluation" / "gold" / "gold_set_100.json",
+            REPO_ROOT / "data" / "evaluation" / "gold" / "gold_set_extended.json",
+        ]
+        records = []
+        for path in paths:
+            records.extend(json.loads(path.read_text(encoding="utf-8")))
 
         topics = {record["metadata"]["topic"] for record in records}
         doc_types = {record["metadata"]["doc_type"] for record in records}
@@ -74,14 +87,16 @@ class EvalSchemaTests(unittest.TestCase):
                 "sensor_fusion",
             }.issubset(topics)
         )
-        self.assertIn("report", doc_types)
+        self.assertIn("paper", doc_types)
 
-    def test_validate_dataset_accepts_synthetic_dataset_file(self):
-        path = REPO_ROOT / "data" / "evaluation" / "synthetic" / "synthetic_dataset.json"
-        records = json.loads(path.read_text(encoding="utf-8"))
+    def test_polluted_legacy_datasets_are_removed(self):
+        legacy_paths = [
+            REPO_ROOT / "data" / "evaluation" / "gold" / "gold_set.json",
+            REPO_ROOT / "data" / "evaluation" / "synthetic" / "synthetic_dataset.json",
+        ]
 
-        self.assertGreaterEqual(len(records), 10)
-        validate_dataset(records)
+        for path in legacy_paths:
+            self.assertFalse(path.exists(), f"Polluted legacy dataset still exists: {path}")
 
 
 if __name__ == "__main__":

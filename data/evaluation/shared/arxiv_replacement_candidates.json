@@ -1,0 +1,597 @@
+[
+  {
+    "id": "2605.18074",
+    "title": "4DLidarOpen: An Open 4D FMCW Lidar Dataset for Motion-Aware Autonomous Driving",
+    "summary": "We present 4DLidarOpen, a large-scale open multi-modal dataset for autonomous driving, centered on 4D frequency-modulated continuous-wave (FMCW) Lidar sensing. Unlike conventional time-of-flight Lidar datasets that mainl"
+  },
+  {
+    "id": "2605.13755",
+    "title": "Generative Texture Diversification of 3D Pedestrians for Robust Autonomous Driving Perception",
+    "summary": "In recent years, autonomous driving has significantly in creased the demand for high-quality data to train 2D and 3D perception models for safety-critical scenarios. Real world datasets struggle to meet this demand as re"
+  },
+  {
+    "id": "2605.10026",
+    "title": "MUSDA: Multi-source Multi-modality Unsupervised Domain Adaptive 3D Object Detection for Autonomous Driving",
+    "summary": "With the advancement of autonomous driving, numerous annotated multi-modality datasets have become available. This presents an opportunity to develop domain-adaptive 3D object detectors for new environments without relyi"
+  },
+  {
+    "id": "2605.08084",
+    "title": "123D: Unifying Multi-Modal Autonomous Driving Data at Scale",
+    "summary": "The pursuit of autonomous driving has produced one of the richest sensor data collections in all of robotics. However, its scale and diversity remain largely untapped. Each dataset adopts different 2D and 3D modalities, "
+  },
+  {
+    "id": "2604.25405",
+    "title": "Leveraging Previous-Traversal Point Cloud Map Priors for Camera-Based 3D Object Detection and Tracking",
+    "summary": "Camera-based 3D object detection and tracking are central to autonomous driving, yet precise 3D object localization remains fundamentally constrained by depth ambiguity when no expensive, depth-rich online LiDAR is avail"
+  },
+  {
+    "id": "2604.24044",
+    "title": "CLLAP: Contrastive Learning-based LiDAR-Augmented Pretraining for Enhanced Radar-Camera Fusion",
+    "summary": "Accurate 3D object detection is critical for autonomous driving, necessitating reliable, cost-effective sensors capable of operating in adverse weather conditions. Camera and millimeter-wave radar fusion has emerged as a"
+  },
+  {
+    "id": "2604.18476",
+    "title": "SemLT3D: Semantic-Guided Expert Distillation for Camera-only Long-Tailed 3D Object Detection",
+    "summary": "Camera-only 3D object detection has emerged as a cost-effective and scalable alternative to LiDAR for autonomous driving, yet existing methods primarily prioritize overall performance while overlooking the severe long-ta"
+  },
+  {
+    "id": "2604.15795",
+    "title": "Fed3D: Federated 3D Object Detection",
+    "summary": "3D object detection models trained in one server plays an important role in autonomous driving, robotics manipulation, and augmented reality scenarios. However, most existing methods face severe privacy concern when depl"
+  },
+  {
+    "id": "2604.04797",
+    "title": "Multi-Modal Sensor Fusion using Hybrid Attention for Autonomous Driving",
+    "summary": "Accurate 3D object detection for autonomous driving requires complementary sensors. Cameras provide dense semantics but unreliable depth, while millimeter-wave radar offers precise range and velocity measurements with sp"
+  },
+  {
+    "id": "2604.01254",
+    "title": "Simulating Realistic LiDAR Data Under Adverse Weather for Autonomous Vehicles: A Physics-Informed Learning Approach",
+    "summary": "Accurate LiDAR simulation is crucial for autonomous driving, especially under adverse weather conditions. Existing methods struggle to capture the complex interactions between LiDAR signals and atmospheric phenomena, lea"
+  },
+  {
+    "id": "2603.28224",
+    "title": "Ghost-FWL: A Large-Scale Full-Waveform LiDAR Dataset for Ghost Detection and Removal",
+    "summary": "LiDAR has become an essential sensing modality in autonomous driving, robotics, and smart-city applications. However, ghost points (or ghosts), which are false reflections caused by multi-path laser returns from glass an"
+  },
+  {
+    "id": "2603.27995",
+    "title": "UniDA3D: A Unified Domain-Adaptive Framework for Multi-View 3D Object Detection",
+    "summary": "Camera-only 3D object detection is critical for autonomous driving, offering a cost-effective alternative to LiDAR based methods. In particular, multi-view 3D object detection has emerged as a promising direction due to "
+  },
+  {
+    "id": "2603.27818",
+    "title": "Benchmarking Multi-View BEV Object Detection with Mixed Pinhole and Fisheye Cameras",
+    "summary": "Modern autonomous driving systems increasingly rely on mixed camera configurations with pinhole and fisheye cameras for full view perception. However, Bird's-Eye View (BEV) 3D object detection models are predominantly de"
+  },
+  {
+    "id": "2603.19193",
+    "title": "Reconstruction Matters: Learning Geometry-Aligned BEV Representation through 3D Gaussian Splatting",
+    "summary": "Bird's-Eye-View (BEV) perception serves as a cornerstone for autonomous driving, offering a unified spatial representation that fuses surrounding-view images to enable reasoning for various downstream tasks, such as sema"
+  },
+  {
+    "id": "2603.16261",
+    "title": "AW-MoE: All-Weather Mixture of Experts for Robust Multi-Modal 3D Object Detection",
+    "summary": "Robust 3D object detection under adverse weather conditions is crucial for autonomous driving. However, most existing methods simply combine all weather samples for training while overlooking data distribution discrepanc"
+  },
+  {
+    "id": "2603.14822",
+    "title": "RadarXFormer: Robust Object Detection via Cross-Dimension Fusion of 4D Radar Spectra and Images for Autonomous Driving",
+    "summary": "Reliable perception is essential for autonomous driving systems to operate safely under diverse real-world traffic conditions. However, camera- and LiDAR-based perception systems suffer from performance degradation under"
+  },
+  {
+    "id": "2603.11566",
+    "title": "R4Det: 4D Radar-Camera Fusion for High-Performance 3D Object Detection",
+    "summary": "4D radar-camera sensing configuration has gained increasing importance in autonomous driving. However, existing 3D object detection methods that fuse 4D Radar and camera data confront several challenges. First, their abs"
+  },
+  {
+    "id": "2603.08180",
+    "title": "ALOOD: Exploiting Language Representations for LiDAR-based Out-of-Distribution Object Detection",
+    "summary": "LiDAR-based 3D object detection plays a critical role for reliable and safe autonomous driving systems. However, existing detectors often produce overly confident predictions for objects not belonging to known categories"
+  },
+  {
+    "id": "2603.07593",
+    "title": "Fast Attention-Based Simplification of LiDAR Point Clouds for Object Detection and Classification",
+    "summary": "LiDAR point clouds are widely used in autonomous driving and consist of large numbers of 3D points captured at high frequency to represent surrounding objects such as vehicles, pedestrians, and traffic signs. While this "
+  },
+  {
+    "id": "2603.07493",
+    "title": "RayD3D: Distilling Depth Knowledge Along the Ray for Robust Multi-View 3D Object Detection",
+    "summary": "Multi-view 3D detection with bird's eye view (BEV) is crucial for autonomous driving and robotics, but its robustness in real-world is limited as it struggles to predict accurate depth values. A mainstream solution, cros"
+  },
+  {
+    "id": "2603.05623",
+    "title": "Post Fusion Bird's Eye View Feature Stabilization for Robust Multimodal 3D Detection",
+    "summary": "Camera-LiDAR fusion is widely used in autonomous driving to enable accurate 3D object detection. However, bird's-eye view (BEV) fusion detectors can degrade significantly under domain shift and sensor failures, limiting "
+  },
+  {
+    "id": "2603.05305",
+    "title": "Fusion4CA: Boosting 3D Object Detection via Comprehensive Image Exploitation",
+    "summary": "Nowadays, an increasing number of works fuse LiDAR and RGB data in the bird's-eye view (BEV) space for 3D object detection in autonomous driving systems. However, existing methods suffer from over-reliance on the LiDAR b"
+  },
+  {
+    "id": "2603.02481",
+    "title": "ModalPatch: A Plug-and-Play Module for Robust Multi-Modal 3D Object Detection under Modality Drop",
+    "summary": "Multi-modal 3D object detection is pivotal for autonomous driving, integrating complementary sensors like LiDAR and cameras. However, its real-world reliability is challenged by transient data interruptions and missing, "
+  },
+  {
+    "id": "2602.23871",
+    "title": "Bandwidth-adaptive Cloud-Assisted 360-Degree 3D Perception for Autonomous Vehicles",
+    "summary": "A key challenge for autonomous driving lies in maintaining real-time situational awareness regarding surrounding obstacles under strict latency constraints. The high processing requirements coupled with limited onboard c"
+  },
+  {
+    "id": "2602.21484",
+    "title": "Unified Unsupervised and Sparsely-Supervised 3D Object Detection by Semantic Pseudo-Labeling and Prototype Learning",
+    "summary": "3D object detection is essential for autonomous driving and robotic perception, yet its reliance on large-scale manually annotated data limits scalability and adaptability. To reduce annotation dependency, unsupervised a"
+  },
+  {
+    "id": "2604.01081",
+    "title": "ProOOD: Prototype-Guided Out-of-Distribution 3D Occupancy Prediction",
+    "summary": "3D semantic occupancy prediction is central to autonomous driving, yet current methods are vulnerable to long-tailed class bias and out-of-distribution (OOD) inputs, often overconfidently assigning anomalies to rare clas"
+  },
+  {
+    "id": "2603.27294",
+    "title": "Class-Distribution Guided Active Learning for 3D Occupancy Prediction in Autonomous Driving",
+    "summary": "3D occupancy prediction provides dense spatial understanding critical for safe autonomous driving. However, this task suffers from a severe class imbalance due to its volumetric representation, where safety-critical obje"
+  },
+  {
+    "id": "2603.27238",
+    "title": "An Instance-Centric Panoptic Occupancy Prediction Benchmark for Autonomous Driving",
+    "summary": "Panoptic occupancy prediction aims to jointly infer voxel-wise semantics and instance identities within a unified 3D scene representation. Nevertheless, progress in this field remains constrained by the absence of high-q"
+  },
+  {
+    "id": "2603.22852",
+    "title": "Gau-Occ: Geometry-Completed Gaussians for Multi-Modal 3D Occupancy Prediction",
+    "summary": "3D semantic occupancy prediction is crucial for autonomous driving. While multi-modal fusion improves accuracy over vision-only methods, it typically relies on computationally expensive dense voxel or BEV tensors. We pre"
+  },
+  {
+    "id": "2603.19219",
+    "title": "DriveTok: 3D Driving Scene Tokenization for Unified Multi-View Reconstruction and Understanding",
+    "summary": "With the growing adoption of vision-language-action models and world models in autonomous driving systems, scalable image tokenization becomes crucial as the interface for the visual modality. However, most existing toke"
+  },
+  {
+    "id": "2603.13108",
+    "title": "Panoramic Multimodal Semantic Occupancy Prediction for Quadruped Robots",
+    "summary": "Panoramic imagery provides holistic 360° visual coverage for perception in quadruped robots. However, existing occupancy prediction methods are mainly designed for wheeled autonomous driving and rely heavily on RGB cues,"
+  },
+  {
+    "id": "2603.09737",
+    "title": "$M^2$-Occ: Resilient 3D Semantic Occupancy Prediction for Autonomous Driving with Incomplete Camera Inputs",
+    "summary": "Semantic occupancy prediction enables dense 3D geometric and semantic understanding for autonomous driving. However, existing camera-based approaches implicitly assume complete surround-view observations, an assumption t"
+  },
+  {
+    "id": "2603.08521",
+    "title": "OccTrack360: 4D Panoptic Occupancy Tracking from Surround-View Fisheye Cameras",
+    "summary": "Understanding dynamic 3D environments in a spatially continuous and temporally consistent manner is fundamental for robotics and autonomous driving. While recent advances in occupancy prediction provide a unified represe"
+  },
+  {
+    "id": "2603.07794",
+    "title": "4DRC-OCC: Robust Semantic Occupancy Prediction Through Fusion of 4D Radar and Camera",
+    "summary": "Autonomous driving requires robust perception across diverse environmental conditions, yet 3D semantic occupancy prediction remains challenging under adverse weather and lighting. In this work, we present the first study"
+  },
+  {
+    "id": "2603.06210",
+    "title": "VG3S: Visual Geometry Grounded Gaussian Splatting for Semantic Occupancy Prediction",
+    "summary": "3D semantic occupancy prediction has become a crucial perception task for comprehensive scene understanding in autonomous driving. While recent advances have explored 3D Gaussian splatting for occupancy modeling to subst"
+  },
+  {
+    "id": "2603.02609",
+    "title": "VLMFusionOcc3D: VLM Assisted Multi-Modal 3D Semantic Occupancy Prediction",
+    "summary": "This paper introduces VLMFusionOcc3D, a robust multimodal framework for dense 3D semantic occupancy prediction in autonomous driving. Current voxel-based occupancy models often struggle with semantic ambiguity in sparse "
+  },
+  {
+    "id": "2603.01007",
+    "title": "Dr.Occ: Depth- and Region-Guided 3D Occupancy from Surround-View Cameras for Autonomous Driving",
+    "summary": "3D semantic occupancy prediction is crucial for autonomous driving perception, offering comprehensive geometric scene understanding and semantic recognition. However, existing methods struggle with geometric misalignment"
+  },
+  {
+    "id": "2602.17231",
+    "title": "HiMAP: History-aware Map-occupancy Prediction with Fallback",
+    "summary": "Accurate motion forecasting is critical for autonomous driving, yet most predictors rely on multi-object tracking (MOT) with identity association, assuming that objects are correctly and continuously tracked. When tracki"
+  },
+  {
+    "id": "2602.08006",
+    "title": "ForecastOcc: Vision-based Semantic Occupancy Forecasting",
+    "summary": "Autonomous driving requires forecasting both geometry and semantics over time to effectively reason about future environment states. Existing vision-based occupancy forecasting methods focus on motion-related categories "
+  },
+  {
+    "id": "2602.06488",
+    "title": "Rebenchmarking Unsupervised Monocular 3D Occupancy Prediction",
+    "summary": "Inferring the 3D structure from a single image, particularly in occluded regions, remains a fundamental yet unsolved challenge in vision-centric autonomous driving. Existing unsupervised approaches typically train a neur"
+  },
+  {
+    "id": "2601.22729",
+    "title": "GaussianOcc3D: A Gaussian-Based Adaptive Multi-modal 3D Occupancy Prediction",
+    "summary": "3D semantic occupancy prediction is a pivotal task in autonomous driving, providing a dense and fine-grained understanding of the surrounding environment, yet single-modality methods face trade-offs between camera semant"
+  },
+  {
+    "id": "2601.15644",
+    "title": "SuperOcc: Toward Cohesive Temporal Modeling for Superquadric-based 3D Occupancy Prediction",
+    "summary": "3D occupancy prediction plays a pivotal role in the realm of autonomous driving, as it provides a comprehensive understanding of the driving environment. Most existing methods construct dense scene representations for oc"
+  },
+  {
+    "id": "2601.11396",
+    "title": "SUG-Occ: Explicit Semantics and Uncertainty Guided Sparse Learning for Efficient 3D Occupancy Prediction",
+    "summary": "3D semantic occupancy prediction has emerged as a critical perception task for autonomous driving due to its ability to offer voxel-level semantic and geometric understanding of the environment. However, such a refined r"
+  },
+  {
+    "id": "2512.12799",
+    "title": "DrivePI: Spatial-aware 4D MLLM for Unified Autonomous Driving Understanding, Perception, Prediction and Planning",
+    "summary": "Although multi-modal large language models (MLLMs) have shown strong capabilities across diverse domains, their application in generating fine-grained 3D perception and prediction outputs in autonomous driving remains un"
+  },
+  {
+    "id": "2512.06865",
+    "title": "Spatial Retrieval Augmented Autonomous Driving",
+    "summary": "Existing autonomous driving systems rely on onboard sensors (cameras, LiDAR, IMU, etc) for environmental perception. However, this paradigm is limited by the drive-time perception horizon and often fails under limited vi"
+  },
+  {
+    "id": "2511.16949",
+    "title": "MobileOcc: A Human-Aware Semantic Occupancy Dataset for Mobile Robots",
+    "summary": "Dense 3D semantic occupancy perception is critical for mobile robots operating in pedestrian-rich environments, yet it remains underexplored compared to its application in autonomous driving. To address this gap, we pres"
+  },
+  {
+    "id": "2511.13031",
+    "title": "Towards 3D Object-Centric Feature Learning for Semantic Scene Completion",
+    "summary": "Vision-based 3D Semantic Scene Completion (SSC) has received growing attention due to its potential in autonomous driving. While most existing approaches follow an ego-centric paradigm by aggregating and diffusing featur"
+  },
+  {
+    "id": "2511.12941",
+    "title": "GUIDE: Gaussian Unified Instance Detection for Enhanced Obstacle Perception in Autonomous Driving",
+    "summary": "In the realm of autonomous driving, accurately detecting surrounding obstacles is crucial for effective decision-making. Traditional methods primarily rely on 3D bounding boxes to represent these obstacles, which often f"
+  },
+  {
+    "id": "2511.07106",
+    "title": "HENet++: Hybrid Encoding and Multi-task Learning for 3D Perception and End-to-end Autonomous Driving",
+    "summary": "Three-dimensional feature extraction is a critical component of autonomous driving systems, where perception tasks such as 3D object detection, bird's-eye-view (BEV) semantic segmentation, and occupancy prediction serve "
+  },
+  {
+    "id": "2511.01768",
+    "title": "UniLION: Towards Unified Autonomous Driving Model with Linear Group RNNs",
+    "summary": "Although transformers have demonstrated remarkable capabilities across various domains, their quadratic attention mechanisms introduce significant computational overhead when processing long-sequence data. In this paper,"
+  },
+  {
+    "id": "2605.09619",
+    "title": "GSMap: 2D Gaussians for Online HD Mapping",
+    "summary": "Accurate High-Definition (HD) map construction is critical for autonomous driving, yet existing methods face a fundamental trade-off: vectorization-based approaches preserve topology but struggle with geometric fidelity,"
+  },
+  {
+    "id": "2605.01478",
+    "title": "LIE: LiDAR-only HD Map Construction with Intensity Enhancement via Online Knowledge Distillation",
+    "summary": "Online High-Definition (HD) map construction is a key component of autonomous driving. Recent methods rely on multi-view camera images for cost-effective HD map segmentation, but cameras lack depth information for accura"
+  },
+  {
+    "id": "2604.24353",
+    "title": "ARETE: Attention-based Rasterized Encoding for Topology Estimation using HSV-transformed Crowdsourced Vehicle Fleet Data",
+    "summary": "The continuous advancement of autonomous driving (AD) introduces challenges across multiple disciplines to ensure safe and efficient driving. One such challenge is the generation of High-Definition (HD) maps, which must "
+  },
+  {
+    "id": "2604.21479",
+    "title": "Frozen LLMs as Map-Aware Spatio-Temporal Reasoners for Vehicle Trajectory Prediction",
+    "summary": "Large language models (LLMs) have recently demonstrated strong reasoning capabilities and attracted increasing research attention in the field of autonomous driving (AD). However, safe application of LLMs on AD perceptio"
+  },
+  {
+    "id": "2604.18940",
+    "title": "Localization-Guided Foreground Augmentation in Autonomous Driving",
+    "summary": "Autonomous driving systems often degrade under adverse visibility conditions-such as rain, nighttime, or snow-where online scene geometry (e.g., lane dividers, road boundaries, and pedestrian crossings) becomes sparse or"
+  },
+  {
+    "id": "2604.11081",
+    "title": "MapATM: Enhancing HD Map Construction through Actor Trajectory Modeling",
+    "summary": "High-definition (HD) mapping tasks, which perform lane detections and predictions, are extremely challenging due to non-ideal conditions such as view occlusions, distant lane visibility, and adverse weather conditions. T"
+  },
+  {
+    "id": "2604.01134",
+    "title": "VRUD: A Drone Dataset for Complex Vehicle-VRU Interactions within Mixed Traffic",
+    "summary": "The Operational Design Domain (ODD) of urbanoriented Level 4 (L4) autonomous driving, especially for autonomous robotaxis, confronts formidable challenges in complex urban mixed traffic environments. These challenges ste"
+  },
+  {
+    "id": "2603.28887",
+    "title": "OccSim: Multi-kilometer Simulation with Long-horizon Occupancy World Models",
+    "summary": "Data-driven autonomous driving simulation has long been constrained by its heavy reliance on pre-recorded driving logs or spatial priors, such as HD maps. This fundamental dependency severely limits scalability, restrict"
+  },
+  {
+    "id": "2603.27109",
+    "title": "Recruiting Heterogeneous Crowdsource Vehicles for Updating a High-definition Map",
+    "summary": "The high-definition map is a cornerstone of autonomous driving. Unlike constructing a costly fleet of mapping vehicles, the crowdsourcing paradigm is a cost-effective way to keep an HD map up to date. Achieving practical"
+  },
+  {
+    "id": "2603.27102",
+    "title": "Efficient and Cost-effective Vehicle Recruitment for HD Map Crowdsourcing",
+    "summary": "The high-definition (HD) map is a cornerstone of autonomous driving. The crowdsourcing paradigm is a cost-effective way to keep an HD map up-to-date. Current HD map crowdsourcing mechanisms aim to enhance HD map freshnes"
+  },
+  {
+    "id": "2603.03453",
+    "title": "Radar-based Pose Optimization for HD Map Generation from Noisy Multi-Drive Vehicle Fleet Data",
+    "summary": "High-definition (HD) maps are important for autonomous driving, but their manual generation and maintenance is very expensive. This motivates the usage of an automated map generation pipeline. Fleet vehicles provide suff"
+  },
+  {
+    "id": "2602.22549",
+    "title": "DrivePTS: A Progressive Learning Framework with Textual and Structural Enhancement for Driving Scene Generation",
+    "summary": "Synthesis of diverse driving scenes serves as a crucial data augmentation technique for validating the robustness and generalizability of autonomous driving systems. Current methods aggregate high-definition (HD) maps an"
+  },
+  {
+    "id": "2602.21589",
+    "title": "SEF-MAP: Subspace-Decomposed Expert Fusion for Robust Multimodal HD Map Prediction",
+    "summary": "High-definition (HD) maps are essential for autonomous driving, yet multi-modal fusion often suffers from inconsistency between camera and LiDAR modalities, leading to performance degradation under low-light conditions, "
+  },
+  {
+    "id": "2602.16669",
+    "title": "PredMapNet: Future and Historical Reasoning for Consistent Online HD Vectorized Map Construction",
+    "summary": "High-definition (HD) maps are crucial to autonomous driving, providing structured representations of road elements to support navigation and planning. However, existing query-based methods often employ random query initi"
+  },
+  {
+    "id": "2602.03447",
+    "title": "HetroD: A High-Fidelity Drone Dataset and Benchmark for Autonomous Driving in Heterogeneous Traffic",
+    "summary": "We present HetroD, a dataset and benchmark for developing autonomous driving systems in heterogeneous environments. HetroD targets the critical challenge of navi- gating real-world heterogeneous traffic dominated by vuln"
+  },
+  {
+    "id": "2601.22376",
+    "title": "FlexMap: Generalized HD Map Construction from Flexible Camera Configurations",
+    "summary": "High-definition (HD) maps provide essential semantic information of road structures for autonomous driving systems, yet current HD map construction methods require calibrated multi-camera setups and either implicit or ex"
+  },
+  {
+    "id": "2601.15260",
+    "title": "DrivIng: A Large-Scale Multimodal Driving Dataset with Full Digital Twin Integration",
+    "summary": "Perception is a cornerstone of autonomous driving, enabling vehicles to understand their surroundings and make safe, reliable decisions. Developing robust perception algorithms requires large-scale, high-quality datasets"
+  },
+  {
+    "id": "2601.10512",
+    "title": "SatMap: Revisiting Satellite Maps as Prior for Online HD Map Construction",
+    "summary": "Online high-definition (HD) map construction is an essential part of a safe and robust end-to-end autonomous driving (AD) pipeline. Onboard camera-based approaches suffer from limited depth perception and degraded accura"
+  },
+  {
+    "id": "2512.19150",
+    "title": "AMap: Distilling Future Priors for Ahead-Aware Online HD Map Construction",
+    "summary": "Online High-Definition (HD) map construction is pivotal for autonomous driving. While recent approaches leverage historical temporal fusion to improve performance, we identify a critical safety flaw in this paradigm: it "
+  },
+  {
+    "id": "2512.11319",
+    "title": "SATMapTR: Satellite Image Enhanced Online HD Map Construction",
+    "summary": "High-definition (HD) maps are evolving from pre-annotated to real-time construction to better support autonomous driving in diverse scenarios. However, this process is hindered by low-quality input data caused by onboard"
+  },
+  {
+    "id": "2512.03510",
+    "title": "CSMapping: Scalable Crowdsourced Semantic Mapping and Topology Inference for Autonomous Driving",
+    "summary": "Crowdsourcing enables scalable autonomous driving map construction, but low-cost sensor noise hinders quality from improving with data volume. We propose CSMapping, a system that produces accurate semantic maps and topol"
+  },
+  {
+    "id": "2512.03317",
+    "title": "NavMapFusion: Diffusion-based Fusion of Navigation Maps for Online Vectorized HD Map Construction",
+    "summary": "Accurate environmental representations are essential for autonomous driving, providing the foundation for safe and efficient navigation. Traditionally, high-definition (HD) maps are providing this representation of the s"
+  },
+  {
+    "id": "2511.19527",
+    "title": "MapRF: Weakly Supervised Online HD Map Construction via NeRF-Guided Self-Training",
+    "summary": "Autonomous driving systems benefit from high-definition (HD) maps that provide critical information about road infrastructure. The online construction of HD maps offers a scalable approach to generate local maps from on-"
+  },
+  {
+    "id": "2510.22675",
+    "title": "DAMap: Distance-aware MapNet for High Quality HD Map Construction",
+    "summary": "Predicting High-definition (HD) map elements with high quality (high classification and localization scores) is crucial to the safety of autonomous driving vehicles. However, current methods perform poorly in high qualit"
+  },
+  {
+    "id": "2512.22972",
+    "title": "Wavelet-based Multi-View Fusion of 4D Radar Tensor and Camera for Robust 3D Object Detection",
+    "summary": "4D millimeter-wave (mmWave) radar has been widely adopted in autonomous driving and robot perception due to its low cost and all-weather robustness. However, point-cloud-based radar representations suffer from informatio"
+  },
+  {
+    "id": "2512.17620",
+    "title": "StereoMV2D: A Sparse Temporal Stereo-Enhanced Framework for Robust Multi-View 3D Object Detection",
+    "summary": "Multi-view 3D object detection is a fundamental task in autonomous driving perception, where achieving a balance between detection accuracy and computational efficiency remains crucial. Sparse query-based 3D detectors ef"
+  },
+  {
+    "id": "2511.09347",
+    "title": "FQ-PETR: Fully Quantized Position Embedding Transformation for Multi-View 3D Object Detection",
+    "summary": "Camera-based multi-view 3D detection is crucial for autonomous driving. PETR and its variants (PETRs) excel in benchmarks but face deployment challenges due to high computational cost and memory footprint. Quantization i"
+  },
+  {
+    "id": "2510.15385",
+    "title": "FreqPDE: Rethinking Positional Depth Embedding for Multi-View 3D Object Detection Transformers",
+    "summary": "Detecting 3D objects accurately from multi-view 2D images is a challenging yet essential task in the field of autonomous driving. Current methods resort to integrating depth prediction to recover the spatial information "
+  },
+  {
+    "id": "2509.16588",
+    "title": "SQS: Enhancing Sparse Perception Models via Query-based Splatting in Autonomous Driving",
+    "summary": "Sparse Perception Models (SPMs) adopt a query-driven paradigm that forgoes explicit dense BEV or volumetric construction, enabling highly efficient computation and accelerated inference. In this paper, we introduce SQS, "
+  },
+  {
+    "id": "2509.14151",
+    "title": "BEVUDA++: Geometric-aware Unsupervised Domain Adaptation for Multi-View 3D Object Detection",
+    "summary": "Vision-centric Bird's Eye View (BEV) perception holds considerable promise for autonomous driving. Recent studies have prioritized efficiency or accuracy enhancements, yet the issue of domain shift has been overlooked, l"
+  },
+  {
+    "id": "2509.08374",
+    "title": "InsFusion: Rethink Instance-level LiDAR-Camera Fusion for 3D Object Detection",
+    "summary": "Three-dimensional Object Detection from multi-view cameras and LiDAR is a crucial component for autonomous driving and smart transportation. However, in the process of basic feature extraction, perspective transformation"
+  },
+  {
+    "id": "2506.23565",
+    "title": "OcRFDet: Object-Centric Radiance Fields for Multi-View 3D Object Detection in Autonomous Driving",
+    "summary": "Current multi-view 3D object detection methods typically transfer 2D features into 3D space using depth estimation or 3D position encoder, but in a fully data-driven and implicit manner, which limits the detection perfor"
+  },
+  {
+    "id": "2506.19769",
+    "title": "A Survey of Multi-sensor Fusion Perception for Embodied AI: Background, Methods, Challenges and Prospects",
+    "summary": "Multi-sensor fusion perception (MSFP) is a key technology for embodied AI, which can serve a variety of downstream tasks (e.g., 3D object detection and semantic segmentation) and application scenarios (e.g., autonomous d"
+  },
+  {
+    "id": "2506.15610",
+    "title": "BoxFusion: Reconstruction-Free Open-Vocabulary 3D Object Detection via Real-Time Multi-View Box Fusion",
+    "summary": "Open-vocabulary 3D object detection has gained significant interest due to its critical applications in autonomous driving and embodied AI. Existing detection methods, whether offline or online, typically rely on dense p"
+  },
+  {
+    "id": "2505.01857",
+    "title": "DualDiff: Dual-branch Diffusion Model for Autonomous Driving with Semantic Fusion",
+    "summary": "Accurate and high-fidelity driving scene reconstruction relies on fully leveraging scene information as conditioning. However, existing approaches, which primarily use 3D bounding boxes and binary maps for foreground and"
+  },
+  {
+    "id": "2504.05908",
+    "title": "PRIMEDrive-CoT: A Precognitive Chain-of-Thought Framework for Uncertainty-Aware Object Interaction in Driving Scene Scenario",
+    "summary": "Driving scene understanding is a critical real-world problem that involves interpreting and associating various elements of a driving environment, such as vehicles, pedestrians, and traffic signals. Despite advancements "
+  },
+  {
+    "id": "2502.15488",
+    "title": "FQ-PETR: Fully Quantized Position Embedding Transformation for Multi-View 3D Object Detection",
+    "summary": "Camera-based multi-view 3D detection is crucial for autonomous driving. PETR and its variants (PETRs) excel in benchmarks but face deployment challenges due to high computational cost and memory footprint. Quantization i"
+  },
+  {
+    "id": "2501.15394",
+    "title": "Doracamom: Joint 3D Detection and Occupancy Prediction with Multi-view 4D Radars and Cameras for Omnidirectional Perception",
+    "summary": "3D object detection and occupancy prediction are critical tasks in autonomous driving, attracting significant attention. Despite the potential of recent vision-based methods, they encounter challenges under adverse condi"
+  },
+  {
+    "id": "2412.20911",
+    "title": "TiGDistill-BEV: Multi-view BEV 3D Object Detection via Target Inner-Geometry Learning Distillation",
+    "summary": "Accurate multi-view 3D object detection is essential for applications such as autonomous driving. Researchers have consistently aimed to leverage LiDAR's precise spatial information to enhance camera-based detectors thro"
+  },
+  {
+    "id": "2412.18884",
+    "title": "HV-BEV: Decoupling Horizontal and Vertical Feature Sampling for Multi-View 3D Object Detection",
+    "summary": "The application of vision-based multi-view environmental perception system has been increasingly recognized in autonomous driving technology, especially the BEV-based models. Current state-of-the-art solutions primarily "
+  },
+  {
+    "id": "2412.08410",
+    "title": "Physical Informed Driving World Model",
+    "summary": "Autonomous driving requires robust perception models trained on high-quality, large-scale multi-view driving videos for tasks like 3D object detection, segmentation and trajectory prediction. While world models provide a"
+  },
+  {
+    "id": "2411.19860",
+    "title": "SpaRC: Sparse Radar-Camera Fusion for 3D Object Detection",
+    "summary": "In this work, we present SpaRC, a novel Sparse fusion transformer for 3D perception that integrates multi-view image semantics with Radar and Camera point features. The fusion of radar and camera modalities has emerged a"
+  },
+  {
+    "id": "2411.14716",
+    "title": "VisionPAD: A Vision-Centric Pre-training Paradigm for Autonomous Driving",
+    "summary": "This paper introduces VisionPAD, a novel self-supervised pre-training paradigm designed for vision-centric algorithms in autonomous driving. In contrast to previous approaches that employ neural rendering with explicit d"
+  },
+  {
+    "id": "2411.13628",
+    "title": "MambaDETR: Query-based Temporal Modeling using State Space Model for Multi-View 3D Object Detection",
+    "summary": "Utilizing temporal information to improve the performance of 3D detection has made great progress recently in the field of autonomous driving. Traditional transformer-based temporal fusion methods suffer from quadratic c"
+  },
+  {
+    "id": "2605.18059",
+    "title": "Bench2Drive-Robust: Benchmarking Closed-Loop Autonomous Driving under Deployment Perturbations",
+    "summary": "Robustness is a critical requirement for deploying autonomous driving systems in the real world. Existing robustness benchmarks for autonomous driving have made important progress in studying the effects of image-level c"
+  },
+  {
+    "id": "2605.17284",
+    "title": "CLAP: Contrastive Latent-space Prompt Optimization for End-to-end Autonomous Driving",
+    "summary": "End-to-end autonomous driving systems powered by Vision-Language-Action (VLA) models achieve strong performance on common driving scenarios, yet remain brittle in rare but safety-critical long-tail situations such as act"
+  },
+  {
+    "id": "2605.16737",
+    "title": "DriveSafer: End-to-End Autonomous Driving with Safety Guidance",
+    "summary": "End-to-End (E2E) autonomous driving models have shown growing capability in recent years, with performance improving on increasingly challenging benchmarks. However, modern generative E2E planners still suffer from a sub"
+  },
+  {
+    "id": "2605.15120",
+    "title": "CLOVER: Closed-Loop Value Estimation and Ranking for End-to-End Autonomous Driving Planning",
+    "summary": "End-to-end autonomous driving planners are commonly trained by imitating a single logged trajectory, yet evaluated by rule-based planning metrics that measure safety, feasibility, progress, and comfort. This creates a tr"
+  },
+  {
+    "id": "2605.14201",
+    "title": "MAPLE: Latent Multi-Agent Play for End-to-End Autonomous Driving",
+    "summary": "Vision-language-action (VLA) models are effective as end-to-end motion planners, but can be brittle when evaluated in closed-loop settings due to being trained under traditional imitation learning framework. Existing clo"
+  },
+  {
+    "id": "2605.13646",
+    "title": "Causality-Aware End-to-End Autonomous Driving via Ego-Centric Joint Scene Modeling",
+    "summary": "End-to-end autonomous driving, which bypasses traditional modular pipelines by directly predicting future trajectories from sensor inputs, has recently achieved substantial progress. However, existing methods often overl"
+  },
+  {
+    "id": "2605.12622",
+    "title": "Action Emergence from Streaming Intent",
+    "summary": "We formalize action emergence as a target capability for end-to-end autonomous driving: the ability to generate physically feasible, semantically appropriate, and safety-compliant actions in arbitrary, long-tail traffic "
+  },
+  {
+    "id": "2605.10564",
+    "title": "DeepSight: Long-Horizon World Modeling via Latent States Prediction for End-to-End Autonomous Driving",
+    "summary": "End-to-end autonomous driving systems are increasingly integrating Vision-Language Model (VLM) architectures, incorporating text reasoning or visual reasoning to enhance the robustness and accuracy of driving decisions. "
+  },
+  {
+    "id": "2605.10426",
+    "title": "CoWorld-VLA: Thinking in a Multi-Expert World Model for Autonomous Driving",
+    "summary": "Vision-Language-Action (VLA) models have emerged as a promising paradigm for end-to-end autonomous driving. However, existing reasoning mechanisms still struggle to provide planning-oriented intermediate representations:"
+  },
+  {
+    "id": "2605.09972",
+    "title": "HiDrive: A Closed-Loop Benchmark for High-Level Autonomous Driving",
+    "summary": "End-to-end autonomous driving has witnessed rapid progress, yet existing benchmarks are increasingly saturated, with state-of-the-art models achieving near-perfect scores on widely used open-loop and closed-loop benchmar"
+  },
+  {
+    "id": "2605.08830",
+    "title": "VECTOR-Drive: Tightly Coupled Vision-Language and Trajectory Expert Routing for End-to-End Autonomous Driving",
+    "summary": "End-to-end autonomous driving requires models to understand traffic scenes, infer driving intent, and generate executable motion plans. Recent vision-language-action (VLA) models inherit semantic priors from large-scale "
+  },
+  {
+    "id": "2605.07195",
+    "title": "See Tomorrow, Act Today: Foresight-Driven Autonomous Driving",
+    "summary": "Current end-to-end autonomous driving planners are fundamentally reactive: they condition on historical and present observations to predict future actions. We argue that autonomous agents should instead imagine future sc"
+  },
+  {
+    "id": "2605.06264",
+    "title": "Can Attribution Predict Risk? From Multi-View Attribution to Planning Risk Signals in End-to-End Autonomous Driving",
+    "summary": "End-to-end autonomous driving models generate future trajectories from multi-view inputs, improving system integration but introducing opaque decisions and hard-to-localize risks. Existing methods either rely on auxiliar"
+  },
+  {
+    "id": "2605.08133",
+    "title": "VLADriver-RAG: Retrieval-Augmented Vision-Language-Action Models for Autonomous Driving",
+    "summary": "Vision-Language-Action (VLA) models have emerged as a promising paradigm for end-to-end autonomous driving, yet their reliance on implicit parametric knowledge limits generalization in long-tail scenarios. While Retrieva"
+  },
+  {
+    "id": "2604.25329",
+    "title": "ProDrive: Proactive Planning for Autonomous Driving via Ego-Environment Co-Evolution",
+    "summary": "End-to-end autonomous driving planners typically generate trajectories from current observations alone. However, real-world driving is highly dynamic, and such reactive planning cannot anticipate future scene evolution, "
+  },
+  {
+    "id": "2605.00880",
+    "title": "Adversarial Flow Matching for Imperceptible Attacks on End-to-End Autonomous Driving",
+    "summary": "Autonomous driving (AD) is evolving towards end-to-end (E2E) frameworks through two primary paradigms: monolithic models exemplified by Vision-Language-Action (VLA), and specialized modular architectures. Despite their d"
+  },
+  {
+    "id": "2604.23362",
+    "title": "UniAda: Universal Adaptive Multi-objective Adversarial Attack for End-to-End Autonomous Driving Systems",
+    "summary": "Adversarial attacks play a pivotal role in testing and improving the reliability of deep learning (DL) systems. Existing literature has demonstrated that subtle perturbations to the input can elicit erroneous outcomes, t"
+  },
+  {
+    "id": "2604.21249",
+    "title": "Reasoning About Traversability: Language-Guided Off-Road 3D Trajectory Planning",
+    "summary": "While Vision-Language Models (VLMs) enable high-level semantic reasoning for end-to-end autonomous driving, particularly in unstructured environments, existing off-road datasets suffer from language annotations that are "
+  },
+  {
+    "id": "2604.19710",
+    "title": "SpanVLA: Efficient Action Bridging and Learning from Negative-Recovery Samples for Vision-Language-Action Model",
+    "summary": "Vision-Language-Action (VLA) models offer a promising autonomous driving paradigm for leveraging world knowledge and reasoning capabilities, especially in long-tail scenarios. However, existing VLA models often struggle "
+  },
+  {
+    "id": "2604.17915",
+    "title": "OneDrive: Unified Multi-Paradigm Driving with Vision-Language-Action Models",
+    "summary": "Vision-Language Models(VLMs) excel at autoregressive text generation, yet end-to-end autonomous driving requires multi-task learning with structured outputs and heterogeneous decoding behaviors, such as autoregressive la"
+  },
+  {
+    "id": "2604.12656",
+    "title": "FeaXDrive: Feasibility-aware Trajectory-Centric Diffusion Planning for End-to-End Autonomous Driving",
+    "summary": "End-to-end diffusion planning has shown strong potential for autonomous driving, but the physical feasibility of generated trajectories remains insufficiently addressed. In particular, generated trajectories may exhibit "
+  },
+  {
+    "id": "2604.12208",
+    "title": "Unveiling the Surprising Efficacy of Navigation Understanding in End-to-End Autonomous Driving",
+    "summary": "Global navigation information and local scene understanding are two crucial components of autonomous driving systems. However, our experimental results indicate that many end-to-end autonomous driving systems tend to ove"
+  },
+  {
+    "id": "2604.11854",
+    "title": "MVAdapt: Zero-Shot Multi-Vehicle Adaptation for End-to-End Autonomous Driving",
+    "summary": "End-to-End (E2E) autonomous driving models are usually trained and evaluated with a fixed ego-vehicle, even though their driving policy is implicitly tied to vehicle dynamics. When such a model is deployed on a vehicle w"
+  },
+  {
+    "id": "2604.10856",
+    "title": "BridgeSim: Unveiling the OL-CL Gap in End-to-End Autonomous Driving",
+    "summary": "Open-loop (OL) to closed-loop (CL) gap (OL-CL gap) exists when OL-pretrained policies scoring high in OL evaluations fail to transfer effectively in closed-loop (CL) deployment. In this paper, we unveil the root causes o"
+  },
+  {
+    "id": "2604.09059",
+    "title": "Learning Vision-Language-Action World Models for Autonomous Driving",
+    "summary": "Vision-Language-Action (VLA) models have recently achieved notable progress in end-to-end autonomous driving by integrating perception, reasoning, and control within a unified multimodal framework. However, they often la"
+  }
+]

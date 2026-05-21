@@ -311,12 +311,12 @@
     "path_or_url": "data/sources/papers/bevformer.md",
     "raw_path": "data/sources/raw/papers/BEVFormer.pdf",
     "origin_url": "unknown",
-    "version": "BEVFormer",
+    "version": "20 pages",
     "topic_tags": [
       "perception",
       "sensor_fusion"
     ],
-    "notes": "cleaned from raw PDF with page-level excerpts"
+    "notes": "re-converted from PDF with PyMuPDF, 20 pages"
   },
   {
     "source_id": "paper-002",
@@ -327,12 +327,12 @@
     "path_or_url": "data/sources/papers/bevfusion.md",
     "raw_path": "data/sources/raw/papers/BEVFusion.pdf",
     "origin_url": "unknown",
-    "version": "BEVFusion",
+    "version": "8 pages",
     "topic_tags": [
       "perception",
       "sensor_fusion"
     ],
-    "notes": "cleaned from raw PDF with page-level excerpts"
+    "notes": "re-converted from PDF with PyMuPDF, 8 pages"
   },
   {
     "source_id": "paper-003",
@@ -343,12 +343,12 @@
     "path_or_url": "data/sources/papers/occupancy-flow-fields.md",
     "raw_path": "data/sources/raw/papers/Occupancy Flow Fields for Motion Forecasting in Autonomous Driving.pdf",
     "origin_url": "unknown",
-    "version": "Occupancy Flow Fields",
+    "version": "8 pages",
     "topic_tags": [
       "planning_control",
       "perception"
     ],
-    "notes": "cleaned from raw PDF with page-level excerpts"
+    "notes": "re-converted from PDF with PyMuPDF, 8 pages"
   },
   {
     "source_id": "paper-004",
@@ -359,12 +359,12 @@
     "path_or_url": "data/sources/papers/waymo-scalability-perception.md",
     "raw_path": "data/sources/raw/papers/Scalability in Perception for Autonomous Driving Waymo Open Dataset.pdf",
     "origin_url": "unknown",
-    "version": "Waymo Open Dataset Report",
+    "version": "9 pages",
     "topic_tags": [
       "perception",
       "system_architecture"
     ],
-    "notes": "cleaned from raw PDF with page-level excerpts"
+    "notes": "re-converted from PDF with PyMuPDF, 9 pages"
   },
   {
     "source_id": "paper-005",
@@ -375,12 +375,12 @@
     "path_or_url": "data/sources/papers/vad.md",
     "raw_path": "data/sources/raw/papers/VAD Vectorized Scene Representation for Efficient Autonomous Driving.pdf",
     "origin_url": "https://arxiv.org/abs/2303.12077",
-    "version": "VAD",
+    "version": "11 pages",
     "topic_tags": [
       "planning_control",
       "perception"
     ],
-    "notes": "cleaned from raw PDF with page-level excerpts"
+    "notes": "re-converted from PDF with PyMuPDF, 11 pages"
   },
   {
     "source_id": "paper-006",
@@ -391,12 +391,12 @@
     "path_or_url": "data/sources/papers/fusionad.md",
     "raw_path": "data/sources/raw/papers/FusionAD Multi-modality Fusion for Prediction and Planning Tasks of Autonomous.pdf",
     "origin_url": "https://arxiv.org/abs/2308.01006",
-    "version": "FusionAD",
+    "version": "8 pages",
     "topic_tags": [
       "planning_control",
       "sensor_fusion"
     ],
-    "notes": "cleaned from raw PDF with page-level excerpts"
+    "notes": "re-converted from PDF with PyMuPDF, 8 pages"
   },
   {
     "source_id": "paper-007",
@@ -407,246 +407,1237 @@
     "path_or_url": "data/sources/papers/genad.md",
     "raw_path": "data/sources/raw/papers/GenAD Generative End-to-End Autonomous Driving.pdf",
     "origin_url": "https://arxiv.org/abs/2402.11502",
-    "version": "GenAD",
+    "version": "10 pages",
     "topic_tags": [
       "planning_control",
       "perception"
     ],
-    "notes": "cleaned from raw PDF with page-level excerpts"
+    "notes": "re-converted from PDF with PyMuPDF, 10 pages"
   },
   {
-    "source_id": "apollo-doc-011",
-    "title": "Apollo Lidar Perception",
-    "doc_type": "official_doc",
-    "category": "apollo",
-    "language": "zh",
-    "path_or_url": "data/sources/apollo/apollo-lidar-perception.md",
-    "raw_path": "",
-    "origin_url": "",
-    "version": "Apollo 6.0",
-    "topic_tags": [
-      "perception",
-      "sensor_fusion"
-    ],
-    "notes": "generated from knowledge"
-  },
-  {
-    "source_id": "apollo-doc-012",
-    "title": "Apollo Camera Perception",
-    "doc_type": "official_doc",
-    "category": "apollo",
-    "language": "zh",
-    "path_or_url": "data/sources/apollo/apollo-camera-perception.md",
-    "raw_path": "",
-    "origin_url": "",
-    "version": "Apollo 6.0",
-    "topic_tags": [
-      "perception",
-      "sensor_fusion"
-    ],
-    "notes": "generated from knowledge"
-  },
-  {
-    "source_id": "apollo-doc-013",
-    "title": "Apollo Radar Perception",
-    "doc_type": "official_doc",
-    "category": "apollo",
-    "language": "zh",
-    "path_or_url": "data/sources/apollo/apollo-radar-perception.md",
-    "raw_path": "",
-    "origin_url": "",
-    "version": "Apollo 6.0",
-    "topic_tags": [
-      "perception",
-      "sensor_fusion"
-    ],
-    "notes": "generated from knowledge"
-  },
-  {
-    "source_id": "apollo-doc-014",
-    "title": "Apollo Prediction Module",
-    "doc_type": "official_doc",
-    "category": "apollo",
-    "language": "zh",
-    "path_or_url": "data/sources/apollo/apollo-prediction-module.md",
-    "raw_path": "",
-    "origin_url": "",
-    "version": "Apollo 6.0",
+    "source_id": "paper-013",
+    "title": "Planning-oriented Autonomous Driving (UniAD)",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/unified-autonomous-driving.md",
+    "raw_path": "data/sources/raw/papers/UniAD Planning-oriented Autonomous Driving.pdf",
+    "origin_url": "https://arxiv.org/abs/2212.10156",
+    "version": "24 pages",
     "topic_tags": [
       "planning_control",
-      "perception"
+      "perception",
+      "sensor_fusion"
     ],
-    "notes": "generated from knowledge"
+    "notes": "re-converted from PDF with PyMuPDF, 24 pages"
   },
   {
-    "source_id": "apollo-doc-015",
-    "title": "Apollo Planning Module",
-    "doc_type": "official_doc",
-    "category": "apollo",
-    "language": "zh",
-    "path_or_url": "data/sources/apollo/apollo-planning-module.md",
-    "raw_path": "",
-    "origin_url": "",
-    "version": "Apollo 6.0",
-    "topic_tags": [
-      "planning_control",
-      "system_architecture"
-    ],
-    "notes": "generated from knowledge"
-  },
-  {
-    "source_id": "paper-008",
-    "title": "DETR3D: 3D Object Detection from Multi-view Images",
+    "source_id": "paper-014",
+    "title": "StreamPETR: Exploring Object-Centric Temporal Modeling for Efficient Multi-View 3D Object Detection",
     "doc_type": "paper",
     "category": "papers",
-    "language": "zh",
-    "path_or_url": "data/sources/papers/detr3d.md",
-    "raw_path": "",
-    "origin_url": "https://arxiv.org/abs/2110.06922",
-    "version": "DETR3D",
+    "language": "en",
+    "path_or_url": "data/sources/papers/streampetr.md",
+    "raw_path": "data/sources/raw/papers/StreamPETR Exploring Object-Centric Temporal Modeling.pdf",
+    "origin_url": "https://arxiv.org/abs/2303.11926",
+    "version": "12 pages",
     "topic_tags": [
       "perception",
       "sensor_fusion"
     ],
-    "notes": "generated from knowledge"
+    "notes": "re-converted from PDF with PyMuPDF, 12 pages"
   },
   {
-    "source_id": "paper-009",
-    "title": "PETRv2: A Unified Framework for 3D Perception",
+    "source_id": "paper-015",
+    "title": "SurroundOcc: Multi-Camera 3D Occupancy Prediction for Autonomous Driving",
     "doc_type": "paper",
     "category": "papers",
-    "language": "zh",
-    "path_or_url": "data/sources/papers/petrv2.md",
-    "raw_path": "",
-    "origin_url": "https://arxiv.org/abs/2206.01256",
-    "version": "PETRv2",
+    "language": "en",
+    "path_or_url": "data/sources/papers/surroundocc.md",
+    "raw_path": "data/sources/raw/papers/SurroundOcc Multi-Camera 3D Occupancy Prediction.pdf",
+    "origin_url": "https://arxiv.org/abs/2303.09551",
+    "version": "13 pages",
     "topic_tags": [
       "perception",
       "sensor_fusion"
     ],
-    "notes": "generated from knowledge"
+    "notes": "re-converted from PDF with PyMuPDF, 13 pages"
   },
   {
-    "source_id": "paper-010",
-    "title": "PointPillars: Fast Encoders for Object Detection from Point Clouds",
+    "source_id": "paper-016",
+    "title": "BEVDepth: Acquisition of Reliable Multi-view 3D Object Detection via Depth Estimation",
     "doc_type": "paper",
     "category": "papers",
-    "language": "zh",
-    "path_or_url": "data/sources/papers/pointpillars.md",
-    "raw_path": "",
-    "origin_url": "https://arxiv.org/abs/1812.05784",
-    "version": "PointPillars",
+    "language": "en",
+    "path_or_url": "data/sources/papers/bevdepth.md",
+    "raw_path": "data/sources/raw/papers/BEVDepth Acquisition of Reliable Depth.pdf",
+    "origin_url": "https://arxiv.org/abs/2206.10092",
+    "version": "9 pages",
+    "topic_tags": [
+      "perception",
+      "sensor_fusion"
+    ],
+    "notes": "re-converted from PDF with PyMuPDF, 9 pages"
+  },
+  {
+    "source_id": "paper-017",
+    "title": "SparseBEV: High-Performance Sparse 3D Object Detection from Multi-Camera Videos",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/sparsebev.md",
+    "raw_path": "data/sources/raw/papers/SparseBEV High-Performance Sparse 3D Object Detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2308.09244",
+    "version": "14 pages",
     "topic_tags": [
       "perception"
     ],
-    "notes": "generated from knowledge"
+    "notes": "re-converted from PDF with PyMuPDF, 14 pages"
   },
   {
-    "source_id": "paper-011",
-    "title": "CenterPoint: Center-based 3D Object Detection and Tracking",
+    "source_id": "paper-018",
+    "title": "FCOS3D: Fully Convolutional One-Stage Monocular 3D Object Detection",
     "doc_type": "paper",
     "category": "papers",
-    "language": "zh",
-    "path_or_url": "data/sources/papers/centerpoint.md",
-    "raw_path": "",
+    "language": "en",
+    "path_or_url": "data/sources/papers/fcos3d.md",
+    "raw_path": "data/sources/raw/papers/FCOS3D Fully Convolutional One-Stage Monocular 3D.pdf",
+    "origin_url": "https://arxiv.org/abs/2104.10956",
+    "version": "11 pages",
+    "topic_tags": [
+      "perception"
+    ],
+    "notes": "re-converted from PDF with PyMuPDF, 11 pages"
+  },
+  {
+    "source_id": "paper-019",
+    "title": "MUSDA: Multi-source Multi-modality Unsupervised Domain Adaptive 3D Object Detection for Autonomous Driving",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/musda-multi-source-multi-modality-unsupervised-domain-adaptive-3d-object-detection-for-aut.md",
+    "raw_path": "data/sources/raw/papers/paper-019_musda-multi-source-multi-modality-unsupervised-domain-adaptive-3d-object-detection-for-aut.pdf",
+    "origin_url": "https://arxiv.org/abs/2605.10026",
+    "version": "7 pages",
+    "topic_tags": [
+      "3d_object_detection",
+      "domain_adaptation",
+      "multi_modal"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2605.10026, 7 pages"
+  },
+  {
+    "source_id": "paper-020",
+    "title": "4DLidarOpen: An Open 4D FMCW Lidar Dataset for Motion-Aware Autonomous Driving",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/4dlidaropen-an-open-4d-fmcw-lidar-dataset-for-motion-aware-autonomous-driving.md",
+    "raw_path": "data/sources/raw/papers/paper-020_4dlidaropen-an-open-4d-fmcw-lidar-dataset-for-motion-aware-autonomous-driving.pdf",
+    "origin_url": "https://arxiv.org/abs/2605.18074",
+    "version": "15 pages",
+    "topic_tags": [
+      "lidar_perception",
+      "dataset",
+      "motion"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2605.18074, 15 pages"
+  },
+  {
+    "source_id": "paper-021",
+    "title": "AB3DMOT: A Baseline for 3D Multi-Object Tracking and New Evaluation Metrics",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/ab3dmot-a-baseline-for-3d-multi-object-tracking-and-new-evaluation-metrics.md",
+    "raw_path": "data/sources/raw/papers/paper-021_ab3dmot-a-baseline-for-3d-multi-object-tracking-and-new-evaluation-metrics.pdf",
+    "origin_url": "https://arxiv.org/abs/2008.08063",
+    "version": "4 pages",
+    "topic_tags": [
+      "multi_object_tracking",
+      "3d_object_detection",
+      "lidar_perception"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2008.08063, 4 pages"
+  },
+  {
+    "source_id": "paper-022",
+    "title": "HENet++: Hybrid Encoding and Multi-task Learning for 3D Perception and End-to-end Autonomous Driving",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/henet-hybrid-encoding-and-multi-task-learning-for-3d-perception-and-end-to-end-autonomous-.md",
+    "raw_path": "data/sources/raw/papers/paper-022_henet-hybrid-encoding-and-multi-task-learning-for-3d-perception-and-end-to-end-autonomous-.pdf",
+    "origin_url": "https://arxiv.org/abs/2511.07106",
+    "version": "23 pages",
+    "topic_tags": [
+      "end_to_end_driving",
+      "3d_perception",
+      "multi_task_learning"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2511.07106, 23 pages"
+  },
+  {
+    "source_id": "paper-023",
+    "title": "BEV-SAN: Accurate BEV 3D Object Detection via Slice Attention Networks",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/bev-san-accurate-bev-3d-object-detection-via-slice-attention-networks.md",
+    "raw_path": "data/sources/raw/papers/paper-023_bev-san-accurate-bev-3d-object-detection-via-slice-attention-networks.pdf",
+    "origin_url": "https://arxiv.org/abs/2212.01231",
+    "version": "11 pages",
+    "topic_tags": [
+      "bev_perception",
+      "3d_object_detection",
+      "attention"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2212.01231, 11 pages"
+  },
+  {
+    "source_id": "paper-024",
+    "title": "BEVDet High-performance Multi-camera 3D Object Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/bevdet-high-performance-multi-camera-3d-object-detection.md",
+    "raw_path": "data/sources/raw/papers/BEVDet High-performance Multi-camera 3D Object Detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2112.11790",
+    "version": "19 pages",
+    "topic_tags": [
+      "3d_detection",
+      "bev_perception"
+    ],
+    "notes": "converted from arxiv PDF, 19 pages"
+  },
+  {
+    "source_id": "paper-025",
+    "title": "BEVDet4D Exploit Temporal Cues in Multi-camera 3D Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/bevdet4d-exploit-temporal-cues-in-multi-camera-3d-detection.md",
+    "raw_path": "data/sources/raw/papers/BEVDet4D Exploit Temporal Cues in Multi-camera 3D Detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2203.17054",
+    "version": "11 pages",
+    "topic_tags": [
+      "3d_detection",
+      "bev_perception",
+      "radar",
+      "sensor_fusion"
+    ],
+    "notes": "converted from arxiv PDF, 11 pages"
+  },
+  {
+    "source_id": "paper-026",
+    "title": "BEVFormer v2 Adapting Modern Image Backbones",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/bevformer-v2-adapting-modern-image-backbones.md",
+    "raw_path": "data/sources/raw/papers/BEVFormer v2 Adapting Modern Image Backbones.pdf",
+    "origin_url": "https://arxiv.org/abs/2211.10439",
+    "version": "13 pages",
+    "topic_tags": [
+      "3d_detection",
+      "bev_perception"
+    ],
+    "notes": "converted from arxiv PDF, 13 pages"
+  },
+  {
+    "source_id": "paper-027",
+    "title": "BEVFusion Multi-Task Multi-Sensor Fusion Unified BEV",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/bevfusion-multi-task-multi-sensor-fusion-unified-bev.md",
+    "raw_path": "data/sources/raw/papers/BEVFusion Multi-Task Multi-Sensor Fusion Unified BEV.pdf",
+    "origin_url": "https://arxiv.org/abs/2205.13542",
+    "version": "8 pages",
+    "topic_tags": [
+      "3d_detection",
+      "bev_perception"
+    ],
+    "notes": "converted from arxiv PDF, 8 pages"
+  },
+  {
+    "source_id": "paper-028",
+    "title": "BEVStereo Enhancing Depth Estimation in Multi-view 3D Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/bevstereo-enhancing-depth-estimation-in-multi-view-3d-detection.md",
+    "raw_path": "data/sources/raw/papers/BEVStereo Enhancing Depth Estimation in Multi-view 3D Detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2209.10248",
+    "version": "9 pages",
+    "topic_tags": [
+      "3d_detection",
+      "bev_perception",
+      "depth_estimation"
+    ],
+    "notes": "re-downloaded from arxiv:2209.10248, 9 pages"
+  },
+  {
+    "source_id": "paper-029",
+    "title": "CLRNet: Cross Layer Refinement Network for Lane Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/clrnet-cross-layer-refinement-network-for-lane-detection.md",
+    "raw_path": "data/sources/raw/papers/paper-029_clrnet-cross-layer-refinement-network-for-lane-detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2203.10350",
+    "version": "10 pages",
+    "topic_tags": [
+      "lane_detection",
+      "vision_perception"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2203.10350, 10 pages"
+  },
+  {
+    "source_id": "paper-030",
+    "title": "CRN: Camera Radar Net for Accurate, Robust, Efficient 3D Perception",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/crn-camera-radar-net-for-accurate-robust-efficient-3d-perception.md",
+    "raw_path": "data/sources/raw/papers/paper-030_crn-camera-radar-net-for-accurate-robust-efficient-3d-perception.pdf",
+    "origin_url": "https://arxiv.org/abs/2304.00670",
+    "version": "18 pages",
+    "topic_tags": [
+      "camera_radar_fusion",
+      "bev_perception",
+      "3d_object_detection"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2304.00670, 18 pages"
+  },
+  {
+    "source_id": "paper-031",
+    "title": "CenterPoint Center-based 3D Object Detection and Tracking",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/centerpoint-center-based-3d-object-detection-and-tracking.md",
+    "raw_path": "data/sources/raw/papers/CenterPoint Center-based 3D Object Detection and Tracking.pdf",
     "origin_url": "https://arxiv.org/abs/2006.11275",
-    "version": "CenterPoint",
+    "version": "12 pages",
     "topic_tags": [
-      "perception"
+      "3d_detection",
+      "lidar",
+      "multi_object_tracking",
+      "tracking"
     ],
-    "notes": "generated from knowledge"
+    "notes": "converted from arxiv PDF, 12 pages"
   },
   {
-    "source_id": "paper-012",
-    "title": "TransFusion: Robust LiDAR-Camera Fusion for 3D Object Detection",
+    "source_id": "paper-032",
+    "title": "123D: Unifying Multi-Modal Autonomous Driving Data at Scale",
     "doc_type": "paper",
     "category": "papers",
-    "language": "zh",
-    "path_or_url": "data/sources/papers/transfusion.md",
-    "raw_path": "",
-    "origin_url": "https://arxiv.org/abs/2203.11496",
-    "version": "TransFusion",
+    "language": "en",
+    "path_or_url": "data/sources/papers/123d-unifying-multi-modal-autonomous-driving-data-at-scale.md",
+    "raw_path": "data/sources/raw/papers/paper-032_123d-unifying-multi-modal-autonomous-driving-data-at-scale.pdf",
+    "origin_url": "https://arxiv.org/abs/2605.08084",
+    "version": "14 pages",
     "topic_tags": [
-      "perception",
+      "dataset",
+      "multi_modal",
+      "autonomous_driving"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2605.08084, 14 pages"
+  },
+  {
+    "source_id": "paper-033",
+    "title": "Cross-view Transformers for Real-time Map-view Segmentation",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/cross-view-transformers-for-real-time-map-view-segmentation.md",
+    "raw_path": "data/sources/raw/papers/Cross-view Transformers for Real-time Map-view Segmentation.pdf",
+    "origin_url": "https://arxiv.org/abs/2205.02833",
+    "version": "10 pages",
+    "topic_tags": [
+      "bev_perception",
+      "hd_map",
+      "map_construction",
+      "segmentation"
+    ],
+    "notes": "converted from arxiv PDF, 10 pages"
+  },
+  {
+    "source_id": "paper-034",
+    "title": "RayD3D: Distilling Depth Knowledge Along the Ray for Robust Multi-View 3D Object Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/rayd3d-distilling-depth-knowledge-along-the-ray-for-robust-multi-view-3d-object-detection.md",
+    "raw_path": "data/sources/raw/papers/paper-034_rayd3d-distilling-depth-knowledge-along-the-ray-for-robust-multi-view-3d-object-detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2603.07493",
+    "version": "9 pages",
+    "topic_tags": [
+      "multi_view",
+      "3d_object_detection",
+      "depth_estimation"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2603.07493, 9 pages"
+  },
+  {
+    "source_id": "paper-035",
+    "title": "SemLT3D: Semantic-Guided Expert Distillation for Camera-only Long-Tailed 3D Object Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/semlt3d-semantic-guided-expert-distillation-for-camera-only-long-tailed-3d-object-detectio.md",
+    "raw_path": "data/sources/raw/papers/paper-035_semlt3d-semantic-guided-expert-distillation-for-camera-only-long-tailed-3d-object-detectio.pdf",
+    "origin_url": "https://arxiv.org/abs/2604.18476",
+    "version": "11 pages",
+    "topic_tags": [
+      "3d_object_detection",
+      "camera_only",
+      "distillation"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2604.18476, 11 pages"
+  },
+  {
+    "source_id": "paper-036",
+    "title": "DETR3D 3D Object Detection from Multi-view Images",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/detr3d-3d-object-detection-from-multi-view-images.md",
+    "raw_path": "data/sources/raw/papers/DETR3D 3D Object Detection from Multi-view Images.pdf",
+    "origin_url": "https://arxiv.org/abs/2110.06922",
+    "version": "12 pages",
+    "topic_tags": [
+      "3d_detection",
+      "transformer"
+    ],
+    "notes": "converted from arxiv PDF, 12 pages"
+  },
+  {
+    "source_id": "paper-037",
+    "title": "FreqPDE: Rethinking Positional Depth Embedding for Multi-View 3D Object Detection Transformers",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/freqpde-rethinking-positional-depth-embedding-for-multi-view-3d-object-detection-transform.md",
+    "raw_path": "data/sources/raw/papers/paper-037_freqpde-rethinking-positional-depth-embedding-for-multi-view-3d-object-detection-transform.pdf",
+    "origin_url": "https://arxiv.org/abs/2510.15385",
+    "version": "16 pages",
+    "topic_tags": [
+      "multi_view",
+      "3d_object_detection",
+      "transformer"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2510.15385, 16 pages"
+  },
+  {
+    "source_id": "paper-038",
+    "title": "Delving into Devils Bird-eye-view Perception Review",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/delving-into-devils-bird-eye-view-perception-review.md",
+    "raw_path": "data/sources/raw/papers/Delving into Devils Bird-eye-view Perception Review.pdf",
+    "origin_url": "https://arxiv.org/abs/2209.05324",
+    "version": "26 pages",
+    "topic_tags": [
+      "review",
+      "survey"
+    ],
+    "notes": "converted from arxiv PDF, 26 pages"
+  },
+  {
+    "source_id": "paper-039",
+    "title": "DriveDreamer: Towards Real-world-driven World Models for Autonomous Driving",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/drivedreamer-towards-real-world-driven-world-models-for-autonomous-driving.md",
+    "raw_path": "data/sources/raw/papers/paper-039_drivedreamer-towards-real-world-driven-world-models-for-autonomous-driving.pdf",
+    "origin_url": "https://arxiv.org/abs/2309.09777",
+    "version": "15 pages",
+    "topic_tags": [
+      "world_model",
+      "simulation",
+      "autonomous_driving"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2309.09777, 15 pages"
+  },
+  {
+    "source_id": "paper-040",
+    "title": "FB-OCC Flow-based 3D Occupancy Prediction",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/fb-occ-flow-based-3d-occupancy-prediction.md",
+    "raw_path": "data/sources/raw/papers/FB-OCC Flow-based 3D Occupancy Prediction.pdf",
+    "origin_url": "https://arxiv.org/abs/2312.09243",
+    "version": "13 pages",
+    "topic_tags": [
+      "occupancy_prediction"
+    ],
+    "notes": "converted from arxiv PDF, 13 pages"
+  },
+  {
+    "source_id": "paper-041",
+    "title": "Far3D: Expanding the Horizon for Surround-view 3D Object Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/far3d-expanding-the-horizon-for-surround-view-3d-object-detection.md",
+    "raw_path": "data/sources/raw/papers/paper-041_far3d-expanding-the-horizon-for-surround-view-3d-object-detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2308.09616",
+    "version": "12 pages",
+    "topic_tags": [
+      "surround_view",
+      "3d_object_detection",
+      "multi_view"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2308.09616, 12 pages"
+  },
+  {
+    "source_id": "paper-042",
+    "title": "FlashOcc Fast Camera-Only 3D Occupancy Prediction",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/flashocc-fast-camera-only-3d-occupancy-prediction.md",
+    "raw_path": "data/sources/raw/papers/FlashOcc Fast Camera-Only 3D Occupancy Prediction.pdf",
+    "origin_url": "https://arxiv.org/abs/2312.17118",
+    "version": "15 pages",
+    "topic_tags": [
+      "occupancy_prediction"
+    ],
+    "notes": "converted from arxiv PDF, 15 pages"
+  },
+  {
+    "source_id": "paper-043",
+    "title": "FusionAD Multi-modality Fusion Prediction Planning",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/fusionad-multi-modality-fusion-prediction-planning.md",
+    "raw_path": "data/sources/raw/papers/FusionAD Multi-modality Fusion Prediction Planning.pdf",
+    "origin_url": "https://arxiv.org/abs/2308.01006",
+    "version": "8 pages",
+    "topic_tags": [
+      "end_to_end",
       "sensor_fusion"
     ],
-    "notes": "generated from knowledge"
+    "notes": "converted from arxiv PDF, 8 pages"
   },
   {
-    "source_id": "standard-010",
-    "title": "ISO 26262 Functional Safety",
-    "doc_type": "standard",
-    "category": "standards",
-    "language": "zh",
-    "path_or_url": "data/sources/standards/iso-26262-functional-safety.md",
-    "raw_path": "",
-    "origin_url": "",
-    "version": "ISO 26262",
+    "source_id": "paper-044",
+    "title": "GameFormer: Game-theoretic Modeling and Learning of Transformer-based Interactive Prediction and Planning for Autonomous Driving",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/gameformer-game-theoretic-modeling-and-learning-of-transformer-based-interactive-predictio.md",
+    "raw_path": "data/sources/raw/papers/paper-044_gameformer-game-theoretic-modeling-and-learning-of-transformer-based-interactive-predictio.pdf",
+    "origin_url": "https://arxiv.org/abs/2303.05760",
+    "version": "18 pages",
     "topic_tags": [
-      "safety"
+      "prediction",
+      "planning",
+      "transformer"
     ],
-    "notes": "generated from knowledge"
+    "notes": "replaced polluted source; converted from arXiv PDF 2303.05760, 18 pages"
   },
   {
-    "source_id": "standard-011",
-    "title": "ISO 21448 SOTIF Detailed Analysis",
-    "doc_type": "standard",
-    "category": "standards",
-    "language": "zh",
-    "path_or_url": "data/sources/standards/iso-21448-sotif-details.md",
-    "raw_path": "",
-    "origin_url": "",
-    "version": "ISO 21448",
+    "source_id": "paper-045",
+    "title": "GaussianOcc: Fully Self-supervised and Efficient 3D Occupancy Estimation with Gaussian Splatting",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/gaussianocc-fully-self-supervised-and-efficient-3d-occupancy-estimation-with-gaussian-spla.md",
+    "raw_path": "data/sources/raw/papers/paper-045_gaussianocc-fully-self-supervised-and-efficient-3d-occupancy-estimation-with-gaussian-spla.pdf",
+    "origin_url": "https://arxiv.org/abs/2408.11447",
+    "version": "16 pages",
     "topic_tags": [
-      "safety"
+      "occupancy_prediction",
+      "gaussian_splatting",
+      "self_supervised"
     ],
-    "notes": "generated from knowledge"
+    "notes": "replaced polluted source; converted from arXiv PDF 2408.11447, 16 pages"
   },
   {
-    "source_id": "standard-012",
-    "title": "UL 4600 Standard for Autonomous Products",
-    "doc_type": "standard",
-    "category": "standards",
-    "language": "zh",
-    "path_or_url": "data/sources/standards/ul-4600-standard.md",
-    "raw_path": "",
-    "origin_url": "",
-    "version": "UL 4600",
+    "source_id": "paper-046",
+    "title": "HDMapNet: An Online HD Map Construction and Evaluation Framework",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/hdmapnet-an-online-hd-map-construction-and-evaluation-framework.md",
+    "raw_path": "data/sources/raw/papers/paper-046_hdmapnet-an-online-hd-map-construction-and-evaluation-framework.pdf",
+    "origin_url": "https://arxiv.org/abs/2107.06307",
+    "version": "7 pages",
     "topic_tags": [
-      "safety"
+      "hd_map",
+      "bev_perception",
+      "mapping"
     ],
-    "notes": "generated from knowledge"
+    "notes": "replaced polluted source; converted from arXiv PDF 2107.06307, 7 pages"
   },
   {
-    "source_id": "standard-013",
-    "title": "ANSI/ATA Standards for Autonomous Vehicles",
-    "doc_type": "standard",
-    "category": "standards",
-    "language": "zh",
-    "path_or_url": "data/sources/standards/ansi-c-ata-standards.md",
-    "raw_path": "",
-    "origin_url": "",
-    "version": "ANSI/ATA",
+    "source_id": "paper-048",
+    "title": "Lift Splat Shoot Encoding Images from Arbitrary Camera Rigs",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/lift-splat-shoot-encoding-images-from-arbitrary-camera-rigs.md",
+    "raw_path": "data/sources/raw/papers/Lift Splat Shoot Encoding Images from Arbitrary Camera Rigs.pdf",
+    "origin_url": "https://arxiv.org/abs/2008.05711",
+    "version": "17 pages",
     "topic_tags": [
-      "safety",
-      "system_architecture"
+      "3d_detection",
+      "bev_perception"
     ],
-    "notes": "generated from knowledge"
+    "notes": "converted from arxiv PDF, 17 pages"
   },
   {
-    "source_id": "standard-014",
-    "title": "Chinese Autonomous Driving Standards Overview",
-    "doc_type": "standard",
-    "category": "standards",
-    "language": "zh",
-    "path_or_url": "data/sources/standards/china-autonomous-driving-standards.md",
-    "raw_path": "",
-    "origin_url": "",
-    "version": "China Standards",
+    "source_id": "paper-049",
+    "title": "M3D-RPN: Monocular 3D Region Proposal Network for Object Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/m3d-rpn-monocular-3d-region-proposal-network-for-object-detection.md",
+    "raw_path": "data/sources/raw/papers/paper-049_m3d-rpn-monocular-3d-region-proposal-network-for-object-detection.pdf",
+    "origin_url": "https://arxiv.org/abs/1907.06038",
+    "version": "10 pages",
     "topic_tags": [
-      "safety",
-      "system_architecture"
+      "monocular_3d_detection",
+      "3d_object_detection"
     ],
-    "notes": "generated from knowledge"
+    "notes": "replaced polluted source; converted from arXiv PDF 1907.06038, 10 pages"
+  },
+  {
+    "source_id": "paper-050",
+    "title": "MOTRv2: Bootstrapping End-to-End Multi-Object Tracking by Pretrained Object Detectors",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/motrv2-bootstrapping-end-to-end-multi-object-tracking-by-pretrained-object-detectors.md",
+    "raw_path": "data/sources/raw/papers/paper-050_motrv2-bootstrapping-end-to-end-multi-object-tracking-by-pretrained-object-detectors.pdf",
+    "origin_url": "https://arxiv.org/abs/2211.09791",
+    "version": "10 pages",
+    "topic_tags": [
+      "multi_object_tracking",
+      "transformer",
+      "end_to_end"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2211.09791, 10 pages"
+  },
+  {
+    "source_id": "paper-051",
+    "title": "MUTR3D: A Multi-camera Tracking Framework via 3D-to-2D Queries",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/mutr3d-a-multi-camera-tracking-framework-via-3d-to-2d-queries.md",
+    "raw_path": "data/sources/raw/papers/paper-051_mutr3d-a-multi-camera-tracking-framework-via-3d-to-2d-queries.pdf",
+    "origin_url": "https://arxiv.org/abs/2205.00613",
+    "version": "10 pages",
+    "topic_tags": [
+      "multi_object_tracking",
+      "multi_camera",
+      "3d_detection"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2205.00613, 10 pages"
+  },
+  {
+    "source_id": "paper-052",
+    "title": "MagicDrive: Street View Generation with Diverse 3D Geometry Control",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/magicdrive-street-view-generation-with-diverse-3d-geometry-control.md",
+    "raw_path": "data/sources/raw/papers/paper-052_magicdrive-street-view-generation-with-diverse-3d-geometry-control.pdf",
+    "origin_url": "https://arxiv.org/abs/2310.02601",
+    "version": "20 pages",
+    "topic_tags": [
+      "generation",
+      "simulation",
+      "3d_geometry"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2310.02601, 20 pages"
+  },
+  {
+    "source_id": "paper-053",
+    "title": "MapTR Structured Modeling Online Vectorized HD Map",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/maptr-structured-modeling-online-vectorized-hd-map.md",
+    "raw_path": "data/sources/raw/papers/MapTR Structured Modeling Online Vectorized HD Map.pdf",
+    "origin_url": "https://arxiv.org/abs/2208.14437",
+    "version": "18 pages",
+    "topic_tags": [
+      "hd_map",
+      "map_construction"
+    ],
+    "notes": "converted from arxiv PDF, 18 pages"
+  },
+  {
+    "source_id": "paper-054",
+    "title": "MapTracker: Tracking with Strided Memory Fusion for Consistent Vector HD Mapping",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/maptracker-tracking-with-strided-memory-fusion-for-consistent-vector-hd-mapping.md",
+    "raw_path": "data/sources/raw/papers/paper-054_maptracker-tracking-with-strided-memory-fusion-for-consistent-vector-hd-mapping.pdf",
+    "origin_url": "https://arxiv.org/abs/2403.15951",
+    "version": "33 pages",
+    "topic_tags": [
+      "hd_map",
+      "vector_map",
+      "temporal_fusion"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2403.15951, 33 pages"
+  },
+  {
+    "source_id": "paper-055",
+    "title": "MonoDLE: Delving into Localization Errors for Monocular 3D Object Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/monodle-delving-into-localization-errors-for-monocular-3d-object-detection.md",
+    "raw_path": "data/sources/raw/papers/paper-055_monodle-delving-into-localization-errors-for-monocular-3d-object-detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2103.16237",
+    "version": "15 pages",
+    "topic_tags": [
+      "monocular_3d_detection",
+      "localization",
+      "3d_object_detection"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2103.16237, 15 pages"
+  },
+  {
+    "source_id": "paper-056",
+    "title": "MonoDepth2 Monocular Self-Supervised Depth Estimation",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/monodepth2-monocular-self-supervised-depth-estimation.md",
+    "raw_path": "data/sources/raw/papers/MonoDepth2 Monocular Self-Supervised Depth Estimation.pdf",
+    "origin_url": "https://arxiv.org/abs/1812.03245",
+    "version": "9 pages",
+    "topic_tags": [
+      "3d_detection",
+      "depth_estimation",
+      "monocular_3d"
+    ],
+    "notes": "converted from arxiv PDF, 9 pages"
+  },
+  {
+    "source_id": "paper-057",
+    "title": "MonoFlex: Objects are Different: Flexible Monocular 3D Object Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/monoflex-objects-are-different-flexible-monocular-3d-object-detection.md",
+    "raw_path": "data/sources/raw/papers/paper-057_monoflex-objects-are-different-flexible-monocular-3d-object-detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2104.02323",
+    "version": "10 pages",
+    "topic_tags": [
+      "monocular_3d_detection",
+      "3d_object_detection"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2104.02323, 10 pages"
+  },
+  {
+    "source_id": "paper-058",
+    "title": "MonoGround Monocular 3D Object Detection Ground-truth",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/monoground-monocular-3d-object-detection-ground-truth.md",
+    "raw_path": "data/sources/raw/papers/MonoGround Monocular 3D Object Detection Ground-truth.pdf",
+    "origin_url": "https://arxiv.org/abs/2206.07372",
+    "version": "10 pages",
+    "topic_tags": [
+      "3d_detection",
+      "monocular_3d"
+    ],
+    "notes": "re-downloaded from arxiv:2206.07372, 10 pages"
+  },
+  {
+    "source_id": "paper-059",
+    "title": "Neural Map Prior for Autonomous Driving",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/neural-map-prior-for-autonomous-driving.md",
+    "raw_path": "data/sources/raw/papers/paper-059_neural-map-prior-for-autonomous-driving.pdf",
+    "origin_url": "https://arxiv.org/abs/2304.08481",
+    "version": "10 pages",
+    "topic_tags": [
+      "hd_map",
+      "neural_prior",
+      "mapping"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2304.08481, 10 pages"
+  },
+  {
+    "source_id": "paper-060",
+    "title": "Occ3D: A Large-Scale 3D Occupancy Prediction Benchmark for Autonomous Driving",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/occ3d-a-large-scale-3d-occupancy-prediction-benchmark-for-autonomous-driving.md",
+    "raw_path": "data/sources/raw/papers/paper-060_occ3d-a-large-scale-3d-occupancy-prediction-benchmark-for-autonomous-driving.pdf",
+    "origin_url": "https://arxiv.org/abs/2304.14365",
+    "version": "25 pages",
+    "topic_tags": [
+      "occupancy_prediction",
+      "benchmark",
+      "autonomous_driving"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2304.14365, 25 pages"
+  },
+  {
+    "source_id": "paper-061",
+    "title": "OccWorld: Learning a 3D Occupancy World Model for Autonomous Driving",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/occworld-learning-a-3d-occupancy-world-model-for-autonomous-driving.md",
+    "raw_path": "data/sources/raw/papers/paper-061_occworld-learning-a-3d-occupancy-world-model-for-autonomous-driving.pdf",
+    "origin_url": "https://arxiv.org/abs/2311.16038",
+    "version": "11 pages",
+    "topic_tags": [
+      "occupancy_prediction",
+      "world_model",
+      "autonomous_driving"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2311.16038, 11 pages"
+  },
+  {
+    "source_id": "paper-062",
+    "title": "PETR Position Embedding Transformation Multi-view 3D Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/petr-position-embedding-transformation-multi-view-3d-detection.md",
+    "raw_path": "data/sources/raw/papers/PETR Position Embedding Transformation Multi-view 3D Detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2203.05625",
+    "version": "18 pages",
+    "topic_tags": [
+      "3d_detection",
+      "transformer"
+    ],
+    "notes": "converted from arxiv PDF, 18 pages"
+  },
+  {
+    "source_id": "paper-063",
+    "title": "PETRv2 A Unified Framework for 3D Perception",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/petrv2-a-unified-framework-for-3d-perception.md",
+    "raw_path": "data/sources/raw/papers/PETRv2 A Unified Framework for 3D Perception.pdf",
+    "origin_url": "https://arxiv.org/abs/2206.01256",
+    "version": "10 pages",
+    "topic_tags": [
+      "3d_detection",
+      "transformer"
+    ],
+    "notes": "converted from arxiv PDF, 10 pages"
+  },
+  {
+    "source_id": "paper-064",
+    "title": "PV-RCNN Point-Voxel Feature Set Abstraction 3D Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/pv-rcnn-point-voxel-feature-set-abstraction-3d-detection.md",
+    "raw_path": "data/sources/raw/papers/PV-RCNN Point-Voxel Feature Set Abstraction 3D Detection.pdf",
+    "origin_url": "https://arxiv.org/abs/1912.13192",
+    "version": "11 pages",
+    "topic_tags": [
+      "3d_detection",
+      "lidar"
+    ],
+    "notes": "converted from arxiv PDF, 11 pages"
+  },
+  {
+    "source_id": "paper-065",
+    "title": "PV-RCNN++: Point-Voxel Feature Set Abstraction With Local Vector Representation for 3D Object Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/pv-rcnn-point-voxel-feature-set-abstraction-with-local-vector-representation-for-3d-object.md",
+    "raw_path": "data/sources/raw/papers/paper-065_pv-rcnn-point-voxel-feature-set-abstraction-with-local-vector-representation-for-3d-object.pdf",
+    "origin_url": "https://arxiv.org/abs/2102.00463",
+    "version": "19 pages",
+    "topic_tags": [
+      "point_cloud",
+      "3d_object_detection",
+      "lidar_perception"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2102.00463, 19 pages"
+  },
+  {
+    "source_id": "paper-066",
+    "title": "Part-A2 Net: 3D Part-Aware and Aggregation Neural Network for Object Detection from Point Cloud",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/part-a2-net-3d-part-aware-and-aggregation-neural-network-for-object-detection-from-point-c.md",
+    "raw_path": "data/sources/raw/papers/paper-066_part-a2-net-3d-part-aware-and-aggregation-neural-network-for-object-detection-from-point-c.pdf",
+    "origin_url": "https://arxiv.org/abs/1907.03670",
+    "version": "17 pages",
+    "topic_tags": [
+      "point_cloud",
+      "3d_object_detection",
+      "lidar_perception"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 1907.03670, 17 pages"
+  },
+  {
+    "source_id": "paper-067",
+    "title": "PersFormer: 3D Lane Detection via Perspective Transformer and the OpenLane Benchmark",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/persformer-3d-lane-detection-via-perspective-transformer-and-the-openlane-benchmark.md",
+    "raw_path": "data/sources/raw/papers/paper-067_persformer-3d-lane-detection-via-perspective-transformer-and-the-openlane-benchmark.pdf",
+    "origin_url": "https://arxiv.org/abs/2203.11089",
+    "version": "33 pages",
+    "topic_tags": [
+      "lane_detection",
+      "3d_lane",
+      "transformer"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2203.11089, 33 pages"
+  },
+  {
+    "source_id": "paper-068",
+    "title": "PointPillars Fast Encoders Object Detection Point Clouds",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/pointpillars-fast-encoders-object-detection-point-clouds.md",
+    "raw_path": "data/sources/raw/papers/PointPillars Fast Encoders Object Detection Point Clouds.pdf",
+    "origin_url": "https://arxiv.org/abs/1812.05784",
+    "version": "9 pages",
+    "topic_tags": [
+      "3d_detection",
+      "lidar"
+    ],
+    "notes": "converted from arxiv PDF, 9 pages"
+  },
+  {
+    "source_id": "paper-069",
+    "title": "RCBEV: Radar-Camera Fusion in Bird's Eye View for 3D Object Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/rcbev-radar-camera-fusion-in-bird-s-eye-view-for-3d-object-detection.md",
+    "raw_path": "data/sources/raw/papers/paper-069_rcbev-radar-camera-fusion-in-bird-s-eye-view-for-3d-object-detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2403.16440",
+    "version": "10 pages",
+    "topic_tags": [
+      "camera_radar_fusion",
+      "bev_perception",
+      "3d_object_detection"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2403.16440, 10 pages"
+  },
+  {
+    "source_id": "paper-070",
+    "title": "RadarNet: Exploiting Radar for Robust Perception of Dynamic Objects",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/radarnet-exploiting-radar-for-robust-perception-of-dynamic-objects.md",
+    "raw_path": "data/sources/raw/papers/paper-070_radarnet-exploiting-radar-for-robust-perception-of-dynamic-objects.pdf",
+    "origin_url": "https://arxiv.org/abs/2007.14366",
+    "version": "16 pages",
+    "topic_tags": [
+      "radar_perception",
+      "3d_object_detection"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2007.14366, 16 pages"
+  },
+  {
+    "source_id": "paper-071",
+    "title": "RenderOcc: Vision-Centric 3D Occupancy Prediction with 2D Rendering Supervision",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/renderocc-vision-centric-3d-occupancy-prediction-with-2d-rendering-supervision.md",
+    "raw_path": "data/sources/raw/papers/paper-071_renderocc-vision-centric-3d-occupancy-prediction-with-2d-rendering-supervision.pdf",
+    "origin_url": "https://arxiv.org/abs/2309.09502",
+    "version": "8 pages",
+    "topic_tags": [
+      "occupancy_prediction",
+      "vision_perception",
+      "rendering"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2309.09502, 8 pages"
+  },
+  {
+    "source_id": "paper-072",
+    "title": "SE-SSD Self-Ensembling Single-Stage Object Detector Point Cloud",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/se-ssd-self-ensembling-single-stage-object-detector-point-cloud.md",
+    "raw_path": "data/sources/raw/papers/SE-SSD Self-Ensembling Single-Stage Object Detector Point Cloud.pdf",
+    "origin_url": "https://arxiv.org/abs/2104.09804",
+    "version": "11 pages",
+    "topic_tags": [
+      "3d_detection",
+      "lidar"
+    ],
+    "notes": "re-downloaded from arxiv:2104.09804, 11 pages"
+  },
+  {
+    "source_id": "paper-073",
+    "title": "PointRCNN: 3D Object Proposal Generation and Detection from Point Cloud",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/pointrcnn-3d-object-detection.md",
+    "raw_path": "data/sources/raw/papers/paper-073_PointRCNN_3D_Object_Detection.pdf",
+    "origin_url": "https://arxiv.org/abs/1812.04244",
+    "version": "10 pages",
+    "topic_tags": [
+      "3d_object_detection",
+      "point_cloud",
+      "lidar_perception"
+    ],
+    "notes": "converted from arxiv PDF, 10 pages"
+  },
+  {
+    "source_id": "paper-074",
+    "title": "SMOKE Single-Stage Monocular 3D Object Detection Keypoint",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/smoke-single-stage-monocular-3d-object-detection-keypoint.md",
+    "raw_path": "data/sources/raw/papers/SMOKE Single-Stage Monocular 3D Object Detection Keypoint.pdf",
+    "origin_url": "https://arxiv.org/abs/2108.06417",
+    "version": "12 pages",
+    "topic_tags": [
+      "3d_detection",
+      "lidar",
+      "monocular_3d"
+    ],
+    "notes": "converted from arxiv PDF, 12 pages"
+  },
+  {
+    "source_id": "paper-075",
+    "title": "SparseDrive End-to-End Autonomous Driving Sparse Scene",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/sparsedrive-end-to-end-autonomous-driving-sparse-scene.md",
+    "raw_path": "data/sources/raw/papers/SparseDrive End-to-End Autonomous Driving Sparse Scene.pdf",
+    "origin_url": "https://arxiv.org/abs/2405.19620",
+    "version": "16 pages",
+    "topic_tags": [
+      "end_to_end",
+      "sparse"
+    ],
+    "notes": "re-downloaded from arxiv:2405.19620, 16 pages"
+  },
+  {
+    "source_id": "paper-076",
+    "title": "SparseDrive: End-to-End Autonomous Driving via Sparse Scene Representation",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/sparsedrive-end-to-end-autonomous-driving-via-sparse-scene-representation.md",
+    "raw_path": "data/sources/raw/papers/paper-076_sparsedrive-end-to-end-autonomous-driving-via-sparse-scene-representation.pdf",
+    "origin_url": "https://arxiv.org/abs/2405.19620",
+    "version": "16 pages",
+    "topic_tags": [
+      "end_to_end_driving",
+      "sparse_representation",
+      "planning"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2405.19620, 16 pages"
+  },
+  {
+    "source_id": "paper-077",
+    "title": "SparseFusion Fusing Multi-modal Sparse Representations 3D Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/sparsefusion-fusing-multi-modal-sparse-representations-3d-detection.md",
+    "raw_path": "data/sources/raw/papers/SparseFusion Fusing Multi-modal Sparse Representations 3D Detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2304.14340",
+    "version": "15 pages",
+    "topic_tags": [
+      "autonomous_driving"
+    ],
+    "notes": "re-downloaded from arxiv:2304.14340, 15 pages"
+  },
+  {
+    "source_id": "paper-078",
+    "title": "StreamMapNet: Streaming Mapping Network for Vectorized Online HD Map Construction",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/streammapnet-streaming-mapping-network-for-vectorized-online-hd-map-construction.md",
+    "raw_path": "data/sources/raw/papers/paper-078_streammapnet-streaming-mapping-network-for-vectorized-online-hd-map-construction.pdf",
+    "origin_url": "https://arxiv.org/abs/2308.12570",
+    "version": "15 pages",
+    "topic_tags": [
+      "hd_map",
+      "online_mapping",
+      "vector_map"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2308.12570, 15 pages"
+  },
+  {
+    "source_id": "paper-079",
+    "title": "TPVFormer Tri-perspective View 3D Semantic Occupancy",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/tpvformer-tri-perspective-view-3d-semantic-occupancy.md",
+    "raw_path": "data/sources/raw/papers/TPVFormer Tri-perspective View 3D Semantic Occupancy.pdf",
+    "origin_url": "https://arxiv.org/abs/2302.07817",
+    "version": "13 pages",
+    "topic_tags": [
+      "lane_detection",
+      "occupancy_prediction"
+    ],
+    "notes": "re-downloaded from arxiv:2302.07817, 13 pages"
+  },
+  {
+    "source_id": "paper-080",
+    "title": "TransFusion Robust LiDAR-Camera Fusion 3D Object Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/transfusion-robust-lidar-camera-fusion-3d-object-detection.md",
+    "raw_path": "data/sources/raw/papers/TransFusion Robust LiDAR-Camera Fusion 3D Object Detection.pdf",
+    "origin_url": "https://arxiv.org/abs/2203.11496",
+    "version": "15 pages",
+    "topic_tags": [
+      "3d_detection",
+      "camera_fusion",
+      "lidar"
+    ],
+    "notes": "converted from arxiv PDF, 15 pages"
+  },
+  {
+    "source_id": "paper-081",
+    "title": "UniDepth: Universal Monocular Metric Depth Estimation",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/unidepth-universal-monocular-metric-depth-estimation.md",
+    "raw_path": "data/sources/raw/papers/paper-081_unidepth-universal-monocular-metric-depth-estimation.pdf",
+    "origin_url": "https://arxiv.org/abs/2403.18913",
+    "version": "18 pages",
+    "topic_tags": [
+      "depth_estimation",
+      "monocular_perception"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2403.18913, 18 pages"
+  },
+  {
+    "source_id": "paper-082",
+    "title": "UniSim: A Neural Closed-Loop Sensor Simulator",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/unisim-a-neural-closed-loop-sensor-simulator.md",
+    "raw_path": "data/sources/raw/papers/paper-082_unisim-a-neural-closed-loop-sensor-simulator.pdf",
+    "origin_url": "https://arxiv.org/abs/2308.01898",
+    "version": "22 pages",
+    "topic_tags": [
+      "simulation",
+      "sensor_simulation",
+      "autonomous_driving"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2308.01898, 22 pages"
+  },
+  {
+    "source_id": "paper-083",
+    "title": "VAD Vectorized Scene Representation Efficient Autonomous Driving",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/vad-vectorized-scene-representation-efficient-autonomous-driving.md",
+    "raw_path": "data/sources/raw/papers/VAD Vectorized Scene Representation Efficient Autonomous Driving.pdf",
+    "origin_url": "https://arxiv.org/abs/2303.12077",
+    "version": "11 pages",
+    "topic_tags": [
+      "end_to_end",
+      "hd_map",
+      "map_construction",
+      "vectorized"
+    ],
+    "notes": "converted from arxiv PDF, 11 pages"
+  },
+  {
+    "source_id": "paper-084",
+    "title": "VectorMapNet End-to-end Vectorized HD Map Learning",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/vectormapnet-end-to-end-vectorized-hd-map-learning.md",
+    "raw_path": "data/sources/raw/papers/VectorMapNet End-to-end Vectorized HD Map Learning.pdf",
+    "origin_url": "https://arxiv.org/abs/2206.08920",
+    "version": "18 pages",
+    "topic_tags": [
+      "hd_map",
+      "map_construction"
+    ],
+    "notes": "converted from arxiv PDF, 18 pages"
+  },
+  {
+    "source_id": "paper-085",
+    "title": "ViP3D: End-to-end Visual Trajectory Prediction via 3D Agent Queries",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/vip3d-end-to-end-visual-trajectory-prediction-via-3d-agent-queries.md",
+    "raw_path": "data/sources/raw/papers/paper-085_vip3d-end-to-end-visual-trajectory-prediction-via-3d-agent-queries.pdf",
+    "origin_url": "https://arxiv.org/abs/2208.01582",
+    "version": "15 pages",
+    "topic_tags": [
+      "trajectory_prediction",
+      "3d_queries",
+      "end_to_end"
+    ],
+    "notes": "replaced polluted source; converted from arXiv PDF 2208.01582, 15 pages"
+  },
+  {
+    "source_id": "paper-086",
+    "title": "VoxelNet End-to-End Learning Point Cloud 3D Object Detection",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/voxelnet-end-to-end-learning-point-cloud-3d-object-detection.md",
+    "raw_path": "data/sources/raw/papers/VoxelNet End-to-End Learning Point Cloud 3D Object Detection.pdf",
+    "origin_url": "https://arxiv.org/abs/1711.06396",
+    "version": "10 pages",
+    "topic_tags": [
+      "3d_detection",
+      "lidar"
+    ],
+    "notes": "converted from arxiv PDF, 10 pages"
+  },
+  {
+    "source_id": "paper-087",
+    "title": "GAIA-1: A Generative World Model for Autonomous Driving",
+    "doc_type": "paper",
+    "category": "papers",
+    "language": "en",
+    "path_or_url": "data/sources/papers/gaia-1-generative-world-model.md",
+    "raw_path": "data/sources/raw/papers/GAIA-1 A Generative World Model for Autonomous Driving.pdf",
+    "origin_url": "https://arxiv.org/abs/2309.17080",
+    "version": "25 pages",
+    "topic_tags": [
+      "world_model",
+      "generation",
+      "end_to_end"
+    ],
+    "notes": "downloaded from arxiv:2309.17080, 25 pages"
   }
 ]

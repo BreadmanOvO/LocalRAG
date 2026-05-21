@@ -1,0 +1,3453 @@
+[
+  {
+    "question": "根据文档中表13的消融实验，当使用稀疏聚合（sparse aggregation）时，将Top-K查询数量从All（全部）减少到4096，对MFA（多模态特征聚合）延迟有多大影响？同时，在AP和ATE等指标上出现了怎样的性能变化？",
+    "reference_answer": "使用4096个查询时，MFA延迟降低了76.4%（从21.01ms降至4.96ms）。性能方面，AP从All时的56.9%降至54.0%，ATE从0.325升至0.367，即分类性能略有下降，但回归指标（如ATE、AOE、AVE）下降更显著。",
+    "evidence": [
+      {
+        "quote": "\"using 4096 size queries reduce the latency of MFA by 76.4% (21.01ms to 4.96ms) on 256 × 256 size BEV grid. ... the performance drops on True Positive metrics (e.g., ATE, AOE, AVE) are more significant than AP, assuming that the classification network can maintain its performance, but the regression network suffers from sparsely spread BEV features to regress objects' attributes.\"",
+        "source_id": "paper-030",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_object_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-001"
+  },
+  {
+    "question": "传统时间立体方法在自动驾驶3D检测场景中面临哪两个主要缺陷？",
+    "reference_answer": "两个主要缺陷是：1）巨大的内存开销，例如将BEVDepth中的深度模块替换为基本时间立体方法后，内存增长3.5倍，而NDS仅提升1.6%；2）无法推理移动物体和静态自车的深度，因为自车静止时视差角趋近0，而物体运动时立体匹配失效。统计显示，nuScenes中超过10%的帧自车静止，约25%的物体在运动。",
+    "evidence": [
+      {
+        "quote": "\"1. Large memory cost. When we replace the depth module in BEVDepth with a basic temporal stereo method (Yao et al. 2018), the memory cost grows to 3.5 times that of BEVDepth despite bringing a 1.6 percent promotion on NDS, making it a tremendous burden to apply it to a detection task; 2. Failing to reason the depth of moving objects and static ego vehicle cases. Temporal stereo approaches are unable to handle several situations (Wang, Pang, and Lin 2022) 2022) like a static ego vehicle and moving objects since the parallax angle tends to 0 if ego vehicle is static and the stereo is unable to match if the object is moving.\"",
+        "source_id": "paper-028",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "depth_estimation",
+      "doc_type": "paper"
+    },
+    "id": "train-002"
+  },
+  {
+    "question": "根据文档，基础设施拥有者和运营者在自动化车辆部署中扮演什么角色？他们表达了什么需求？",
+    "reference_answer": "基础设施拥有者和运营者负责规划、设计、建设、维护和运营道路基础设施，他们对如何为自动化车辆在公共道路上的测试和部署做好准备表达了获取更多信息和指导的需求。",
+    "evidence": [
+      {
+        "quote": "[p.34] Considerations for Infrastructure Owners and Operators Infrastructure owners and operators are involved in the planning, design, construction, maintenance, and operation of the roadway infrastructure. Infrastructure owners and operators have expressed interest in more information and guidance on how to prepare for automated vehicle deployment and testing on public roadways.",
+        "source_id": "standard-003",
+        "locator": "page=34"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "system_architecture",
+      "doc_type": "standard"
+    },
+    "id": "train-003"
+  },
+  {
+    "question": "在CSDP模块的跨视图注意力中，不同mask ratio对检测性能的影响如何？实验表明哪个mask ratio效果最佳？",
+    "reference_answer": "通过消融实验（Tab. 8），mask ratio设置为0.2时效果最佳，NDS达到58.5%，mAP达到50.5%，mATE为0.569，优于无mask（NDS 58.3）和其他比例（0.1、0.3）。",
+    "evidence": [
+      {
+        "quote": "In our CSDP module, we apply a fixed-ratio mask to the features in order to mitigate the influence of non-overlapping regions. To verify the effectiveness of this masking approach, we conduct ablation studies to evaluate the impact of different mask ratios, as illustrated in Tab. 8. With a mask ratio of 0.2, our method demonstrates improved performance, outperforming the model without masking and other mask ratio. Table 8. Necessity of cross-view. Mask Ratio NDS ↑ mAP ↑ mATE↓ - 58.3 50.3 0.578 0.1 57.3 49.6 0.609 0.2 58.5 50.5 0.569 0.3 58.2 50 0.580",
+        "source_id": "paper-037",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "transformer",
+      "doc_type": "paper"
+    },
+    "id": "train-004"
+  },
+  {
+    "question": "根据本文分析，为什么基于BEV表示在3D目标检测任务上表现良好，但却难以描述细粒度的3D结构？",
+    "reference_answer": "因为3D目标检测只需要对常见物体（如车辆、行人）预测粗粒度的包围框，而BEV将高度压缩后仍能编码这些信息；然而真实场景中物体的3D结构多样，难以用扁平的向量完整表示，因此需要更全面细粒度的3D理解。",
+    "evidence": [
+      {
+        "quote": "\"This is because 3D object detection only demands predictions of coarse-level bounding boxes for commonly seen objects such as cars and pedestrians. However, objects with various 3D structures can be encountered in real scenes and it is difficult (if not impossible) to encode all of them using a flattened vector. Therefore, it requires a more comprehensive and fine-grained understanding of the 3D surroundings toward a safer and more robust vision-centric autonomous driving system.\" (Page 2)",
+        "source_id": "paper-079",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "occupancy_prediction",
+      "doc_type": "paper"
+    },
+    "id": "train-005"
+  },
+  {
+    "question": "为什么Lift-Splat模型能够实现端到端的可微分感知？相比传统的多视角扩展方法有什么优势？",
+    "reference_answer": "Lift-Splat模型设计的整个流程（从图像到BEV表示）是端到端可微分的，允许误差从下游规划器反向传播回感知网络。传统方法使用单图像检测器的后处理检测结果，这阻止了从自车坐标系中的预测到传感器输入的梯度传递。因此，模型无法以数据驱动方式学习跨相机融合的最佳方式，也无法利用规划器的反馈自动改进感知系统。Lift-Splat通过可微的“提升-溅射”操作解决了这一问题。",
+    "evidence": [
+      {
+        "quote": "The downside of the simple approach above is that using post-processed detections from the single-image detector prevents one from differentiating from predictions made in the ego frame all the way back to the sensor inputs. As a result, the model cannot learn in a data-driven way... backpropagation cannot be used to automatically improve the perception system using feedback from the downstream planner. We propose a model named “Lift-Splat” that preserves the 3 symmetries identified above by design while also being end-to-end differentiable.",
+        "source_id": "paper-048",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-006"
+  },
+  {
+    "question": "SparseDrive由哪两个主要模块组成？",
+    "reference_answer": "SparseDrive由一个对称的稀疏感知模块（symmetric sparse perception module）和一个并行运动规划器（parallel motion planner）组成。",
+    "evidence": [
+      {
+        "quote": "\"SparseDrive consists of a symmetric sparse perception module and a parallel motion planner. The sparse perception module unifies detection, tracking and online mapping with a symmetric model architecture, learning a fully sparse representation of the driving scene. For motion prediction and planning, we review the great similarity between these two tasks, leading to a parallel design for motion planner.\"",
+        "source_id": "paper-076",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "end_to_end_driving",
+      "doc_type": "paper"
+    },
+    "id": "train-007"
+  },
+  {
+    "question": "Lift-Splat模型的核心思想是什么？",
+    "reference_answer": "Lift-Splat模型的核心思想是将每个图像单独“提升”（lift）为每个相机的视锥特征，然后将所有视锥“溅射”（splat）到一个栅格化的鸟瞰视角（BEV）网格中，从而直接提取场景的鸟瞰视角表示。",
+    "evidence": [
+      {
+        "quote": "The core idea behind our approach is to “lift” each image individually into a frustum of features for each camera, then “splat” all frustums into a rasterized bird’s-eye-view grid.",
+        "source_id": "paper-048",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "bev_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-008"
+  },
+  {
+    "question": "Part-A2 Net由哪两个阶段组成？",
+    "reference_answer": "Part-A2 Net由part-aware stage（部件感知阶段）和part-aggregation stage（部件聚合阶段）组成。",
+    "evidence": [
+      {
+        "quote": "\"the part-aware and aggregation neural network (Part-A2 net). The whole framework consists of the part-aware stage and the part-aggregation stage.\"",
+        "source_id": "paper-066",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "3d_object_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-009"
+  },
+  {
+    "question": "与 BEVGen 和 BEVControl 相比，MagicDrive 在几何控制上解决了哪些关键问题？其设计中的哪个模块有助于多视图一致性？",
+    "reference_answer": "BEVGen 丢失了高度信息，BEVControl 丢失了深度信息；MagicDrive 通过分离设计对物体和道路地图进行编码，并引入交叉视图注意力模块，在相邻视图间进行交互，从而保持多视图一致性并提供精确的3D几何控制。",
+    "evidence": [
+      {
+        "quote": "\"Existing solutions like BEVGen ... approach street view generation by encapsulating all semantics within BEV. Conversely, BEVControl starts by projecting 3D coordinates to image views, subsequently using 2D geometric guidance. However, both methods compromise certain geometric dimensions—height is lost in BEVGen and depth in BEVControl. ... One distinctive component of our framework is the cross-view attention module. This simple yet effective component provides multi-view consistency through interactions between adjacent views.\"",
+        "source_id": "paper-052",
+        "locator": "page=2 (Section 1)"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "3d_geometry",
+      "doc_type": "paper"
+    },
+    "id": "train-010"
+  },
+  {
+    "question": "根据论文，提出的卷积前端（Convolutional Frontend）在单目图像上输出哪些内容？",
+    "reference_answer": "输出2D关键点位置（二维）关键点位置（keypoint locations）、关键点描述子（keypoint descriptors）以及一种新颖的点稳定性分数（point stability score）。",
+    "evidence": [
+      {
+        "quote": "Our proposed frontend operates on monocular images and consists of a single multi-task convolutional neural network which outputs 2D keypoints locations, keypoint descriptors, and a novel point stability score.",
+        "source_id": "paper-056",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "monocular_3d",
+      "doc_type": "paper"
+    },
+    "id": "train-011"
+  },
+  {
+    "question": "在NHTSA新组织架构中，负责执法的部门具体位于哪个机构下？该部门名称是什么？",
+    "reference_answer": "位于缺陷调查办公室（Office of Defects Investigation）内，名为“先进和新兴技术部门”（Advanced and Emerging Technologies Division）。",
+    "evidence": [
+      {
+        "quote": "\"5 New NHTSA Organizations • Rulemaking: • Enforcement: Within the Office of Defects Investigation – Advanced and Emerging Technologies Division Office of Automation Safety Automat…\"",
+        "source_id": "standard-006",
+        "locator": "page=5"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-012"
+  },
+  {
+    "question": "在Far3D中，自适应查询如何生成？训练过程中如何处理深度信息以提升效果？",
+    "reference_answer": "自适应查询通过将2D proposals和对应的深度估计变换到3D空间生成。训练早期使用GT深度生成3D自适应查询，待网络训练稳定后引入预测深度进行适应。",
+    "evidence": [
+      {
+        "quote": "\"Our adaptive queries are generated by transforming 2D proposals and corresponding depth estimates into 3D space. To ensure the training efficacy, during the early stages of training, we utilize ground truth (GT) depth to generate 3D adaptive queries. As the network training stabilizes, we introduce predicted depth for the adaptation process.\"",
+        "source_id": "paper-041",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "surround_view",
+      "doc_type": "paper"
+    },
+    "id": "train-013"
+  },
+  {
+    "question": "NMP如何通过两种技术手段实现全局地图先验的更新和局部地图推理的增强？",
+    "reference_answer": "首先，通过交叉注意力机制动态识别当前特征与先验特征之间的相关性，将强地图先验集成到局部地图推理中；其次，利用基于学习的融合模块，引导网络融合来自先前遍历的特征，从而更新全局神经地图先验。",
+    "evidence": [
+      {
+        "quote": "\"Specifically, we utilize two approaches to achieve this. Firstly, to integrate a strong map prior into local map inference, we apply cross-attention, a mechanism that dynamically identifies correlations between current and prior features. Secondly, to update the global neural map prior, we utilize a learning-based fusion module that guides the network in fusing features from previous traversals.\"",
+        "source_id": "paper-059",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "mapping",
+      "doc_type": "paper"
+    },
+    "id": "train-014"
+  },
+  {
+    "question": "GameFormer模型是基于什么理论来建模交通参与者之间的交互预测问题？",
+    "reference_answer": "基于层次博弈论（level-k game theory）。",
+    "evidence": [
+      {
+        "quote": "This paper tackles the interaction prediction problem by formulating it with hierarchical game theory and proposing the GameFormer model for its implementation.",
+        "source_id": "paper-044",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "prediction",
+      "doc_type": "paper"
+    },
+    "id": "train-015"
+  },
+  {
+    "question": "BEVFusion的核心思想是什么？它如何解决多模态传感器融合中的视图不一致问题？",
+    "reference_answer": "BEVFusion的核心思想是将多模态特征统一到共享的鸟瞰图（BEV）表示空间中，而不是将一种模态映射到另一种模态。它通过相机到BEV的视图变换和LiDAR到BEV的转换，同时保留相机的语义密度和LiDAR的几何结构，从而解决了相机（透视图）和LiDAR（3D视图）之间的视图不一致问题。",
+    "evidence": [
+      {
+        "quote": "\"In this paper, we propose BEVFusion to unify multi-modal features in a shared bird’s-eye view (BEV) representation space for task-agnostic learning. We maintain both geometric structure and semantic density (see Figure 1c) and naturally support most 3D perception tasks (since their output space can be naturally captured in BEV).\"",
+        "source_id": "paper-002",
+        "locator": "page=1: page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    },
+    "id": "train-016"
+  },
+  {
+    "question": "HDMapNet中提出的从透视图到鸟瞰图的特征投影模块有哪些特点？",
+    "reference_answer": "该模块隐式地建模3D环境，并显式考虑相机外参。它结合了神经特征变换和几何投影，用于在缺少深度信息的情况下有效将透视图像特征转换为鸟瞰图特征。",
+    "evidence": [
+      {
+        "quote": "\"We put forward a novel view transformer that consists of both neural feature transformation and geometric projection. ... We come up with a novel feature projection module from perspective view to bird's-eye view. This module models 3D environments implicitly and considers the camera extrinsic explicitly.\"",
+        "source_id": "paper-046",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "bev_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-017"
+  },
+  {
+    "question": "GaussianOcc中Gaussian Splatting from Voxel space (GSV)模块的核心思想是什么，它带来了哪些性能提升？",
+    "reference_answer": "GSV模块将体素网格中的每个顶点视为3D高斯，直接在体素空间中优化高斯的属性（如语义和不透明度），从而避免了传统体渲染的密集采样，实现了更快的训练和渲染速度。",
+    "evidence": [
+      {
+        "quote": "\"Instead, we propose performing Gaussian splatting directly from the 3D voxel space. In this approach, each vertex in the voxel grid is treated as a 3D Gaussian, and we optimize the attributes of these Gaussians—such as semantic and opacity—directly within the voxel space. ... achieving competitive performance with 2.7 times faster training and 5 times faster rendering compared to the previous works with volume rendering.\"",
+        "source_id": "paper-045",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "gaussian_splatting",
+      "doc_type": "paper"
+    },
+    "id": "train-018"
+  },
+  {
+    "question": "根据论文，3D占用预测任务如何形式化定义？对于不在预定义类别中的物体，论文中如何标记和处理？",
+    "reference_answer": "3D占用预测任务形式化为：模型需要从图像中联合估计场景中每个体素的占用状态和语义标签。占用状态分为自由（free）、被占用（occupied）或未观测（unobserved）。对于被占用体素，分配语义标签；对于不在预定义类别中的物体，标记为通用物体（General Objects，GOs），这对于安全至关重要的感知任务非常必要，因为传统3D目标检测会漏检这些物体。",
+    "evidence": [
+      {
+        "quote": "\"We formalize the 3D occupancy prediction task as follows: a model needs to jointly estimate the occupancy state and semantic label of every voxel in the scene from images [2, 24, 5]. The occupancy state of each voxel can be categorized as free, occupied, or unobserved. For occupied voxels, semantic labels are assigned. For objects that are not in the predefined categories, they are labeled as General Objects (GOs). Although GOs are rare, they are essential for perception tasks with safety considerations since they are typically undetected by 3D object detection with predefined categories.\"",
+        "source_id": "paper-060",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "autonomous_driving",
+      "doc_type": "paper"
+    },
+    "id": "train-019"
+  },
+  {
+    "question": "在自动驾驶场景中，RenderOcc如何解决稀疏视角带来的渲染监督效果受限问题？请简要描述其方法。",
+    "reference_answer": "通过引入Auxiliary Ray方法，利用相邻帧的射线来增强当前帧的多视角一致性约束，并设计动态采样训练策略，筛选不对齐的射线并控制额外训练成本。",
+    "evidence": [
+      {
+        "quote": "\"Considering this, we introduce the concept of Auxiliary-Ray, which leverages rays from adjacent frames to enhance the multi-view consistency constraints for the current frame. Moreover, we have developed a dynamic sampling training strategy for auxiliary rays, which not only screens out misaligned rays, but also simultaneously mitigates the additional training costs associated with them.\"",
+        "source_id": "paper-071",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "rendering",
+      "doc_type": "paper"
+    },
+    "id": "train-020"
+  },
+  {
+    "question": "特征引导位置编码器（Feature-guided Position Encoder, FPE）是如何改进原始 3D PE 的？请简述其具体流程。",
+    "reference_answer": "FPE 将投影后的 2D 特征输入一个小型 MLP 网络和 Sigmoid 层，生成注意力权重，然后以逐元素方式重新加权 3D PE，使其变为数据依赖的，从而为 transformer 解码器中的查询学习提供信息指导。",
+    "evidence": [
+      {
+        "quote": "\"Concretely, the projected 2D features are firstly injected into a small MLP network and a Sigmoid layer to generate the attention weight, which is used to reweight the 3D PE in an element-wise manner. The improved 3D PE is data-dependent, providing the informative guidance for the query learning in transformer decoder.\"",
+        "source_id": "paper-063",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "multi_view",
+      "doc_type": "paper"
+    },
+    "id": "train-021"
+  },
+  {
+    "question": "GenAD如何建模未来轨迹的结构化先验？请简述其方法。",
+    "reference_answer": "GenAD学习一个变分自编码器（VAE），将真实轨迹映射到高斯分布，以考虑运动预测和规划的不确定性，然后使用门控循环单元（GRU）在潜在空间中进行自回归，建模实例移动。",
+    "evidence": [
+      {
+        "quote": "\"To model the structural prior of future trajectories, we learn a variational autoencoder to map ground-truth map ground-truth trajectories to Gaussian distributions considering the uncertain nature of motion prediction and driving planning. We then use a simple yet effective gated recurrent unit (GRU) [7] to perform auto-regressing to model instance move\"",
+        "source_id": "paper-007",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    },
+    "id": "train-022"
+  },
+  {
+    "question": "ViP3D使用什么作为整个pipeline的主要线程，从而实现端到端的未来轨迹预测？",
+    "reference_answer": "ViP3D使用3D agent queries作为整个pipeline的主要线程，从而实现从原始视频帧输入到未来轨迹预测的端到端处理。",
+    "evidence": [
+      {
+        "quote": "\"ViP3D uses 3D agent queries as the main thread of the pipeline, enabling end-to-end future trajectory prediction from raw video frame inputs.\"",
+        "source_id": "paper-085",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "end_to_end",
+      "doc_type": "paper"
+    },
+    "id": "train-023"
+  },
+  {
+    "question": "AV 3.0这份文档的主要目的是什么？",
+    "reference_answer": "AV 3.0旨在启动一场关于美国地面交通系统未来的全国性讨论，推动自动化车辆的发展，改善交通安全与出行体验。",
+    "evidence": [
+      {
+        "quote": "[p.2] With the development of automated vehicles, American creativity and innovation hold the potential to once again transform mobility. AV 3.0 is the beginning of a national discussion about the future of our surface transportation system. Your voice is essential to shaping this future.",
+        "source_id": "standard-003",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-024"
+  },
+  {
+    "question": "MUTR3D在nuScenes数据集上相比之前最好的方法提升了多少AMOTA？",
+    "reference_answer": "5.3 AMOTA",
+    "evidence": [
+      {
+        "quote": "\"MUTR3D outperforms state-of-the-art methods by 5.3 AMOTA on the nuScenes dataset.\"",
+        "source_id": "paper-051",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "multi_object_tracking",
+      "doc_type": "paper"
+    },
+    "id": "train-025"
+  },
+  {
+    "question": "VAD相比传统栅格化场景表示方法，在性能和效率上有哪些具体优势？请至少列出两点。",
+    "reference_answer": "1. 性能上：VAD在nuScenes数据集上实现了最先进的端到端规划性能，VAD-Base模型将平均碰撞率降低了29.0%。2. 效率上：VAD-Base运行速度比之前最佳方法快2.5倍，轻量级变体VAD-Tiny推理速度提升高达9.3倍，且计算开销更小，无需栅格化表示和手工设计的后处理步骤。",
+    "evidence": [
+      {
+        "quote": "\"VAD achieves state-of-the-art end-to-end planning performance on the nuScenes dataset, outperforming the previous best method by a large margin. Our base model, VAD-Base, greatly reduces the average collision rate by 29.0% and runs  and runs 2.5× faster. Besides, a lightweight variant, VAD-Tiny, greatly improves the inference speed (up to 9.3×) while achieving comparable planning performance.\"",
+        "source_id": "paper-005",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    },
+    "id": "train-026"
+  },
+  {
+    "question": "PersFormer如何生成鸟瞰图（BEV）特征？",
+    "reference_answer": "通过注意力机制关注前视图中的相关局部区域，并参考相机参数来生成BEV特征。",
+    "evidence": [
+      {
+        "quote": "\"Our model generates BEV features by attending to related front-view local regions with camera parameters as a reference.\"",
+        "source_id": "paper-067",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "transformer",
+      "doc_type": "paper"
+    },
+    "id": "train-027"
+  },
+  {
+    "question": "在TPV（三透视视图）表示中，如何获得三维空间中任意点的特征？",
+    "reference_answer": "首先将该点分别投影到三个平面上，用双线性插值获得每个投影点的特征，然后将三个投影特征求和，作为该三维点的综合特征。",
+    "evidence": [
+      {
+        "quote": "\"Specifically, to obtain the feature of a point in the 3D space, we first project it into each of the three planes and use bilinear interpolation to obtain the feature for each projected point. We then sum the three projected features as the comprehensive feature of the 3D point.\" (Page 2)",
+        "source_id": "paper-079",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "occupancy_prediction",
+      "doc_type": "paper"
+    },
+    "id": "train-028"
+  },
+  {
+    "question": "根据文档中的分类表格（Table 1），SparseFusion属于哪一类 LiDAR-相机融合方法？",
+    "reference_answer": "Sparse+Sparse→Sparse。",
+    "evidence": [
+      {
+        "quote": "\"Sparse+Sparse→Sparse (ours) extracts sparse instance features from each modality and directly fuses them to obtain the final sparse instance features used for detection.\"",
+        "source_id": "paper-077",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "autonomous_driving",
+      "doc_type": "paper"
+    },
+    "id": "train-029"
+  },
+  {
+    "question": "MapTracker的主要创新点是什么？",
+    "reference_answer": "MapTracker将向量高清地图构建（Vector HD mapping）作为跟踪任务（tracking task），并利用历史记忆潜伏表示（memory latents）来确保时间一致性。它维护两种潜伏表示的缓存：鸟瞰视角（BEV）空间中的栅格潜伏和道路元素上的向量潜伏，并通过距离步长选择部分记忆潜伏进行融合以增强时间一致性。",
+    "evidence": [
+      {
+        "quote": "\"This paper presents a vector HD-mapping algorithm that formulates the mapping as a tracking task and uses a history of memory latents to ensure consistent reconstructions over time. Our method, MapTracker, accumulates a sensor stream into memory buffers of two latent representations: 1) Raster latents in the bird's-eye-view (BEV) space and 2) Vector latents over the road elements (i.e., pedestrian-crossings, lane-dividers, and road-boundaries).\"",
+        "source_id": "paper-054",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "hd_map",
+      "doc_type": "paper"
+    },
+    "id": "train-030"
+  },
+  {
+    "question": "DETR3D在哪个自动驾驶数据集上实现了最先进的性能？",
+    "reference_answer": "nuScenes自动驾驶基准数据集（nuScenes autonomous driving benchmark）。",
+    "evidence": [
+      {
+        "quote": "We achieve state-of-the-art performance on the nuScenes autonomous driving benchmark.",
+        "source_id": "paper-036",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-031"
+  },
+  {
+    "question": "PETRv2 中如何实现时序对齐（temporal alignment）？",
+    "reference_answer": "通过 3D 位置嵌入（3D PE）的位姿变换，将前一帧的 3D 坐标与当前帧对齐，从而实现时序对齐。",
+    "evidence": [
+      {
+        "quote": "\"For temporal modeling, the main problem is how to align the object position of different frames in 3D space. ... In our practice, we find that PETR works well under temporal condition by simply aligning the 3D coordinates of previous frame with the current frame.\"",
+        "source_id": "paper-063",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "3d_object_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-032"
+  },
+  {
+    "question": "SE-SSD在KITTI基准测试中，对汽车检测的BEV和3D排行榜分别排名第几？",
+    "reference_answer": "BEV排行榜排名第1，3D排行榜排名第2。",
+    "evidence": [
+      {
+        "quote": "\"Our SE-SSD attains top performance compared with all prior published works. Also, it attains top precisions for car detection in the KITTI benchmark (ranked 1st and 2nd on the BEV and 3D leaderboards, respectively) with an ultra-high inference speed.\"",
+        "source_id": "paper-072",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-033"
+  },
+  {
+    "question": "MonoFlex如何解耦截断物体的预测？请结合特征图处理方式说明。",
+    "reference_answer": "MonoFlex根据物体的投影中心是否在图像内将物体分为两类：内部物体对应投影中心，外部物体（截断物体）则用精心选择的边缘点表示。通过将特征图分为内部区域和边缘区域分别处理两组物体，并进一步提出边缘融合模块来解耦截断物体的特征学习和预测，以避免影响正常物体的优化。",
+    "evidence": [
+      {
+        "quote": "To localize the projected 3D center, we divide objects according to whether their projected centers are “inside” or “outside” the image. Then we represent inside objects exactly as the projected centers and outside objects as delicately chosen edge points so that two groups of objects are handled by the inner and edge regions of the feature map respectively. Considering it is still difficult for convolutional filters to manage spatial-variant predictions, the edge fusion module is further proposed to decouple the feature learning and prediction of outside objects.",
+        "source_id": "paper-057",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_object_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-034"
+  },
+  {
+    "question": "StreamMapNet中引入的“Multi-Point Attention”机制主要解决了什么问题？",
+    "reference_answer": "解决了传统可变形注意力无法有效捕捉地图元素不规则、细长形状所需的长距离注意力范围的问题，同时保持计算效率。",
+    "evidence": [
+      {
+        "quote": "\"Unlike typical object detection scenarios where objects exhibit local characteristics, map elements often possess irregular and elongated shapes, necessitating long-range attention modeling that conventional deformable attention [29] fails to capture. To enable a wide perception range, we introduce a novel approach called 'Multi-Point Attention' that effectively captures longer attention ranges while maintaining computational efficiency.\"",
+        "source_id": "paper-078",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "vector_map",
+      "doc_type": "paper"
+    },
+    "id": "train-035"
+  },
+  {
+    "question": "MonoGround提出的深度对齐（depth-align）训练策略和两阶段深度推理方法分别有什么目的？",
+    "reference_answer": "深度对齐训练策略旨在有效学习并预测密集的地面深度图；两阶段深度推理方法则利用密集的预测深度，对每个目标进行更精细的深度估计，从而提升最终3D检测的准确性。",
+    "evidence": [
+      {
+        "quote": "\"With the above motivations, we propose our monocular 3D object detection model with the dense ground plane prior, termed as MonoGround. Within this formulation, we propose a depth-align method to effectively learn and predict dense grounded depth. Meanwhile, with the help of dense predicted depth, we also propose a two-stage depth inference method, which brings finer-grained depth estimation.\" (page 2)",
+        "source_id": "paper-058",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "monocular_3d",
+      "doc_type": "paper"
+    },
+    "id": "train-036"
+  },
+  {
+    "question": "UniDepth 是如何使用伪球面表示来解耦相机和深度表示的？这带来了什么好处？",
+    "reference_answer": "UniDepth 使用方位角、仰角和径向深度（θ, φ, z）构成伪球面输出空间，其中方位角和仰角对应相机平面，径向深度对应深度轴，形成一个正交空间，从而避免深度误差的梯度流入相机模块，实现相机和深度的解耦。",
+    "evidence": [
+      {
+        "quote": "\"We propose an effective pseudo-spherical representation of the output space to disentangle the camera and depth dimensions of this space. This representation employs azimuth and elevation angle components for the camera and a radial component for the depth, forming a perfect orthogonal space between the camera plane and the depth axis.\"",
+        "source_id": "paper-081",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "depth_estimation",
+      "doc_type": "paper"
+    },
+    "id": "train-037"
+  },
+  {
+    "question": "通过本课程，你能够识别自动驾驶汽车的哪些关键部分？",
+    "reference_answer": "识别自动驾驶汽车的关键部分，并了解Apollo架构。",
+    "evidence": [
+      {
+        "quote": "Through this course, you will be able to identify key parts of self-driving parts of self-driving cars and get to know Apollo architecture. You will be able to utilize Apollo HD Map, localization, perception, prediction, planning and control, and start the learning path of building a self-driving car. Identify key parts of self-driving cars, and get to know Apollo team and architecture.",
+        "source_id": "apollo-doc-001",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    },
+    "id": "train-038"
+  },
+  {
+    "question": "描述OccWorld中用于生成未来场景和自车轨迹的主要组件及其作用。",
+    "reference_answer": "OccWorld使用两个主要组件：1) 基于VQVAE的場景分词器，通过自监督方式将3D occupancy转化为离散场景标记（scene tokens）；2) 空间-时间生成Transformer（类似GPT），先进行空间混合获得多尺度标记，再对不同层次应用时间注意力预测下一帧，最后解码出未来的occupancy和自车轨迹。",
+    "evidence": [
+      {
+        "quote": "To achieve this, we first employ a vector-quantized variational autoencoder (VQVAE) to refine high-level concepts and obtain discrete scene tokens in a self-supervised manner. We then tailor the generative pre-training transformers (GPT) architecture and propose a spatial-temporal generative transformer to predict the subsequent scene tokens and ego tokens to forecast the future occupancy and ego trajectory, respectively. We first perform spatial mixing to aggregate scene tokens and obtain multi-scale tokens to represent scenes at multiple levels. We then apply temporal attention to tokens at different levels to predict tokens for the next frame and use a U-net structure to decode the future occupancy.",
+        "source_id": "paper-061",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "world_model",
+      "doc_type": "paper"
+    },
+    "id": "train-039"
+  },
+  {
+    "question": "MonoFlex论文的主要贡献是什么？",
+    "reference_answer": "MonoFlex的主要贡献有两个方面：(1) 揭示了在单目3D物体检测中考虑物体差异的重要性，并提出了解耦截断物体的预测；(2) 提出了一种新的物体深度估计方法，利用不确定性来灵活地组合独立的深度估计器。",
+    "evidence": [
+      {
+        "quote": "The main contributions of this paper can be summarized in two aspects: (1) We reveal the importance to consider the difference among objects for monocular 3D object detection and propose to decouple the prediction of truncated objects; (2) We propose a new formulation for object depth estimation, which utilizes uncertainties to flexibly combine independent estimators.",
+        "source_id": "paper-057",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "monocular_3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-040"
+  },
+  {
+    "question": "在论文的稳定性分类器中，网络自动学会了抑制哪些对视觉里程计有问题的点类型？请列出三种具体类别。",
+    "reference_answer": "三种类别包括：深度不连续处的型结点处的型结点（t-junctions across depth discontinuities）、阴影和高光上的特征（features on shadows and highlights），以及动态物体（如人）。",
+    "evidence": [
+      {
+        "quote": "The stability classifier automatically discovers a ranking for keypoints that are not likely to help in VO, such as t-junctions across depth discontinuities, features on shadows and highlights, and dynamic objects like people.",
+        "source_id": "paper-056",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "monocular_3d",
+      "doc_type": "paper"
+    },
+    "id": "train-041"
+  },
+  {
+    "question": "在 MapTR 中，位置匹配损失采用了哪种设计？与点级别匹配相关的成本设计？与另一种设计相比，这种设计在性能上有什么优势？",
+    "reference_answer": "MapTR 采用了 point2point 成本（Point2point cost）作为位置匹配损失，即先找到最佳的点对点分配，再求和所有点对的曼哈顿距离。实验表明，point2point 成本优于使用 Chamfer 距离成本的设计，在 mAP 指标上从 47.5 提升至 50.3。",
+    "evidence": [
+      {
+        "quote": "As mentioned in Sec. 3.2, we adopt the position matching cost term L_position(ˆVπ(i), Vi) in instance-level matching, for reflecting the position correlation between the predicted point set ˆVπ(i) and the GT point set Vi. In Tab. 8, we compare two kinds of cost design. i.e., Chamfer distance cost and point2point cost. Point2point cost is similar to the point-level matching cost. Specifically, we find the best point2point assignment, and sum the Manhattan distance of all point pairs as the position matching cost of two point sets. The experiments show point2point cost is better than Chamfer distance cost.",
+        "source_id": "paper-053",
+        "locator": "page=14"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "map_construction",
+      "doc_type": "paper"
+    },
+    "id": "train-042"
+  },
+  {
+    "question": "BEVFusion在视图变换中识别出哪个主要效率瓶颈，并通过什么方法实现了超过40倍的加速？",
+    "reference_answer": "主要效率瓶颈是BEV池化操作（BEV pooling），它单独占用了模型运行时的80%以上。BEVFusion提出了一种专用核，结合预计算和区间规约（precomputation and interval reduction）来消除该瓶颈，实现了超过40倍的加速。",
+    "evidence": [
+      {
+        "quote": "\"While converting all features to BEV, we identify the major prohibitive efficiency bottleneck in the view transformation: i.e., the BEV pooling operation alone takes more than 80% of the model's runtime. Then, we propose a specialized kernel with precomputation and interval reduction to eliminate this bottleneck, achieving more than 40× speedup.\"",
+        "source_id": "paper-027",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "bev_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-043"
+  },
+  {
+    "question": "PV-RCNN++相比PV-RCNN的两个主要改进是什么？它们分别提升了哪方面性能？",
+    "reference_answer": "两个改进是：扇区化建议中心采样（sectorized proposal-centric sampling）和VectorPool聚合（VectorPool aggregation）。扇区化建议中心采样能更高效地产生更具代表性的关键点，VectorPool聚合能以更少的资源消耗更好地聚合局部点特征。这些策略使PV-RCNN++比PV-RCNN快约3倍，同时性能更优。",
+    "evidence": [
+      {
+        "quote": "Second, we propose an advanced framework, PV-RCNN++, for more efficient and accurate 3D object detection. It consists of two major improvements: sectorized proposal-centric sampling for efficiently producing more representative keypoints, and VectorPool aggregation for better aggregating local point features with much less resource consumption. With these two strategies, our PV-RCNN++ is about 3× faster than PV-RCNN, while also achieving better performance.",
+        "source_id": "paper-065",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "lidar_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-044"
+  },
+  {
+    "question": "Apollo定位模块针对不同应用需求提供了哪三种不同实现方式的定位模块？",
+    "reference_answer": "Apollo定位模块提供了RTK（Real Time Kinematic）定位模块、MSF（Multi-Sensor Fusion）定位模块和NDT（Normal Distribution Transform）定位模块三种实现方式。",
+    "evidence": [
+      {
+        "quote": "Apollo定位模块针对不同的应用需求提供了三种不同实现方式的定位模块。 RTK（RealTimeKinematic）定位模块 利用GPS+IMU实现的全局定位导航系统，在GPS信号良好的情况下可以实现厘米级定位精度。 MSF（Multi-SensorFusion）定位模块 结合GPS+IMU+Lidar实现的多传感器融合全局定位导航系统，利用多传感器优缺点的互补，实现高精度、高鲁棒性的定位能力。 NDT（NormalDistributionTransform）定位模块 结合GPS+IMU+Lidar实现的简单融合定位系统，其中lidar定位采用开源NDT算法实现。",
+        "source_id": "apollo-doc-010",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    },
+    "id": "train-045"
+  },
+  {
+    "question": "BEVStereo的主要创新点是什么？",
+    "reference_answer": "BEVStereo提出了一种动态时间立体方法，通过预测深度中心µ和深度范围σ来动态选择匹配候选的尺度，显著降低计算开销；同时引入开销；同时设计了基于EM算法的迭代演化方法，不断更新更有价值的候选值，使其适应移动物体和静态自车等复杂场景，从而提升了多视角3D检测的性能。",
+    "evidence": [
+      {
+        "quote": "\"To this end, we introduce an effective temporal stereo method to dynamically select the scale of matching candidates, enable to significantly reduce computation overhead. Going one step further, we design an iterative algorithm to update more valuable candidates, making it adaptive to moving candidates.\"",
+        "source_id": "paper-028",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "bev_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-046"
+  },
+  {
+    "question": "Cross-view Transformer 在 nuScenes 数据集上的推理速度是多少？训练需要多少 GPU 小时？",
+    "reference_answer": "推理速度为 35 FPS（在单张 RTX 2080 Ti GPU 上），训练耗时 32 GPU 小时。",
+    "evidence": [
+      {
+        "quote": "\"The model performs at state-of-the-art on the nuScenes [3] dataset for vehicle and road segmentation in the map-view and comfortably runs in real-time (35 FPS) on a single RTX 2080 Ti GPU. The model is easy to implement and trains within 32 GPU hours.\"",
+        "source_id": "paper-033",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "map_construction",
+      "doc_type": "paper"
+    },
+    "id": "train-047"
+  },
+  {
+    "question": "在LiDAR仿真方面，UniSim与LiDARsim相比有哪些优势？请根据文档中的定量结果说明。",
+    "reference_answer": "在LiDAR仿真中，UniSim在Real2Sim和Sim2Real设置下均优于LiDARsim。例如，在Real2Sim中，UniSim的mAP为77.0，而LiDARsim为74.9；在Sim2Real中，UniSim的mAP为77.9，LiDARsim为75.9。尤其在严格IoU阈值（如AP@0.7和AP@0.8）下，UniSim的域差距更小，表明其能更准确地模拟LiDAR数据。",
+    "evidence": [
+      {
+        "quote": "\"As shown in Table 13 and Table 14, UniSim results in smaller domain gap in both Real2Sim and Sim2Real compared to LiDARsim especially when the IoU threshold is strict (e.g. AP@0.7, AP@0.8). This indicates our approach further bridges the gap between simulation and real world.\"",
+        "source_id": "paper-082",
+        "locator": "page=21, section A4.5"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_simulation",
+      "doc_type": "paper"
+    },
+    "id": "train-048"
+  },
+  {
+    "question": "BEVFormer v2 提出了一种新的监督方式，用于帮助现代图像骨干网络适应鸟瞰视角识别。这种监督方式是什么？",
+    "reference_answer": "透视监督（perspective supervision），即在透视视图上添加额外的监督信号，直接作用于骨干网络，帮助其学习3D知识。",
+    "evidence": [
+      {
+        "quote": "We present a novel bird’s-eye-view (BEV) detector with perspective supervision, which converges faster and better suits modern image backbones. ... To address this limitation, we prioritize easing the optimization of BEV detectors by introducing perspective view supervision.",
+        "source_id": "paper-026",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "bev_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-049"
+  },
+  {
+    "question": "在nuScenes和Argoverse2数据集上，VectorMapNet相比之前最先进的方法分别提升了多少mAP？",
+    "reference_answer": "在nuScenes数据集上提升14.2 mAP，在Argoverse2数据集上提升14.6 mAP。",
+    "evidence": [
+      {
+        "quote": "\"Extensive experiments show that VectorMapNet achieve strong map learning performance on both nuScenes and Argoverse2→ dataset, surpassing previous state-of-the-art methods by 14.2 mAP and 14.6 mAP.\"",
+        "source_id": "paper-084",
+        "locator": "page=1, Abstract"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "map_construction",
+      "doc_type": "paper"
+    },
+    "id": "train-050"
+  },
+  {
+    "question": "OccNeRF方法的主要目标是什么？",
+    "reference_answer": "训练无需3D监督（如LiDAR点云）的3D占用预测网络。",
+    "evidence": [
+      {
+        "quote": "\"In this paper, we propose an OccNeRF method for training occupancy networks without 3D supervision.\"",
+        "source_id": "paper-040",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "occupancy_prediction",
+      "doc_type": "paper"
+    },
+    "id": "train-051"
+  },
+  {
+    "question": "GaussianOcc方法相比于传统自监督3D occupancy估计方法的主要优势是什么？",
+    "reference_answer": "GaussianOcc实现了完全自监督（无需真实6D ego位姿）且高效（训练速度快2.7倍，渲染速度快5倍）的3D occupancy估计。",
+    "evidence": [
+      {
+        "quote": "\"We introduce GaussianOcc, a systematic method that investigates Gaussian splatting for fully self-supervised and efficient 3D occupancy estimation in surround views. ... the proposed GaussianOcc method enables fully self-supervised (no ground truth ego pose) 3D occupancy estimation in competitive performance with low computational cost (2.7 times faster in training and 5 times faster in rendering).\"",
+        "source_id": "paper-045",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "self_supervised",
+      "doc_type": "paper"
+    },
+    "id": "train-052"
+  },
+  {
+    "question": "SE-SSD中如何利用教师模型产生的软目标来指导学生模型？具体采用了什么策略和损失函数？",
+    "reference_answer": "采用基于IoU的匹配策略（IoU-based matching strategy）来过滤教师模型产生的软目标，并将学生模型的预测与这些软目标配对，然后使用一致性损失（consistency loss）来减少学生预测与软目标之间的对齐误差。",
+    "evidence": [
+      {
+        "quote": "\"To encourage the bounding boxes and confidence predicted by the student to better align with the soft targets, we design an effective IoU-based matching strategy to filter soft targets and pair them with student predictions, and further formulate a consistency loss to reduce the misalignment between them.\"",
+        "source_id": "paper-072",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "lidar",
+      "doc_type": "paper"
+    },
+    "id": "train-053"
+  },
+  {
+    "question": "RenderOcc方法的核心创新是什么？",
+    "reference_answer": "RenderOcc的核心创新是提出了一种仅使用2D标签（语义和深度）来训练3D占据预测模型的新范式，避免了昂贵的3D占据标注过程。",
+    "evidence": [
+      {
+        "quote": "\"To address this, we present RenderOcc, a novel paradigm for training 3D occupancy models only using 2D labels. Specifically, we extract a NeRF-style 3D volume representation from multi-view images, and employ volume rendering techniques to establish 2D renderings, thus enabling direct 3D supervision from 2D semantics and depth labels.\"",
+        "source_id": "paper-071",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "occupancy_prediction",
+      "doc_type": "paper"
+    },
+    "id": "train-054"
+  },
+  {
+    "question": "特征引导位置编码器（FPE）是如何改进原始3D位置嵌入的？",
+    "reference_answer": "特征引导位置编码器首先将投影的2D特征输入一个小型MLP网络和Sigmoid层，生成注意力权重，然后用该权重以逐元素方式重新加权3D位置嵌入，使得改进后的3D PE变为数据依赖的，从而为Transformer解码器中的查询学习提供信息性指导。",
+    "evidence": [
+      {
+        "quote": "\"we further improve the original 3D PE by introducing a feature-guided position encoder (FPE). Concretely, the projected 2D features are firstly injected into a small MLP network and a Sigmoid layer to generate the attention weight, which is used to reweight the 3D PE in an element-wise manner. The improved 3D PE is data-dependent, providing the informative guidance for the query learning in transformer decoder.\"",
+        "source_id": "paper-063",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "transformer",
+      "doc_type": "paper"
+    },
+    "id": "train-055"
+  },
+  {
+    "question": "根据论文，现有的点级LiDAR-相机融合方法（硬关联方法）存在哪两个主要问题？",
+    "reference_answer": "首先，它们通过逐元素加法或拼接简单融合LiDAR特征和图像特征，因此在图像特征质量较低（如光照条件差）时性能严重下降；其次，在稀疏LiDAR点和密集图像像素之间建立硬关联不仅浪费了大量语义丰富的图像特征，还严重依赖于两个传感器校准质量，而由于固有的时空错位，高质量的校准通常难以获得。",
+    "evidence": [
+      {
+        "quote": "Despite the impressive improvements, these point-level fusion methods suffer from two major problems... First, they simply fuse the LiDAR features and image features through element-wise addition or concatenation, and thus their performance degrades seriously with low-quality image features, e.g., images in bad illumination conditions. Second, finding the hard association between sparse LiDAR points and dense image pixels not only wastes many image features with rich semantic information, but also heavily relies on high-quality calibration between two sensors, which is usually hard to acquire due to the inherent spatial-temporal misalignment.",
+        "source_id": "paper-080",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "camera_fusion",
+      "doc_type": "paper"
+    },
+    "id": "train-056"
+  },
+  {
+    "question": "PETRv2如何利用时间信息提升3D目标检测？",
+    "reference_answer": "PETRv2通过扩展PETR中的3D位置嵌入（3D PE）进行时间建模，利用前一帧的时间信息来增强3D目标检测。具体来说，它通过对前一帧和当前帧的3D坐标进行姿态变换对齐，实现时间对齐，从而提升检测性能。",
+    "evidence": [
+      {
+        "quote": "\"Based on PETR [24], PETRv2 explores the effectiveness of temporal modeling, which utilizes the temporal information of previous frames to boost 3D object detection. More specifically, we extend the 3D position embedding (3D PE) in PETR for temporal modeling. The 3D PE achieves the temporal alignment on object position of different frames.\"",
+        "source_id": "paper-063",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-057"
+  },
+  {
+    "question": "论文提到除数据不平衡外，还有哪两个内在挑战？并举例说明其中一个挑战的具体表现。",
+    "reference_answer": "两个挑战：类内多样性（intra-class diversity）和类间模糊性（inter-class ambiguity）。例如，类间模糊性：警察（police officer）穿着反光背心与建筑工人（construction worker）难以区分，警车（police car）在某些视角下与普通轿车相似，导致模型误分类。",
+    "evidence": [
+      {
+        "quote": "Beyond data scarcity and imbalance, two inherent challenges further exacerbate the issue in camera-only 3D detection (Fig. 1 middle). First, intra-class diversity: tail categories often cover visually heterogeneous instances. For example, debris can refer to trash containers, ladders, or fallen cargo. Second, inter-class ambiguity: visual overlaps between semantically related classes cause frequent confusion. The police officer may wear reflective vests that are indistinguishable from the construction worker, and the police car at certain viewpoints may resemble a typical car.",
+        "source_id": "paper-035",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_object_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-058"
+  },
+  {
+    "question": "在CLRNet中，ROIGather模块的主要作用是什么？它是如何帮助解决车道检测中无视觉证据问题的？",
+    "reference_answer": "ROIGather模块通过建立ROI车道特征与整个特征图之间的关系来捕获更多全局上下文信息，从而增强车道特征表示。当车道被车辆遮挡或处于极端光照条件下时，缺乏视觉证据，ROIGather能聚合全局上下文以辅助检测，提升检测鲁棒性。",
+    "evidence": [
+      {
+        "quote": "\"To solve the problem of non-visual evidence of lane, we introduce ROIGather to capture more global contextual information by building the relation between the ROI lane feature and the whole feature map. Moreover, we define the IoU of lane lines and propose the Line IoU (LIoU) loss to regress the lane as a whole unit and considerably improve the performance compared with standard loss, i.e., smooth-l1 loss.\"",
+        "source_id": "paper-029",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "vision_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-059"
+  },
+  {
+    "question": "论文中如何通过相机感知的跨视图注意力（camera-aware cross-view attention）机制实现多相机到地图视图的映射？请解释位置编码的作用以及如何避免显式建模几何关系。",
+    "reference_answer": "每个相机使用依赖其内参和外参（intrinsic and extrinsic calibration）生成位置嵌入（positional embeddings），这些嵌入使 Transformer 能够在不显式建模几何关系的情况下学习不同视图之间的映射。通过学习得到的地图视图位置嵌入和多头注意力机制，模型将相机特征关联到地图视图中的位置，从而隐式学习几何变换。",
+    "evidence": [
+      {
+        "quote": "\"Each camera uses positional embeddings that depend on its intrinsic and extrinsic calibration. These embeddings allow a transformer to learn the mapping across different views without ever explicitly modeling it geometrically. ... The transformer does not perform any explicit geometric reasoning but instead learns to map between views through a geometry-aware positional embedding. ... Our cross-view transformer learns to reproject camera views into a common map representation as part of training.\"",
+        "source_id": "paper-033",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "segmentation",
+      "doc_type": "paper"
+    },
+    "id": "train-060"
+  },
+  {
+    "question": "FusionAD中提出的FMSPnP模块的全称是什么？它采用了什么结构来确保所有任务都能从中间感知特征中受益？",
+    "reference_answer": "FMSPnP全称为Fusion Aided Modality Aided Modality-Aware Prediction and Status-Aware Planning（融合辅助的模态感知预测和状态感知规划）模块，它采用了层次化金字塔结构（hierarchical pyramid formulation）来确保所有任务都能从中间感知特征中受益。",
+    "evidence": [
+      {
+        "quote": "\"we then formulate a fusion aided modality-aware prediction and status-aware planning modules, dubbed FMSPnP, that incorporates progressive interaction and refinement and formulate fusion-based collision loss modeling. Different from [1], our FMSPnP module exploits a hierarchical pyramid formulation as depicted in Figure 1 (Bottom), that ensures all tasks can benefit from the intermediate perception features.\"",
+        "source_id": "paper-043",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "end_to_end",
+      "doc_type": "paper"
+    },
+    "id": "train-061"
+  },
+  {
+    "question": "BEVDepth提出了一种新的3D目标检测方法，其核心创新点是什么？",
+    "reference_answer": "BEVDepth的核心创新点包括利用显式的深度监督（来自点云数据）来指导深度学习，并引入相机感知的深度估计模块以增强深度预测能力，同时设计了一个深度细化模块来减轻特征不精确投影带来的负面影响。",
+    "evidence": [
+      {
+        "quote": "\"BEVDepth resolves this by leveraging explicit depth supervision. A camera-awareness depth estimation module is also introduced to facilitate the depth predicting capability. Besides, we design a novel Depth Refinement Module to counter the side effects carried by imprecise feature unprojection.\"",
+        "source_id": "paper-016",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    },
+    "id": "train-062"
+  },
+  {
+    "question": "Apollo预测模块的主要输入是什么？请列出至少两个输入通道。",
+    "reference_answer": "主要输入包括 /apollo/perception/obstacles（感知信息，包含障碍物的位置、朝向、速度、加速度）和 /apollo/localization/pose（定位信息，自车的位置、速度信息）。",
+    "evidence": [
+      {
+        "quote": "预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息",
+        "source_id": "apollo-doc-007",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    },
+    "id": "train-063"
+  },
+  {
+    "question": "SemLT3D框架包含哪两个主要组件？各自的作用是什么？",
+    "reference_answer": "(1) 语言引导的混合专家模块（language-guided mixture-of-experts），通过语言嵌入引导3D查询分配给专门专家，以更好区分混淆类别并专精于尾部分布；(2) 语义投影蒸馏管道（semantic projection distillation pipeline），将3D查询与CLIP引导的2D语义对齐，产生更连贯和判别性强的特征。",
+    "evidence": [
+      {
+        "quote": "SemLT3D consists of: (1) a language-guided mixture-of-experts module that routes 3D queries to specialized experts according to their semantic affinity, enabling the model to better disentangle confusing classes and specialize on tail distributions; and (2) a semantic projection distillation pipeline that aligns 3D queries with CLIP-informed 2D semantics, producing more coherent and discriminative features across diverse visual manifestations.",
+        "source_id": "paper-035",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "distillation",
+      "doc_type": "paper"
+    },
+    "id": "train-064"
+  },
+  {
+    "question": "在3D障碍物检测中，用于表示3D边框的变量有哪些？请列出。",
+    "reference_answer": "物体的长宽高（h, w, l），物体的位置（x, y, z），以及物体的旋转角度θ（偏航角）。",
+    "evidence": [
+      {
+        "quote": "这里使用7个变量来表示3D边框，分别是物体的长宽高，物体的位置x，y，z以及物体的旋转角度日。 检测模块 分类结果（x1,x2…xc) 2D 边框[x,y,w,h ]2D 3D形状[w',h',l']3D 3D 中心[xy]p,z3D 3D角度3D 3D角点x（m），y\"（m），z（m） 上图是3D障碍物检测模块的模型结构图，输入的是单张的图像信息，经过神经网络提取特征，最后接上检测模块 (Apollo有两个检测模型，分别是基于YOLO的one-stage检测方法和基于中心点检测的检测方法)。",
+        "source_id": "apollo-doc-006",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    },
+    "id": "train-065"
+  },
+  {
+    "question": "为什么文中要提出sAMOTA、AMOTA和AMOTP这些积分指标？它们解决了什么核心问题？",
+    "reference_answer": "因为传统指标MOTA和MOTP不考虑跟踪对象的置信度，仅评估单一阈值，导致无法全面反映系统在不同置信度下的性能。积分指标通过在不同召回率值上积分MOTA和MOTP来总结系统在整个置信度范围内的表现，解决单阈值评估的局限性。",
+    "evidence": [
+      {
+        "quote": "\"Common MOT metrics such as MOTA and MOTP do not consider the confidence of tracked objects. As a result, users must manually select a confidence threshold and filter out tracked objects with confidence lower than the threshold before evaluation... using a single confidence threshold for evaluation prevents us from understanding the full spectrum of accuracy of a MOT system... we propose three integral metrics – sAMOTA, AMOTA and AMOTP – to summarize the performance of MOTA and MOTP across different thresholds. Specifically, the integral metrics AMOTA and AMOTP are computed by integrating the MOTA and MOTP over all recall values.\"",
+        "source_id": "paper-021",
+        "locator": "page=3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "multi_object_tracking",
+      "doc_type": "paper"
+    },
+    "id": "train-066"
+  },
+  {
+    "question": "Far3D模型中使用了哪三种不同类型的查询（queries）？请列举。",
+    "reference_answer": "全局查询（global queries）、自适应查询（adaptive queries）和传播查询（propagated queries）。",
+    "evidence": [
+      {
+        "quote": "\"There are three types of queries in Far3D: global queries, adaptive queries and propagated queries. For temporal modeling, propagated queries are from previous frames with high-scores, the same as StreamPETR.\"",
+        "source_id": "paper-041",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "multi_view",
+      "doc_type": "paper"
+    },
+    "id": "train-067"
+  },
+  {
+    "question": "在 BEVFormer v2 中，透视检测头产生的第一阶段提议经过哪些后处理步骤，最终用于生成混合查询？",
+    "reference_answer": "首先对每个视角的提议进行NMS（2D IoU=0.75）；然后从每个视角取top-k1个提议（k1=100）；将所有视角的提议投影到BEV平面；在BEV平面上再次进行NMS（BEV IoU=0.3）；最后选取top k2个提议（k2=100），将其投影中心作为参考点用于Deformable DETR。",
+    "evidence": [
+      {
+        "quote": "We start with the raw predictions of all camera views provided by the perspective head. ... Firstly, we perform non-maximum suppression (NMS) on the proposals of each view i to obtain candidates Ci without overlapping in the perspective view: Ci := NMSpers({(Bi,j, si,j)}j). The threshold of NMS is set as 2D IoU = 0.75. ... we balance the numbers of proposals from different views by taking the top-k1 of each view i after NMS: C := ∪_{i∈V} top-k1(Ci). We set k1 = 100. ... All the 3D boxes in C are projected to the bird’s-eye-view coordinate with corresponding camera extrinsics. ... another NMS is applied on the BEV plane with BEV IoU = 0.3: C := NMSbev(C). Finally, we select the top k2 = 100 proposals: C := top-k2(C). ... For every 3D bounding box B in the final set of proposals C, we use its projected center on the BEV plane, (cx(B), cy(B)), as the reference points for Deformable DETR in the object decoder.",
+        "source_id": "paper-026",
+        "locator": "page=12-13"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-068"
+  },
+  {
+    "question": "MOTRv2 如何改进 MOTR 的检测性能？它使用了哪个预训练目标检测器来生成锚点提议？",
+    "reference_answer": "MOTRv2 通过引入一个额外的预训练目标检测器 YOLOX 来生成提议作为锚点，为 MOTR 提供检测先验。它用锚点的正余弦位置编码替换了 MOTR 中检测查询的可学习位置编码，使检测任务更易于优化，从而显著提升了检测性能。",
+    "evidence": [
+      {
+        "quote": "\"We ﬁrst adopt the anchor formulation of queries and then use an extra object detector to generate proposals as anchors, providing detection prior to MOTR. ... We replace the learnable positional embedding (PE) of detect query in MOTR with the sine-cosine PE [30] of anchors, producing an anchor-based MOTR tracker. ... The simple modiﬁcation greatly eases the conﬂict between joint learning detection and association tasks in MOTR.\" (Page 1-2)",
+        "source_id": "paper-050",
+        "locator": "page=1-2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "multi_object_tracking",
+      "doc_type": "paper"
+    },
+    "id": "train-069"
+  },
+  {
+    "question": "根据表7中 nuScenes 验证集上的 3D 目标检测结果，MagicDrive 合成的数据对哪些类别物体的平均精度（AP）提升最明显？请从物体大小和外观多样性两个角度分析原因。",
+    "reference_answer": "提升最明显的类别包括大型物体（如公交车、拖车、施工车辆）和外观多样性较少的物体（如交通锥、障碍物）。原因：大型物体和外观单一物体受益于合成数据补充；对于行人、摩托车和自行车，虽然远处物体生成不够忠實，但近处物体质量高，因此也有显著提升。所有类别的 AP 均有提高。",
+    "evidence": [
+      {
+        "quote": "\"From the results, we observe that, firstly, the improvements for large objects are significant, for example, buses, trailers, and construction vehicles. Secondly, objects with less diverse appearances, such as traffic cones and barriers, show more improvement, especially compared to trucks. ... Overall, mAP improvement comes with promotion in all classes’ AP, indicating MAGICDRIVE can indeed help the training of perception models.\"",
+        "source_id": "paper-052",
+        "locator": "page=15 (Section H, Table 7 analysis)"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "simulation",
+      "doc_type": "paper"
+    },
+    "id": "train-070"
+  },
+  {
+    "question": "123D框架的主要目标是什么？",
+    "reference_answer": "通过一个统一的API将碎片化的多模态驾驶数据统一起来，实现跨数据集的访问和应用。",
+    "evidence": [
+      {
+        "quote": "\"We present 123D, an open-source framework that unifies such multi-modal driving data through a single API.\"",
+        "source_id": "paper-032",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "dataset",
+      "doc_type": "paper"
+    },
+    "id": "train-071"
+  },
+  {
+    "question": "雷达数据在自动驾驶感知中面临哪些主要挑战？RadarNet是如何设计以应对这些挑战的？",
+    "reference_answer": "雷达数据的主要挑战包括：数据非常稀疏（通常比激光雷达更稀疏）、测量存在位置和速度上的歧义、读数缺乏切向信息、以及常含误报。RadarNet通过多级融合方案应对：首先采用基于体素的早期融合来弥补稀疏性并利用雷达的远距离，然后采用基于注意力的后期融合来建模测量不确定性，从而将径向速度可靠地转化为二维速度估计。",
+    "evidence": [
+      {
+        "quote": "Radar brings its own challenges, as the data is very sparse (typically much more so than LiDAR), the measurements are ambiguous in terms of position and velocity, the readings lack tangential information and often contain false positives. ... we design a novel neural network architecture, dubbed RadarNet, which can exploit both LiDAR and Radar to provide accurate detections and velocity estimates ... we propose a multi-level fusion scheme that can fully exploit both geometric and dynamic information of Radar data.",
+        "source_id": "paper-070",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "radar_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-072"
+  },
+  {
+    "question": "UniSim存在哪些主要限制？请列出至少三点，并说明文档中提到的未来研究方向。",
+    "reference_answer": "UniSim的限制包括：(1) 无法渲染光照变化，因为辐照度烘焙到表示中；(2) 不能模拟动画（如转向灯、交通灯）或物体变形（如行人行走）；(3) 渲染先前视野之外的区域时会出现伪影。未来工作方向包括显式建模和操控场景光照、天气，以及整合来自其他工作的动画和变形技术。",
+    "evidence": [
+      {
+        "quote": "\"Our neural features grid cannot render lighting variations, as the modeled radiance bakes the lighting into the representation. Future work involves explicitly modelling and manipulating scene lighting and weather. We also do not model animation (e.g., turn signals, traffic lights) or actor deformation (e.g. walking) ... We also have artifacts when rendering areas that were previously outside the field-of-view.\"",
+        "source_id": "paper-082",
+        "locator": "page=22, section A5"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "autonomous_driving",
+      "doc_type": "paper"
+    },
+    "id": "train-073"
+  },
+  {
+    "question": "根据 FCOS3D 附录中的失败案例分析，未来研究应重点关注提升哪类对象的检测性能？并解释原因。",
+    "reference_answer": "应重点关注大型对象的检测性能，因为遮挡对象的失败是任务固有的，而大型对象检测不准确主要由卷积核感受野不足导致，可通过扩大感受野来改进。",
+    "evidence": [
+      {
+        "quote": "The former is mainly manifest in the failure to find the objects behind, while the latter is mainly manifest in the inaccurate estimation of the size and orientation of the objects. The reasons behind the two failure cases are also different. The former is due to the inherent property of the current setting, which is difficult to solve; the latter may be because the receptive field of convolution kernel of the current model is not large enough, resulting in low performance of large object detection. Therefore, the future research direction may be more focused on the solution of the latter.",
+        "source_id": "paper-018",
+        "locator": "page=11"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "monocular_3d",
+      "doc_type": "paper"
+    },
+    "id": "train-074"
+  },
+  {
+    "question": "VAD提出的矢量场景表示相对于传统光栅化表示有什么主要优势？",
+    "reference_answer": "VAD利用矢量化代理运动和地图元素作为显式的实例级规划约束，有效提高规划安全性；同时通过摆脱计算密集型的光栅化表示和手工设计的后处理步骤，运行速度更快。",
+    "evidence": [
+      {
+        "quote": "The proposed vectorized paradigm has two significant advantages. On one hand, VAD exploits the vectorized agent motion and map elements as explicit instance-level planning constraints which effectively improves planning safety. On the planning safety. On the other hand, VAD runs much faster than previous end-to-end planning methods by getting rid of computation-intensive rasterized representation and hand-designed post-processing steps.",
+        "source_id": "paper-083",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "vectorized",
+      "doc_type": "paper"
+    },
+    "id": "train-075"
+  },
+  {
+    "question": "根据文档中的消融实验结果，在闭环规划测试中，使用几个推理层次可以在性能与效率之间取得最佳平衡？为什么？",
+    "reference_answer": "使用2个推理层次。因为在该层次下成功率已达到平台期（94%），而继续增加层次只会增加计算时间而不再显著提升成功率。",
+    "evidence": [
+      {
+        "quote": "In closed-loop testing, the success rate reaches a plateau at a decoding level of 2, while the computation time continues to increase. Therefore, using two reasoning levels in our model may offer a favorable balance between performance and efficiency in practical applications.",
+        "source_id": "paper-044",
+        "locator": "page=16"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "planning",
+      "doc_type": "paper"
+    },
+    "id": "train-076"
+  },
+  {
+    "question": "MUSDA框架旨在解决什么问题？",
+    "reference_answer": "解决多源、多模态的无监督域自适应3D目标检测问题，即利用多个带标签的源域和一个无标签的目标域，融合相机和LiDAR两种模态信息，实现对目标域环境的检测。",
+    "evidence": [
+      {
+        "quote": "\"In this paper, we propose a novel framework for multi-source, multi-modality unsupervised domain adaptation in 3D object detection for autonomous driving. Given multiple labeled source domains and one unlabeled target domain, our framework first introduces hierarchical spatially-conditioned (HSC) domain classifiers, which jointly align features from both camera and LiDAR modalities at two distinct levels for each source–target domain pair.\"",
+        "source_id": "paper-019",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "domain_adaptation",
+      "doc_type": "paper"
+    },
+    "id": "train-077"
+  },
+  {
+    "question": "DriveDreamer 如何实现多视图视频生成，以保证视图一致性和帧一致性？",
+    "reference_answer": "通过堆叠视图注意层（view-wise attention layers）和帧注意层（frame-wise attention layers）来处理扩散潜在特征，从而生成视图一致且帧一致的视频。",
+    "evidence": [
+      {
+        "quote": "\"For multi-view video generation, view-wise attention layers and frame-wise attention layers are stacked to process diffusion latent features, which results in view-consistent and frame-consistent videos\"",
+        "source_id": "paper-039",
+        "locator": "page=12"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "world_model",
+      "doc_type": "paper"
+    },
+    "id": "train-078"
+  },
+  {
+    "question": "SparseOcc 被称为什么类型的占用网络？它的主要特点是什么？",
+    "reference_answer": "SparseOcc 被称为第一个全稀疏占用网络（fully sparse occupancy network）。其主要特点是不依赖任何密集设计（如密集3D特征、稀疏到密集模块、全局注意力），而是通过稀疏体素解码器和掩码变换器实现高效计算，在保持实时推理速度的同时达到高准确率。",
+    "evidence": [
+      {
+        "quote": "\"We propose SparseOcc, the first fully sparse occupancy network. ... SparseOcc includes two steps. First, it leverages a sparse voxel decoder to reconstruct the sparse geometry of a scene in a coarse-to-fine manner. This only models non-free regions, saving computational costs significantly. Second, we design a mask transformer with sparse semantic/instance queries to predict masks and labels of segments from the sparse space. ... As such, our SparseOcc fully exploits the sparse property and gets rid of any dense design like dense 3D features, sparse-to-dense modules, and global attention.\"",
+        "source_id": "paper-042",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "occupancy_prediction",
+      "doc_type": "paper"
+    },
+    "id": "train-079"
+  },
+  {
+    "question": "与传统的detect-to-track方法相比，MUTR3D如何简化3D跟踪流程？",
+    "reference_answer": "MUTR3D通过隐式建模对象轨迹的位置和外观变化，消除了常用的后处理步骤，如非极大值抑制、边界框关联和物体重识别（Re-ID）。",
+    "evidence": [
+      {
+        "quote": "\"Unlike existing detect-to-track methods that use explicit tracking heuristics, our method implicitly models the position and appearance variances of object tracks. Furthermore, we simplify the 3D tracking pipeline by eliminating commonly used post-processing steps such as non-maximum suppression, bounding box association, and object re-identification (Re-ID).\"",
+        "source_id": "paper-051",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "multi_object_tracking",
+      "doc_type": "paper"
+    },
+    "id": "train-080"
+  },
+  {
+    "question": "根据文档，在2015年，机动车交通事故死亡率出现了多年下降后的反弹，上升幅度是多少？导致这一现象的主要原因是什么？",
+    "reference_answer": "上升了7.2%；主要原因是94%的致命事故中人为错误是主要因素。",
+    "evidence": [
+      {
+        "quote": "“In addition, after decades of decline, motor vehicle fatalities spiked by more than 7.2 percent in 2015, the largest single-year increase since 1966. The major factor in 94 percent of all fatal crashes is human error. S…”",
+        "source_id": "standard-002",
+        "locator": "page=3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-081"
+  },
+  {
+    "question": "HDMapNet的主要目标是什么？",
+    "reference_answer": "HDMapNet的目标是基于车载传感器观测动态构建局部HD语义地图，即利用周围摄像头和/或激光雷达的点云，在鸟瞰视角下预测矢量化的地图元素，为实时运动预测和规划提供局部语义地图。",
+    "evidence": [
+      {
+        "quote": "\"We introduce the problem of HD semantic map learning, which dynamically constructs the local semantics based on onboard sensor observations. Meanwhile, we introduce a semantic map learning method, dubbed HDMapNet. HDMapNet encodes image features from surrounding cameras and/or point clouds from LiDAR, and predicts vectorized map elements in the bird's-eye view.\"",
+        "source_id": "paper-046",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "hd_map",
+      "doc_type": "paper"
+    },
+    "id": "train-082"
+  },
+  {
+    "question": "Apollo Cyber RT 是什么？",
+    "reference_answer": "Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架，与 Apollo 3.5 开放平台同期发布。",
+    "evidence": [
+      {
+        "quote": "Apollo Cyber RT framework 全球首个开源高性能自动驾驶计算框架 自动驾驶的顶端技术 Apollo Cyber RT 是世界上第一个专为自动驾驶定制的高性能开源框架。它与 Apollo 3.5 开放平台同期发布 。",
+        "source_id": "apollo-doc-002",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    },
+    "id": "train-083"
+  },
+  {
+    "question": "Occ3D基准数据集是基于哪两个公开自动驾驶数据集构建的？",
+    "reference_answer": "Occ3D是基于Waymo Open Dataset和nuScenes Dataset构建的，分别称为Occ3D-Waymo和Occ3D-nuScenes。",
+    "evidence": [
+      {
+        "quote": "\"Building upon the public Waymo Open Dataset [43], nuScenes [4] and Panoptic nuScenes [11] Dataset, we produce two benchmarks for our task accordingly, Occ3D-Waymo and Occ3D-nuScenes.\"",
+        "source_id": "paper-060",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "benchmark",
+      "doc_type": "paper"
+    },
+    "id": "train-084"
+  },
+  {
+    "question": "请简要描述SurroundOcc生成密集3D occupancy标签的流程。",
+    "reference_answer": "首先利用现有的3D检测和3D语义分割标签，分别融合多帧动态物体和静态场景的LiDAR点云。然后使用泊松重建算法填充空洞。最后通过最近邻和体素化获得密集的3D occupancy标签。",
+    "evidence": [
+      {
+        "quote": "\"To avoid expensive occupancy annotations, we devise a pipeline to generate dense occupancy ground truth only with the existing 3D detection and 3D semantic segmentation labels. Specifically, we first combine multi-frame points of dynamic objects and static scenes respectively. Then we leverage Poisson Reconstruction algorithm to further fill the holes. Finally, NN and voxelization are used to obtain dense 3D occupancy labels.\" (Page 1-2)",
+        "source_id": "paper-015",
+        "locator": "page=1-2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    },
+    "id": "train-085"
+  },
+  {
+    "question": "BEV-SAN中LiDAR引导采样策略的目的是什么？它是如何确定局部切片高度范围的？",
+    "reference_answer": "目的是利用LiDAR的统计分布来确定更具信息量的局部切片高度，以提高BEV感知性能。具体做法是将LiDAR点投影到BEV空间，计算沿高度维度的直方图，根据直方图采样局部切片的上限和下限高度。",
+    "evidence": [
+      {
+        "quote": "\"In order to improve the performance, we further propose a LiDAR-guided sampling strategy to leverage the statistical distribution of LiDAR to determine the optimal heights of local slices. We project the LiDAR points to the BEV space and calculate the histogram along the height dimension. According to the histogram, we can sample the upper and lower height bounds of local slices.\"",
+        "source_id": "paper-023",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "3d_object_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-086"
+  },
+  {
+    "question": "根据文档，RCBEVDet在nuScenes验证集上的推理速度是多少？",
+    "reference_answer": "21∼28 FPS。",
+    "evidence": [
+      {
+        "quote": "\"RCBEVDet achieves better 3D detection results than all real-time camera-only and radar-camera 3D object detectors with a faster inference speed at 21∼28 FPS.\"",
+        "source_id": "paper-069",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_object_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-087"
+  },
+  {
+    "question": "RadarNet主要融合了哪两种传感器来实现动态物体的稳健感知？",
+    "reference_answer": "RadarNet主要融合了LiDAR（激光雷达）和Radar（雷达）两种传感器，通过多级融合方案来充分利用雷达的几何信息和动态信息。",
+    "evidence": [
+      {
+        "quote": "We tackle the problem of exploiting Radar for perception in the context of self-driving as Radar provides complementary information to other sensors such as LiDAR or cameras in the form of Doppler velocity. ... Our approach, dubbed RadarNet, features a voxel-based early fusion and an attention-based late fusion, which learn from data to exploit both geometric and dynamic information of Radar data.",
+        "source_id": "paper-070",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "radar_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-088"
+  },
+  {
+    "question": "根据文档，FusionAD在nuScenes数据集上的性能提升具体体现在哪些方面？请至少列举两个指标上的提升。",
+    "reference_answer": "在感知任务（如检测和跟踪）上平均提升15%，在占用预测准确率上提升10%，平均位移误差（ADE）从0.708降低到0.389，碰撞率从0.31%降低到0.12%。",
+    "evidence": [
+      {
+        "quote": "\"our FusionAD achieves state-of-the-art performance and surpassing baselines on average 15% on perception tasks like detection and tracking, 10% on occupancy prediction accuracy, reducing prediction error from 0.708 to 0.389 in ADE score and reduces the collision rate from 0.31% to only 0.12%.\"",
+        "source_id": "paper-006",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    },
+    "id": "train-089"
+  },
+  {
+    "question": "HENet++提出的混合图像编码网络是如何处理短期帧和长期帧的？",
+    "reference_answer": "使用大图像编码器处理短期帧，使用小的图像编码器处理长期帧。",
+    "evidence": [
+      {
+        "quote": "Specifically, we propose a hybrid image encoding network that uses a large image encoder for short-term frames and a small one for long-term frames.",
+        "source_id": "paper-022",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "3d_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-090"
+  },
+  {
+    "question": "现有跨模态蒸馏方法在传递深度信息时存在什么问题？RayD3D如何利用射线先验来改进？",
+    "reference_answer": "现有方法会无意中传递深度无关的信息（如点云密度、反射强度），导致深度信息传递不充分。RayD3D基于成像基本原理：物体的预测位置只能沿相机到物体真实位置的射线变化，最终由深度值决定。因此，沿这条射线进行蒸馏可以更有效地传递深度知识，避免无关信息干扰。",
+    "evidence": [
+      {
+        "quote": "\"However, existing cross-modal distillation methods ... LiDAR models unintentionally transfer depth-irrelevant information such as point cloud density and reflection intensity, to camera models. Therefore, these methods fail to effectively transfer crucial depth information to camera models. ... The ray refers to the line projecting from the camera to true location of an object during imaging. In multi-view 3D detection, predicted location of this object can only vary along this ray in both front view and BEV view ... The location of this object is finally determined by predicted depth value. Therefore, distilling along the ray enables more effective depth information transfer from LiDAR to camera model.\"",
+        "source_id": "paper-034",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "multi_view",
+      "doc_type": "paper"
+    },
+    "id": "train-091"
+  },
+  {
+    "question": "SparseBEV在nuScenes测试集上取得了多少NDS？",
+    "reference_answer": "67.5 NDS",
+    "evidence": [
+      {
+        "quote": "On the test split of nuScenes, SparseBEV achieves the state-of-the-art performance of 67.5 NDS.",
+        "source_id": "paper-017",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    },
+    "id": "train-092"
+  },
+  {
+    "question": "BEV-SAN中，与传统的展平BEV空间方法相比，其核心创新点是什么？",
+    "reference_answer": "BEV-SAN不再将BEV空间沿高度维度展平，而是首先沿高度维度采样以构建全局和局部BEV切片，然后通过注意力机制融合这些切片。",
+    "evidence": [
+      {
+        "quote": "\"Instead of flattening the BEV space, we first sample along the height dimension to build the global and local BEV slices. Then, the features of BEV slices are aggregated from the camera features and merged by the attention mechanism. Finally, we fuse the merged local and global BEV features by a transformer to generate the final feature map for task heads.\"",
+        "source_id": "paper-023",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "bev_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-093"
+  },
+  {
+    "question": "SparseOcc 中的掩码引导稀疏采样（mask-guided sparse sampling）是如何实现稀疏交叉注意力的？它为何能避免昂贵密集特征或全局注意力？",
+    "reference_answer": "掩码引导稀疏采样在掩码变换器中设计，使稀疏查询能够以全稀疏方式与2D特征交互。它利用从稀疏3D表示中获得的掩码（mask）引导采样位置，仅关注与查询相关的局部2D特征区域，从而避免构造密集3D体积或执行全局注意力操作，大幅降低计算开销。",
+    "evidence": [
+      {
+        "quote": "\"A mask-guided sparse sampling is designed to achieve sparse cross-attention in the mask transformer. ... As such, our SparseOcc fully exploits the sparse property and gets rid of any dense design like dense 3D features, sparse-to-dense modules, and global attention.\"",
+        "source_id": "paper-042",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "occupancy_prediction",
+      "doc_type": "paper"
+    },
+    "id": "train-094"
+  },
+  {
+    "question": "CRN中通过什么技术将透视视角的图像特征转换到BEV空间？该技术利用了哪种传感器的数据来克服图像缺乏空间信息的问题？",
+    "reference_answer": "CRN使用雷达辅助视角变换（RVT，radar-assisted view transformation）将透视视角的图像特征转换到BEV空间。该技术利用稀疏但准确的雷达点来帮助克服图像缺乏空间信息的问题。",
+    "evidence": [
+      {
+        "quote": "\"To overcome the lack of spatial information in an image, we transform perspective view image features to BEV with the help of sparse but accurate radar points, named radar-assisted view transformation (RVT).\"",
+        "source_id": "paper-030",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "bev_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-095"
+  },
+  {
+    "question": "4DLidarOpen数据集采用了哪种混合标注策略？请简要描述。",
+    "reference_answer": "大规模自动标注数据支持可扩展训练，同时人类专家对人工标注的训练集和验证集进行细化和精修。",
+    "evidence": [
+      {
+        "quote": "A hybrid annotation strategy is adopted, where large-scale auto-labeled data support scalable training and human experts refine annotations for the human-annotated training and validation sets.",
+        "source_id": "paper-020",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "dataset",
+      "doc_type": "paper"
+    },
+    "id": "train-096"
+  },
+  {
+    "question": "MonoGround如何利用地面平面先验将稀疏的深度监督转变为密集的深度监督？",
+    "reference_answer": "通过引入地面平面，方法能够生成密集的地面深度（grounded depth），从而在训练时对整张图像的每个像素位置提供深度监督，而不仅仅是稀疏的目标中心点位置，实现了从稀疏到密集的转变。",
+    "evidence": [
+      {
+        "quote": "\"Moreover, since the ground plane is introduced and utilized, we could expand the original sparse depth supervision to a dense depth supervision by using the dense depth from the ground plane.\" (page 2)",
+        "source_id": "paper-058",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-097"
+  },
+  {
+    "question": "OccNeRF如何表示无边界场景以进行3D占用预测？",
+    "reference_answer": "通过参数化占用场，将整个3D空间分为内部区域（保持原始坐标）和外部区域（采用收缩坐标），并设计特定采样策略将参数化占用场转换为2D深度图。",
+    "evidence": [
+      {
+        "quote": "\"we parameterize the occupancy fields to represent unbounded environments. Specifically, we split the whole 3D space into the inside and outside regions. The inside one maintains the original coordinate while the outside one adopts a contracted coordinate. A specific sampling strategy is designed to transfer parameterized occupancy fields to 2D depth maps with the neural rendering algorithm.\"",
+        "source_id": "paper-040",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "occupancy_prediction",
+      "doc_type": "paper"
+    },
+    "id": "train-098"
+  },
+  {
+    "question": "根据UN R157，ALKS系统可以在哪些道路条件下被激活？",
+    "reference_answer": "在禁止行人和自行车、且设计有物理隔离分隔对向交通的道路上。",
+    "evidence": [
+      {
+        "quote": "ALKS can be activated under certain conditions on roads where pedestrians and cyclists are prohibited and which, by design, are equipped with a physical separation that divides the traffic moving in opposite directions…",
+        "source_id": "standard-009",
+        "locator": "page=3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "standard"
+    },
+    "id": "train-099"
+  },
+  {
+    "question": "根据文档中的传感器性能比较，请分别指出摄像头、毫米波雷达和激光雷达在哪些任务或条件下具有突出优势？",
+    "reference_answer": "摄像头在分类任务中尤其准确；毫米波雷达在穿透性、距离估计和极端天气抗干扰性方面具有卓越性能；激光雷达擅长目标检测任务。",
+    "evidence": [
+      {
+        "quote": "摄像头：对于分类任务尤其准确， ·毫米波雷达：在穿透性、距离估计和极端天气抗干扰性具有卓越的性能， 数据格式 ·激光雷达：擅长目标检测任务。",
+        "source_id": "apollo-doc-005",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    },
+    "id": "train-100"
+  },
+  {
+    "question": "根据文档，GAIA-1将世界建模视为无监督序列建模问题，具体是如何实现的？并列举其涌现出了哪些特性？",
+    "reference_answer": "GAIA-1将输入（视频、文本、动作）映射为离散token，然后预测序列中的下一个token。这种无监督序列建模方法涌现出了学习高层结构和场景动态、上下文意识、泛化能力以及对几何的理解等特性。",
+    "evidence": [
+      {
+        "quote": "\"Our approach casts world modeling as an unsupervised sequence modeling problem by mapping the inputs to discrete tokens, and predicting the next token in the sequence. Emerging properties from our model include learning high-level structures and scene dynamics, contextual awareness, generalization, and understanding of geometry.\"",
+        "source_id": "paper-087",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "world_model",
+      "doc_type": "paper"
+    },
+    "id": "train-101"
+  },
+  {
+    "question": "AV 4.0报告由哪两个美国联邦机构联合发布？它的发布时间是什么时候？",
+    "reference_answer": "由美国国家科学技术委员会（NATIONAL SCIENCE & TECHNOLOGY COUNCIL）和美国运输部（UNITED STATES DEPARTMENT OF TRANSPORTATION）联合发布，发布时间为2020年1月。",
+    "evidence": [
+      {
+        "quote": "Ensuring American Leadership in Automated Vehicle Technologies Automated Vehicles 4.0 A Report by the NATIONAL SCIENCE & TECHNOLOGY COUNCIL and the UNITED STATES DEPARTMENT OF TRANSPORTATION January 2020",
+        "source_id": "standard-004",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-102"
+  },
+  {
+    "question": "FCOS3D 在哪个公开挑战赛中获得了视觉方法第一名？",
+    "reference_answer": "它在 nuScenes 3D detection challenge of NeurIPS 2020 的视觉方法中获得了第一名。",
+    "evidence": [
+      {
+        "quote": "Our solution achieves 1st place out of all the vision-only methods in the nuScenes 3D detection challenge of NeurIPS 2020.",
+        "source_id": "paper-018",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "monocular_3d",
+      "doc_type": "paper"
+    },
+    "id": "train-103"
+  },
+  {
+    "question": "基于4DLidarOpen数据集的实验表明，4D FMCW激光雷达的直接速度测量在哪些场景下对下游任务提升最为明显？",
+    "reference_answer": "对涉及弱势道路使用者和快速移动物体的场景，速度感知表示能改善运动相关的感知、下游预测和规划任务。",
+    "evidence": [
+      {
+        "quote": "Extensive experiments show that direct velocity measurements from 4D FMCW Lidar provide complementary motion cues for dynamic-scene understanding. Compared with geometric-only sensing, the velocity-aware representation improves motion-related perception and downstream forecasting and planning, especially in scenarios involving vulnerable road users and fast-moving objects.",
+        "source_id": "paper-020",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "motion",
+      "doc_type": "paper"
+    },
+    "id": "train-104"
+  },
+  {
+    "question": "MapTR 的主要任务是什么？与现有方法相比，其关键创新点是什么？",
+    "reference_answer": "MapTR 是一种用于高效在线矢量化高清地图构建的结构化端到端 Transformer。其关键创新点在于提出了一种统一的置换等价建模方法，将地图元素建模为带有一组等价排列的点集，并设计了层次化查询嵌入方案和层次化二分匹配来进行地图元素学习。",
+    "evidence": [
+      {
+        "quote": "We present MapTR, a structured end-to-end Transformer for efficient online vectorized HD map construction. We propose a unified permutation-equivalent modeling approach, i.e., modeling map element as a point set with a group of equivalent permutations, which accurately describes the shape of map element and stabilizes the learning process. We design a hierarchical query embedding scheme to flexibly encode structured map information and perform hierarchical bipartite matching for map element learning.",
+        "source_id": "paper-053",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "hd_map",
+      "doc_type": "paper"
+    },
+    "id": "train-105"
+  },
+  {
+    "question": "GAIA-1的模型架构将世界模型和视频扩散解码器分开设计，分别承担什么角色？",
+    "reference_answer": "世界模型负责推理场景的高层组件和动态，理解环境的结构化表示；视频扩散解码器负责将潜在表示转换回高质量视频，生成逼真的细节。",
+    "evidence": [
+      {
+        "quote": "\"First, we partition the model into two components: the world model and the video diffusion decoder. The world model reasons about the scene’s high-level components and dynamics, while the diffusion model takes on the responsibility of translating latent representations back into high-quality videos with realistic detail.\"",
+        "source_id": "paper-087",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "generation",
+      "doc_type": "paper"
+    },
+    "id": "train-106"
+  },
+  {
+    "question": "UN R155法规主要适用于哪些车辆类别？",
+    "reference_answer": "该法规适用于M类和N类车辆（关于网络安全），以及如果配备至少一个电子控制单元的O类车辆。此外，也适用于配备L3及以上自动驾驶功能的L6和L7类车辆。",
+    "evidence": [
+      {
+        "quote": "[p.4] 4 1. Scope 1.1. This Regulation applies to vehicles, with regard to cyber security, of the Categories M and N. This Regulation also applies to vehicles of Category O if fitted with at least one electronic control unit. 1.2. This Regulation also applies to vehicles of the Categories L6 and L7 if equipped with automated driving functionalities from level 3 onwards, as defined in the reference document with definitions of Automated Driving un…",
+        "source_id": "standard-007",
+        "locator": "page=4"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-107"
+  },
+  {
+    "question": "在规划性能评估中，文档指出的之前碰撞率计算方法存在哪两个缺陷？SparseDrive 如何改进？",
+    "reference_answer": "之前碰撞率计算的第一个缺陷是将障碍物边界框转换为网格大小为0.5m的占用地图，导致在某些情况下（如自车接近小于单个像素的障碍物）出现假碰撞；第二个缺陷是未考虑自车航向角，假设航向不变。SparseDrive 通过估计轨迹点计算偏航角，并检查自车与障碍物边界框之间的重叠来精确评估碰撞。",
+    "evidence": [
+      {
+        "quote": "\"On one hand, previous benchmark convert obstacle bounding boxes into occupancy map with a grid size of 0.5m, resulting in false collisions in certain cases, e.g. ego vehicle approaches obstacles that smaller than a single occupancy map pixel[53]. (2) The heading of ego vehicle is not considered and assumed to remain unchanged[27]. To accurately evaluate the planning performance, we account for the changes in ego heading by estimating the yaw angle through trajectory points, and assess the presence of a collision by examining the overlap between the bounding boxes of ego vehicle and obstacles.\"",
+        "source_id": "paper-075",
+        "locator": "page=13"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "end_to_end",
+      "doc_type": "paper"
+    },
+    "id": "train-108"
+  },
+  {
+    "question": "根据论文，导致单目3D目标检测中定位精度低的一个重要因素是什么？论文提出了什么解决方案？",
+    "reference_answer": "重要因素是2D边界框中心与3D物体投影中心之间的不对齐（misalignment）。解决方案是使用投影的3D中心作为粗中心检测分支的监督信号，从而提高定位精度。",
+    "evidence": [
+      {
+        "quote": "\"First, we revisit the misalignment between the center of the 2D bounding box and the projected center of the 3D object, which is a vital factor leading to low localization accuracy. ... Accordingly, we propose our solution for this problem. Here we visualize the learned features of coarse center detection branch in Figure 7 to show the effectiveness of the proposed method. The qualitative results clearly show that using projected 3D center as ground truth can make the coarse center more accurate, thereby improving the localization accuracy.\"",
+        "source_id": "paper-055",
+        "locator": "page=1, page=13"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "localization",
+      "doc_type": "paper"
+    },
+    "id": "train-109"
+  },
+  {
+    "question": "StreamPETR与BEV时间方法的主要区别是什么？",
+    "reference_answer": "BEV时间方法显式地将BEV特征从历史帧扭曲到当前帧，而StreamPETR采用对象中心时间建模，直接通过稀疏对象查询传播历史信息，避免了处理密集特征图带来的计算负担。",
+    "evidence": [
+      {
+        "quote": "\"BEV temporal methods [27,16,25,39] explicitly warp BEV features from historical to current frame, as illustrated in Fig. 1 (a), where BEV features serve as an efficient intermediate representation for temporal modeling. However, the highly structured BEV features limit the modeling of moving objects.\" 以及 \"Based on the above analysis, we suppose it is possible to employ sparse queries as the hidden states of temporal propagation. In this way, we can utilize object queries to model moving objects while keeping high efficiency. Therefore, we introduce a new paradigm: object-centric temporal modeling and design an efficient framework, termed StreamPETR.\"",
+        "source_id": "paper-014",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    },
+    "id": "train-110"
+  },
+  {
+    "question": "VAD的全称是什么？它主要解决自动驾驶中的什么问题？",
+    "reference_answer": "VAD的全称是Vectorized Autonomous Driving。它主要解决传统端到端自动驾驶方法依赖密集栅格化场景表示（如agent occupancy和semantic map）导致计算量大、缺乏实例级结构信息的问题。",
+    "evidence": [
+      {
+        "quote": "\"In this paper, we propose VAD, an end-to-end vectorized paradigm for autonomous driving. VAD models the scene in a fully vectorized way (i.e., vectorized agent motion and map), getting rid of computationally intensive rasterized representation. Vectorized map provides road structure information and helps the autonomous vehicle narrow down the trajectory search space... VAD exploits the vectorized agent motion and map elements as explicit instance-level planning constraints which effectively improves planning safety.\"",
+        "source_id": "paper-005",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "paper"
+    },
+    "id": "train-111"
+  },
+  {
+    "question": "根据文档，CLRNet提出的Line IoU（LIoU）损失与传统Smooth-L1损失相比有何优势？并说明CLRNet如何通过该损失将车道线视为整体进行回归。",
+    "reference_answer": "Line IoU损失将车道线作为一个整体单元进行回归，而不是像Smooth-L1损失那样逐点回归。这使得模型能够直接优化整个车道的IoU，从而显著提升定位精度。CLRNet将车道线定义为连续的线段（通过起始点、长度和角度等参数），LIoU计算预测线与真值线之间的交并比，作为回归目标，使网络学习全局形状而非局部点误差。",
+    "evidence": [
+      {
+        "quote": "\"To solve the problem of non-visual evidence of lane, we introduce ROIGather to capture more global contextual information by building the relation between the ROI lane feature and the whole feature map. Moreover, we define the IoU of lane lines and propose the Line IoU (LIoU) loss to regress the lane as a whole unit and considerably improve the performance compared with standard loss, i.e., smooth-l1 loss.\"",
+        "source_id": "paper-029",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "lane_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-112"
+  },
+  {
+    "question": "根据论文，FusionAD在nuScenes数据集上的碰撞率相比基线降低了多少？",
+    "reference_answer": "FusionAD将碰撞率从0.31%降低到0.12%。",
+    "evidence": [
+      {
+        "quote": "\"our FusionAD achieves state-of-the-art performance and surpassing baselines on average 15% on perception tasks like detection and tracking, 10% on occupancy prediction accuracy, reducing prediction error from 0.708 to 0.389 in ADE score and reduces the collision rate from 0.31% to only 0.12%.\"",
+        "source_id": "paper-043",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "end_to_end",
+      "doc_type": "paper"
+    },
+    "id": "train-113"
+  },
+  {
+    "question": "与2016年联邦自动驾驶车辆政策相比，新的指导在长度和结构上有什么变化？它主要聚焦于哪两个部分？",
+    "reference_answer": "新的指导长度显著减少，聚焦于两个部分：Section I: Voluntary Guidance for Automated Driving Systems（自动驾驶系统自愿指南；Section II: Technical Assistance技术援助。",
+    "evidence": [
+      {
+        "quote": "The length of this guidance is significantly reduced from 2016'sFederalAutomatedVehicles Policy and focuses on two sections: Section I:Voluntary Guidance for Automated Driving Systems;and Section Il: Technical Assistanc…",
+        "source_id": "standard-001",
+        "locator": "p.2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "system_architecture",
+      "doc_type": "standard"
+    },
+    "id": "train-114"
+  },
+  {
+    "question": "根据UN R157第3.5节，制造商在安全方面需要建立哪些管理过程？",
+    "reference_answer": "建立并维持安全管理系统，包括安全管理体系、需求管理、风险管理以及功能性/操作安全、网络安全等部门之间的有效沟通渠道，并监控由ALKS引发的安全相关事件、事故/碰撞。",
+    "evidence": [
+      {
+        "quote": "The design and development process shall be established including safety management system, requirements management, risk management... The manufacturer shall institute and maintain effective communication channels between manufacturer departments responsible for functional/operational safety, cybersecurity and any other relevant disciplines... The manufacturer shall have processes to monitor safety-relevant incidents/crashes/collisions caused by the engaged automated lane keeping system and a process to manage potential safety-relevant gaps post-registration.",
+        "source_id": "standard-009",
+        "locator": "page=69"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-115"
+  },
+  {
+    "question": "文档强调“从碰撞数据中学习是ADS安全潜力的核心组成部分”。请解释为什么一次碰撞的数据记录和分析能够带来超越单一车辆的安全效益？文档对此提供了怎样的机制说明？",
+    "reference_answer": "一次ADS碰撞的分析可能导致安全性发展以及后续在其他ADS中预防相同碰撞场景的发生。碰撞数据记录和分析的关键是进行正确的碰撞重建，通过重建可以识别事故原因并修正ADS的行为模式，从而在系统层面进行改进和防止类似事件重演。",
+    "evidence": [
+      {
+        "quote": "“Learning from crash data is a central component to the safety potential of ADSs. For example, the analysis of a crash involving a single ADS could lead to safety developments and subsequent prevention of that crash scenario in other ADSs. Paramount to this type of learning is proper crash reconstruction.”",
+        "source_id": "standard-002",
+        "locator": "page=20"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-116"
+  },
+  {
+    "question": "在Apollo无人驾驶系统中，视觉感知算法主要应用于哪三个场景？",
+    "reference_answer": "红绿灯检测、车道线检测、基于摄像头的障碍物检测。",
+    "evidence": [
+      {
+        "quote": "但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。",
+        "source_id": "apollo-doc-006",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    },
+    "id": "train-117"
+  },
+  {
+    "question": "BEVFusion使用哪种统一表示空间来融合多模态特征？",
+    "reference_answer": "BEVFusion使用共享的鸟瞰视角（Bird's-Eye View, BEV）表示空间来统一多模态特征。",
+    "evidence": [
+      {
+        "quote": "\"In this paper, we propose BEVFusion, an efficient and generic multi-task multi-sensor fusion framework. It unifies multi-modal features in the shared bird's-eye view (BEV) representation space, which nicely preserves both preserves both geometric and semantic information.\"",
+        "source_id": "paper-027",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "bev_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-118"
+  },
+  {
+    "question": "在UniDepth的网络架构中，相机模块是如何初始化参数并生成稠密相机表示的？请简述其关键步骤。",
+    "reference_answer": "相机模块使用编码器提取的四个类令牌初始化相机参数。这些令牌先通过一个交叉注意力层（以编码器特征为键和值），再经过MLP和残差连接，随后通过两个自注意力层，最终投影到一维并指数化得到焦距（fx, fy）和主点（cx, cy）。然后通过反投影计算每个像素的方位角和仰角，并使用拉普拉斯球谐嵌入（SHE）得到81通道的稠密相机表示E。",
+    "evidence": [
+      {
+        "quote": "\"Camera Module. The camera parameters are initialized with the four class tokens extracted from the Encoder. The flattened and stacked feature maps from the encoder are detached and used as keys and values in one cross-attention layer, where the queries correspond to the four camera parameters. ... The camera parameters are obtained as fx = ΔfxW/2, fy = ΔfyH/2, cx = ΔcxW/2, cy = ΔcyH/2. The dense camera representation C is obtained by backprojecting with the predicted camera parameters ... The angular representation is embedded through the Laplace Spherical Harmonics Embedding (SHE) leading to 81 channels, resulting in E ∈ R^(h×w×81).\"",
+        "source_id": "paper-081",
+        "locator": "page=15"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "monocular_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-119"
+  },
+  {
+    "question": "StreamPETR中的运动感知层归一化（MLN）是如何帮助缓解视频流中累积误差的？",
+    "reference_answer": "MLN通过隐式编码自车和周围物体在不同时间戳的运动信息，从而缓解了视频流中由于物体运动导致的累积误差。",
+    "evidence": [
+      {
+        "quote": "\"Besides, a motion-aware layer normalization (MLN) is introduced to implicitly encode the motion of the ego vehicle and surrounding objects at different time stamps. ... For moving objects, MLN alleviates the cumulative error in video streaming.\"",
+        "source_id": "paper-014",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "paper"
+    },
+    "id": "train-120"
+  },
+  {
+    "question": "DD3D 如何结合伪点云方法与端到端方法的优点？",
+    "reference_answer": "DD3D 结合了伪点云方法的可扩展性（能够利用深度预训练进行规模化）和端到端方法的简洁性与泛化性能。其训练协议简单，仅需深度预训练和检测微调，而伪点云方法需要额外的深度微调步骤且容易过拟合成深度误差。",
+    "evidence": [
+      {
+        "quote": "We introduce a single-stage 3D object detector, DD3D, that combines the best of both pseudo-lidar methods (scaling with depth pre-training) and end-to-end methods (simplicity and generalization performance). Our detector features a simple training protocol of depth pre-training and detection fine-tuning, compared to pseudo-lidar methods that require an additional depth fine-tuning step and tend to overfit to depth errors.",
+        "source_id": "paper-074",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-121"
+  },
+  {
+    "question": "相较于基于深度图的多相机重建方法，SurroundOcc采用的3D occupancy有什么优势？",
+    "reference_answer": "3D occupancy直接预测每个体素的概率，天然保证多相机几何一致性，并能够恢复被遮挡部分，而深度图只能预测每条光线上的最近占点，无法恢复部分区域。",
+    "evidence": [
+      {
+        "quote": "\"Different from depth-based methods, another trend [8, 22] is to directly predict the 3D occupancy of the scene. It describes a 3D scene by assigning an occupied probability to each voxel in the 3D space. We advocate 3D occupancy to be a good 3D representation for multi-camera scene reconstruction, which naturally guarantees the multi-camera geometry consistency and is able to recover occluded parts.\" (Page 1-2)",
+        "source_id": "paper-015",
+        "locator": "page=1-2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "paper"
+    },
+    "id": "train-122"
+  },
+  {
+    "question": "NHTSA的Standing General Order (SGO)主要功能是什么？数据发布在哪里？",
+    "reference_answer": "用于常规事故数据发布，数据在 www.NHTSA.gov/SGOcrashReporting 上定期公布。",
+    "evidence": [
+      {
+        "quote": "\"4 NHTSA’s Standing General Order (SGO) • Regular Data Publication: www.NHTSA.gov/SGOcrashReporting\"",
+        "source_id": "standard-006",
+        "locator": "page=4"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-123"
+  },
+  {
+    "question": "根据UN Regulation No. 156，什么是“RX Software Identification Number (RXSWIN)”？",
+    "reference_answer": "由车辆制造商定义的专用标识符，代表电子控制系统中对型式认证相关的软件信息。",
+    "evidence": [
+      {
+        "quote": "[p.4] \"RX Software Identification Number (RXSWIN)\" means a dedicated identifier, defined by the vehicle manufacturer, representing information a bout the type approval relevant software of the Electronic Control System contri...\"",
+        "source_id": "standard-008",
+        "locator": "page=4"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-124"
+  },
+  {
+    "question": "根据文档，BEV（鸟瞰图）感知相比前视图或透视图具有哪些固有优势？",
+    "reference_answer": "BEV感知没有2D任务中常见的遮挡或尺度问题，能够更好地解决遮挡车辆或交叉交通的识别问题；同时，以这种形式表示物体或道路元素有利于后续模块（如规划、控制）的开发和部署。",
+    "evidence": [
+      {
+        "quote": "\"Compared to its front-view or perspective view counterpart, which is broadly investigated [1, 2] in 2D vision domains, BEV domains, BEV representation bears several inherent merits. First, it has no occlusion or scale problem as commonly existent in 2D tasks. Recognizing vehicles with occlusion or cross-traffic could be better resolved. Moreover, representing objects or road elements in such form would favorably make it convenient for subsequent modules (e.g. planning, control) to develop and deploy.\"",
+        "source_id": "paper-038",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "review",
+      "doc_type": "paper"
+    },
+    "id": "train-125"
+  },
+  {
+    "question": "NHTSA发布的涉及L2+自动驾驶的公共道路碰撞通知的常设通用令是在哪一年发布的？",
+    "reference_answer": "2021年6月。",
+    "evidence": [
+      {
+        "quote": "3 Standing General Order – Public Road Crash Notifications involving L2+ Driving Automation • Issued June 2021",
+        "source_id": "standard-005",
+        "locator": "page=3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-126"
+  },
+  {
+    "question": "根据文档中的C-mAP表格（Table 6和Table 7），分析MapTracker与基线方法（MapTRv2和StreamMapNet）在nuScenes和Argoverse2数据集上使用5帧回看时的C-mAP表现差异，并说明MapTracker在一致性方面的优势。",
+    "reference_answer": "在nuScenes上，MapTracker使用5帧回看时C-mAP达到70.7%，而MapTRv2为60.0%，StreamMapNet为61.0%。在Argoverse2上，MapTracker的C-mAP为71.0%，MapTRv2为63.7%，StreamMapNet为61.4%。MapTracker显著领先，且其C-mAP与C-mAP的差距（1.8）远小于基线方法的差距，表明其预测的时间对应关系更准确，重建的一致性更强。",
+    "evidence": [
+      {
+        "quote": "\"When increasing the look-back parameters, the C-mAP of MapTracker can also keep improving – Although MapTracker obtains much more consistent reconstructions than the baselines, the predicted temporal correspondences are sometimes incorrect, and road elements are still occasionally unstable (i.e., disappear and reappear within several frames). As explained in §B.3, C-mAP is the upper bound of C-mAP when the reconstructions pass all consistency checks. MapTracker gets very close to the C-mAP when we use the track extraction algorithm with N = 5 to trade running time for track quality – The gap (1.8) is much smaller than the gap of the baselines, again demonstrating our superior consistency.\"",
+        "source_id": "paper-054",
+        "locator": "page=26"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "vector_map",
+      "doc_type": "paper"
+    },
+    "id": "train-127"
+  },
+  {
+    "question": "在AV 4.0文档中，联邦政府的活动如何描述子系统级认知和机器学习的角色？这些技术具体覆盖了哪些子领域？",
+    "reference_answer": "子系统级认知和机器学习被视为跨越所有子领域（包括对象、事件和活动识别；机器人导航；灵巧操作；意图识别与反应；以及交会对接）的组成部分。",
+    "evidence": [
+      {
+        "quote": "Go VeRNmeNt ActiVities ANd oPPoR tuNities foR c oll AboRA tioN — 19 subsystem-level), cognition, and machine learning are integral parts that span all sub-areas, including object, event, and activity recognition; robot navigation; dexterous manipulation; intent recognition and reaction; and rendezvous and docking.",
+        "source_id": "standard-004",
+        "locator": "page=23"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "system_architecture",
+      "doc_type": "standard"
+    },
+    "id": "train-128"
+  },
+  {
+    "question": "与基于深度预测的“伪LiDAR”方法相比，DETR3D在哪些方面具有优势？请列出至少两点，并引用原文支持。",
+    "reference_answer": "1. 不依赖于密集深度预测模块，避免了深度预测误差的累积（compounding error）。2. 不需要后处理如非极大值抑制（NMS），提高了推理速度。",
+    "evidence": [
+      {
+        "quote": "This strategy ... is subject to compounding errors [7]: poorly-estimated depth values have a strongly negative effect on the performance of 3D object detection. Moreover, our method does not require any post-processing, such as non-maximum suppression (NMS), improving efficiency and reducing reliance on hand-designed methods for cleaning its output.",
+        "source_id": "paper-036",
+        "locator": "page=1, page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-129"
+  },
+  {
+    "question": "PointRCNN的整体框架由几个阶段组成？请分别说明各阶段的主要功能。",
+    "reference_answer": "PointRCNN由两个阶段组成。第一阶段（stage-1）用于自底向上的3D提案生成；第二阶段（stage-2）在规范坐标中对提案进行细化，以获得最终检测结果。",
+    "evidence": [
+      {
+        "quote": "\"The whole framework is composed of two stages: stage-1 for the bottom-up 3D proposal generation and stage-2 for refining proposals in the canonical coordinates to obtain the final detection results.\"",
+        "source_id": "paper-073",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "3d_object_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-130"
+  },
+  {
+    "question": "在PointRCNN的第二阶段中，对池化后的点云进行了什么特殊的坐标变换？这种变换如何与第一阶段学习的何种特征相结合？目的是什么？",
+    "reference_answer": "池化后的3D点被转换到规范坐标（canonical coordinates），并与池化点特征以及第一阶段学习的分割掩码相结合，用于学习相对坐标的细化，从而更准确地估计边界框。",
+    "evidence": [
+      {
+        "quote": "\"the pooled 3D points are transformed to the canonical coordinates and combined with the pooled point features as well as the segmentation mask from stage-1 for learning relative coordinate refinement. This strategy full\"",
+        "source_id": "paper-073",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "point_cloud",
+      "doc_type": "paper"
+    },
+    "id": "train-131"
+  },
+  {
+    "question": "什么是intra-object part locations？",
+    "reference_answer": "指每个前景点相对于其所属物体3D边界框的相对位置。",
+    "evidence": [
+      {
+        "quote": "\"the relative location of each foreground point w.r.t. the object box that it belongs to is denoted as the intra-object part locations.\"",
+        "source_id": "paper-066",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "point_cloud",
+      "doc_type": "paper"
+    },
+    "id": "train-132"
+  },
+  {
+    "question": "根据文档，基于输入数据的类型，BEV感知研究主要分为哪三类？",
+    "reference_answer": "BEV camera（纯视觉或视觉为中心的算法，用于多摄像头环绕下的3D目标检测或分割）、BEV LiDAR（基于点云输入的检测或分割任务）、BEV fusion（融合多传感器输入的机制，如摄像头、激光雷达、GNSS、里程计、高精地图、CAN总线等）。",
+    "evidence": [
+      {
+        "quote": "\"Based on the input data, we divide BEV perception research into three parts mainly - BEV camera, BEV LiDAR and BEV fusion. Fig. 1 depicts the general picture of BEV perception family. Specifically, BEV camera indicates vision-only or vision-centric algorithms for 3D object detection or segmentation from multiple surrounding cameras; BEV LiDAR describes detection or segmentation task from point cloud input; BEV fusion depicts the fusion mechanisms from multiple sensor inputs, such as camera, LiDAR, GNSS, odometry, HD-Map, CAN-bus, etc.\"",
+        "source_id": "paper-038",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "survey",
+      "doc_type": "paper"
+    },
+    "id": "train-133"
+  },
+  {
+    "question": "深度感知卷积层（depth-aware convolutional layer）的设计动机是什么？",
+    "reference_answer": "传统卷积操作是空间不变的，这有利于低层特征，但高层特征在感知深度和假设一致的相机场景几何时能获益。因此设计了深度感知卷积层，使网络能够学习空间感知的高层特征，改善3D参数估计。",
+    "evidence": [
+      {
+        "quote": "we design a novel depth-aware convolutional layer which is able to learn spatially-aware features. Traditionally, convolutional operations are preferred to be spatially-invariant in order to detect objects at arbitrary image locations. However, while it is likely beneficial for low-level features, we show that high-level features improve when given increased awareness of their depth and while assuming a consistent camera scene geometry.",
+        "source_id": "paper-049",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "monocular_3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-134"
+  },
+  {
+    "question": "HENet++在nuScenes端到端自动驾驶基准上取得了什么关键性能指标？",
+    "reference_answer": "达到了最低碰撞率（lowest collision rate）。",
+    "evidence": [
+      {
+        "quote": "HENet++ achieves state-of-the-art end-to-end multi-task 3D perception results on the nuScenes benchmark, while also attaining the lowest collision rate on the nuScenes end-to-end autonomous driving benchmark.",
+        "source_id": "paper-022",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "end_to_end_driving",
+      "doc_type": "paper"
+    },
+    "id": "train-135"
+  },
+  {
+    "question": "Apollo预测模块的作用是什么？",
+    "reference_answer": "场景选择子模块的作用是针对不同的场景（如巡航、路口等）采用不同的预测方法，便于后续扩展，提高算法的泛化能力。",
+    "evidence": [
+      {
+        "quote": "·场景选择：预测模块针对不同的场景采用不同的预测方法（如巡航、路口等场景），便于后续扩展，提高算法的泛化能力。",
+        "source_id": "apollo-doc-007",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    },
+    "id": "train-136"
+  },
+  {
+    "question": "VoxelNet如何处理LiDAR点云稀疏性和密度变化问题？请简要描述其技术方案。",
+    "reference_answer": "VoxelNet通过将点云划分为等间距的三维体素，并利用体素特征编码层对每个体素内的点进行处理，将点云编码为高维体素表示，然后通过三维卷积聚合局部体素特征，最后连接区域提案网络生成检测结果。这种方法同时利用了稀疏点结构和体素网格的高效并行处理能力。",
+    "evidence": [
+      {
+        "quote": "\"In this work, we remove the need of manual feature engineering for 3D point clouds and propose VoxelNet, a generic 3D detection network that unifies feature extraction and bounding box prediction into a single stage, end-to-end trainable deep network. Specifically, VoxelNet divides a point cloud into equally spaced 3D voxels and transforms a group of points within each voxel into a unified feature representation through the newly introduced voxel feature encoding (VFE) layer. In this way, the point cloud is encoded as a descriptive volumetric representation, which is then connected to a RPN to generate detections.\"",
+        "source_id": "paper-086",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "autonomous_driving",
+      "doc_type": "paper"
+    },
+    "id": "train-137"
+  },
+  {
+    "question": "AB3DMOT系统的基础组件是什么？",
+    "reference_answer": "AB3DMOT使用3D卡尔曼滤波器（Kalman filter）结合匈牙利算法（Hungarian algorithm）进行状态估计和数据关联。",
+    "evidence": [
+      {
+        "quote": "\"we implement a classical approach which is both efficient and simple in design – the Kalman filter [3] (1960) coupled with the Hungarian method [5] (1955). Specifically, our system is shown in Fig. 1 (Right), which employs an off-the-shelf 3D object detector to obtain 3D detections from the LiDAR point cloud [4]. Then, a combination of the 3D Kalman filter (with a constant velocity model) and the Hungarian algorithm is used for state estimation and data association.\"",
+        "source_id": "paper-021",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "multi_object_tracking",
+      "doc_type": "paper"
+    },
+    "id": "train-138"
+  },
+  {
+    "question": "与SASA-beta相比，SASA有哪些改进？",
+    "reference_answer": "SASA不仅具有多尺度特征聚合能力特征聚合能力，还能为每个查询生成自适应感受野，而SASA-beta的感受野系数是每个头共享的可学习参数。",
+    "evidence": [
+      {
+        "quote": "Compared with SASA-beta, SASA not only has the ability of multi-scale feature aggregation, but generates adaptive receptive field for each query as well.",
+        "source_id": "paper-017",
+        "locator": "page=13"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "paper"
+    },
+    "id": "train-139"
+  },
+  {
+    "question": "神经地图先验（Neural Map Prior, NMP）的核心目标是什么？",
+    "reference_answer": "构建一个可自动更新并提升局部地图推理性能的全局地图神经表示。",
+    "evidence": [
+      {
+        "quote": "\"In this study, we propose Neural Map Prior (NMP), a neural representation of global maps. This representation automatically updates itself and improves the performance of local map inference.\"",
+        "source_id": "paper-059",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "neural_prior",
+      "doc_type": "paper"
+    },
+    "id": "train-140"
+  },
+  {
+    "question": "为什么Waymo Open Dataset将测试集场景从地理保留区中选择？这有助于研究什么领域？",
+    "reference_answer": "将测试集场景从地理保留区中选择，可以评估在训练集上训练的模型对未见过的区域的泛化能力。这为领域适应（domain adaptation 研究提供了机会，因为不同地理区域之间存在显著的 domain gap。",
+    "evidence": [
+      {
+        "quote": "\"Selecting the test set scenes from a geographical holdout area allows us to evaluate how well models that were trained on our dataset generalize to previously unseen areas. ... We demonstrate that the differences in these geographies lead to a pronounced domain gap, enabling exciting research opportunities in the field of domain adaptation.\"",
+        "source_id": "paper-004",
+        "locator": "page=1-2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "system_architecture",
+      "doc_type": "report"
+    },
+    "id": "train-141"
+  },
+  {
+    "question": "论文中提到的speculative agents是什么？为什么传统轨迹预测模型难以处理它们？",
+    "reference_answer": "Speculative agents是指当前被遮挡但可能在未来通过解除遮挡或进入视野而出现的智能体。传统轨迹预测模型依赖于当前可见的跟踪结果，无法推理这些尚未出现的智能体。而Occupancy Flow Fields可以通过预测occupancy和流场来同时建模可见和不可见（speculative）智能体的未来概率位置和运动。",
+    "evidence": [
+      {
+        "quote": "\"In addition, we introduce the problem of predicting speculative agents, which are currently-occluded agents that may appear in the future through dis-occlusion or by entering the field of view. ... Reasoning about the location and velocity of these so-called speculative agents is critical for safe and effective autonomous driving. Trajectory prediction models in t\" （注：原文在page=2被截断，但意思清晰）",
+        "source_id": "paper-003",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    },
+    "id": "train-142"
+  },
+  {
+    "question": "文档中提到了哪些具体的感知任务？",
+    "reference_answer": "分类、检测和分割。",
+    "evidence": [
+      {
+        "quote": "Identify different perception tasks such as classification, detection, and segmentation and learning convolutional neural networks which are critical to perception.",
+        "source_id": "apollo-doc-001",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    },
+    "id": "train-143"
+  },
+  {
+    "question": "BEVDepth在nuScenes测试集上取得了怎样的性能？它如何同时保持高效率？",
+    "reference_answer": "BEVDepth在nuScenes测试集上实现了60.9%的NDS（NuScenes Detection Score），首次使基于相机的模型NDS达到60%。高效率是通过定制的Efficient Voxel Pooling和多帧融合技术来维持的。",
+    "evidence": [
+      {
+        "quote": "\"Aided by customized Efficient Voxel Pooling and multi-frame mechanism, BEVDepth achieves the new state-of-the-art 60.9% NDS on the challenging nuScenes test set while maintaining high efficiency. For the first time, the NDS score of a camera model reaches 60%.\"",
+        "source_id": "paper-016",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    },
+    "id": "train-144"
+  },
+  {
+    "question": "根据文档，BEVDet-Tiny在nuScenes验证集上的性能与FCOS3D相比如何？请明确列出其计算量和速度上的优势对比。",
+    "reference_answer": "BEVDet-Tiny在nuScenes验证集上获得了31.2%的mAP和39.2%的NDS，与FCOS3D表现相当，但其计算量仅为FCOS3D的215.3 GFLOPs的11%，即约23.68 GFLOPs，且运行速度快9.2倍，达到15.6 FPS。",
+    "evidence": [
+      {
+        "quote": "\"In the experiment, BEVDet offers an excellent trade-off between accuracy and time-efficiency. As a fast version, BEVDet-Tiny scores 31.2% mAP and 39.2% NDS on the nuScenes val set. It is comparable with FCOS3D, but requires just 11% computational budget of 215.3 GFLOPs and runs 9.2 times faster at 15.6 FPS.\"",
+        "source_id": "paper-024",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-145"
+  },
+  {
+    "question": "UniAD（Unified Autonomous Driving）的核心设计理念是什么？",
+    "reference_answer": "UniAD 的核心设计理念是“以规划为导向”（planning-oriented），即所有感知和预测任务的设计和优化都应服务于最终的规划目标，从而减少错误累积和任务不协调。",
+    "evidence": [
+      {
+        "quote": "\"Instead, we argue that a favorable framework should be devised and optimized in pursuit of the ultimate goal, i.e., planning of the self-driving car. Oriented at this, we revisit the key components within perception and prediction, and prioritize the tasks such that all these tasks contribute to planning.\"",
+        "source_id": "paper-013",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    },
+    "id": "train-146"
+  },
+  {
+    "question": "BEVDet的框架包含哪四个核心模块？",
+    "reference_answer": "BEVDet的框架包含图像视角编码器（Image-view encoder）、视角变换器（View transformer）、BEV编码器（BEV encoder）和任务特定头部网络（Head）。其中头部网络用于在BEV空间执行3D目标检测。",
+    "evidence": [
+      {
+        "quote": "\"BEVDet, as illustrated in Fig. 1, shares a similar framework with the up-to-date BEV semantic segmentation algorithms. It is modularly designed with an image-view encoder for encoding features in image view, a view transformer for transforming the feature from image view into BEV, a BEV encoder for further encoding features in the BEV perspective, and a task-specific head for performing 3D object detection in the BEV space.\"",
+        "source_id": "paper-024",
+        "locator": "page=2: page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "bev_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-147"
+  },
+  {
+    "question": "在Apollo规划模块架构中，状态机（ApolloFSM）、规划分发器（PlanningDispatcher）和规划器（Planner）各自的主要职责是什么？",
+    "reference_answer": "状态机（ApolloFSM）是一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景；规划分发器（PlanningDispatcher）根据状态机与车辆相关信息，调用合适当前场景的规划器；规划器（Planner）结合上游模块信息，通过一系列的任务组合，完成自动驾驶车辆的轨迹规划。",
+    "evidence": [
+      {
+        "quote": "Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：根据状态机与车辆相关信息，调用合适当前场景的规划器 ·规划器（Planner)：结合上游模块信息，通过一系列的任务组合，完成自动驾驶车辆的轨迹规划 ·决策器&优化器（Deciders&Optimizers）：一组实现决策和优化任务的task集合。优化器用于优化车辆的轨迹和速度。决 策器则基于规则，确定自动驾驶车辆何时换车道、何时停车、何时蠕行（慢速行进）或螺行何时完成等驾驶行为。",
+        "source_id": "apollo-doc-008",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    },
+    "id": "train-148"
+  },
+  {
+    "question": "FusionAD中FMSPnP模块的全称是什么？它相比UniAD采用了何种创新设计来确保所有任务都能从中间感知特征中受益？",
+    "reference_answer": "FMSPnP全称为\"fusion aided modality-aware prediction and status-aware planning modules\"。相比UniAD，它采用了层次金字塔结构（hierarchical pyramid formulation），使得所有任务都能从中间感知特征中受益，并引入了渐进式交互与精炼（progressive interaction and refinement）以及基于融合的碰撞损失建模（fusion-based collision loss modeling）。",
+    "evidence": [
+      {
+        "quote": "\"we then formulate a fusion aided modality-aware prediction and status-aware planning modules, dubbed FMSPnP, that incorporates progressive interaction and refinement and formulate fusion-based collision loss modeling. Different from [1], our FMSPnP module exploits a hierarchical pyramid formulation as depicted in Figure 1 (Bottom), that ensures all tasks can benefit from the intermediate perception features.\"",
+        "source_id": "paper-006",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    },
+    "id": "train-149"
+  },
+  {
+    "question": "PETR 生成 3D 位置感知特征的具体流程中，如何将相机空间与 3D 世界坐标联系起来？请简述其中两个关键步骤。",
+    "reference_answer": "首先将不同视图共享的相机截头体（camera frustum space）离散化为网格坐标，然后这些坐标通过不同的相机参数变换得到 3D 世界空间坐标。接着，2D 图像特征与 3D 坐标一起输入到 3D 位置编码器中，生成 3D 位置感知特征。",
+    "evidence": [
+      {
+        "quote": "To achieve this goal, the camera frustum space, shared by different views, is first discretized into meshgrid coordinates. The coordinates are then transformed by different camera parameters to obtain the coordinates of 3D world space. Then 2D image features extracted from backbone and 3D coordinates are input to a simple 3D position encoder to produce the 3D position-aware features.",
+        "source_id": "paper-062",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-150"
+  },
+  {
+    "question": "文档中讨论TransFusion在Waymo数据集上相比nuScenes带来的性能提升更小，分析了哪两个主要原因？",
+    "reference_answer": "一是Waymo的类别划分较粗（车辆、行人、骑行者），而图像语义信息对改善细粒度分类（如自行车、摩托车）的区分特别有效，这种改进被粗粒度类别掩盖；二是Waymo的LiDAR点云远比nuScenes密集，因此LiDAR-only基准（TransFusion-L）的定位已经十分准确，图像融合进一步提升的空间更小。",
+    "evidence": [
+      {
+        "quote": "(i) As shown in Table 1, compared with TransFusion-L, TransFusion brings the largest performance increase for bicycle (+8.7%), motorcycle (+5.4%), and construction vehicle (+4.9%) in terms of mAP on nuScenes. Due to the geometrical ambiguity, objects from the above three categories are difficult to distinguish using LiDAR information only... However, the categorization of Waymo is rather coarse-gained (i.e., vehicle, pedestrian, cyclist), which hides the improvement brought by the image information to some extent. (ii) The LiDAR point clouds in Waymo are much denser than those in nuScenes... Thus the bounding box predictions of TransFusion-L are already with accurate localization, which reduces the room for further improvement by image fusion.",
+        "source_id": "paper-080",
+        "locator": "page=13 (Section H)"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-151"
+  },
+  {
+    "question": "AV 4.0将美国政府的参与范围扩展到了多少个相关组件？",
+    "reference_answer": "38个。",
+    "evidence": [
+      {
+        "quote": "expanding the scope to 38 relevant United States Government(USG) components which have direct or tangential equities in safe development and integration of AV technologies.",
+        "source_id": "standard-001",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-152"
+  },
+  {
+    "question": "根据文档，点级融合方法（如将相机特征增强到LiDAR点云）在语义导向任务上效果不佳的根本原因是什么？请结合LiDAR点的密度差异进行说明。",
+    "reference_answer": "根本原因是相机到LiDAR的投影是语义有损的。对于典型的32线LiDAR扫描仪，只有约5%的相机特征能够匹配到LiDAR点，而其余特征全部被丢弃。这种密度差异在更稀疏的LiDAR或雷达上会更加严重，导致语义信息大量丢失，因此无法有效支持语义导向任务（如BEV地图分割）。",
+    "evidence": [
+      {
+        "quote": "\"This is because the camera-to-LiDAR projection is semantically lossy (see Figure 1b): for a typical 32-beam LiDAR scanner, only 5% camera features will be matched to a LiDAR point while all others will be dropped. Such density differences will become even more drastic for sparser LiDARs (or radars).\"",
+        "source_id": "paper-002",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "perception",
+      "doc_type": "paper"
+    },
+    "id": "train-153"
+  },
+  {
+    "question": "根据法规，车辆制造商在型式批准前需要执行哪些与安全措施相关的验证要求？",
+    "reference_answer": "车辆制造商应对车辆类型上（如有提供）用于存储和执行售后软件、服务、应用程序或数据的专用环境采取适当且相称的安全措施，并在型式批准前进行充分和适当的测试，以验证所实施安全措施的有效性。",
+    "evidence": [
+      {
+        "quote": "[p.11] The vehicle manufacturer shall put in place appropriate and proportionate measures to secure dedicated environments on the vehicle type (vehicle type) (if provided) for the storage and execution of aftermarket software, services, applications or data. 7.3.6. The vehicle manufacturer shall perform, prior to type approval, appropriate and sufficient testing to verify the effectiveness of the security measures implemented. 7.3.7.",
+        "source_id": "standard-007",
+        "locator": "page=11"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-154"
+  },
+  {
+    "question": "MUSDA中如何利用多个源域的信息？请简述原型图加权多源融合策略。",
+    "reference_answer": "MUSDA构造每对域之间的原型图，基于原型图加权（PGW）多源融合策略，聚合来自多个源检测头的预测结果，从而有效利用多个源域的互补信息。",
+    "evidence": [
+      {
+        "quote": "\"To effectively leverage information from multiple source domains, we construct a prototype graph between each pair of domains. Based on this, we develop a prototype graph weighted (PGW) multi-source fusion strategy to aggregate predictions from multiple source detection heads.\"",
+        "source_id": "paper-019",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "multi_modal",
+      "doc_type": "paper"
+    },
+    "id": "train-155"
+  },
+  {
+    "question": "SparseFusion 在多传感器3D目标检测中，主要使用了什么类型的候选和表示？",
+    "reference_answer": "稀疏候选和稀疏表示。",
+    "evidence": [
+      {
+        "quote": "\"We propose SparseFusion, a novel multi-sensor 3D detection method that exclusively uses sparse candidates and sparse representations.\"",
+        "source_id": "paper-077",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "autonomous_driving",
+      "doc_type": "paper"
+    },
+    "id": "train-156"
+  },
+  {
+    "question": "VoxelNet的核心创新是什么？它如何避免传统方法对手动特征工程的依赖？",
+    "reference_answer": "VoxelNet的核心创新是提出了一个端到端可训练的三维检测网络，通过引入体素特征编码层，将点云分割成等间距三维体素并转换为统一特征表示，从而统一了特征提取和边界框预测，无需手动设计特征。",
+    "evidence": [
+      {
+        "quote": "\"In this work, we remove the need of manual feature engineering for 3D point clouds and propose VoxelNet, a generic 3D detection network that unifies feature extraction and bounding box prediction into a single stage, end-to-end trainable deep network. Specifically, VoxelNet divides a point cloud into equally spaced 3D voxels and transforms a group of points within each voxel into a unified feature representation through the newly introduced voxel feature encoding (VFE) layer.\"",
+        "source_id": "paper-086",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-157"
+  },
+  {
+    "question": "FreqPDE 方法通过哪三个主要模块将2D图像特征与空间信息结合，用于3D检测Transformer解码器？",
+    "reference_answer": "分别是频率感知空间金字塔编码器（FSPE）、跨视图尺度不变深度预测器（CSDP）和位置深度编码器（PDE）。",
+    "evidence": [
+      {
+        "quote": "In this paper, we introduce Frequency-aware Positional Depth Embedding (FreqPDE) to equip 2D image features with spatial information for 3D detection transformer decoder, which can be obtained through three main modules. Specifically, the Frequency-aware Spatial Pyramid Encoder (FSPE) constructs a feature pyramid by combining high-frequency edge clues and low-frequency semantics from different levels respectively. Then the Cross-view Scale-invariant Depth Predictor (CSDP) estimates the pixel-level depth distribution with cross-view and efficient channel attention mechanism. Finally, the Positional Depth Encoder (PDE) combines the 2D image features and 3D position embeddings to generate the 3D depth-aware features for query decoding.",
+        "source_id": "paper-037",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "multi_view",
+      "doc_type": "paper"
+    },
+    "id": "train-158"
+  },
+  {
+    "question": "PETRv2 框架在 PETR 的基础上主要增加了哪两种能力？",
+    "reference_answer": "时序建模（temporal modeling）和多任务学习（multi-task learning），包括 BEV 分割和 3D 车道检测。",
+    "evidence": [
+      {
+        "quote": "\"Based on PETR [24], PETRv2 explores the effectiveness of temporal modeling, which utilizes the temporal information of previous frames to boost 3D object detection. ... To support for multi-task learning (e.g., BEV segmentation and 3D lane detection), PETRv2 provides a simple yet effective solution by introducing task-specific queries.\"",
+        "source_id": "paper-063",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "bev_perception",
+      "doc_type": "paper"
+    },
+    "id": "train-159"
+  },
+  {
+    "question": "PV-RCNN框架中用于点-体素特征聚合的两个关键步骤是什么？",
+    "reference_answer": "第一个步骤是体素到关键点场景编码（voxel-to-keypoint scene encoding），通过稀疏卷积的3D体素CNN进行特征学习和建议生成，然后将多尺度体素特征通过基于点的集合抽象汇总到一组关键点；第二个步骤是关键点到网格RoI特征抽象（keypoint-to-grid RoI feature abstraction），通过RoI-grid pooling模块将上述关键点特征聚合到每个建议的规则RoI网格，形成用于建议细化的多尺度上下文信息。",
+    "evidence": [
+      {
+        "quote": "Firstly, we introduce our initial 3D detection framework, PV-RCNN, which is a two-stage 3D detector on point clouds. It consists of two novel steps for point-voxel feature aggregation. The first step is voxel-to-keypoint scene encoding, where a 3D voxel CNN with sparse convolutions is adopted for feature learning and proposal generation. The multi-scale voxel features are then summarized into a small set of keypoints by point-based set abstraction, where the keypoints with accurate point locations are sampled by farthest point sampling from the raw points. The second step is keypoint-to-grid RoI feature abstraction, where we propose RoI-grid pooling module to aggregate the above keypoint features back to regular RoI grids of each proposal. It encodes multi-scale contextual information to form regular grid features for proposal refinement.",
+        "source_id": "paper-065",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "3d_object_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-160"
+  },
+  {
+    "question": "在规划性能评估中，SparseDrive如何解决了先前碰撞率（collision rate）评估的两个缺点？",
+    "reference_answer": "SparseDrive通过两个改进来准确评估碰撞率：1) 通过轨迹点估计车辆航向角的变化，2) 通过检查自车与障碍物边界框的重叠来判断碰撞，而不是使用固定网格的占用地图。",
+    "evidence": [
+      {
+        "quote": "\"For collision rate, there are two drawbacks in previous [15, 20] implementation, resulting in inaccurate evaluation in planning performance. On one hand, previous benchmark convert obstacle bounding boxes into occupancy map with a grid size of 0.5m, resulting in false collisions in certain cases, e.g. ego vehicle approaches obstacles that smaller than a single occupancy map pixel[53]. (2) The heading of ego vehicle is not considered and assumed to remain unchanged[27]. To accurately evaluate the planning performance, we account for the changes in ego heading by estimating the yaw angle through trajectory points, and assess the presence of a collision by examining the overlap between the bounding boxes of ego vehicle and obstacles.\"",
+        "source_id": "paper-076",
+        "locator": "page=13"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "sparse_representation",
+      "doc_type": "paper"
+    },
+    "id": "train-161"
+  },
+  {
+    "question": "在 MOTRv2 中，基于锚点的查询设计（anchor-based query formulation）是如何工作的？它如何帮助解耦检测和关联任务？",
+    "reference_answer": "MOTRv2 将检测查询和跟踪查询的初始化改为基于锚点框（中心点、高和宽），并用锚点的正余弦位置编码替换原有的可学习位置编码。来自 YOLOX 的检测提议作为锚点输入，Transformer 解码器预测相对于这些锚点的偏移量，从而将检测任务从联合学习中解耦，降低了检测与关联任务的冲突，使得 MOTR 可以专注于学习帧间实例的关联。",
+    "evidence": [
+      {
+        "quote": "\"Similar to them, we modify the initialization of both detect and track queries in MOTR. We replace the learnable positional embedding (PE) of detect query in MOTR with the sine-cosine PE [30] of anchors, producing an anchor-based MOTR tracker. With such anchor-based modeling, proposals generated by an extra object detector can serve as the anchor initialization of MOTR, providing local priors. ... The detection task is implicitly decoupled from the MOTR framework, easing the conﬂict between the detection and association tasks in the shared transformer decoder.\" (Page 2)",
+        "source_id": "paper-050",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "transformer",
+      "doc_type": "paper"
+    },
+    "id": "train-162"
+  },
+  {
+    "question": "在曲线采样策略的消融实验中，基于曲率的采样方法在Frêchet mAP上比固定间隔采样方法高多少？",
+    "reference_answer": "21.5 mAP。",
+    "evidence": [
+      {
+        "quote": "\"The curvature-based sampling outperforms its fixed-sampling counterpart by a large margin and achieves a leading 21.5 Fréchet mAP and 15.5 Chamfer mAP.\"",
+        "source_id": "paper-084",
+        "locator": "page=17, Section D.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "hd_map",
+      "doc_type": "paper"
+    },
+    "id": "train-163"
+  },
+  {
+    "question": "BEVDet4D如何融合前一帧和当前帧的特征？请描述其具体操作。",
+    "reference_answer": "首先保留前一帧的中间BEV特征，然后通过空间对齐操作（在平坦平面内）和拼接操作，将前一帧特征与当前帧对应特征融合。除此外，框架大部分细节保持不变。",
+    "evidence": [
+      {
+        "quote": "\"It simply extends the naive BEVDet [15] by retaining the intermediate BEV features in the previous frames. Then it fuses the retained feature with the corresponding one in the current frame just by a spatial alignment operation and a concatenation operation. Other than that, we kept most other details of the framework unchanged. ... The spatial alignment operation and the learning targets should be carefully designed to cooperate with the elegant framework so that the velocity prediction task can be simplified and superior generalization performance can be achieved with BEVDet4D.\"",
+        "source_id": "paper-025",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    },
+    "id": "train-164"
+  },
+  {
+    "question": "在训练回归式轨迹解码器时，ViP3D如何从多个预测轨迹中选择最佳轨迹用于计算损失？请写出具体步骤和使用的距离度量。",
+    "reference_answer": "在训练回归式轨迹解码器时，首先计算每个预测轨迹与真值轨迹之间的累积ℓ2距离：d(s, ŝ) = Σ_{t=1}^{T_future} ||s_t - ŝ_t||，然后选择距离最小的预测轨迹：k̂ = argmin_{k∈1...K} d(s, s^{(k)})，最后使用该最近轨迹与真值轨迹计算平滑ℓ1损失。",
+    "evidence": [
+      {
+        "quote": "\"During training, we first calculate the distance between each predicted trajectory ŝ and ground truth trajectory s: d(s, ŝ) = Σ_{t=1}^{T_future} ||s_t - ŝ_t||, where ||·|| is the ℓ2 distance between two points. Then, we select the predicted trajectory with the closest distance: k̂ = argmin_{k∈1...K} d(s, s^{(k)}), where s^{(k)} is the kth predicted trajectory. Finally, we calculate regression loss between the closest predicted trajectory s^{(k̂)} and the ground truth trajectory s as L_trajectory = Σ_{t=1}^{T_future} L_reg(s_t, s^{(k̂)}_t), where L_reg is the smooth ℓ1 loss between two points.\"",
+        "source_id": "paper-085",
+        "locator": "page=12"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_queries",
+      "doc_type": "paper"
+    },
+    "id": "train-165"
+  },
+  {
+    "question": "Apollo智能控制模块需要具备哪些特性来适应不同驾驶环境？目前开放了两个数据集，这些数据集包含哪些类型的数据以及采集地点分别在哪里？",
+    "reference_answer": "Apollo智能控制模块需要精准、广泛适用、自适应性强，能应对不同道路条件、车速和车辆载荷。目前开放两个数据集：Apollo-SouthBay（美国加州硅谷采集）和Apollo-DaoxiangLake（中国北京稻香湖采集），包含时间戳的LiDAR扫描、相机图像和后处理GPS轨迹。",
+    "evidence": [
+      {
+        "quote": "5. Intelligent Control The Apollo intelligent vehicle control and canbus-proxy modules are precise, broadly applicable and adaptive to different environments. The modules handle different road conditions, speeds, vehicl... Currently, there are two open datasets, Apollo-SouthBay and Apollo-DaoxiangLake. The data was collected in Silicon Valley, California, the United States, and Daoxiang Lake, Beijing, China. The datasets contain time-stamped LiDAR scans, camera images, and post-processed GPS trajectories.",
+        "source_id": "apollo-doc-004",
+        "locator": "page=5"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    },
+    "id": "train-166"
+  },
+  {
+    "question": "根据Figure 1的描述，OccWorld在预测未来场景时存在一个局限性是什么？请说明原因。",
+    "reference_answer": "OccWorld无法预测新进入视野的车辆，因为输入中不存在这些车辆，导致难以预测其出现。",
+    "evidence": [
+      {
+        "quote": "OccWorld even generates more reasonable drivable areas than the ground truth, demonstrating its ability to understand the scene rather than memorizing training data. Still, it fails to forecast new vehicles entering the sight, which is difficult given their absence in the inputs.",
+        "source_id": "paper-061",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "autonomous_driving",
+      "doc_type": "paper"
+    },
+    "id": "train-167"
+  },
+  {
+    "question": "RCBEVDet方法融合了哪两种传感器来实现3D物体检测？",
+    "reference_answer": "融合了多视角相机和毫米波雷达传感器。",
+    "evidence": [
+      {
+        "quote": "\"An effective solution to this issue is combining multi-view cameras with the economical millimeter-wave radar sensor to achieve more reliable multi-modal 3D object detection.\"",
+        "source_id": "paper-069",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "camera_radar_fusion",
+      "doc_type": "paper"
+    },
+    "id": "train-168"
+  },
+  {
+    "question": "BEVFormer是如何聚合空间信息的？请简要描述其空间交叉注意力机制。",
+    "reference_answer": "通过空间交叉注意力（Spatial Cross-Attention），每个BEV query从跨多个相机视图的感兴趣区域（RoI）提取空间特征。",
+    "evidence": [
+      {
+        "quote": "\"To aggregate spatial information, we design spatial cross-attention that each BEV query extracts the spatial features from the regions of interest across camera views.\"",
+        "source_id": "paper-001",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    },
+    "id": "train-169"
+  },
+  {
+    "question": "在nuScenes基准上，BEVDet4D-Base的NDS和mAP分别是多少？与之前领先的BEVDet-Base相比，效果如何？",
+    "reference_answer": "BEVDet4D-Base达到54.5% NDS和42. DS和42.1% mAP，在相同推理速度下，NDS比BEVDet-Base高出7.3%。",
+    "evidence": [
+      {
+        "quote": "\"On challenge benchmark nuScenes, we report a new record of 54.5% NDS with the high-performance configuration dubbed BEVDet4D-Base. At the same inference speed, this notably surpasses the previous leading method BEVDet-Base by +7.3% NDS. ... The high-performance configuration dubbed BEVDet4D-Base scores high as 42.1% mAP and 54.5% NDS, which has surpassed all published results in vision-based 3D object detection\"",
+        "source_id": "paper-025",
+        "locator": "page=1-2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-170"
+  },
+  {
+    "question": "根据MonoDLE论文的诊断实验，限制单目3D目标检测性能的关键因素是什么？",
+    "reference_answer": "定位误差（localization error）是限制单目3D目标检测性能的关键因素。",
+    "evidence": [
+      {
+        "quote": "\"Based on our investigation, we have the following three observations and corresponding designs. Observation 1: The most striking feature in Figure 1 is the leap in performance when using ground-truth location, reaching a level similar to the state-of-the-art LiDAR-based methods, suggesting the localization error is the key factor in restricting monocular 3D detection.\"",
+        "source_id": "paper-055",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "localization",
+      "doc_type": "paper"
+    },
+    "id": "train-171"
+  },
+  {
+    "question": "在PV-RCNN中，用于从体素特征中选择一小部分关键点的具体采样方法是什么？",
+    "reference_answer": "最远点采样（Farthest point sampling, FPS）。",
+    "evidence": [
+      {
+        "quote": "a small set of keypoints are selected by the furtherest point sampling (FPS) to summarize the overall 3D information from the voxel-wise features.",
+        "source_id": "paper-064",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-172"
+  },
+  {
+    "question": "123D对八个真实世界驾驶数据集进行了哪些系统研究？",
+    "reference_answer": "比较了标注统计，评估了每个数据集的位姿和校准精度。",
+    "evidence": [
+      {
+        "quote": "\"We conduct a systematic study comparing annotation statistics and assessing each dataset's pose and calibration accuracy.\"",
+        "source_id": "paper-032",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "autonomous_driving",
+      "doc_type": "paper"
+    },
+    "id": "train-173"
+  },
+  {
+    "question": "RayD3D设计了哪两个基于射线的蒸馏模块？分别简述其作用。",
+    "reference_answer": "1) Ray-based Contrastive Distillation (RCD)：通过沿射线采样进行对比学习，让模型学习LiDAR如何准确定位物体。2) Ray-based Weighted Distillation (RWD)：根据射线自适应调整蒸馏权重，最小化LiDAR中深度无关信息（如点云密度）的干扰。",
+    "evidence": [
+      {
+        "quote": "\"Ray-based Contrastive Distillation (RCD) incorporates contrastive learning into distillation by sampling along the ray to learn how LiDAR accurately locates objects. Ray-based Weighted Distillation (RWD) adaptively adjusts distillation weight based on the ray to minimize the interference of depth-irrelevant information in LiDAR.\"",
+        "source_id": "paper-034",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "depth_estimation",
+      "doc_type": "paper"
+    },
+    "id": "train-174"
+  },
+  {
+    "question": "OpenLane数据集包含多少帧图像？",
+    "reference_answer": "200,000帧",
+    "evidence": [
+      {
+        "quote": "\"OpenLane contains 200,000 frames, over 880,000 instance-level lanes, 14 lane categories, along with scene tags and the closed-in-path object annotations\"",
+        "source_id": "paper-067",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "3d_lane",
+      "doc_type": "paper"
+    },
+    "id": "train-175"
+  },
+  {
+    "question": "CenterPoint使用什么来表示3D物体表示方法来简化三维检测与跟踪？",
+    "reference_answer": "CenterPoint使用点（中心点）来表示物体，而非传统的3D边界框。",
+    "evidence": [
+      {
+        "quote": "In this paper, we instead propose to represent, detect, and track 3D objects as points. Our framework, CenterPoint, first detects centers of objects using a keypoint detector and regresses to other attributes, including 3D size, 3D orientation, and velocity.",
+        "source_id": "paper-031",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-176"
+  },
+  {
+    "question": "在相机外参噪声鲁棒性实验中，当噪声等级为4时，BEVFormer-S、BEVFormer-S (point)和BEVFormer的NDS下降百分比分别是多少？什么因素提高了鲁棒性的关键因素有哪些？",
+    "reference_answer": "BEVFormer-S下降15.2%，BEVFormer-S (point)下降17.3%，BEVFormer下降14.3%。提高鲁棒性的关键因素包括：使用可变形注意力（deformable attention）在参考点周围采样特征、融合时序信息、以及用噪声外参训练模型（可进一步降低NDS下降至8.9%）。",
+    "evidence": [
+      {
+        "quote": "\"With deformable attention, the robustness of BEVFormer-S is stronger than BEVFormer-S (point). For example, with the noise level being 4, the NDS of BEVFormer-S drops 15.2% (calculated by 1−0.380 0.448), while the NDS of BEVFormer-S (point) drops 17.3%. Compared to BEVFormer-S, BEVFormer only drops 14.3% NDS, which shows that temporal information can also improve robustness on camera extrinsics. Following [32], we show that when training BEVFormer with noisy extrinsics, BEVFormer (noise) has stronger robustness (only drops 8.9% NDS).\"",
+        "source_id": "paper-001",
+        "locator": "page=17 (Section B, Robustness on Camera Extrinsics)"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "sensor_fusion",
+      "doc_type": "paper"
+    },
+    "id": "train-177"
+  },
+  {
+    "question": "Apollo规划模块的功能实现是基于什么方式？开发者如何根据自身需求调整规划策略？",
+    "reference_answer": "Apollo规划模块功能的实现是基于场景（scenario-based）实现的。针对不同的场景，规划模块通过一系列独立的任务（task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下的配置文件，调配任务组合实现自己的规划要求。",
+    "evidence": [
+      {
+        "quote": "Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。",
+        "source_id": "apollo-doc-008",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    },
+    "id": "train-178"
+  },
+  {
+    "question": "与 DETR3D 相比，PETR 在架构上主要避免了哪两个复杂的操作？这样做带来了什么好处？",
+    "reference_answer": "避免了在线 2D-to-3D 投影和特征采样。好处包括保持端到端检测的简洁性，并且 3D 位置坐标可以离线生成，便于实际应用。",
+    "evidence": [
+      {
+        "quote": "The proposed PETR architecture brings many advantages compared to the DETR3D. It keeps the end-to-end spirit of original DETR while avoiding the complex 2D-to-3D projection and feature sampling. During inference time, the 3D position coordinates can be generated in an offline manner and served as an extra input position embedding.",
+        "source_id": "paper-062",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-179"
+  },
+  {
+    "question": "VAD提出了哪三种实例级规划约束？它们各自的作用是什么？",
+    "reference_answer": "三种约束分别是：ego-agent碰撞约束（维持自车与其他动态代理之间的横向和纵向安全距离）、ego-boundary越界约束（将规划轨迹推离道路边界）和ego-lane方向约束（规范未来运动方向与车道方向一致）。",
+    "evidence": [
+      {
+        "quote": "VAD proposes three instance-level planning constraints based on the explicit vectorized scene representation: …the ego-agent collision constraint for maintaining a safe distance between the ego vehicle and other dynamic agents both laterally and longitudinally; the ego-boundary overstepping constraint for pushing the planning trajectory away from the road boundary; and the ego-lane direction constraint for regularizing the future motion direction…",
+        "source_id": "paper-083",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "hd_map",
+      "doc_type": "paper"
+    },
+    "id": "train-180"
+  },
+  {
+    "question": "根据文档，为什么伪点云方法在深度估计误差和泛化问题上存在显著缺陷，而 DD3D 的架构如何克服这些限制？",
+    "reference_answer": "伪点云方法依赖中间深度网络生成点云，但单目深度回归本身是病态逆问题，深度误差是伪点云与基于激光雷达的检测器之间差距的主要原因，且泛化问题尚未完全理解。DD3D 通过端到端单阶段架构和深度预训练实现有效信息传递，避免了伪点云方法所需的额外深度微调步骤和过拟合问题，从而在不增加复杂性的前提下利用大规模无标签数据进行预训练。",
+    "evidence": [
+      {
+        "quote": "However, regressing depth from single images is inherently an ill-posed inverse problem. Consequently, errors in depth estimation account for the major part of the gap between pseudo-lidar and lidar-based detectors, a problem compounded by generalization issues that are not fully understood yet. [...] Our main contribution is a novel fully convolutional single-stage 3D detection architecture, DD3D (for Dense Depth-pre-trained 3D Detector), that can effectively leverage monocular depth estimation for pre-training [...] Our detector features a simple training protocol of depth pre-training and detection fine-tuning, compared to pseudo-lidar methods that require an additional depth fine-tuning step and tend to overfit to depth errors.",
+        "source_id": "paper-074",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "lidar",
+      "doc_type": "paper"
+    },
+    "id": "train-181"
+  },
+  {
+    "question": "论文中提出的flow trace loss有什么作用？它在训练中产生了什么效果？",
+    "reference_answer": "Flow trace loss在occupancy和flow预测之间建立一致性，使得模型能够通过追踪流向量序列将远期网格单元的occupancy回溯到当前时间的位置。实验表明，该损失显著改善了依赖流预测链的指标，并帮助模型平滑感知噪声并学习智能体长期运动模式，但会导致单步流准确率略有下降。",
+    "evidence": [
+      {
+        "quote": "\"To this end, we propose a deep learning architecture that generates Occupancy Flow Fields with the help of a new flow trace loss that establishes consistency between the occupancy and flow predictions. ... The trace loss incentivizes the model to smooth out these fluctuations and learn the true behavior of the agents to be able to capture their long-term motion patterns, rather than trying to model the noise and temporal inaccuracies in the detection pipeline.\"",
+        "source_id": "paper-003",
+        "locator": "page=1, page=2（从摘要和结论部分综合）"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "paper"
+    },
+    "id": "train-182"
+  },
+  {
+    "question": "在执行软件更新前，制造商必须建立何种流程以确保更新不影响车辆安全？请根据文档列举一个具体流程要求。",
+    "reference_answer": "制造商必须建立流程来评估、识别并记录软件更新是否会影响车辆安全继续运行所需的任何其他系统，或者更新是否会增加或改变车辆注册时的功能。",
+    "evidence": [
+      {
+        "quote": "[p.8] \"A process to assess, identify and record if a software update will affect any other system required for the safe and continued operation of the vehicle or if the update will add or alter functionality of the vehicle compared to when it was registered;\"",
+        "source_id": "standard-008",
+        "locator": "page=8"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-183"
+  },
+  {
+    "question": "StreamMapNet采用了哪种时序融合策略来处理视频输入？",
+    "reference_answer": "Streaming策略，即逐帧处理并跨时间传播隐藏状态以保留时序信息，而非简单堆叠多帧。",
+    "evidence": [
+      {
+        "quote": "\"To address these issues, we present StreamMapNet, an end-to-end online pipeline that utilizes camera videos with a temporal fusion strategy to construct temporal-consistent high-quality vectorized maps covering a wide range. ... We adopt a streaming strategy for our temporal fusion approach. Instead of stacking multiple frames together, our method process each frame individually while propagating a hidden state across time to preserve temporal information, as demonstrated in Figure 1.\"",
+        "source_id": "paper-078",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "online_mapping",
+      "doc_type": "paper"
+    },
+    "id": "train-184"
+  },
+  {
+    "question": "SparseDrive 相比传统 BEV-Centric 范式，其核心创新点是什么？",
+    "reference_answer": "SparseDrive 采用稀疏场景表示（Sparse-Centric paradigm），替代了计算密集的 BEV 密集特征，通过对称稀疏感知模块和并行运动规划器实现端到端自动驾驶，提升了性能和效率。",
+    "evidence": [
+      {
+        "quote": "\"To this end, we explore the sparse representation and review the task design for end-to-end autonomous driving, proposing a new paradigm named SparseDrive. Concretely, SparseDrive consists of a symmetric sparse perception module and a parallel motion planner. The sparse perception module unifies detection, tracking and online mapping with a symmetric model architecture, learning a fully sparse representation of the driving scene.\"",
+        "source_id": "paper-075",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sparse",
+      "doc_type": "paper"
+    },
+    "id": "train-185"
+  },
+  {
+    "question": "在KITTI测试集上，PointPillars的检测性能与运行速度相比其他方法有何优势？具体数值是多少？",
+    "reference_answer": "PointPillars在KITTI测试集上不仅检测精度（mAP）大幅领先所有仅使用激光雷达的方法，而且运行速度达到62 Hz（快速版本105 Hz），比现有方法快2-4倍，同时性能甚至超过部分融合方法。",
+    "evidence": [
+      {
+        "quote": "\"PointPillars outperforms all other lidar-only methods in terms of both speed and accuracy by a large margin. It also outperforms all fusion based method except on pedestrians. This detection performance is achieved while running at 62 Hz: a 2-4 fold runtime improvement. A faster version matches the state of the art at 105 Hz.\"",
+        "source_id": "paper-068",
+        "locator": "page=1 (Abstract and Figure 1 description)"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "lidar",
+      "doc_type": "paper"
+    },
+    "id": "train-186"
+  },
+  {
+    "question": "在Apollo的CyberRT通信系统中，数据通道（Channel）包含哪些数据字段？请简要说明每个字段的作用。",
+    "reference_answer": "数据通道包含四个字段：ChannelName（数据通道的名字）、MessageType（通道内数据的消息类型）、FrameRatio（数据更新频率）、MessageSize（原始数据的大小）。",
+    "evidence": [
+      {
+        "quote": "数据通道 Channel是传转辅输数据的通道，管理CybarRT 中的数据通信。用户可以发布/订阅同一个Charel建立通信，实现点对点（P2F) 招放数据包之后，打开CyherMonitor工具井进入特定数据通道，可以看到海个Channel中都有ChannelINae、 HessageType、FraeRatio、Rahessage Size数据字段。",
+        "source_id": "apollo-doc-003",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    },
+    "id": "train-187"
+  },
+  {
+    "question": "Apollo中的消息格式主要分为哪两大类？请各举一个示例说明。",
+    "reference_answer": "消息格式主要分为通用（Common）消息格式和特定模块消息格式。通用消息格式如定义时间的时间戳消息格式、错误代码消息格式；特定模块消息格式是各模块独有的，例如感知模块的PerceptionObstacles消息格式。",
+    "evidence": [
+      {
+        "quote": "消息格式主要分为两大类，即：●通用（Common）消息格式 各模块通用的消息格式，如定义时间的时间戳消息格式、错误代码消息格式。 ·特定模块消息格式 各模块独有的消息格式。 下文将介绍demc_35uecord相关的通用消息格式和特定模块的消息格式。",
+        "source_id": "apollo-doc-003",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    },
+    "id": "train-188"
+  },
+  {
+    "question": "Apollo感知系统如何利用深度学习和云端技术实现持续改进？",
+    "reference_answer": "Apollo通过大规模深度学习平台和GPU集群大幅缩短大量数据的学习时间。训练完成后，新模型通过云端OTA（空中升级）部署到车辆上。人工智能和数据驱动解决方案相结合，使得感知系统能够持续提升其检测和识别能力，为其他自动驾驶模块提供准确、稳定、可靠的输入。",
+    "evidence": [
+      {
+        "quote": "The large-scale deep-learning platform and GPU clusters drastically shorten the learning time for large quantities of data. Once trained, the new models are deployed onto the vehicle using over-the-air updates through the cloud. Artificial intelligence and data-driven solutions combine to enable Apollo’s perception system to continuously improve its detection and recognition capabilities, which provide accurate, stable, and reliable input for other autonomous system modules.",
+        "source_id": "apollo-doc-004",
+        "locator": "p.3"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc"
+    },
+    "id": "train-189"
+  },
+  {
+    "question": "Apollo控制模块的主要目标是什么？",
+    "reference_answer": "基于规划模块输出的目标轨迹和定位模块输出的车辆状态，生成方向盘、油门、刹车控制命令，并通过canbus模块给车辆底层执行器。",
+    "evidence": [
+      {
+        "quote": "控制模块是整个自动驾驶软件系统中的执行环节，控制模块的目标是基于规划模块输出的目标轨迹和定位模块输出的车辆状态 生成方向盘、油门、刹车控制命令，并通过canbus模块给车辆底层执行器。",
+        "source_id": "apollo-doc-009",
+        "locator": "p.1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    },
+    "id": "train-190"
+  },
+  {
+    "question": "Apollo MSF（多传感器融合）定位模块包含哪些子模块？它们各自的作用是什么？",
+    "reference_answer": "Apollo MSF定位模块包含三个主要子模块：GNSSLocalization模块以车端GPS信号和基站数据为输入，输出高精度RTK定位结果；LiDARLocalization模块以在线lidar扫描数据和高精度Lidar定位地图为输入，提供高精度lidar定位结果；SINS模块利用IMU数据进行惯性导航。后端采用error-state Kalman filter融合多种传感器量测信息，输出高精度的车辆位置和姿态。",
+    "evidence": [
+      {
+        "quote": "MSF定位系统以多种传感器数据和离线制作的高精度Lidar定位地图为输入，其中GNSSLocalization模块以车端 GPS信号和基站数据为输入，输出高精度RTK定位结果。LiDARLocalization模块以在线lidar扫描数据和高精度 Lidar定位地图为输入，提供高精度lidar定位结果。SINS模块利用IMU数据进行惯性导航。后端采用error-state Kalmanfilter融合多种传感器量测信息。输出高精度的车辆位置和姿态。",
+        "source_id": "apollo-doc-010",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    },
+    "id": "train-191"
+  },
+  {
+    "question": "根据NHTSA的进口豁免计划（Import Exemption Program），自2016年10月以来，已有多少辆配备自动驾驶系统的车辆获得临时进口许可？",
+    "reference_answer": "264辆",
+    "evidence": [
+      {
+        "quote": "[p.4] 4 Import Exemption Program • Temporary importation permission (49 U.S.C. § 30114(a) and 49 CFR Part 591) for: o Research o Investigations o Demonstrations o Training o Competitive racing events o Show o Display • Since October 2016 o 264 ADS-equipped vehicles o 150+ different sites o 23 states • Currently o 157 vehicles with on-road permissions • Applications o 80-100 per year",
+        "source_id": "standard-005",
+        "locator": "page=4"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "safety",
+      "doc_type": "standard"
+    },
+    "id": "train-192"
+  },
+  {
+    "question": "Waymo Open Dataset中包含了多少数量的LiDAR和相机标注框？它们分别对应多少数量的物体跟踪轨迹？",
+    "reference_answer": "该数据集包含约1200万个LiDAR标注框和约1200万个相机标注框，对应约11.3万个LiDAR物体轨迹和约25万个相机图像轨迹。",
+    "evidence": [
+      {
+        "quote": "Our dataset contains around 12 million LiDAR box annotations and around 12 million camera box annotations, giving rise to around 113k LiDAR object tracks and around 250k camera image tracks.",
+        "source_id": "paper-004",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "report"
+    },
+    "id": "train-193"
+  },
+  {
+    "question": "GenAD如何同时进行运动预测和规划？请简述其方法。",
+    "reference_answer": "GenAD通过统一的目标轨迹生成模型同时执行运动预测和规划。具体地，在推理时，它从学习到的结构潜在空间中采样分布，该分布以实例令牌为条件，然后利用学习到的时序模型生成未来轨迹，从而一次性得到预测和规划结果。",
+    "evidence": [
+      {
+        "quote": "GenAD finally simultaneously performs motion prediction and planning by sampling distributions in the learned structural latent space conditioned on the instance tokens and using the learned temporal model to generate futures.",
+        "source_id": "paper-007",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    },
+    "id": "train-194"
+  },
+  {
+    "question": "UniAD是采用什么策略来避免传统模块化系统中累积误差和多任务学习中负迁移的问题？",
+    "reference_answer": "UniAD采用规划导向（planning-oriented）的端到端框架，将所有感知、预测和规划任务集成到一个网络中，通过统一的查询接口实现任务间的通信，使得前期任务都服务于规划目标，从而避免信息丢失、误差累积和特征不对齐（模块化系统的缺点）以及负迁移（多任务学习的缺点）。",
+    "evidence": [
+      {
+        "quote": "By contrast, the emergence of end-to-end autonomous driving [11,15,19,38,97] unites all nodes from perception, prediction and planning as a whole. The choice and priority of preceding tasks should be determined in favor of planning. The system should be planning-oriented, exquisitely designed with certain components involved, such that there are few accumulative error as in the standalone option or negative transfer as in the MTL scheme.",
+        "source_id": "paper-013",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "paper"
+    },
+    "id": "train-195"
+  },
+  {
+    "question": "在CenterPoint中，3D物体跟踪是如何简化的？",
+    "reference_answer": "3D物体跟踪简化为贪心的最近点匹配（greedy closest-point matching），通过预测物体在连续帧之间的相对偏移（速度），然后将检测到的中心点与上一帧的轨迹进行匹配。",
+    "evidence": [
+      {
+        "quote": "In CenterPoint, 3D object tracking simplifies to greedy closest-point matching. ... CenterPoint predicts the relative offset (velocity) of objects between consecutive frames, which are then linked up greedily.",
+        "source_id": "paper-031",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "tracking",
+      "doc_type": "paper"
+    },
+    "id": "train-196"
+  },
+  {
+    "question": "DriveDreamer 的两阶段训练管道是如何设计的？每个阶段的目标分别是什么？",
+    "reference_answer": "第一阶段训练Auto-DM，通过引入交通结构信息作为中间条件，增强对真实驾驶场景的理解，特别是动态前景对象和静态背景；第二阶段训练通过视频预测建立世界模型，利用驾驶动作迭代更新未来交通结构条件，使模型能根据不同驾驶策略预测驾驶环境变化，并预测未来的驾驶策略。",
+    "evidence": [
+      {
+        "quote": "We propose a two-stage training pipeline. In the first stage, we train Auto-DM by incorporating traffic structural information as intermediate conditions, which significantly enhances sampling efficiency. Consequently, Auto-DM exhibits remarkable capabilities in comprehending real-world driving scenes, particularly concerning the dynamic foreground objects and the static background. In the second-stage training, we establish the world model through video prediction. Specifically, driving actions are employed to iteratively update future traffic structural conditions, which enables DriveDreamer to anticipate variations in the driving environment based on different driving strategies. Moreover, DriveDreamer extends its predictive prowess to foresee forthcoming driving policies, drawing from historical observations and Auto-DM features.",
+        "source_id": "paper-039",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "world_model",
+      "doc_type": "paper"
+    },
+    "id": "train-197"
+  },
+  {
+    "question": "M3D-RPN如何通过共享锚点和分类目标来统一2D和3D检测空间？",
+    "reference_answer": "M3D-RPN将3D检测问题重新表述，使得2D和3D空间使用共享的锚点和分类目标。这样，3D检测器在物体分类可靠性上能够达到与2D检测器相当的性能。此外，3D锚点主要基于图像空间设计，并使用每个3D参数的先验统计进行初始化。",
+    "evidence": [
+      {
+        "quote": "we propose to reformulate the 3D detection problem such that both 2D and 3D spaces utilize shared anchors and classification targets. In doing so, the 3D detector is naturally able to perform on par with the performance of its 2D counterpart, from the perspective of reliably classifying objects.\" \"we formulate 3D anchors to function primarily within the image-space and initialize all anchors with prior statistics for each of its 3D parameters.",
+        "source_id": "paper-049",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "monocular_3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-198"
+  },
+  {
+    "question": "PV-RCNN如何整合体素CNN和PointNet网络的优势？请简要描述其核心思路。",
+    "reference_answer": "PV-RCNN通过两步策略整合两者优势：第一步利用体素CNN进行高效的特征学习和高质量的提案生成，并通过最远点采样选择少量关键点，再使用PointNet的集合抽象聚合体素特征；第二步通过RoI-grid池化模块，对每个提案的网格点使用多半径的关键点集合抽象，聚合多尺度上下文特征，用于提案精炼。",
+    "evidence": [
+      {
+        "quote": "We propose a novel 3D object detection framework, PV-RCNN ... which boosts the 3D detection performance by incorporating the advantages from both the Point-based and Voxel-based feature learning methods. The principle of PV-RCNN lies in the fact that the voxel-based operation efficiently encodes multi-scale feature representations and can generate high-quality 3D proposals, while the PointNet-based set abstraction operation preserves accurate location information with flexible receptive fields.\" (page 1)",
+        "source_id": "paper-064",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-199"
+  },
+  {
+    "question": "PointPillars相比VoxelNet有哪些主要优势？",
+    "reference_answer": "PointPillars的优势包括：通过学习特征而非固定编码器，能利用点云的全部信息；使用pillars（垂直列）而非voxels，无需手动调整垂直方向的分箱；所有关键操作可表述为2D卷积，在GPU上计算极其高效；无需针对不同点云配置手动调整，易于融合多扫描或雷达点云；在KITTI上以62Hz运行，远超VoxelNet的4.4Hz。",
+    "evidence": [
+      {
+        "quote": "There are several advantages of this approach. First, by learning features instead of relying on fixed encoders, PointPillars can leverage the full information represented by the point cloud. Further, by operating on pillars instead of voxels there is no need to tune the binning of the vertical direction by hand. Finally, pillars are highly efficient because all key operations can be formulated as 2D convolutions which are extremely efficient to compute on a GPU. An additional benefit of learning features is that PointPillars requires no hand-tuning to use different point cloud configurations. For example, it can easily incorporate multiple lidar scans, or even radar point clouds.",
+        "source_id": "paper-068",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "3d_detection",
+      "doc_type": "paper"
+    },
+    "id": "train-200"
+  },
+  {
+    "question": "在Apollo感知融合模块中，统一输入channel和主要输出channel分别是什么？它们各自的作用是什么？",
+    "reference_answer": "统一输入channel是/perception/inner/PrefusedObjects，各传感器感知的结果都会输出到该channel里作为感知融合模块的源数据；主要输出channel是/apollo/perception/obstacles，该channel输出的是多传感器融合之后的障碍物信息。",
+    "evidence": [
+      {
+        "quote": "channel名称 channel说明 统一输入channel。各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。",
+        "source_id": "apollo-doc-005",
+        "locator": "Page 1, 感知融合模块的相关参数部分"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc"
+    },
+    "id": "train-201"
+  },
+  {
+    "question": "Apollo控制模块有哪些输入channel？分别是什么？",
+    "reference_answer": "Apollo控制模块有三个输入channel，分别是：/Apollo/planning（规划信息，自车规划的轨迹信息）、/Apollo/localization/pose（定位信息，自车的位置）、/Apollo/canbus/chassis（底盘信息，自车的方向盘、速度信息）。",
+    "evidence": [
+      {
+        "quote": "控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo/planing 规划信息，自车规划的轨迹信息 定位信息，自车的位置 /Apollo/localizatio/pose /Apollo/canbus/chassis 底盘信息，自车的方向盘、速度信息 控制模块输出channel 控制模块有一个输出channel： 输入输出channel说明 channel名称 控制信息，方向盘角度、油门刹车 /Apollo/control 输出",
+        "source_id": "apollo-doc-009",
+        "locator": "Page 1, \"Apollo控制模块输入输出\" section"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "planning_control",
+      "doc_type": "official_doc"
+    },
+    "id": "train-202"
+  },
+  {
+    "question": "请描述Apollo Cyber RT框架如何通过其组件模型和调度模型支持低延迟自动驾驶工作负载？",
+    "reference_answer": "Apollo Cyber RT框架通过其组件模型和调度模型支持低延迟自动驾驶工作负载，组件模型定义了处理单元的结构，调度模型优化了任务执行顺序和资源分配，从而实现了低延迟。",
+    "evidence": [
+      {
+        "quote": "## Summary\nOfficial Apollo runtime-framework material describing Cyber RT, its component model, scheduling model, and how it supports low-latency autonomous-driving workloads.",
+        "source_id": "apollo-doc-002",
+        "locator": "Apollo Cyber RT architecture"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "system_architecture",
+      "doc_type": "official_doc"
+    },
+    "id": "train-203"
+  }
+]

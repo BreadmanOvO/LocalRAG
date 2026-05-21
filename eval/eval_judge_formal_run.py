@@ -175,7 +175,9 @@ def write_test_report(
         f"- Generated at: {datetime.now().isoformat(timespec='seconds')}",
         f"- Dataset: `{run['dataset_path'].resolve()}`",
         f"- Baseline run: `{run['baseline_run_dir'].resolve()}`",
+        f"- Baseline predictions: `{run['baseline_predictions_path'].resolve()}`",
         f"- Candidate run: `{run['chunking_run_dir'].resolve()}`",
+        f"- Candidate predictions: `{run['candidate_predictions_path'].resolve()}`",
         f"- Judge run: `{run['judge_run_dir'].resolve()}`",
         "",
         "## Commands",
@@ -256,7 +258,7 @@ def run_formal_judge_pipeline(
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run the formal judge evaluation pipeline.")
-    parser.add_argument("--dataset", type=Path, default=Path("data/evaluation/gold/gold_set.json"))
+    parser.add_argument("--dataset", type=Path, default=Path("data/evaluation/gold/eval_set.json"))
     parser.add_argument("--baseline-out-dir", type=Path, default=Path("results/baseline_eval"))
     parser.add_argument("--chunking-out-dir", type=Path, default=Path("results/chunking_eval"))
     parser.add_argument("--judge-out-dir", type=Path, default=Path("results/judge_eval"))

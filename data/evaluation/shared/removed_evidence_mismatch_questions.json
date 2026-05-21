@@ -1,0 +1,109 @@
+{
+  "eval": {
+    "before": 100,
+    "after": 92,
+    "removed": [
+      {
+        "id": "eval-014",
+        "source_id": "apollo-doc-010",
+        "question": "在MSF定位模块中，后端融合多种传感器量测信息时采用了什么算法？该滤波器？并请描述其具体名称。"
+      },
+      {
+        "id": "eval-021",
+        "source_id": "apollo-doc-002",
+        "question": "Apollo Cyber RT 框架通过哪些特性实现高性能？请结合其计算模型说明。"
+      },
+      {
+        "id": "eval-040",
+        "source_id": "standard-005",
+        "question": "文档中提到了哪些NHTSA在ADS安全方面的主要活动？请至少列出三项并说明其目的简要说明。"
+      },
+      {
+        "id": "eval-045",
+        "source_id": "apollo-doc-004",
+        "question": "Apollo开放平台的最底层组成部分是什么？它的主要目标是什么？"
+      },
+      {
+        "id": "eval-059",
+        "source_id": "paper-049",
+        "question": "论文提出的方向估计后优化算法（orientation estimation post-optimization algorithm）是如何改进θ估计的？"
+      },
+      {
+        "id": "eval-060",
+        "source_id": "apollo-doc-006",
+        "question": "在Apollo的障碍物检测模块中，3D边框使用哪7个变量来表示？请写出这些变量的含义。"
+      },
+      {
+        "id": "eval-099",
+        "source_id": "apollo-doc-009",
+        "question": "在Apollo控制模块的横向控制中，方向盘闭环和方向盘开环各自是如何实现的？请结合文档说明。"
+      },
+      {
+        "id": "eval-100",
+        "source_id": "apollo-doc-003",
+        "question": "在 Apollo 的 Channel 数据通道中，MessageType 字段的作用是什么？"
+      }
+    ]
+  },
+  "train": {
+    "before": 202,
+    "after": 191,
+    "removed": [
+      {
+        "id": "train-001",
+        "source_id": "paper-064",
+        "question": "PV-RCNN主要融合了哪两种类型的点云特征学习网络？"
+      },
+      {
+        "id": "train-053",
+        "source_id": "paper-068",
+        "question": "PointPillars使用了哪种深度学习网络来学习点云的表示？"
+      },
+      {
+        "id": "train-075",
+        "source_id": "apollo-doc-009",
+        "question": "根据文档描述，Apollo纵向控制模块如何通过位置闭环、速度闭环以及表定表最终生成油门或刹车指令？请完整描述其流程。"
+      },
+      {
+        "id": "train-088",
+        "source_id": "paper-039",
+        "question": "DriveDreamer 是基于什么场景建立的世界模型？"
+      },
+      {
+        "id": "train-106",
+        "source_id": "paper-007",
+        "question": "GenAD将自动驾驶建模为哪个问题？"
+      },
+      {
+        "id": "train-114",
+        "source_id": "paper-013",
+        "question": "UniAD 在 UniAD 框架中，包含了哪些主要的感知和预测任务模块？"
+      },
+      {
+        "id": "train-140",
+        "source_id": "paper-031",
+        "question": "在CenterPoint的贪心跟踪算法（Algorithm 1）中，如何计算检测与上一帧跟踪对象的匹配代价？"
+      },
+      {
+        "id": "train-141",
+        "source_id": "apollo-doc-005",
+        "question": "感知融合模块如何过滤检测不准确的障碍物？请简述其核心步骤。"
+      },
+      {
+        "id": "train-144",
+        "source_id": "apollo-doc-006",
+        "question": "在Apollo的视觉感知模块中，摄像头存在哪些主要缺点？视觉感知算法在Apollo平台上主要应用于哪三个场景？"
+      },
+      {
+        "id": "train-158",
+        "source_id": "paper-004",
+        "question": "Waymo Open Dataset在多样性方面相对于现有最大相机+LiDAR数据集有何优势？具体如何量化？"
+      },
+      {
+        "id": "train-199",
+        "source_id": "apollo-doc-006",
+        "question": "红绿灯检测模块包含哪四个部分？请简要说明每个部分的功能。"
+      }
+    ]
+  }
+}

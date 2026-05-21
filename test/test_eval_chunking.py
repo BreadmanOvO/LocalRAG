@@ -584,7 +584,7 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
         )
         report = eval_chunking.render_chunking_report(
             run_id="gold-20260421-120000",
-            dataset_path=Path("data/evaluation/gold/gold_set.json"),
+            dataset_path=Path("data/evaluation/gold/eval_set.json"),
             baseline_store_path=Path("results/chunking_eval/stores/baseline"),
             candidate_store_path=Path("results/chunking_eval/stores/doc_type_aware"),
             comparison=comparison,

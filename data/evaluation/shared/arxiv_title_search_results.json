@@ -1,0 +1,63 @@
+{
+  "paper-019": [],
+  "paper-020": [],
+  "paper-021": [],
+  "paper-022": [],
+  "paper-023": [],
+  "paper-029": [],
+  "paper-030": [],
+  "paper-032": [],
+  "paper-034": [],
+  "paper-035": [],
+  "paper-037": [],
+  "paper-039": [],
+  "paper-041": [],
+  "paper-044": [],
+  "paper-045": [],
+  "paper-046": [],
+  "paper-049": [
+    {
+      "id": "1907.06038v2",
+      "title": "M3D-RPN: Monocular 3D Region Proposal Network for Object Detection",
+      "summary": "Understanding the world in 3D is a critical component of urban autonomous driving. Generally, the combination of expensive LiDAR sensors and stereo RGB imaging has been paramount for successful 3D obj"
+    }
+  ],
+  "paper-050": [
+    {
+      "id": "2211.09791v2",
+      "title": "MOTRv2: Bootstrapping End-to-End Multi-Object Tracking by Pretrained Object Detectors",
+      "summary": "In this paper, we propose MOTRv2, a simple yet effective pipeline to bootstrap end-to-end multi-object tracking with a pretrained object detector. Existing end-to-end methods, MOTR and TrackFormer are"
+    }
+  ],
+  "paper-051": [],
+  "paper-052": [],
+  "paper-054": [],
+  "paper-055": [],
+  "paper-057": [],
+  "paper-059": [],
+  "paper-060": [
+    {
+      "id": "2304.14365v3",
+      "title": "Occ3D: A Large-Scale 3D Occupancy Prediction Benchmark for Autonomous Driving",
+      "summary": "Robotic perception requires the modeling of both 3D geometry and semantics. Existing methods typically focus on estimating 3D bounding boxes, neglecting finer geometric details and struggling to handl"
+    }
+  ],
+  "paper-061": [],
+  "paper-065": [],
+  "paper-066": [],
+  "paper-067": [],
+  "paper-069": [],
+  "paper-070": [],
+  "paper-071": [],
+  "paper-076": [],
+  "paper-078": [],
+  "paper-081": [],
+  "paper-082": [],
+  "paper-085": [
+    {
+      "id": "2208.01582v3",
+      "title": "ViP3D: End-to-end Visual Trajectory Prediction via 3D Agent Queries",
+      "summary": "Perception and prediction are two separate modules in the existing autonomous driving systems. They interact with each other via hand-picked features such as agent bounding boxes and trajectories. Due"
+    }
+  ]
+}

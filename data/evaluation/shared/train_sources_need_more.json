@@ -1,0 +1,172 @@
+[
+  {
+    "source_id": "apollo-doc-002",
+    "count": 1,
+    "title": "Apollo Cyber RT Framework",
+    "path": "data/sources/apollo/apollo-cyber-rt.md",
+    "topic_tags": [
+      "system_architecture",
+      "planning_control"
+    ],
+    "doc_type": "official_doc"
+  },
+  {
+    "source_id": "apollo-doc-003",
+    "count": 0,
+    "title": "Apollo Channel Data Format",
+    "path": "data/sources/apollo/apollo-channel-data-format.md",
+    "topic_tags": [
+      "system_architecture",
+      "sensor_fusion",
+      "planning_control"
+    ],
+    "doc_type": "official_doc"
+  },
+  {
+    "source_id": "apollo-doc-004",
+    "count": 1,
+    "title": "Apollo Open Platform Overview",
+    "path": "data/sources/apollo/apollo-open-platform-overview.md",
+    "topic_tags": [
+      "system_architecture",
+      "perception",
+      "planning_control"
+    ],
+    "doc_type": "official_doc"
+  },
+  {
+    "source_id": "apollo-doc-005",
+    "count": 1,
+    "title": "Apollo Perception Fusion Overview",
+    "path": "data/sources/apollo/apollo-perception-fusion-overview.md",
+    "topic_tags": [
+      "perception",
+      "sensor_fusion"
+    ],
+    "doc_type": "official_doc"
+  },
+  {
+    "source_id": "apollo-doc-009",
+    "count": 0,
+    "title": "Apollo Control Overview",
+    "path": "data/sources/apollo/apollo-vision-control-overview.md",
+    "topic_tags": [
+      "planning_control",
+      "system_architecture"
+    ],
+    "doc_type": "official_doc"
+  },
+  {
+    "source_id": "apollo-doc-010",
+    "count": 1,
+    "title": "Apollo Localization Overview",
+    "path": "data/sources/apollo/apollo-vision-location-overview.md",
+    "topic_tags": [
+      "system_architecture",
+      "planning_control"
+    ],
+    "doc_type": "official_doc"
+  },
+  {
+    "source_id": "standard-005",
+    "count": 1,
+    "title": "Automated Driving System Safety: Overview of NHTSA Activities",
+    "path": "data/sources/standards/nhtsa-ads-safety-overview.md",
+    "topic_tags": [
+      "safety"
+    ],
+    "doc_type": "standard"
+  },
+  {
+    "source_id": "paper-004",
+    "count": 1,
+    "title": "Scalability in Perception for Autonomous Driving: Waymo Open Dataset",
+    "path": "data/sources/papers/waymo-scalability-perception.md",
+    "topic_tags": [
+      "perception",
+      "system_architecture"
+    ],
+    "doc_type": "report"
+  },
+  {
+    "source_id": "paper-007",
+    "count": 1,
+    "title": "GenAD: Generative End-to-End Autonomous Driving",
+    "path": "data/sources/papers/genad.md",
+    "topic_tags": [
+      "planning_control",
+      "perception"
+    ],
+    "doc_type": "paper"
+  },
+  {
+    "source_id": "paper-013",
+    "count": 1,
+    "title": "Planning-oriented Autonomous Driving (UniAD)",
+    "path": "data/sources/papers/unified-autonomous-driving.md",
+    "topic_tags": [
+      "planning_control",
+      "perception",
+      "sensor_fusion"
+    ],
+    "doc_type": "paper"
+  },
+  {
+    "source_id": "paper-031",
+    "count": 1,
+    "title": "CenterPoint Center-based 3D Object Detection and Tracking",
+    "path": "data/sources/papers/centerpoint-center-based-3d-object-detection-and-tracking.md",
+    "topic_tags": [
+      "3d_detection",
+      "lidar",
+      "multi_object_tracking",
+      "tracking"
+    ],
+    "doc_type": "paper"
+  },
+  {
+    "source_id": "paper-039",
+    "count": 1,
+    "title": "DriveDreamer: Towards Real-world-driven World Models for Autonomous Driving",
+    "path": "data/sources/papers/drivedreamer-towards-real-world-driven-world-models-for-autonomous-driving.md",
+    "topic_tags": [
+      "world_model",
+      "simulation",
+      "autonomous_driving"
+    ],
+    "doc_type": "paper"
+  },
+  {
+    "source_id": "paper-049",
+    "count": 1,
+    "title": "M3D-RPN: Monocular 3D Region Proposal Network for Object Detection",
+    "path": "data/sources/papers/m3d-rpn-monocular-3d-region-proposal-network-for-object-detection.md",
+    "topic_tags": [
+      "monocular_3d_detection",
+      "3d_object_detection"
+    ],
+    "doc_type": "paper"
+  },
+  {
+    "source_id": "paper-064",
+    "count": 1,
+    "title": "PV-RCNN Point-Voxel Feature Set Abstraction 3D Detection",
+    "path": "data/sources/papers/pv-rcnn-point-voxel-feature-set-abstraction-3d-detection.md",
+    "topic_tags": [
+      "3d_detection",
+      "lidar"
+    ],
+    "doc_type": "paper"
+  },
+  {
+    "source_id": "paper-068",
+    "count": 1,
+    "title": "PointPillars Fast Encoders Object Detection Point Clouds",
+    "path": "data/sources/papers/pointpillars-fast-encoders-object-detection-point-clouds.md",
+    "topic_tags": [
+      "3d_detection",
+      "lidar"
+    ],
+    "doc_type": "paper"
+  }
+]

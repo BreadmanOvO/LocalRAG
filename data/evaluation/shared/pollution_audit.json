@@ -1,0 +1,854 @@
+{
+  "suspects": [
+    {
+      "source_id": "paper-019",
+      "registry_title": "3D-Aug Auto-Augmenting for 3D Object Detection",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "aug",
+        "auto",
+        "augmenting"
+      ],
+      "first_content": "arXiv:2210.04166v2  [cs.LG]  3 Jun 2023 Test-time recalibration of conformal predictors under distribution shift based on unlabeled examples Fatih Furkan Yilmaz∗and Reinhard Heckel∗,† ∗Dept. of Electrical and Computer En",
+      "path": "data/sources/papers/3d-aug-auto-augmenting-for-3d-object-detection.md"
+    },
+    {
+      "source_id": "paper-020",
+      "registry_title": "4D-Net Learning from 3D and LiDAR Data",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "net",
+        "data"
+      ],
+      "first_content": "Published as a conference paper at ICLR 2023 GOOD: EXPLORING GEOMETRIC CUES FOR DETECT- ING OBJECTS IN AN OPEN WORLD Haiwen Huang1,2 Andreas Geiger2,3 Dan Zhang1,4 1Bosch Industry on Campus Lab, University of T¨ubingen 2",
+      "path": "data/sources/papers/4d-net-learning-from-3d-and-lidar-data.md"
+    },
+    {
+      "source_id": "paper-021",
+      "registry_title": "AB3DMOT Real-time 3D Multi-Object Tracking",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "ab3dmot",
+        "real",
+        "time",
+        "tracking"
+      ],
+      "first_content": "Weak saturation numbers of complete bipartite graphs in the clique Gal Kronenberg ∗ Ta´ısa Martins † Natasha Morrison‡ Abstract The notion of weak saturation was introduced by Bollob´as in 1968. Let F and H be graphs. A ",
+      "path": "data/sources/papers/ab3dmot-real-time-3d-multi-object-tracking.md"
+    },
+    {
+      "source_id": "paper-022",
+      "registry_title": "AD-MLP Autonomous Driving with MLP",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "mlp",
+        "mlp"
+      ],
+      "first_content": "arXiv:2310.10984v1  [cs.SI]  17 Oct 2023 Latent class analysis with weighted responses Huan Qinga,∗ aSchool of Economics and Finance, Chongqing University of Technology, Chongqing, 400054, China Abstract The latent class",
+      "path": "data/sources/papers/ad-mlp-autonomous-driving-with-mlp.md"
+    },
+    {
+      "source_id": "paper-023",
+      "registry_title": "BEV-SAN Bird-eye-view Segmentation Attention Network",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.12,
+      "hits": [
+        "eye"
+      ],
+      "expected_tokens": [
+        "bev",
+        "san",
+        "bird",
+        "eye",
+        "view",
+        "segmentation",
+        "attention",
+        "network"
+      ],
+      "first_content": "Towards ML-based diagnostics of focused laser pulse Y. R. Rodimkov,1, ∗V. D. Volokitin,1, 2, † I. B. Meyerov,1, 2, ‡ and E. S. Eﬁmenko3, § 1Department of Mathematical Software and Supercomputing Technologies, Lobachevsky",
+      "path": "data/sources/papers/bev-san-bird-eye-view-segmentation-attention-network.md"
+    },
+    {
+      "source_id": "paper-029",
+      "registry_title": "CLRNet Cross Layer Refinement Network Lane Detection",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "clrnet",
+        "cross",
+        "layer",
+        "refinement",
+        "network",
+        "lane"
+      ],
+      "first_content": "1 Efﬁcient and Robust 2D-to-BEV Representation Learning via Geometry-guided Kernel Transformer Shaoyu Chen∗, Tianheng Cheng∗, Xinggang Wang†, Wenming Meng, Qian Zhang, Wenyu Liu Abstract—Learning Bird’s Eye View (BEV) re",
+      "path": "data/sources/papers/clrnet-cross-layer-refinement-network-lane-detection.md"
+    },
+    {
+      "source_id": "paper-030",
+      "registry_title": "CRN Camera Radar Net 3D Object Detection",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "crn",
+        "net"
+      ],
+      "first_content": "arXiv:2209.09826v2  [cond-mat.stat-mech]  28 Nov 2023 Thermalization without eigenstate thermalization Aram W. Harrow∗1 and Yichen Huang (黄溢辰)†1,2 1Center for Theoretical Physics, Massachusetts Institute of Technology, C",
+      "path": "data/sources/papers/crn-camera-radar-net-3d-object-detection.md"
+    },
+    {
+      "source_id": "paper-032",
+      "registry_title": "Changan 3D Multi-Object Tracking",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "changan",
+        "tracking"
+      ],
+      "first_content": "SEGMENTATION OF HIGH DIMENSIONAL MEANS OVER MULTI-DIMENSIONAL CHANGE POINTS AND CONNECTIONS TO REGRESSION TREES BY ABHISHEK KAUL1, 1Department of Mathematics and Statistics Washington State University Pullman, WA 99164, ",
+      "path": "data/sources/papers/changan-3d-multi-object-tracking.md"
+    },
+    {
+      "source_id": "paper-034",
+      "registry_title": "DAD Depth-aware BEV Multi-view 3D Object Detection",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "dad",
+        "depth",
+        "aware",
+        "bev",
+        "view"
+      ],
+      "first_content": "INVERSE SCATTERING TRANSFORM FOR THE INTEGRABLE FRACTIONAL DERIVATIVE NONLINEAR SCHR ¨ODINGER EQUATION∗ LING AN†, LIMING LING‡, AND XIAOEN ZHANG§ Abstract. In this paper, we explore the integrable fractional derivative n",
+      "path": "data/sources/papers/dad-depth-aware-bev-multi-view-3d-object-detection.md"
+    },
+    {
+      "source_id": "paper-035",
+      "registry_title": "DD3D Depth-aware 3D Object Detection Fully Convolutional",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.4,
+      "hits": [
+        "dd3d",
+        "depth"
+      ],
+      "expected_tokens": [
+        "dd3d",
+        "depth",
+        "aware",
+        "fully",
+        "convolutional"
+      ],
+      "first_content": "Is Pseudo-Lidar needed for Monocular 3D Object detection? Dennis Park* Rares, Ambrus, ∗ Vitor Guizilini Jie Li Adrien Gaidon Toyota Research Institute firstname.lastname@tri.global Abstract Recent progress in 3D object d",
+      "path": "data/sources/papers/dd3d-depth-aware-3d-object-detection-fully-convolutional.md"
+    },
+    {
+      "source_id": "paper-037",
+      "registry_title": "DETRs3D Monocular 3D Object Detection with DETR",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "detrs3d",
+        "monocular",
+        "detr"
+      ],
+      "first_content": "Continuation KD: Improved Knowledge Distillation through the Lens of Continuation Optimization Aref Jafari1 Ivan Kobyzev2 Mehdi Rezagholizadeh2 Pascal Poupart1 Ali Ghodsi1 1University of Waterloo 2Huawei Noah’s Ark Lab {",
+      "path": "data/sources/papers/detrs3d-monocular-3d-object-detection-with-detr.md"
+    },
+    {
+      "source_id": "paper-039",
+      "registry_title": "DriveDreamer World Models for Autonomous Driving",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "drivedreamer",
+        "world",
+        "models"
+      ],
+      "first_content": "Towards Safer Operations: An Expert-involved Dataset of High-Pressure Gas Incidents for Preventing Future Failures Shumpei Inoue1, Minh-Tien Nguyen1,2,∗, Hiroki Mizokuchi1, Tuan-Anh D. Nguyen1, Huu-Hiep Nguyen1, Dung Tie",
+      "path": "data/sources/papers/drivedreamer-world-models-for-autonomous-driving.md"
+    },
+    {
+      "source_id": "paper-041",
+      "registry_title": "Far3D Expanding Horizon Surround-view 3D Object Detection",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "far3d",
+        "expanding",
+        "horizon",
+        "surround",
+        "view"
+      ],
+      "first_content": "Preprint MINIGPT-4: ENHANCING VISION-LANGUAGE UNDERSTANDING WITH ADVANCED LARGE LANGUAGE MODELS Deyao Zhu∗, Jun Chen∗, Xiaoqian Shen, Xiang Li, Mohamed Elhoseiny King Abdullah University of Science and Technology {deyao.",
+      "path": "data/sources/papers/far3d-expanding-horizon-surround-view-3d-object-detection.md"
+    },
+    {
+      "source_id": "paper-044",
+      "registry_title": "GameFormer Learning Interactive Driving Game-aware Transformers",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "gameformer",
+        "interactive",
+        "game",
+        "aware",
+        "transformers"
+      ],
+      "first_content": "LLM4VG: Large Language Models Evaluation for Video Grounding Wei Feng Tsinghua University Xin Wang* Tsinghua University Hong Chen Tsinghua University Zeyang Zhang Tsinghua University Houlun Chen Tsinghua University Zihan",
+      "path": "data/sources/papers/gameformer-learning-interactive-driving-game-aware-transformers.md"
+    },
+    {
+      "source_id": "paper-045",
+      "registry_title": "GaussianOcc 3D Gaussian Splatting Occupancy Prediction",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "gaussianocc",
+        "gaussian",
+        "splatting",
+        "occupancy",
+        "prediction"
+      ],
+      "first_content": "Factorized Learning Assisted with Large Language Model for Gloss-free Sign Language Translation Zhigang Chen1,2, Benjia Zhou3, Jun Li1,2, Jun Wan1,2,3†, Zhen Lei1,2,4 Ning Jiang5, Quan Lu5, Guoqing Zhao5 1MAIS, Institute",
+      "path": "data/sources/papers/gaussianocc-3d-gaussian-splatting-occupancy-prediction.md"
+    },
+    {
+      "source_id": "paper-046",
+      "registry_title": "HDMapNet Learning HD Map for Autonomous Driving",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "hdmapnet",
+        "map"
+      ],
+      "first_content": "TransWeather: Transformer-based Restoration of Images Degraded by Adverse Weather Conditions Jeya Maria Jose Valanarasu, Rajeev Yasarla, and Vishal M. Patel Johns Hopkins University {jvalana1,ryasarl1,vpatel36} @jhu.edu ",
+      "path": "data/sources/papers/hdmapnet-learning-hd-map-for-autonomous-driving.md"
+    },
+    {
+      "source_id": "paper-049",
+      "registry_title": "M3D-RPN Monocular 3D Region Proposal Network",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "m3d",
+        "rpn",
+        "monocular",
+        "region",
+        "proposal",
+        "network"
+      ],
+      "first_content": "All the attention you need: Global-local, spatial-channel attention for image retrieval Chull Hwan Song Odd Concepts Hye Joo Han Odd Concepts Yannis Avrithis Inria, Univ Rennes, CNRS, IRISA Abstract We address representa",
+      "path": "data/sources/papers/m3d-rpn-monocular-3d-region-proposal-network.md"
+    },
+    {
+      "source_id": "paper-050",
+      "registry_title": "MOTRv2 Bootstrapping End-to-End Multi-Object Tracking",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "motrv2",
+        "bootstrapping",
+        "tracking"
+      ],
+      "first_content": "Gene Set Summarization Using Large Language Models Marcin P. Joachimiak1, J. Harry Caufield1, Nomi L. Harris1, Hyeongsik Kim2,  Christopher J. Mungall1 1Biosystems Data Science Department, Environmental Genomics and Syst",
+      "path": "data/sources/papers/motrv2-bootstrapping-end-to-end-multi-object-tracking.md"
+    },
+    {
+      "source_id": "paper-051",
+      "registry_title": "MUTR3D Multi-object Tracking with 3D Detection",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "mutr3d",
+        "tracking"
+      ],
+      "first_content": "Neural Shape Deformation Priors Jiapeng Tang1 Lev Markhasin2 Bi Wang2 Justus Thies3 Matthias Nießner1 1 Technical University of Munich 2 Sony Europe RDC Stuttgart 3 Max Planck Institute for Intelligent Systems, Tübingen,",
+      "path": "data/sources/papers/mutr3d-multi-object-tracking-with-3d-detection.md"
+    },
+    {
+      "source_id": "paper-052",
+      "registry_title": "MagicDrive Street View Generation Diverse 3D Geometry",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "magicdrive",
+        "street",
+        "view",
+        "generation",
+        "diverse",
+        "geometry"
+      ],
+      "first_content": "arXiv:2305.11816v1  [astro-ph.SR]  19 May 2023 Draft version May 22, 2023 Typeset using LATEX default style in AASTeX631 Element Abundances in Impulsive Solar Energetic Particle Events J. Martin Laming1 and Natsuha Kurod",
+      "path": "data/sources/papers/magicdrive-street-view-generation-diverse-3d-geometry.md"
+    },
+    {
+      "source_id": "paper-054",
+      "registry_title": "MapTracker Tracking Strided Memory Vector HD Mapping",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "maptracker",
+        "tracking",
+        "strided",
+        "memory",
+        "vector",
+        "mapping"
+      ],
+      "first_content": "Delay propagation patterns in Japan’s domestic air transport network Kashin Sugishitaa,∗, Kazuki Arisawaa, Shinya Hanaokaa aDepartment of Transdisciplinary Science and Engineering, Tokyo Institute of Technology, Tokyo 15",
+      "path": "data/sources/papers/maptracker-tracking-strided-memory-vector-hd-mapping.md"
+    },
+    {
+      "source_id": "paper-055",
+      "registry_title": "MonoDLE Delving into Localization Errors Monocular 3D Detection",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "monodle",
+        "delving",
+        "into",
+        "localization",
+        "errors",
+        "monocular"
+      ],
+      "first_content": "Domain-Adaptive Self-Supervised Face & Body Detection in Drawings Barıs¸ Batuhan Topal1 , Deniz Yuret1 , Tevﬁk Metin Sezgin1 1Department of Computer Engineering, KUIS AI Center, Koc¸ University {baristopal20, dyuret, mts",
+      "path": "data/sources/papers/monodle-delving-into-localization-errors-monocular-3d-detection.md"
+    },
+    {
+      "source_id": "paper-057",
+      "registry_title": "MonoFlex Monocular 3D Object Detection Flexible Reconstruction",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "monoflex",
+        "monocular",
+        "flexible",
+        "reconstruction"
+      ],
+      "first_content": "arXiv:2103.04630v2  [math.AG]  2 Dec 2021 A GENERALIZATION OF WITTEN’S CONJECTURE FOR THE PIXTON CLASS AND THE NONCOMMUTATIVE KDV HIERARCHY ALEXANDR BURYAK AND PAOLO ROSSI Abstract. In this paper, we formulate and presen",
+      "path": "data/sources/papers/monoflex-monocular-3d-object-detection-flexible-reconstruction.md"
+    },
+    {
+      "source_id": "paper-059",
+      "registry_title": "NeuralMapPrior Online HD Map Reconstruction Neural Priors",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.17,
+      "hits": [
+        "neural"
+      ],
+      "expected_tokens": [
+        "neuralmapprior",
+        "online",
+        "map",
+        "reconstruction",
+        "neural",
+        "priors"
+      ],
+      "first_content": "FoundationPose: Unified 6D Pose Estimation and Tracking of Novel Objects Bowen Wen Wei Yang Jan Kautz Stan Birchfield NVIDIA Abstract We present FoundationPose, a unified foundation model for 6D object pose estimation an",
+      "path": "data/sources/papers/neuralmapprior-online-hd-map-reconstruction-neural-priors.md"
+    },
+    {
+      "source_id": "paper-060",
+      "registry_title": "Occ3D A Large-Scale 3D Occupancy Prediction Benchmark",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.17,
+      "hits": [
+        "large"
+      ],
+      "expected_tokens": [
+        "occ3d",
+        "large",
+        "scale",
+        "occupancy",
+        "prediction",
+        "benchmark"
+      ],
+      "first_content": "ReWOO: Decoupling Reasoning from Observations for Efficient Augmented Language Models Binfeng Xu billxbf@gmail.com Zhiyuan Peng jerrypeng1937@gmail.com Bowen Lei bowenlei@stat.tamu.edu Subhabrata Mukherjee subhabrata.muk",
+      "path": "data/sources/papers/occ3d-a-large-scale-3d-occupancy-prediction-benchmark.md"
+    },
+    {
+      "source_id": "paper-061",
+      "registry_title": "OccWorld 3D Occupancy World Model",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.25,
+      "hits": [
+        "model"
+      ],
+      "expected_tokens": [
+        "occworld",
+        "occupancy",
+        "world",
+        "model"
+      ],
+      "first_content": "Calibrated Explanations for Regression Tuwe L¨ofstr¨om1*, Helena L¨ofstr¨om1, Ulf Johansson1, Cecilia S¨onstr¨od1, Rudy Matela1 1*J¨onk¨oping AI Lab (JAIL), Department of Computing, J¨onk¨oping University, Box 1026, J¨on",
+      "path": "data/sources/papers/occworld-3d-occupancy-world-model.md"
+    },
+    {
+      "source_id": "paper-065",
+      "registry_title": "PV-RCNN++ Point-Voxel Feature Set Abstraction Local Vector",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.25,
+      "hits": [
+        "feature",
+        "local"
+      ],
+      "expected_tokens": [
+        "rcnn",
+        "point",
+        "voxel",
+        "feature",
+        "set",
+        "abstraction",
+        "local",
+        "vector"
+      ],
+      "first_content": "AI: Modeling Oceans and Climate Change Workshop at ICLR 2021 FEATURE IMPORTANCE IN A DEEP LEARNING CLIMATE EMULATOR Wei Xu, Xihaier Luo, Yihui Ren, Ji Hwan Park & Shinjae Yoo Computational Science Initiative Brookhaven N",
+      "path": "data/sources/papers/pv-rcnn-point-voxel-feature-set-abstraction-local-vector.md"
+    },
+    {
+      "source_id": "paper-066",
+      "registry_title": "Part-A2 3D Object Detection Point Cloud Part-aware Aggregation",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "part",
+        "point",
+        "cloud",
+        "part",
+        "aware",
+        "aggregation"
+      ],
+      "first_content": "Propose-and-Attend Single Shot Detector Ho-Deok Jang Sanghyun Woo Philipp Benz Jinsun Park In So Kweon Korea Advanced Institute of Science and Technology (KAIST) {hdjang, shwoo93, pbenz, zzangjinsun, iskweon}@kaist.ac.kr",
+      "path": "data/sources/papers/part-a2-3d-object-detection-point-cloud-part-aware-aggregation.md"
+    },
+    {
+      "source_id": "paper-067",
+      "registry_title": "PersFormer Geometry-aware Attention for 3D Lane Detection",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "persformer",
+        "geometry",
+        "aware",
+        "attention",
+        "lane"
+      ],
+      "first_content": "Exponential decay for Constrained-degree percolation Diogo C. dos Santos1 and Roger W. C. Silva 2 Abstract We consider the Constrained-degree percolation model in random environment (CDPRE) on the square lattice. In this",
+      "path": "data/sources/papers/persformer-geometry-aware-attention-for-3d-lane-detection.md"
+    },
+    {
+      "source_id": "paper-069",
+      "registry_title": "RCBEV Radar-Camera Fusion BEV 3D Object Detection",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "rcbev",
+        "fusion",
+        "bev"
+      ],
+      "first_content": "Fairness in Multi-Task Learning via Wasserstein Barycenters François Hu1[0009−0000−6093−6175], Philipp Ratz2[0000−0002−0966−5493], and Arthur Charpentier2[0000−0003−3654−6286] 1 Université de Montréal, Montréal, Québec, ",
+      "path": "data/sources/papers/rcbev-radar-camera-fusion-bev-3d-object-detection.md"
+    },
+    {
+      "source_id": "paper-070",
+      "registry_title": "RadarNet Exploiting Radar Robust 3D Object Detection",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "radarnet",
+        "exploiting"
+      ],
+      "first_content": "Rethinking the Evaluation for Conversational Recommendation in the Era of Large Language Models Xiaolei Wang1,3∗, Xinyu Tang1,3∗, Wayne Xin Zhao1,3†, Jingyuan Wang4 and Ji-Rong Wen1,2,3 1Gaoling School of Artificial Inte",
+      "path": "data/sources/papers/radarnet-exploiting-radar-robust-3d-object-detection.md"
+    },
+    {
+      "source_id": "paper-071",
+      "registry_title": "RenderOcc Vision-centric 3D Occupancy Prediction 2D Rendering",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.17,
+      "hits": [
+        "vision"
+      ],
+      "expected_tokens": [
+        "renderocc",
+        "vision",
+        "centric",
+        "occupancy",
+        "prediction",
+        "rendering"
+      ],
+      "first_content": "LA-UR-23-24761 QCD resummation of dijet azimuthal decorrelations in pp and pA collisions Mei-Sen Gaoa , Zhong-Bo Kangb,c,d , Ding Yu Shaoa,e,f , John Terryg and Cheng Zhanga aDepartment of Physics and Center for Field Th",
+      "path": "data/sources/papers/renderocc-vision-centric-3d-occupancy-prediction-2d-rendering.md"
+    },
+    {
+      "source_id": "paper-076",
+      "registry_title": "SparseDrivev2 Sparse Scene Modeling End-to-End AD",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "sparsedrivev2",
+        "sparse",
+        "scene",
+        "modeling"
+      ],
+      "first_content": "Causal-StoNet: Causal Inference for High-Dimensional Complex Data Yaxin Fang Department of Statistics Purdue University West Lafayette, IN 47907, USA fang230@purdue.edu Faming Liang Department of Statistics Purdue Univer",
+      "path": "data/sources/papers/sparsedrivev2-sparse-scene-modeling-end-to-end-ad.md"
+    },
+    {
+      "source_id": "paper-078",
+      "registry_title": "StreamMapNet Streaming Mapping Online HD Map",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "streammapnet",
+        "streaming",
+        "mapping",
+        "online",
+        "map"
+      ],
+      "first_content": "arXiv:2308.10116v2  [math.CV]  23 Aug 2023 LIPSCHITZ CONTINUITY FOR HARMONIC FUNCTIONS AND SOLUTIONS OF THE ¯α-POISSON EQUATION MIODRAG MATELJEVI´C, NIKOLA MUTAVDˇZI´C, ADEL KHALFALLAH Abstract. We study Lipschitz contin",
+      "path": "data/sources/papers/streammapnet-streaming-mapping-online-hd-map.md"
+    },
+    {
+      "source_id": "paper-081",
+      "registry_title": "UniDepth Unified Depth Estimation",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "unidepth",
+        "depth",
+        "estimation"
+      ],
+      "first_content": "1 Path Structured Multimarginal Schr¨odinger Bridge for Probabilistic Learning of Hardware Resource Usage by Control Software Georgiy A. Bondar, Robert Gifford, Linh Thi Xuan Phan, Abhishek Halder Abstract— Solution of t",
+      "path": "data/sources/papers/unidepth-unified-depth-estimation.md"
+    },
+    {
+      "source_id": "paper-082",
+      "registry_title": "UniSim Unified Simulation for Autonomous Driving",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "unisim",
+        "simulation"
+      ],
+      "first_content": "Capturing Smart Contract Design with DCR Graphs Mojtaba Eshghie1[0000−0002−0069−0588], Wolfgang Ahrendt2[0000−0002−5671−2555], Cyrille Artho1[0000−0002−3656−1614], Thomas Troels Hildebrandt3[0000−0002−7435−5563], and Ger",
+      "path": "data/sources/papers/unisim-unified-simulation-for-autonomous-driving.md"
+    },
+    {
+      "source_id": "paper-085",
+      "registry_title": "ViP3D End-to-end Visual Trajectory Prediction via 3D Agent Queries",
+      "reason": "title_content_mismatch",
+      "match_ratio": 0.0,
+      "hits": [],
+      "expected_tokens": [
+        "vip3d",
+        "visual",
+        "trajectory",
+        "prediction",
+        "agent",
+        "queries"
+      ],
+      "first_content": "Segment Anything Alexander Kirillov1,2,4 Eric Mintun2 Nikhila Ravi1,2 Hanzi Mao2 Chloe Rolland3 Laura Gustafson3 Tete Xiao3 Spencer Whitehead Alexander C. Berg Wan-Yen Lo Piotr Doll´ar4 Ross Girshick4 1project lead 2join",
+      "path": "data/sources/papers/vip3d-end-to-end-visual-trajectory-prediction-via-3d-agent-queries.md"
+    }
+  ],
+  "affected_questions": {
+    "eval": {
+      "paper-019": [
+        "eval-031"
+      ],
+      "paper-020": [
+        "eval-067"
+      ],
+      "paper-021": [
+        "eval-033"
+      ],
+      "paper-022": [
+        "eval-070"
+      ],
+      "paper-023": [
+        "eval-064"
+      ],
+      "paper-029": [
+        "eval-083"
+      ],
+      "paper-030": [
+        "eval-100"
+      ],
+      "paper-032": [
+        "eval-062"
+      ],
+      "paper-034": [
+        "eval-049"
+      ],
+      "paper-035": [
+        "eval-037"
+      ],
+      "paper-037": [
+        "eval-066"
+      ],
+      "paper-039": [
+        "eval-087"
+      ],
+      "paper-041": [
+        "eval-034"
+      ],
+      "paper-044": [
+        "eval-057"
+      ],
+      "paper-045": [
+        "eval-041"
+      ],
+      "paper-046": [
+        "eval-038"
+      ],
+      "paper-049": [
+        "eval-017"
+      ],
+      "paper-050": [
+        "eval-036"
+      ],
+      "paper-051": [
+        "eval-061"
+      ],
+      "paper-052": [
+        "eval-079"
+      ],
+      "paper-054": [
+        "eval-081"
+      ],
+      "paper-055": [
+        "eval-078"
+      ],
+      "paper-057": [
+        "eval-065"
+      ],
+      "paper-059": [
+        "eval-095"
+      ],
+      "paper-060": [
+        "eval-011"
+      ],
+      "paper-061": [
+        "eval-085"
+      ],
+      "paper-065": [
+        "eval-052"
+      ],
+      "paper-066": [
+        "eval-080"
+      ],
+      "paper-067": [
+        "eval-026"
+      ],
+      "paper-069": [
+        "eval-092"
+      ],
+      "paper-070": [
+        "eval-073"
+      ],
+      "paper-071": [
+        "eval-004"
+      ],
+      "paper-076": [
+        "eval-060"
+      ],
+      "paper-078": [
+        "eval-046"
+      ],
+      "paper-081": [
+        "eval-082"
+      ],
+      "paper-082": [
+        "eval-093"
+      ],
+      "paper-085": [
+        "eval-068"
+      ]
+    },
+    "train": {
+      "paper-019": [
+        "train-063",
+        "train-196"
+      ],
+      "paper-020": [
+        "train-115",
+        "train-191"
+      ],
+      "paper-021": [
+        "train-046",
+        "train-185"
+      ],
+      "paper-022": [
+        "train-092",
+        "train-117"
+      ],
+      "paper-023": [
+        "train-153",
+        "train-183"
+      ],
+      "paper-029": [
+        "train-004",
+        "train-086"
+      ],
+      "paper-030": [
+        "train-202",
+        "train-203"
+      ],
+      "paper-032": [
+        "train-160",
+        "train-161"
+      ],
+      "paper-034": [
+        "train-007",
+        "train-065"
+      ],
+      "paper-035": [
+        "train-014",
+        "train-157"
+      ],
+      "paper-037": [
+        "train-010",
+        "train-189"
+      ],
+      "paper-039": [
+        "train-008",
+        "train-025"
+      ],
+      "paper-041": [
+        "train-107"
+      ],
+      "paper-044": [
+        "train-112",
+        "train-188"
+      ],
+      "paper-045": [
+        "train-079"
+      ],
+      "paper-046": [
+        "train-072",
+        "train-073"
+      ],
+      "paper-049": [
+        "train-070",
+        "train-146"
+      ],
+      "paper-050": [
+        "train-108",
+        "train-176"
+      ],
+      "paper-051": [
+        "train-087",
+        "train-166"
+      ],
+      "paper-052": [
+        "train-006",
+        "train-179"
+      ],
+      "paper-054": [
+        "train-060",
+        "train-190"
+      ],
+      "paper-055": [
+        "train-109",
+        "train-165"
+      ],
+      "paper-057": [
+        "train-050",
+        "train-148"
+      ],
+      "paper-059": [
+        "train-031",
+        "train-147",
+        "train-168",
+        "train-177",
+        "train-195"
+      ],
+      "paper-060": [
+        "train-023",
+        "train-125"
+      ],
+      "paper-061": [
+        "train-032",
+        "train-091"
+      ],
+      "paper-065": [
+        "train-123",
+        "train-144"
+      ],
+      "paper-066": [
+        "train-043",
+        "train-110"
+      ],
+      "paper-067": [
+        "train-012",
+        "train-149"
+      ],
+      "paper-069": [
+        "train-077",
+        "train-111"
+      ],
+      "paper-070": [
+        "train-059",
+        "train-150"
+      ],
+      "paper-071": [
+        "train-041",
+        "train-130"
+      ],
+      "paper-076": [
+        "train-016",
+        "train-052"
+      ],
+      "paper-078": [
+        "train-105",
+        "train-113"
+      ],
+      "paper-081": [
+        "train-093",
+        "train-164"
+      ],
+      "paper-082": [
+        "train-178",
+        "train-184"
+      ],
+      "paper-085": [
+        "train-018",
+        "train-139"
+      ]
+    }
+  }
+}

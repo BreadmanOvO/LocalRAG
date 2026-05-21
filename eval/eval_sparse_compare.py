@@ -87,8 +87,8 @@ def run_sparse_eval(dataset, store_path: Path, top_k: int = 5):
 
 
 def main():
-    dataset_path = Path("data/evaluation/gold/gold_set.json")
-    stores_dir = Path("results/chunking_eval/stores/gold_set-20260505-104419")
+    dataset_path = Path("data/evaluation/gold/eval_set.json")
+    stores_dir = Path("results/chunking_eval/stores/gold_set_100-20260507-230611")
 
     dataset = load_dataset(dataset_path)
     top_k = config.similarity_top_k

@@ -169,8 +169,10 @@ Sparse Retrieval 对比实验：
 
 ## 数据集合同
 数据文件：
-- `data/evaluation/gold/gold_set.json`
-- `data/evaluation/synthetic/synthetic_dataset.json`
+- `data/evaluation/gold/eval_set.json`
+- `data/evaluation/gold/gold_set_100.json`
+- `data/evaluation/gold/gold_set_extended.json`
+- `data/evaluation/train/train_set.json`
 - `data/evaluation/shared/eval_schema.py`
 
 每条样本必须包含：
@@ -191,10 +193,10 @@ Sparse Retrieval 对比实验：
 - `doc_type`
 
 当前 schema 测试还约束：
-- Gold Set 至少 30 条
-- Synthetic Set 至少 10 条
-- Gold Set 自身需覆盖核心主题：`system_architecture`、`perception`、`planning_control`、`safety`、`sensor_fusion`
-- Gold Set 自身必须至少包含一种 `report` 类型样本
+- 清洗后的主评测集 `eval_set.json` 为 100 条
+- 污染的旧 `gold_set.json` 和 `synthetic_dataset.json` 不再作为活动数据集保留
+- 清洗后的评测集需覆盖核心自动驾驶主题，例如 `perception`、`planning_control`、`safety`、`sensor_fusion`
+- 清洗后的评测集必须包含论文类样本（`paper`）
 
 ## 当前口径下的指标解释
 
