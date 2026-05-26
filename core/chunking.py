@@ -16,6 +16,20 @@ class ChunkRecord:
     metadata: dict[str, Any]
 
 
+@dataclass(frozen=True)
+class SegmentPolicy:
+    split_on_page: bool
+    split_on_heading: bool
+
+
+DOC_TYPE_SEGMENT_POLICIES = {
+    "official_doc": SegmentPolicy(split_on_page=True, split_on_heading=True),
+    "standard": SegmentPolicy(split_on_page=True, split_on_heading=True),
+    "paper": SegmentPolicy(split_on_page=True, split_on_heading=True),
+    "report": SegmentPolicy(split_on_page=True, split_on_heading=True),
+}
+
+
 def build_locator(page_start: int | None, section_path: str | None) -> str | None:
     if page_start is not None and section_path:
         return f"p.{page_start} | § {section_path}"
@@ -24,6 +38,15 @@ def build_locator(page_start: int | None, section_path: str | None) -> str | Non
     if section_path:
         return f"§ {section_path}"
     return None
+
+
+def _parse_page_heading(heading: str) -> tuple[int | None, int | None]:
+    page_range_match = re.match(r"^pages?\s+(\d+)(?:\s*[-–]\s*(\d+))?$", heading, re.IGNORECASE)
+    if not page_range_match:
+        return None, None
+    page_start = int(page_range_match.group(1))
+    page_end = int(page_range_match.group(2) or page_start)
+    return page_start, page_end
 
 
 def extract_page_aware_segments(
@@ -66,9 +89,13 @@ def extract_page_aware_segments(
             if heading:
                 heading_stack = heading_stack[: max(level - 1, 0)]
                 heading_stack.append(heading)
+                page_start, page_end = _parse_page_heading(heading)
+                if page_start is not None:
+                    current_page_start = page_start
+                    current_page_end = page_end
             continue
 
-        page_match = re.match(r"^\[p\.(\d+)\]\s*(.*)$", line)
+        page_match = re.match(r"^(?:[-*]\s*)?\[p\.(\d+)\]\s*(.*)$", line)
         if page_match:
             page_number = int(page_match.group(1))
             if split_on_page:
@@ -94,6 +121,10 @@ def extract_page_aware_segments(
             "section_path": None,
         }
     ]
+
+
+def get_doc_type_segment_policy(doc_type: str) -> SegmentPolicy:
+    return DOC_TYPE_SEGMENT_POLICIES.get(doc_type, SegmentPolicy(split_on_page=False, split_on_heading=False))
 
 
 def build_baseline_splitter(
@@ -171,12 +202,11 @@ def chunk_text_baseline(text: str, *, source_metadata: dict[str, Any]) -> list[C
 
 def chunk_text_doc_type_aware(text: str, *, source_metadata: dict[str, Any]) -> list[ChunkRecord]:
     doc_type = source_metadata["doc_type"]
-    split_on_page = doc_type == "official_doc"
-    split_on_heading = doc_type == "official_doc"
+    segment_policy = get_doc_type_segment_policy(doc_type)
     segments = extract_page_aware_segments(
         text,
-        split_on_page=split_on_page,
-        split_on_heading=split_on_heading,
+        split_on_page=segment_policy.split_on_page,
+        split_on_heading=segment_policy.split_on_heading,
     )
     records: list[ChunkRecord] = []
     chunk_order = 0

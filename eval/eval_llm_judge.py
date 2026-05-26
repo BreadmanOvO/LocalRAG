@@ -1,6 +1,7 @@
 import argparse
 import json
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -112,8 +113,22 @@ def _parse_judge_response(response_text: str) -> tuple[str, str]:
 
 def _judge_pair(model: Any, baseline_row: dict[str, Any], candidate_row: dict[str, Any]) -> tuple[str, str]:
     prompt = _build_judge_prompt(baseline_row, candidate_row)
-    response = model.invoke(prompt)
-    return _parse_judge_response(_extract_response_text(response))
+    last_error = ""
+    for attempt in range(3):
+        response = model.invoke(prompt)
+        response_text = _extract_response_text(response)
+        try:
+            return _parse_judge_response(response_text)
+        except ValueError as e:
+            last_error = str(e)
+            print(f"judge parse attempt {attempt + 1} failed for {baseline_row.get('id', '')}: {e}", flush=True)
+            prompt = (
+                "上一次输出不符合要求。请只输出一个合法 JSON 对象，不要 markdown，不要解释。"
+                "JSON 结构必须是 {\"winner\":\"baseline|candidate|tie\",\"reason\":\"...\"}。\n\n"
+                f"原始任务如下：\n{_build_judge_prompt(baseline_row, candidate_row)}"
+            )
+            time.sleep(2)
+    return "tie", f"judge returned unparsable response after retries: {last_error}"
 
 
 def _index_predictions(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
@@ -182,6 +197,7 @@ def build_manifest(
         "runner_script": "eval/eval_llm_judge.py",
         "provider": runtime_config.provider,
         "chat_model_name": runtime_config.chat_model_name,
+        "embedding_model_name": runtime_config.embedding_model_name,
         "judge_prompt_version": JUDGE_PROMPT_VERSION,
     }
 

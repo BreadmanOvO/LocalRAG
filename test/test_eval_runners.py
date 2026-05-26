@@ -10,6 +10,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
+from core.hybrid_retriever import BM25_BATCH_SIZE, HybridRetriever
 from eval import eval_chunking
 from eval import eval_judge_formal_run as judge_formal_run
 from eval import eval_llm_judge as judge_runner
@@ -17,8 +18,50 @@ from eval import eval_ragas as ragas_runner
 
 formal_runner = judge_formal_run
 from eval.eval_llm_judge import summarize_judgements
+
+
+class FakeCollection:
+    def __init__(self, count):
+        self.count = count
+        self.calls = []
+
+    def get(self, *, include, limit, offset):
+        self.calls.append({"include": include, "limit": limit, "offset": offset})
+        end = min(offset + limit, self.count)
+        ids = [f"doc-{i}" for i in range(offset, end)]
+        return {
+            "ids": ids,
+            "documents": [f"document text {i}" for i in range(offset, end)],
+            "metadatas": [{"source_id": f"source-{i}"} for i in range(offset, end)],
+        }
+
+
+class FakeVectorStore:
+    def __init__(self, count):
+        self._collection = FakeCollection(count)
+
+    def similarity_search_with_relevance_scores(self, query, k):
+        return []
+
+
+class HybridRetrieverTests(unittest.TestCase):
+    def test_bm25_index_reads_collection_in_batches(self):
+        vector_store = FakeVectorStore(BM25_BATCH_SIZE + 3)
+
+        retriever = HybridRetriever(vector_store)
+
+        self.assertEqual(BM25_BATCH_SIZE + 3, len(retriever._bm25_docs))
+        self.assertEqual(
+            [
+                {"include": ["documents", "metadatas"], "limit": BM25_BATCH_SIZE, "offset": 0},
+                {"include": ["documents", "metadatas"], "limit": BM25_BATCH_SIZE, "offset": BM25_BATCH_SIZE},
+            ],
+            vector_store._collection.calls,
+        )
+
 from eval.eval_ragas import (
     build_prediction_record,
+    build_runtime_manifest_fields,
     build_session_id,
     require_runtime_config,
     run_baseline,
@@ -365,6 +408,22 @@ class EvalRunnerTests(unittest.TestCase):
         self.assertEqual(build_session_id({"id": "sample-1"}), "eval-session-sample-1")
         self.assertEqual(build_session_id({"id": 42}), "eval-session-42")
 
+    def test_build_runtime_manifest_fields_records_control_variables(self):
+        runtime_config = types.SimpleNamespace(
+            provider="sensenova",
+            chat_model_name="sensenova-6.7-flash-lite",
+            embedding_model_name="models/bge-m3",
+        )
+
+        self.assertEqual(
+            {
+                "provider": "sensenova",
+                "chat_model_name": "sensenova-6.7-flash-lite",
+                "embedding_model_name": "models/bge-m3",
+            },
+            build_runtime_manifest_fields(runtime_config),
+        )
+
     def test_summarize_predictions_counts_answered_context_and_evidence_hits(self):
         summary = summarize_predictions(
             [
@@ -596,6 +655,40 @@ class EvalRunnerTests(unittest.TestCase):
                 payload["rows"][0]["reason"],
             )
 
+    def test_run_pairwise_judge_retries_and_records_tie_for_unparsable_response(self):
+        baseline_predictions = [{"id": "sample-1", "question": "Q1", "reference_answer": "R1", "answer": "b1", "retrieved_rows": [], "evidence": []}]
+        candidate_predictions = [{"id": "sample-1", "question": "Q1", "reference_answer": "R1", "answer": "c1", "retrieved_rows": [], "evidence": []}]
+        fake_runtime_config = types.SimpleNamespace(
+            provider="modelscope",
+            api_key="test-key",
+            base_url="https://api-inference.modelscope.cn/v1",
+            chat_model_name="Qwen/Qwen2.5-72B-Instruct",
+            embedding_model_name="Qwen/Qwen3-Embedding-8B",
+        )
+        fake_chat_model = mock.Mock()
+        fake_chat_model.invoke.return_value = "candidate wins because it is better"
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir = Path(temp_dir)
+            baseline_path = temp_dir / "baseline.json"
+            candidate_path = temp_dir / "candidate.json"
+            output_path = temp_dir / "judgements.json"
+            baseline_path.write_text(json.dumps(baseline_predictions), encoding="utf-8")
+            candidate_path.write_text(json.dumps(candidate_predictions), encoding="utf-8")
+
+            with (
+                mock.patch.object(judge_runner, "load_runtime_config", return_value=fake_runtime_config),
+                mock.patch.object(judge_runner, "build_chat_model", return_value=fake_chat_model),
+                mock.patch.object(judge_runner.time, "sleep"),
+            ):
+                summary = judge_runner.run_pairwise_judge(baseline_path, candidate_path, output_path)
+
+            payload = json.loads(output_path.read_text(encoding="utf-8"))
+            self.assertEqual(1, summary["tie_count"])
+            self.assertEqual("tie", payload["rows"][0]["winner"])
+            self.assertIn("unparsable", payload["rows"][0]["reason"])
+            self.assertEqual(3, fake_chat_model.invoke.call_count)
+
     def test_run_pairwise_judge_rejects_mismatched_ids(self):
         baseline_predictions = [{"id": "sample-1", "question": "Q1", "reference_answer": "R1", "answer": "b1"}]
         candidate_predictions = [{"id": "sample-2", "question": "Q2", "reference_answer": "R2", "answer": "c2"}]
@@ -650,6 +743,7 @@ class EvalRunnerTests(unittest.TestCase):
             self.assertEqual("judge_eval", manifest["pipeline"])
             self.assertEqual("modelscope", manifest["provider"])
             self.assertEqual("qwen3-max", manifest["chat_model_name"])
+            self.assertEqual("text-embedding-v4", manifest["embedding_model_name"])
             self.assertEqual("v1.1-pairwise-judge", manifest["judge_prompt_version"])
 
     def test_run_baseline_uses_distinct_session_ids_per_sample(self):
@@ -725,6 +819,83 @@ class EvalRunnerTests(unittest.TestCase):
             self.assertEqual("p2", predictions[1]["evidence"][0]["locator"])
             self.assertTrue(predictions_path.exists())
             self.assertTrue(metrics_path.exists())
+
+    def test_run_baseline_uses_explicit_store_dir_and_restores_config(self):
+        samples = [
+            {
+                "id": "sample-1",
+                "question": "What is LocalRAG?",
+                "reference_answer": "A local RAG project.",
+                "evidence": [
+                    {"quote": "LocalRAG", "source_id": "doc-1", "locator": "p1"}
+                ],
+                "metadata": {"difficulty": "easy", "topic": "rag", "doc_type": "guide"},
+            }
+        ]
+        original_persist_directory = ragas_runner.config.persist_directory
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir = Path(temp_dir)
+            dataset_path = temp_dir / "dataset.json"
+            predictions_path = temp_dir / "predictions.json"
+            metrics_path = temp_dir / "metrics.json"
+            store_dir = temp_dir / "store"
+            store_dir.mkdir()
+            dataset_path.write_text(json.dumps(samples), encoding="utf-8")
+
+            fake_rag_module = types.SimpleNamespace()
+            fake_rag_service = mock.Mock()
+            fake_rag_service.answer_with_retrieval.return_value = {
+                "answer": "answer-1",
+                "retrieved_context": "ctx-1",
+                "retrieved_rows": [{"source_id": "doc-1", "locator": "p1", "content": "ctx-1"}],
+                "retrieval_debug_candidates": [{"source_id": "doc-1", "locator": "p1", "content": "ctx-1"}],
+            }
+            seen_persist_directories = []
+
+            def build_rag_service():
+                seen_persist_directories.append(ragas_runner.config.persist_directory)
+                return fake_rag_service
+
+            fake_rag_module.RagService = mock.Mock(side_effect=build_rag_service)
+
+            with (
+                mock.patch.dict(sys.modules, {"core.rag": fake_rag_module}),
+                mock.patch("eval.eval_ragas.load_runtime_config", return_value=None),
+                mock.patch("time.sleep"),
+            ):
+                summary = run_baseline(dataset_path, predictions_path, metrics_path, store_dir)
+
+        self.assertEqual(1, summary["sample_count"])
+        self.assertEqual([str(store_dir)], seen_persist_directories)
+        self.assertEqual(original_persist_directory, ragas_runner.config.persist_directory)
+
+    def test_run_baseline_rejects_missing_explicit_store_dir(self):
+        samples = [
+            {
+                "id": "sample-1",
+                "question": "What is LocalRAG?",
+                "reference_answer": "A local RAG project.",
+                "evidence": [
+                    {"quote": "LocalRAG", "source_id": "doc-1", "locator": "p1"}
+                ],
+                "metadata": {"difficulty": "easy", "topic": "rag", "doc_type": "guide"},
+            }
+        ]
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir = Path(temp_dir)
+            dataset_path = temp_dir / "dataset.json"
+            dataset_path.write_text(json.dumps(samples), encoding="utf-8")
+
+            with mock.patch("eval.eval_ragas.load_runtime_config", return_value=None):
+                with self.assertRaisesRegex(FileNotFoundError, "store directory does not exist"):
+                    run_baseline(
+                        dataset_path,
+                        temp_dir / "predictions.json",
+                        temp_dir / "metrics.json",
+                        temp_dir / "missing-store",
+                    )
 
     def test_run_baseline_to_dir_writes_manifest_bundle(self):
         samples = [

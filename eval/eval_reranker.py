@@ -20,8 +20,8 @@ from core.hybrid_retriever import HybridRetriever
 from core.reranker import CrossEncoderReranker, LLMReranker
 from core.rag import _format_documents
 from eval.eval_chunking import summarize_chunking_predictions
-from eval.eval_hybrid import _build_hybrid_retriever
-from eval.eval_ragas import load_dataset, write_json
+from eval.eval_hybrid import _build_hybrid_retriever, invoke_chain_with_retries
+from eval.eval_ragas import build_runtime_manifest_fields, load_dataset, write_json
 
 
 def run_eval_with_reranker(
@@ -45,7 +45,7 @@ def run_eval_with_reranker(
     chain = prompt_template | chat_model | (lambda x: x.content if hasattr(x, "content") else str(x))
 
     predictions = []
-    for sample in dataset:
+    for i, sample in enumerate(dataset):
         question = str(sample["question"])
 
         # Step 1: hybrid retrieval (top-20 candidates)
@@ -56,9 +56,14 @@ def run_eval_with_reranker(
         reranked = reranker.rerank(question, candidates, top_k=final_top_k)
         docs = [doc for doc, _ in reranked]
 
-        # Step 3: generate answer
         context_str = _format_documents(docs)
-        answer = chain.invoke({"question": question, "context": context_str})
+        answer = invoke_chain_with_retries(
+            chain,
+            {"question": question, "context": context_str},
+            str(sample["id"]),
+            len(dataset),
+            i + 1,
+        )
 
         scored_rows = [
             {"source_id": d.metadata.get("source_id", ""), "doc_type": d.metadata.get("doc_type", ""),
@@ -100,14 +105,20 @@ def run_eval_without_reranker(
     chain = prompt_template | chat_model | (lambda x: x.content if hasattr(x, "content") else str(x))
 
     predictions = []
-    for sample in dataset:
+    for i, sample in enumerate(dataset):
         question = str(sample["question"])
         scored_all = retriever.retrieve_all_scores(question)
         merged = scored_all["merged"]
         docs = [doc for doc, _ in merged]
 
         context_str = _format_documents(docs)
-        answer = chain.invoke({"question": question, "context": context_str})
+        answer = invoke_chain_with_retries(
+            chain,
+            {"question": question, "context": context_str},
+            str(sample["id"]),
+            len(dataset),
+            i + 1,
+        )
 
         scored_rows = [
             {"source_id": d.metadata.get("source_id", ""), "doc_type": d.metadata.get("doc_type", ""),
@@ -148,7 +159,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    load_runtime_config()
+    runtime_config = load_runtime_config()
     dataset = load_dataset(args.dataset)
 
     if args.reranker == "cross-encoder":
@@ -195,12 +206,14 @@ def main() -> None:
         "contract_version": "v1.1",
         "pipeline": "reranker_eval",
         "run_id": run_id,
+        "dataset_path": str(args.dataset),
         "reranker_type": args.reranker,
         "reranker_model": args.reranker_model if args.reranker == "cross-encoder" else "llm",
         "alpha": args.alpha,
         "store_dir": str(args.store_dir),
         "retrieve_top_k": args.retrieve_top_k,
         "final_top_k": args.final_top_k,
+        **build_runtime_manifest_fields(runtime_config),
     })
 
     print(json.dumps(summary, ensure_ascii=False, indent=2))

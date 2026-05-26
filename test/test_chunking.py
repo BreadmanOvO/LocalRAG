@@ -64,6 +64,23 @@ class ChunkingTests(unittest.TestCase):
         self.assertEqual(2, segments[1]["page_start"])
         self.assertEqual("Intro > Details", segments[1]["section_path"])
 
+    def test_extract_page_aware_segments_reads_bulleted_page_markers(self):
+        text = "## Structured notes\n\n### Pages 1-3\n- [p.2] Alpha clause.\n- [p.3] Beta clause."
+        segments = extract_page_aware_segments(text)
+
+        self.assertEqual(2, len(segments))
+        self.assertEqual(2, segments[0]["page_start"])
+        self.assertEqual("Structured notes > Pages 1-3", segments[0]["section_path"])
+        self.assertEqual(3, segments[1]["page_start"])
+
+    def test_extract_page_aware_segments_reads_page_headings(self):
+        text = "## Document Content\n\n### Page 12\n\nPaper paragraph."
+        segments = extract_page_aware_segments(text)
+
+        self.assertEqual(1, len(segments))
+        self.assertEqual(12, segments[0]["page_start"])
+        self.assertEqual("Document Content > Page 12", segments[0]["section_path"])
+
     def test_build_locator_combines_page_and_section(self):
         locator = build_locator(page_start=2, section_path="Intro > Details")
         self.assertEqual("p.2 | § Intro > Details", locator)
@@ -73,7 +90,7 @@ class ChunkingTests(unittest.TestCase):
         self.assertEqual("baseline", choose_chunking_strategy("official_doc", "baseline"))
         self.assertEqual("doc_type_aware", choose_chunking_strategy("official_doc", "doc_type_aware"))
 
-    def test_doc_type_aware_standard_produces_fewer_chunks_than_official_doc(self):
+    def test_doc_type_aware_standard_uses_page_markers_for_locator(self):
         text = ("# Clause\n[p.1] This is a structured paragraph for autonomous driving systems.\n\n" * 20)
         official_meta = {**self.source_metadata, "doc_type": "official_doc"}
         standard_meta = {**self.source_metadata, "doc_type": "standard"}
@@ -90,9 +107,9 @@ class ChunkingTests(unittest.TestCase):
             official_chunks = chunk_text_doc_type_aware(text, source_metadata=official_meta)
             standard_chunks = chunk_text_doc_type_aware(text, source_metadata=standard_meta)
 
-        self.assertGreater(len(official_chunks), len(standard_chunks))
         self.assertTrue(all(chunk.metadata["chunk_strategy"] == "doc_type_aware" for chunk in official_chunks))
         self.assertTrue(all(chunk.metadata["chunk_strategy"] == "doc_type_aware" for chunk in standard_chunks))
+        self.assertTrue(all(chunk.metadata["locator"] == "p.1 | § Clause" for chunk in standard_chunks))
 
     def test_doc_type_aware_chunking_emits_canonical_locator_and_provenance(self):
         text = "# Intro\n\n[p.2] Alpha paragraph.\n\n## Details\n\n[p.3] Beta paragraph."
@@ -114,6 +131,21 @@ class ChunkingTests(unittest.TestCase):
         self.assertEqual("doc_type_aware", first["chunk_strategy"])
         self.assertIn("chunk_order", first)
         self.assertEqual("p.2 | § Intro", first["locator"])
+
+    def test_doc_type_aware_paper_uses_page_headings_for_locator(self):
+        text = "## Document Content\n\n### Page 4\n\nBEVFormer paragraph about temporal attention."
+        source_metadata = {
+            "source": "paper.md",
+            "source_id": "paper-001",
+            "doc_type": "paper",
+            "create_time": "2026-05-26 10:00:00",
+            "operator": "tester",
+        }
+
+        chunks = chunk_text_doc_type_aware(text, source_metadata=source_metadata)
+
+        self.assertEqual(1, len(chunks))
+        self.assertEqual("p.4 | § Document Content > Page 4", chunks[0].metadata["locator"])
 
     def test_knowledge_base_service_uses_runtime_embedding_settings(self):
         runtime_config = SimpleNamespace(

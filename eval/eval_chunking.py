@@ -2,6 +2,7 @@ import argparse
 import json
 import shutil
 import sys
+import time
 from collections import defaultdict
 from contextlib import contextmanager
 from datetime import datetime
@@ -12,7 +13,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from config import settings as config
-from eval.eval_ragas import build_session_id, load_dataset, write_json
+from eval.eval_ragas import build_runtime_manifest_fields, build_session_id, load_dataset, write_json
 from core.knowledge_base import KnowledgeBaseService
 from core.rag import RagService
 from config.runtime_keys import load_runtime_config
@@ -318,12 +319,29 @@ def run_strategy_evaluation(dataset: list[dict[str, Any]], store_path: Path) -> 
     with use_store_path(store_path):
         rag_service = RagService()
         predictions = []
-        for sample in dataset:
-            result = rag_service.answer_with_retrieval(
-                str(sample["question"]),
-                session_id=build_session_id(sample),
-            )
-            predictions.append(_build_prediction_record(sample, result))
+        for i, sample in enumerate(dataset):
+            for attempt in range(5):
+                try:
+                    result = rag_service.answer_with_retrieval(
+                        str(sample["question"]),
+                        session_id=build_session_id(sample),
+                    )
+                    predictions.append(_build_prediction_record(sample, result))
+                    print(f"  [{i+1}/{len(dataset)}] OK: {sample['id']}", flush=True)
+                    time.sleep(2)
+                    break
+                except Exception as e:
+                    wait = 2 ** attempt * 10
+                    print(f"  [{i+1}/{len(dataset)}] Attempt {attempt+1} failed: {e}. Retrying in {wait}s...", flush=True)
+                    time.sleep(wait)
+            else:
+                print(f"  [{i+1}/{len(dataset)}] FAILED after 5 attempts, skipping", flush=True)
+                predictions.append(_build_prediction_record(sample, {
+                    "answer": "",
+                    "retrieved_context": "",
+                    "retrieved_rows": [],
+                    "retrieval_debug_candidates": [],
+                }))
     return predictions
 
 
@@ -346,7 +364,7 @@ def main() -> dict[str, Any]:
     )
     args = parser.parse_args()
 
-    require_runtime_config()
+    runtime_config = load_runtime_config()
     dataset = load_dataset(args.dataset)
     run_id = build_run_id(args.dataset)
     stores_dir = args.out_dir / "stores" / run_id
@@ -408,6 +426,10 @@ def main() -> dict[str, Any]:
         "pipeline": "chunking_eval",
         "run_id": run_id,
         "strategies": args.strategies,
+        "dataset_path": str(args.dataset),
+        "registry_path": str(args.registry),
+        "stores_dir": str(stores_dir),
+        **build_runtime_manifest_fields(runtime_config),
     })
 
     # Print summary table

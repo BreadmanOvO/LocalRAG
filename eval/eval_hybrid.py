@@ -1,6 +1,7 @@
 import argparse
 import json
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -22,11 +23,26 @@ from eval.eval_chunking import (
     summarize_chunking_predictions,
     write_chunking_run_artifacts,
 )
-from eval.eval_ragas import build_session_id, write_json
+from eval.eval_ragas import build_runtime_manifest_fields, build_session_id, write_json
 
 STRATEGY_DENSE = "dense_only"
 STRATEGY_SPARSE = "sparse_only"
 STRATEGY_HYBRID = "hybrid"
+
+
+def invoke_chain_with_retries(chain: Any, payload: dict[str, str], sample_id: str, total: int, index: int) -> str:
+    for attempt in range(5):
+        try:
+            answer = chain.invoke(payload)
+            print(f"  [{index}/{total}] OK: {sample_id}", flush=True)
+            time.sleep(2)
+            return answer
+        except Exception as e:
+            wait = 2 ** attempt * 10
+            print(f"  [{index}/{total}] Attempt {attempt+1} failed: {e}. Retrying in {wait}s...", flush=True)
+            time.sleep(wait)
+    print(f"  [{index}/{total}] FAILED after 5 attempts, using empty answer", flush=True)
+    return ""
 
 
 def _build_hybrid_retriever(store_path: Path, alpha: float, final_top_k: int) -> HybridRetriever:
@@ -68,7 +84,7 @@ def run_hybrid_evaluation(
     chain = prompt_template | chat_model | (lambda x: x.content if hasattr(x, "content") else str(x))
 
     predictions = []
-    for sample in dataset:
+    for i, sample in enumerate(dataset):
         question = str(sample["question"])
 
         if strategy == STRATEGY_DENSE:
@@ -87,7 +103,13 @@ def run_hybrid_evaluation(
             docs = [doc for doc, _ in scored]
 
         context_str = _format_documents(docs)
-        answer = chain.invoke({"question": question, "context": context_str})
+        answer = invoke_chain_with_retries(
+            chain,
+            {"question": question, "context": context_str},
+            str(sample["id"]),
+            len(dataset),
+            i + 1,
+        )
 
         scored_rows = [
             {"source_id": d.metadata.get("source_id", ""), "doc_type": d.metadata.get("doc_type", ""),
@@ -123,7 +145,7 @@ def main() -> dict[str, Any]:
     parser.add_argument("--alpha", type=float, default=0.7, help="Dense weight (1-alpha = sparse weight)")
     args = parser.parse_args()
 
-    load_runtime_config()
+    runtime_config = load_runtime_config()
     dataset = load_dataset(args.dataset)
     run_id = build_run_id(args.dataset)
 
@@ -158,8 +180,10 @@ def main() -> dict[str, Any]:
         "contract_version": "v1.1",
         "pipeline": "hybrid_eval",
         "run_id": run_id,
+        "dataset_path": str(args.dataset),
         "alpha": args.alpha,
         "store_dir": str(args.store_dir),
+        **build_runtime_manifest_fields(runtime_config),
     })
 
     report_lines = [

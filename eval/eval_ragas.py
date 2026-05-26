@@ -1,6 +1,7 @@
 import argparse
 import json
 import sys
+from contextlib import contextmanager, nullcontext
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -8,6 +9,7 @@ from typing import Any
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from config import settings as config
 from data.evaluation.shared.eval_schema import validate_dataset
 from config.runtime_keys import load_runtime_config
 
@@ -119,44 +121,62 @@ def require_runtime_config() -> None:
     load_runtime_config()
 
 
+@contextmanager
+def use_store_path(store_path: Path):
+    if not store_path.exists():
+        raise FileNotFoundError(f"store directory does not exist: {store_path}")
+    original_persist_directory = config.persist_directory
+    config.persist_directory = str(store_path)
+    try:
+        yield
+    finally:
+        config.persist_directory = original_persist_directory
+
+
 def run_baseline(
-    dataset_path: Path | str, predictions_path: Path | str, metrics_path: Path | str
+    dataset_path: Path | str,
+    predictions_path: Path | str,
+    metrics_path: Path | str,
+    store_dir: Path | str | None = None,
 ) -> dict[str, Any]:
     import time
 
     dataset_path = Path(dataset_path)
     predictions_path = Path(predictions_path)
     metrics_path = Path(metrics_path)
+    store_path = Path(store_dir) if store_dir is not None else None
 
     dataset = load_dataset(dataset_path)
     require_runtime_config()
 
-    from core.rag import RagService
+    context = use_store_path(store_path) if store_path else nullcontext()
+    with context:
+        from core.rag import RagService
 
-    rag_service = RagService()
-    predictions = []
-    for i, sample in enumerate(dataset):
-        for attempt in range(5):
-            try:
-                result = rag_service.answer_with_retrieval(
-                    str(sample["question"]), session_id=build_session_id(sample)
-                )
-                predictions.append(build_prediction_record(sample, result))
-                print(f"  [{i+1}/{len(dataset)}] OK: {sample['id']}", flush=True)
-                time.sleep(2)  # Rate limit buffer between requests
-                break
-            except Exception as e:
-                wait = 2 ** attempt * 10
-                print(f"  [{i+1}/{len(dataset)}] Attempt {attempt+1} failed: {e}. Retrying in {wait}s...", flush=True)
-                time.sleep(wait)
-        else:
-            print(f"  [{i+1}/{len(dataset)}] FAILED after 5 attempts, skipping", flush=True)
-            predictions.append(build_prediction_record(sample, {
-                "answer": "",
-                "retrieved_context": "",
-                "retrieved_rows": [],
-                "retrieval_debug_candidates": [],
-            }))
+        rag_service = RagService()
+        predictions = []
+        for i, sample in enumerate(dataset):
+            for attempt in range(5):
+                try:
+                    result = rag_service.answer_with_retrieval(
+                        str(sample["question"]), session_id=build_session_id(sample)
+                    )
+                    predictions.append(build_prediction_record(sample, result))
+                    print(f"  [{i+1}/{len(dataset)}] OK: {sample['id']}", flush=True)
+                    time.sleep(2)  # Rate limit buffer between requests
+                    break
+                except Exception as e:
+                    wait = 2 ** attempt * 10
+                    print(f"  [{i+1}/{len(dataset)}] Attempt {attempt+1} failed: {e}. Retrying in {wait}s...", flush=True)
+                    time.sleep(wait)
+            else:
+                print(f"  [{i+1}/{len(dataset)}] FAILED after 5 attempts, skipping", flush=True)
+                predictions.append(build_prediction_record(sample, {
+                    "answer": "",
+                    "retrieved_context": "",
+                    "retrieved_rows": [],
+                    "retrieval_debug_candidates": [],
+                }))
 
     summary = summarize_predictions(predictions)
     write_json(predictions_path, predictions)
@@ -174,8 +194,9 @@ def build_manifest(
     dataset_path: Path,
     runner_script: str,
     runtime_config: Any,
+    store_dir: Path | None = None,
 ) -> dict[str, Any]:
-    return {
+    manifest = {
         "contract_version": "v1.1",
         "pipeline": "baseline_eval",
         "run_id": run_id,
@@ -186,11 +207,27 @@ def build_manifest(
         "chat_model_name": runtime_config.chat_model_name,
         "embedding_model_name": runtime_config.embedding_model_name,
     }
+    if store_dir is not None:
+        manifest["store_dir"] = str(store_dir)
+    return manifest
 
 
-def run_baseline_to_dir(dataset_path: Path | str, out_dir: Path | str) -> dict[str, Any]:
+def build_runtime_manifest_fields(runtime_config: Any) -> dict[str, str]:
+    return {
+        "provider": runtime_config.provider,
+        "chat_model_name": runtime_config.chat_model_name,
+        "embedding_model_name": runtime_config.embedding_model_name,
+    }
+
+
+def run_baseline_to_dir(
+    dataset_path: Path | str,
+    out_dir: Path | str,
+    store_dir: Path | str | None = None,
+) -> dict[str, Any]:
     dataset_path = Path(dataset_path)
     out_dir = Path(out_dir)
+    store_path = Path(store_dir) if store_dir is not None else None
     runtime_config = load_runtime_config()
     run_id = build_run_id(dataset_path)
     run_dir = out_dir / run_id
@@ -198,6 +235,7 @@ def run_baseline_to_dir(dataset_path: Path | str, out_dir: Path | str) -> dict[s
         dataset_path,
         run_dir / "predictions.json",
         run_dir / "metrics.json",
+        store_path,
     )
     write_json(
         run_dir / "manifest.json",
@@ -206,6 +244,7 @@ def run_baseline_to_dir(dataset_path: Path | str, out_dir: Path | str) -> dict[s
             dataset_path=dataset_path,
             runner_script="eval/eval_ragas.py",
             runtime_config=runtime_config,
+            store_dir=store_path,
         ),
     )
     return summary
@@ -216,9 +255,10 @@ def main() -> dict[str, Any]:
     parser.add_argument("--dataset", required=True, type=Path)
     parser.add_argument("--predictions-out", required=True, type=Path)
     parser.add_argument("--metrics-out", required=True, type=Path)
+    parser.add_argument("--store-dir", type=Path)
     args = parser.parse_args()
 
-    summary = run_baseline(args.dataset, args.predictions_out, args.metrics_out)
+    summary = run_baseline(args.dataset, args.predictions_out, args.metrics_out, args.store_dir)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return summary
 

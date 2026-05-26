@@ -212,6 +212,7 @@ def run_ragas_evaluation(
             "sample_limit": sample_limit,
             "provider": config.provider,
             "chat_model_name": config.chat_model_name,
+            "embedding_model_name": config.embedding_model_name,
             "eval_model": eval_model or config.chat_model_name,
         }, ensure_ascii=False, indent=2), encoding="utf-8"
     )
