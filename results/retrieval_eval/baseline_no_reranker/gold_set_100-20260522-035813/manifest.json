@@ -1,0 +1,10 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "retrieval_eval",
+  "run_id": "gold_set_100-20260522-035813",
+  "alpha": 0.5,
+  "final_top_k": 5,
+  "use_reranker": false,
+  "reranker_model": null,
+  "store_dir": "results\\chunking_eval\\stores\\eval_set-20260522-011447\\baseline"
+}

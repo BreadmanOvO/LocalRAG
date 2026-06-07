@@ -32,13 +32,13 @@ md5.txt
 .streamlit/
 
 # Local agent/runtime state
+.claude/
 .codex/
 .omx/
 .playwright-mcp/
 
 # Local git worktrees (both locations)
 .worktrees/
-.claude/worktrees/
 
 # Nested local docs repo
 RAG_md/

@@ -1,0 +1,1294 @@
+{
+  "sample_count": 100,
+  "hit_count": 93,
+  "hit_ratio": 0.93,
+  "mrr": 0.8891666666666667,
+  "hit_at_1": 0.86,
+  "hit_at_3": 0.92,
+  "hit_at_5": 0.93,
+  "details": [
+    {
+      "id": "eval-001",
+      "question": "CRN (Camera Radar Net) 融合了哪两种传感器的数据以实现3D感知？",
+      "evidence_source_ids": [
+        "paper-030"
+      ],
+      "retrieved_source_ids": [
+        "paper-030"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-002",
+      "question": "Apollo规划模块的输入包括哪些信息？请至少列举四个输入channel及其说明。",
+      "evidence_source_ids": [
+        "apollo-doc-008"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-009",
+        "apollo-doc-008",
+        "apollo-doc-007"
+      ],
+      "hit": true,
+      "best_rank": 2
+    },
+    {
+      "id": "eval-003",
+      "question": "在Apollo中，执行计划轨迹需要哪些执行器？",
+      "evidence_source_ids": [
+        "apollo-doc-001"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-009",
+        "apollo-doc-008",
+        "apollo-doc-007"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "eval-004",
+      "question": "GameFormer模型中的Transformer解码器是如何实现层次推理的？",
+      "evidence_source_ids": [
+        "paper-044"
+      ],
+      "retrieved_source_ids": [
+        "paper-044"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-005",
+      "question": "在nuScenes测试集上，CenterPoint的整体检测性能（mAP和NDS）是多少？",
+      "evidence_source_ids": [
+        "paper-031"
+      ],
+      "retrieved_source_ids": [
+        "paper-031",
+        "paper-080"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-006",
+      "question": "根据文档，CARMA项目的主要目标是什么？它在哪些方面促进自动系统的集成？",
+      "evidence_source_ids": [
+        "standard-004"
+      ],
+      "retrieved_source_ids": [
+        "standard-003",
+        "standard-009",
+        "standard-004",
+        "paper-048",
+        "paper-020"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-007",
+      "question": "UniSim的主要目标是什么？",
+      "evidence_source_ids": [
+        "paper-082"
+      ],
+      "retrieved_source_ids": [
+        "paper-082"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-008",
+      "question": "DD3D 的全称是什么？",
+      "evidence_source_ids": [
+        "paper-074"
+      ],
+      "retrieved_source_ids": [
+        "paper-026",
+        "paper-074"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-009",
+      "question": "UniDepth 主要解决了什么问题？",
+      "evidence_source_ids": [
+        "paper-081"
+      ],
+      "retrieved_source_ids": [
+        "paper-081"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-010",
+      "question": "文档中提到的“参数无关设计”（parameter-free design）旨在解决BEV感知中的哪个主要挑战？它具体针对什么因素进行解耦？",
+      "evidence_source_ids": [
+        "paper-038"
+      ],
+      "retrieved_source_ids": [
+        "paper-067",
+        "paper-038",
+        "paper-052"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-011",
+      "question": "多视图3D检测在真实世界场景中的主要性能瓶颈是什么？",
+      "evidence_source_ids": [
+        "paper-034"
+      ],
+      "retrieved_source_ids": [
+        "paper-045",
+        "paper-041",
+        "paper-001",
+        "paper-028",
+        "paper-034"
+      ],
+      "hit": true,
+      "best_rank": 4
+    },
+    {
+      "id": "eval-012",
+      "question": "GenAD中如何捕获自车与其他交通参与者之间的高阶交互？这一设计解决了传统端到端地解决了传统流水线中的什么局限？",
+      "evidence_source_ids": [
+        "paper-007"
+      ],
+      "retrieved_source_ids": [
+        "paper-007"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-013",
+      "question": "Part-A2 Net的核心创新点是什么？它如何利用3D边界框注释中的\"免费\"信息？",
+      "evidence_source_ids": [
+        "paper-066"
+      ],
+      "retrieved_source_ids": [
+        "paper-066"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-014",
+      "question": "StreamPETR采用的时间建模范式是什么？",
+      "evidence_source_ids": [
+        "paper-014"
+      ],
+      "retrieved_source_ids": [
+        "paper-014"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-015",
+      "question": "根据文档，自2016年10月以来，进口豁免计划下共有多少辆ADS装备的车辆获得了临时进口许可？",
+      "evidence_source_ids": [
+        "standard-005"
+      ],
+      "retrieved_source_ids": [
+        "standard-002",
+        "standard-005"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-016",
+      "question": "根据NHTSA文档，该机构的核心使命是什么？",
+      "evidence_source_ids": [
+        "standard-001"
+      ],
+      "retrieved_source_ids": [
+        "standard-001",
+        "standard-006",
+        "standard-005"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-017",
+      "question": "CLRNet 的核心创新点是什么？",
+      "evidence_source_ids": [
+        "paper-029"
+      ],
+      "retrieved_source_ids": [
+        "paper-029"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-018",
+      "question": "BEVDet在训练过程中遇到了什么问题？它对数据增强策略有什么特殊发现？",
+      "evidence_source_ids": [
+        "paper-024"
+      ],
+      "retrieved_source_ids": [
+        "paper-025",
+        "paper-024"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-019",
+      "question": "DETR3D中如何将2D特征与3D物体预测联系起来？请简要描述其关键操作。",
+      "evidence_source_ids": [
+        "paper-036"
+      ],
+      "retrieved_source_ids": [
+        "paper-062",
+        "paper-036"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-020",
+      "question": "SparseBEV的三个关键设计是什么？",
+      "evidence_source_ids": [
+        "paper-017"
+      ],
+      "retrieved_source_ids": [
+        "paper-017"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-021",
+      "question": "UN R157法规的主要目的是什么？",
+      "evidence_source_ids": [
+        "standard-009"
+      ],
+      "retrieved_source_ids": [
+        "standard-009",
+        "standard-008",
+        "standard-007"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-022",
+      "question": "在SparseFusion中LiDAR视角预测头包含六个独立的MLP，请分别说明每个MLP预测的输出维度。",
+      "evidence_source_ids": [
+        "paper-077"
+      ],
+      "retrieved_source_ids": [
+        "paper-077",
+        "paper-013"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-023",
+      "question": "ViP3D提出了哪三种轨迹解码器？请分别简要说明其特点。",
+      "evidence_source_ids": [
+        "paper-085"
+      ],
+      "retrieved_source_ids": [
+        "paper-085"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-024",
+      "question": "为什么OccWorld选择使用3D occupancy而非3D bounding boxes作为场景表示？请列出三点原因。",
+      "evidence_source_ids": [
+        "paper-061"
+      ],
+      "retrieved_source_ids": [
+        "paper-061"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-025",
+      "question": "FusionAD融合了哪两种传感器来优化自动驾驶的预测和规划任务？",
+      "evidence_source_ids": [
+        "paper-006"
+      ],
+      "retrieved_source_ids": [
+        "paper-043"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "eval-026",
+      "question": "NHTSA的核心使命是什么？",
+      "evidence_source_ids": [
+        "standard-006"
+      ],
+      "retrieved_source_ids": [
+        "standard-001",
+        "standard-006"
+      ],
+      "hit": true,
+      "best_rank": 3
+    },
+    {
+      "id": "eval-027",
+      "question": "在nuScenes数据集上，HDMapNet在语义分割和实例检测方面相比现有方法提升了多少？",
+      "evidence_source_ids": [
+        "paper-046"
+      ],
+      "retrieved_source_ids": [
+        "paper-035",
+        "paper-059",
+        "paper-078"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "eval-028",
+      "question": "BEVFusion在视图变换中识别到的关键效率瓶颈是什么？它如何解决这个问题？",
+      "evidence_source_ids": [
+        "paper-002"
+      ],
+      "retrieved_source_ids": [
+        "paper-027"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "eval-029",
+      "question": "VectorMapNet在论文中宣称是第一个什么样的方法？",
+      "evidence_source_ids": [
+        "paper-084"
+      ],
+      "retrieved_source_ids": [
+        "paper-084",
+        "paper-085",
+        "paper-078"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-030",
+      "question": "UniAD 如何通过“规划导向”设计来减少模块间的错误累积？请结合文档中的具体机制说明。",
+      "evidence_source_ids": [
+        "paper-013"
+      ],
+      "retrieved_source_ids": [
+        "paper-013"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-031",
+      "question": "根据文档，基于体素的方法和基于点的方法在3D目标检测中各自存在什么根本性局限？PV-RCNN如何通过深度融合两者来克服这些局限？",
+      "evidence_source_ids": [
+        "paper-065"
+      ],
+      "retrieved_source_ids": [
+        "paper-064",
+        "paper-065"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-032",
+      "question": "SparseDrive的并行运动规划器设计基于一个关键观察：运动预测和规划之间存在三个被先前方法忽视的并行性。其中第三个并行性是什么？",
+      "evidence_source_ids": [
+        "paper-076"
+      ],
+      "retrieved_source_ids": [
+        "paper-076"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-033",
+      "question": "RadarBEVNet由哪两个主要组件构成？",
+      "evidence_source_ids": [
+        "paper-069"
+      ],
+      "retrieved_source_ids": [
+        "paper-069"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-034",
+      "question": "BEVFormer在nuScenes测试集上取得了多少NDS指标？与之前的最好方法相比，提升了多少？",
+      "evidence_source_ids": [
+        "paper-001"
+      ],
+      "retrieved_source_ids": [
+        "paper-034",
+        "paper-016",
+        "paper-001"
+      ],
+      "hit": true,
+      "best_rank": 2
+    },
+    {
+      "id": "eval-035",
+      "question": "根据文档分析，PointPillars相比VoxelNet和SECOND的性能提升可能源于哪些因素？",
+      "evidence_source_ids": [
+        "paper-068"
+      ],
+      "retrieved_source_ids": [
+        "paper-068",
+        "paper-016"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-036",
+      "question": "MUSDA框架相比于传统单源单模态域适应方法，其核心创新体现在哪些方面？",
+      "evidence_source_ids": [
+        "paper-019"
+      ],
+      "retrieved_source_ids": [
+        "paper-019"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-037",
+      "question": "MonoGround方法引入的地面平面先验（ground plane prior）主要解决了单目3D目标检测中的哪些具体问题？",
+      "evidence_source_ids": [
+        "paper-058"
+      ],
+      "retrieved_source_ids": [
+        "paper-058"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-038",
+      "question": "在混合深度监督（Hybrid Depth Supervision）实验中，相比于仅使用LiDAR点监督或仅使用伪标签监督，混合监督在深度估计和检测性能上分别有什么效果？",
+      "evidence_source_ids": [
+        "paper-037"
+      ],
+      "retrieved_source_ids": [
+        "paper-027",
+        "paper-037"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-039",
+      "question": "在 BEVFormer v2 中，透视损失由哪几个部分组成？请写出其公式（使用原文中的符号），并说明每个子损失对应哪类任务。",
+      "evidence_source_ids": [
+        "paper-026"
+      ],
+      "retrieved_source_ids": [
+        "paper-067",
+        "paper-026",
+        "paper-022",
+        "paper-072"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-040",
+      "question": "根据文档内容，为什么直接使用3D占据标签进行监督存在困难？请结合具体数据说明。",
+      "evidence_source_ids": [
+        "paper-071"
+      ],
+      "retrieved_source_ids": [
+        "paper-079",
+        "paper-071",
+        "paper-040"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-041",
+      "question": "Waymo Open Dataset包含多少个场景，每个场景的时长是多少？",
+      "evidence_source_ids": [
+        "paper-004"
+      ],
+      "retrieved_source_ids": [
+        "paper-014",
+        "paper-038",
+        "paper-001",
+        "paper-060",
+        "paper-003"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "eval-042",
+      "question": "根据UN R155法规附件中列举的威胁类型，“中间人攻击”是通过何种方式实现的？请结合原文说明。",
+      "evidence_source_ids": [
+        "standard-007"
+      ],
+      "retrieved_source_ids": [
+        "standard-009",
+        "standard-008",
+        "standard-007"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-043",
+      "question": "论文SemLT3D主要解决什么问题？",
+      "evidence_source_ids": [
+        "paper-035"
+      ],
+      "retrieved_source_ids": [
+        "paper-035"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-044",
+      "question": "根据论文，传统离线HD地图构建方法存在哪些主要局限性？NMP是如何在方法论上区别于这些方法的？",
+      "evidence_source_ids": [
+        "paper-059"
+      ],
+      "retrieved_source_ids": [
+        "paper-078",
+        "paper-059"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-045",
+      "question": "PointRCNN在生成3D提案的方式上与现有方法（如AVOD、Frustum-PointNet）有何主要不同？",
+      "evidence_source_ids": [
+        "paper-073"
+      ],
+      "retrieved_source_ids": [
+        "paper-066",
+        "paper-073"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-046",
+      "question": "Apollo Cyber RT 框架的架构是如何组织的？请简要描述其组件和依赖关系。",
+      "evidence_source_ids": [
+        "apollo-doc-002"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-002"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-047",
+      "question": "SurroundOcc方法的主要目标是什么？",
+      "evidence_source_ids": [
+        "paper-015"
+      ],
+      "retrieved_source_ids": [
+        "paper-015",
+        "paper-045"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-048",
+      "question": "DriveDreamer 的两阶段训练流程分别赋予了模型什么能力？",
+      "evidence_source_ids": [
+        "paper-039"
+      ],
+      "retrieved_source_ids": [
+        "paper-039"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-049",
+      "question": "在 DanceTrack 数据集上，MOTRv2 相比 MOTR 在 HOTA 和 DetA 指标上有显著提升，请结合具体数值说明提升幅度，并分析这种提升主要归因于论文中提出的哪项技术改进？",
+      "evidence_source_ids": [
+        "paper-050"
+      ],
+      "retrieved_source_ids": [
+        "paper-050"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-050",
+      "question": "论文中的自监督学习框架是如何从视觉里程计（VO）中获得监督信号的？请简要描述其关键步骤。",
+      "evidence_source_ids": [
+        "paper-056"
+      ],
+      "retrieved_source_ids": [
+        "paper-056"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-051",
+      "question": "MagicDrive 是一个什么类型的框架？它主要支持哪些控制条件来生成街景图像？",
+      "evidence_source_ids": [
+        "paper-052"
+      ],
+      "retrieved_source_ids": [
+        "paper-052"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-052",
+      "question": "根据论文对数据集的分析，原始的Argoverse2和nuScenes评估协议存在什么主要偏差？论文提出了什么解决方案？",
+      "evidence_source_ids": [
+        "paper-078"
+      ],
+      "retrieved_source_ids": [
+        "paper-054",
+        "paper-078"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-053",
+      "question": "FCOS3D 如何将常规定义的 7-DoF 3D 目标转换到图像域？请简述其解耦策略。",
+      "evidence_source_ids": [
+        "paper-018"
+      ],
+      "retrieved_source_ids": [
+        "paper-018",
+        "paper-025"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-054",
+      "question": "在PETRv2中，如何通过稀疏任务特定查询来支持多任务学习（如BEV分割和3D车道检测）？",
+      "evidence_source_ids": [
+        "paper-063"
+      ],
+      "retrieved_source_ids": [
+        "paper-063"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-055",
+      "question": "文档中提到自动化对安全最大的潜在影响是什么？",
+      "evidence_source_ids": [
+        "standard-003"
+      ],
+      "retrieved_source_ids": [
+        "standard-003",
+        "standard-009",
+        "standard-002"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-056",
+      "question": "根据 MapTR 对相机旋转偏差鲁棒性的实验，当旋转偏差的标准差为多大时，MapTR-tiny 仍然能保持与无偏差时相比可比的性能（即 mAP 下降不超过大约 5 个百分点？并给出具体数值。",
+      "evidence_source_ids": [
+        "paper-053"
+      ],
+      "retrieved_source_ids": [
+        "paper-053",
+        "paper-016"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-057",
+      "question": "现有自监督3D occupancy估计方法（如OccNeRF）为什么需要真实6D ego位姿？GaussianOcc如何通过Gaussian Splatting for Projection (GSP)模块消除这一依赖？",
+      "evidence_source_ids": [
+        "paper-045"
+      ],
+      "retrieved_source_ids": [
+        "paper-045"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-058",
+      "question": "Lift-Splat模型在设计上保留了哪三种对称性？请简要说明。",
+      "evidence_source_ids": [
+        "paper-048"
+      ],
+      "retrieved_source_ids": [
+        "paper-034",
+        "paper-048",
+        "paper-016"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-059",
+      "question": "M3D-RPN的核心思想是什么？",
+      "evidence_source_ids": [
+        "paper-049"
+      ],
+      "retrieved_source_ids": [
+        "paper-049"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-060",
+      "question": "GAIA-1的主要目标是什么？",
+      "evidence_source_ids": [
+        "paper-087"
+      ],
+      "retrieved_source_ids": [
+        "paper-087"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-061",
+      "question": "根据文档描述，预测模块的输出通道是什么？该输出中的信息如何为下游规划模块提供支持？",
+      "evidence_source_ids": [
+        "apollo-doc-007"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-007",
+        "apollo-doc-008"
+      ],
+      "hit": true,
+      "best_rank": 3
+    },
+    {
+      "id": "eval-062",
+      "question": "为什么BEVFusion认为传统的点级融合方法在语义导向任务（如BEV地图分割）上效果不佳？请简要解释。",
+      "evidence_source_ids": [
+        "paper-027"
+      ],
+      "retrieved_source_ids": [
+        "paper-027"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-063",
+      "question": "MonoFlex是如何融合多个深度估计器来估计物体深度的？",
+      "evidence_source_ids": [
+        "paper-057"
+      ],
+      "retrieved_source_ids": [
+        "paper-058",
+        "paper-057"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-064",
+      "question": "Apollo感知系统中，大规模深度学习平台和GPU集群如何提升算法性能？训练后的模型如何部署到车辆上？",
+      "evidence_source_ids": [
+        "apollo-doc-004"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-006",
+        "apollo-doc-004",
+        "apollo-doc-007",
+        "apollo-doc-002"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-065",
+      "question": "VAD提出了哪三种基于显式向量化场景表示的实例级规划约束？它们分别起到什么作用？",
+      "evidence_source_ids": [
+        "paper-005"
+      ],
+      "retrieved_source_ids": [
+        "paper-083"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "eval-066",
+      "question": "对于配备ADS的车辆，当系统发生故障或遇到无法处理的场景时，文档建议如何实现“最小风险状态”（Minimal Risk Condition）的过渡？",
+      "evidence_source_ids": [
+        "standard-002"
+      ],
+      "retrieved_source_ids": [
+        "standard-003",
+        "standard-002",
+        "standard-006"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-067",
+      "question": "4DLidarOpen数据集与传统ToF激光雷达数据集的主要区别是什么？",
+      "evidence_source_ids": [
+        "paper-020"
+      ],
+      "retrieved_source_ids": [
+        "paper-020"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-068",
+      "question": "SparseDrive 中的并行运动规划器是如何处理规划如何将规划建模为多模态问题，并采用何种选择策略来保证安全？",
+      "evidence_source_ids": [
+        "paper-075"
+      ],
+      "retrieved_source_ids": [
+        "paper-076",
+        "paper-075"
+      ],
+      "hit": true,
+      "best_rank": 2
+    },
+    {
+      "id": "eval-069",
+      "question": "BEVStereo如何利用动态机制和EM算法解决传统MVS在自动驾驶场景中的问题？请结合参数预测和演化过程说明。",
+      "evidence_source_ids": [
+        "paper-028"
+      ],
+      "retrieved_source_ids": [
+        "paper-028"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-070",
+      "question": "在nuScenes数据集上，VAD-Base相比之前最佳方法在平均碰撞率和运行速度上分别提升了多少？",
+      "evidence_source_ids": [
+        "paper-083"
+      ],
+      "retrieved_source_ids": [
+        "paper-083"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-071",
+      "question": "Cross-view Transformer 模型的一个关键特点是什么，它如何避免显式建模几何关系？",
+      "evidence_source_ids": [
+        "paper-033"
+      ],
+      "retrieved_source_ids": [
+        "paper-033"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-072",
+      "question": "MUTR3D提出了哪两个用于评估运动模型的新指标？",
+      "evidence_source_ids": [
+        "paper-051"
+      ],
+      "retrieved_source_ids": [
+        "paper-051"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-073",
+      "question": "论文中提出的3D IoU导向损失函数主要针对哪个子任务进行优化？它在实验中相比3D GIoU损失表现如何？",
+      "evidence_source_ids": [
+        "paper-055"
+      ],
+      "retrieved_source_ids": [
+        "paper-055",
+        "paper-073"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-074",
+      "question": "在BEV-SAN中，全局和局部BEV切片特征的融合具体分为哪两个步骤？分别使用了什么机制？",
+      "evidence_source_ids": [
+        "paper-023"
+      ],
+      "retrieved_source_ids": [
+        "paper-069",
+        "paper-022",
+        "paper-023"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-075",
+      "question": "Apollo控制模块有几个输入channel？分别是什么？",
+      "evidence_source_ids": [
+        "apollo-doc-009"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-009",
+        "apollo-doc-008"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-076",
+      "question": "PV-RCNN为了高效融合体素CNN和PointNet-based网络，提出了哪两步策略来解决内存密集问题？",
+      "evidence_source_ids": [
+        "paper-064"
+      ],
+      "retrieved_source_ids": [
+        "paper-064",
+        "paper-065"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-077",
+      "question": "123D如何解决不同数据集之间模态同步和频率不一致的问题？",
+      "evidence_source_ids": [
+        "paper-032"
+      ],
+      "retrieved_source_ids": [
+        "paper-032"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-078",
+      "question": "论文中指出了现有Lift-splat方法在深度学习方面的三个缺陷，请列举并简要解释。",
+      "evidence_source_ids": [
+        "paper-016"
+      ],
+      "retrieved_source_ids": [
+        "paper-016",
+        "paper-024"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-079",
+      "question": "请解释 RayIoU 评估指标的工作原理及其相较于传统 mIoU 的优势。",
+      "evidence_source_ids": [
+        "paper-042"
+      ],
+      "retrieved_source_ids": [
+        "paper-042"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-080",
+      "question": "请简述RadarNet中两种融合方法（voxel-based early fusion和attention-based late fusion）各自的作用是什么？",
+      "evidence_source_ids": [
+        "paper-070"
+      ],
+      "retrieved_source_ids": [
+        "paper-070"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-081",
+      "question": "在端到端自动驾驶系统中，多任务学习面临哪些主要挑战？",
+      "evidence_source_ids": [
+        "paper-022"
+      ],
+      "retrieved_source_ids": [
+        "paper-043",
+        "apollo-doc-006",
+        "paper-022"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-082",
+      "question": "根据文档描述，VoxelNet在KITTI数据集的车、行人和自行车检测任务上的表现如何？它是否仅限于车辆检测？",
+      "evidence_source_ids": [
+        "paper-086"
+      ],
+      "retrieved_source_ids": [
+        "paper-086",
+        "paper-073",
+        "paper-049"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-083",
+      "question": "什么是Occupancy Flow Fields？它由哪两部分组成？",
+      "evidence_source_ids": [
+        "paper-003"
+      ],
+      "retrieved_source_ids": [
+        "paper-003"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-084",
+      "question": "文中提出的新3D MOT评估工具是如何实现3D空间评价的？",
+      "evidence_source_ids": [
+        "paper-021"
+      ],
+      "retrieved_source_ids": [
+        "paper-021"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-085",
+      "question": "Far3D主要解决了当前环绕视图3D目标检测中的什么问题？",
+      "evidence_source_ids": [
+        "paper-041"
+      ],
+      "retrieved_source_ids": [
+        "paper-022",
+        "paper-041"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-086",
+      "question": "TPVFormer模型在训练时使用什么类型的监督信号？它能够完成什么预测任务？",
+      "evidence_source_ids": [
+        "paper-079"
+      ],
+      "retrieved_source_ids": [
+        "paper-079",
+        "paper-015"
+      ],
+      "hit": true,
+      "best_rank": 2
+    },
+    {
+      "id": "eval-087",
+      "question": "红绿灯检测模块在矫正阶段是如何处理识别置信度不高的情况的？",
+      "evidence_source_ids": [
+        "apollo-doc-006"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-006"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-088",
+      "question": "在 Apollo 的规划控制流程中，控制（Control）模块的主要功能是什么？它是如何与硬件交互的？",
+      "evidence_source_ids": [
+        "apollo-doc-003"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-009"
+      ],
+      "hit": false,
+      "best_rank": null
+    },
+    {
+      "id": "eval-089",
+      "question": "根据该法规，制造商在软件更新管理系统（SUMS）证书有效期结束时，应如何操作以确保合规？",
+      "evidence_source_ids": [
+        "standard-008"
+      ],
+      "retrieved_source_ids": [
+        "standard-008",
+        "standard-007"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-090",
+      "question": "TransFusion提出了一种全新的LiDAR与相机融合策略，该策略的核心创新点是什么？",
+      "evidence_source_ids": [
+        "paper-080"
+      ],
+      "retrieved_source_ids": [
+        "paper-077",
+        "paper-080"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-091",
+      "question": "PETR 这个名称代表什么？它解决的是哪类视觉任务？",
+      "evidence_source_ids": [
+        "paper-062"
+      ],
+      "retrieved_source_ids": [
+        "paper-062",
+        "paper-016"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-092",
+      "question": "Apollo感知融合模块能够支持哪三种传感器的感知结果进行融合？",
+      "evidence_source_ids": [
+        "apollo-doc-005"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-005"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-093",
+      "question": "在SE-SSD的ODIoU损失函数中，作者对加权系数γ进行了消融实验，最终选取的γ值是多少？并说明选择该值的理由。",
+      "evidence_source_ids": [
+        "paper-072"
+      ],
+      "retrieved_source_ids": [
+        "paper-072"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-094",
+      "question": "MSF（Multi-Sensor Fusion）定位系统以哪些数据为输入，输出什么结果？",
+      "evidence_source_ids": [
+        "apollo-doc-010"
+      ],
+      "retrieved_source_ids": [
+        "apollo-doc-010",
+        "apollo-doc-005"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-095",
+      "question": "在PersFormer的消融实验中（Table 9），哪种设计对生成BEV特征最为关键？其表现相对于其他设计有何优势？",
+      "evidence_source_ids": [
+        "paper-067"
+      ],
+      "retrieved_source_ids": [
+        "paper-067",
+        "paper-026",
+        "paper-063"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-096",
+      "question": "MapTracker如何通过记忆机制实现时间一致性？具体描述其两种潜伏表示和融合策略。",
+      "evidence_source_ids": [
+        "paper-054"
+      ],
+      "retrieved_source_ids": [
+        "paper-054"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-097",
+      "question": "BEVDet4D的主要创新点是什么？",
+      "evidence_source_ids": [
+        "paper-025"
+      ],
+      "retrieved_source_ids": [
+        "paper-025",
+        "paper-016"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-098",
+      "question": "论文中提出的自动标签生成管道包含哪三个主要步骤？每个步骤解决的主要问题是什么？",
+      "evidence_source_ids": [
+        "paper-060"
+      ],
+      "retrieved_source_ids": [
+        "paper-060",
+        "paper-032"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-099",
+      "question": "FusionAD融合了哪两种传感器的信息？",
+      "evidence_source_ids": [
+        "paper-043"
+      ],
+      "retrieved_source_ids": [
+        "paper-043"
+      ],
+      "hit": true,
+      "best_rank": 1
+    },
+    {
+      "id": "eval-100",
+      "question": "在语义占用预测中，OccNeRF如何利用预训练的开放词汇2D分割模型？",
+      "evidence_source_ids": [
+        "paper-040"
+      ],
+      "retrieved_source_ids": [
+        "paper-040"
+      ],
+      "hit": true,
+      "best_rank": 1
+    }
+  ]
+}

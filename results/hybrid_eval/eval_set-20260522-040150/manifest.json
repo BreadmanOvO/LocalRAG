@@ -1,0 +1,7 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "hybrid_eval",
+  "run_id": "eval_set-20260522-040150",
+  "alpha": 0.5,
+  "store_dir": "results\\chunking_eval\\stores\\eval_set-20260522-011447\\semantic"
+}

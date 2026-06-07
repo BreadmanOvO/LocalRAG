@@ -1,0 +1,11 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "baseline_eval",
+  "run_id": "eval_set-20260522-055220",
+  "dataset_path": "data\\evaluation\\gold\\eval_set.json",
+  "created_at": "2026-05-22T07:10:34",
+  "runner_script": "eval/eval_ragas.py",
+  "provider": "sensenova",
+  "chat_model_name": "sensenova-6.7-flash-lite",
+  "embedding_model_name": "BAAI/bge-m3"
+}

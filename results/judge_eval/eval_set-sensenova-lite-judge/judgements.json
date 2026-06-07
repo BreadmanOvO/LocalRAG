@@ -1,0 +1,910 @@
+{
+  "summary": {
+    "sample_count": 100,
+    "candidate_win_count": 94,
+    "baseline_win_count": 4,
+    "tie_count": 2
+  },
+  "rows": [
+    {
+      "id": "eval-001",
+      "question": "CRN (Camera Radar Net) 融合了哪两种传感器的数据以实现3D感知？",
+      "reference_answer": "CRN融合了摄像头和雷达两种传感器的数据。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中**并未提及 CRN (Camera Radar Net)** 这一模型或相关的传感器融合方案，因此无法基于现有资料回答该问题。\n\n资料中涉及的其他技术包括：\n*   **DETR3D**：一种基于纯视觉的 3D 目标检测方法，不依赖 LiDAR 点云数据。\n*   **Apollo 定位模块**：使用 GPS、IMU 和 LiDAR 进行多传感器融合。\n*   **VAD**：一种基于图像特征的向量场景表示方法。\n\n因此，无法基于现有资料回答 CRN 融合了哪两种传感器的问题。建议您补充相关参考资料，以便准确作答。",
+      "candidate_answer": "\n\n根据提供的参考资料，CRN (Camera Radar Net) 融合了**摄像头（Camera）**和**雷达（Radar）**两种传感器的数据以实现3D感知。\n\n参考资料中明确提到：\n*   **论文标题**为“CRN: Camera Radar Net for Accurate, Robust, Efficient 3D Perception”。\n*   **摘要**中指出该方法通过“fusing camera with low-cost radar”（融合摄像头与低成本雷达）来实现3D感知。\n*   **结论**部分称其为一种“novel camera-radar fusion method”（新颖的摄像头-雷达融合方法）。\n*   **方法描述**中提到，该方法将“perspective view image features”（透视视图图像特征）与“sparse but accurate radar points”（稀疏但精确的雷达点）进行融合，生成BEV特征图。",
+      "winner": "candidate",
+      "reason": "Baseline 未能回答问题，且错误地声称参考资料中未提及 CRN，这与其自身提供的 evidence（来自 paper-030 的引用明确提到了 CRN 和 camera-radar fusion）直接矛盾。Candidate 正确回答了 CRN 融合了摄像头和雷达，且该答案完全由 evidence 和 retrieved_rows（均来自 paper-030）支持，更接近 reference_answer 且忠于证据。"
+    },
+    {
+      "id": "eval-002",
+      "question": "Apollo规划模块的输入包括哪些信息？请至少列举四个输入channel及其说明。",
+      "reference_answer": "规划模块的输入包括：车身底盘反馈信息（/apollo/canbus/chassis）、车辆定位信息（/apollo/localization/pose）、感知红绿灯信息（/apollo/perception/traffic_light）、预测障碍物信息（/apollo/prediction）、局部地图信息（/apollo/relative_map）、导航routing信息（/apollo/routing_response）。",
+      "baseline_answer": "\n\n根据提供的参考资料，Apollo 规划模块的输入信息主要来源于其核心算法模块的输出。资料中明确提到了以下四个关键模块及其提供的信息，这些构成了规划模块的输入基础。虽然资料中未明确列出具体的通信 channel 名称，但指出 **Apollo Cyber RT** 是用于管理模块间通信和任务调度的运行时框架。\n\n1.  **Localization（定位）**\n    *   **说明**：确定车辆在地图中的精确位置，提供自车的位置、航向角等位姿数据。\n2.  **Perception（感知）**\n    *   **说明**：识别道路、障碍物、交通标志等，提供周围环境信息。\n3.  **Prediction（预测）**\n    *   **说明**：对感知到的动态障碍物未来运动轨迹进行预测。\n4.  **Map Engine（地图引擎）**\n    *   **说明**：处理高精地图数据，提供道路结构、车道线等信息。\n\n**补充说明**：\n*   规划模块还接收 **Routing（路由）** 信息，提供从起点到终点的全局路径规划结果。\n*   此外，**Chassis（底盘）** 反馈信息（如车辆速度、方向盘转角等）也是规划模块的重要输入。\n*   以上模块通过 **Apollo Cyber RT** 进行通信，数据集包括 Apollo-SouthBay 和 Apollo-DaoxiangLake（采集自美国硅谷和中国北京）。",
+      "candidate_answer": "\n\n根据提供的参考资料，Apollo 规划模块的输入主要包括以下 channel 及其说明（列举其中四个）：\n\n1. **`/apollo/canbus/chassis`**：输入车身底盘反馈信息。\n2. **`/apollo/localization/pose`**：输入车辆定位信息。\n3. **`/apollo/perception/traffic_light`**：输入感知红绿灯信息。\n4. **`/apollo/prediction`**：输入预测障碍物信息。\n\n此外，规划模块还接收 **`/apollo/relative_map`**（局部地图信息）和 **`/apollo/routing_response`**（输入导航 routing 信息）作为输入。",
+      "winner": "candidate",
+      "reason": "Candidate 准确列举了具体的输入 channel 名称（如 /apollo/canbus/chassis 等）及其说明，完全符合题目要求且与 evidence 和 reference_answer 高度一致。Baseline 仅列举了模块名称（如 Localization、Perception），未提供题目要求的具体 channel 名称，且包含证据中未提及的数据集信息（无依据扩写）。"
+    },
+    {
+      "id": "eval-003",
+      "question": "在Apollo中，执行计划轨迹需要哪些执行器？",
+      "reference_answer": "使用转向、油门和制动。",
+      "baseline_answer": "\n\n根据提供的参考资料，在Apollo中执行计划轨迹主要涉及以下执行器：\n\n1.  **油门与刹车执行器**：根据《Apollo Control Overview》资料，**纵向控制模块**会根据规划模块的轨迹生成**油门、刹车指令**。系统通过查表（速度、加速度与油门、刹车对应关系）来输出具体的控制量。\n2.  **通信接口**：Apollo的**canbus-proxy模块**负责与车辆进行通信，将控制模块生成的指令（如油门、刹车）传递给车辆底盘执行。\n\n综上，基于现有资料，执行计划轨迹明确涉及**油门**和**刹车**执行器，并由控制模块通过canbus-proxy进行指令下发。",
+      "candidate_answer": "\n\n根据提供的参考资料，**无法明确列出**执行计划轨迹所需的具体执行器（如油门、刹车、转向等）。\n\n资料内容主要聚焦于 Apollo 规划与控制模块的功能定义，具体信息如下：\n1.  **规划模块**：负责生成包含位置、速度、加速度等信息的运动轨迹。\n2.  **控制模块**：资料中仅提到 **Control（控制）** 模块负责“执行规划指令”，但**未进一步说明**控制指令具体对应哪些硬件执行器。\n\n因此，基于现有参考资料，无法回答执行计划轨迹需要哪些执行器。",
+      "winner": "baseline",
+      "reason": "Evidence 中明确提到 'steering, throttle, and brake'。Baseline 虽然漏掉了转向，但正确识别了油门和刹车，且基于证据进行了回答；Candidate 错误地声称无法回答，完全忽略了 Evidence 中的关键信息，属于严重的检索利用失败。"
+    },
+    {
+      "id": "eval-004",
+      "question": "GameFormer模型中的Transformer解码器是如何实现层次推理的？",
+      "reference_answer": "通过一系列解码器实现层次推理：level-0解码器仅使用初始模态查询和编码的场景上下文来预测多模态未来轨迹，后续级别的解码器利用前一级的预测结果和共享环境上下文来迭代优化交互过程。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法回答**关于 GameFormer 模型中 Transformer 解码器如何实现层次推理的问题。\n\n提供的参考资料主要涵盖了以下主题，未涉及 GameFormer 模型的具体架构细节：\n1. **Apollo 感知模块**：描述了感知模块的职责及视觉感知如何支持自动驾驶。\n2. **VAD 架构**：涉及 Vectorized Scene Representation 的整体架构，包括 Backbone、BEV encoder 及场景学习。\n3. **Apollo 开放平台**：描述了软件栈、硬件栈及模块边界。\n4. **安全标准**：涉及 ISO 21448（SOTIF）预期功能安全标准及 UL 4600 自动驾驶产品安全评估标准。\n\n建议您查阅 GameFormer 模型的原始技术文档或相关论文以获取准确信息。",
+      "candidate_answer": "\n\n根据提供的参考资料，GameFormer 模型中的 Transformer 解码器通过基于 **level-k 博弈理论** 的层次化结构实现推理，具体机制如下：\n\n1.  **分层解码器架构**：模型包含一系列解码器层级（从 level-0 到 level-k），旨在捕捉智能体间的交互并迭代精化预测。\n2.  **Level-0 解码器（初始层）**：\n    *   **输入**：以模态嵌入（modality embedding）和智能体历史编码（agent history encodings）作为查询。\n    *   **输出**：生成初始的 level-0 未来轨迹及对应得分。\n3.  **Level-k 解码器（k≥1）**：\n    *   **输入依赖**：接收来自前一层（level-(k-1)）的预测轨迹作为输入，结合背景信息。\n    *   **交互建模**：利用 **自注意力模块（self-attention module）** 对前一层智能体间的未来交互（level-(k-1) future interaction）进行建模。\n    *   **信息融合**：将建模后的交互信息 **附加到场景上下文编码（scene context encoding）** 中，用于预测当前层的轨迹。\n4.  **迭代精化**：每一层解码器都利用前一层的预测结果和共享的环境上下文，逐步迭代地优化所有交互智能体的未来轨迹，使当前层智能体的行为能够响应前一层其他智能体的行为。",
+      "winner": "candidate",
+      "reason": "Candidate的答案更贴近reference_answer的核心要点，详细描述了level-0和level-k解码器的输入输出及迭代优化机制，且所有关键信息均能从retrieved_rows和evidence中找到直接支持。Baseline错误地声称资料无法回答问题，而实际检索到的paper-044文档明确包含GameFormer的层次推理实现细节。"
+    },
+    {
+      "id": "eval-005",
+      "question": "在nuScenes测试集上，CenterPoint的整体检测性能（mAP和NDS）是多少？",
+      "reference_answer": "CenterPoint在nuScenes测试集上取得了58.0 mAP和65.5 NDS。",
+      "baseline_answer": "\n\n根据提供的参考资料，无法回答关于 CenterPoint 在 nuScenes 测试集上的 mAP 和 NDS 具体数值。\n\n参考资料（source_id=paper-011）主要介绍了 CenterPoint 的架构设计，包括体素化、BEV 特征图生成、热力图预测和属性回归等组件，但并未提及该模型在 nuScenes 测试集上的具体性能指标。",
+      "candidate_answer": "\n\n根据提供的参考资料，CenterPoint 在 nuScenes 测试集上的检测性能因模型配置（如传感器模态）不同而有所差异，具体数据如下：\n\n1.  **多模态配置 (Camera & LiDAR & Radar)**：\n    *   **mAP**: 0.671\n    *   **NDS**: 0.714\n    *   来源：source_id=paper-025 (Table 2)\n\n2.  **纯 LiDAR 配置 (L)**：\n    *   **mAP**: 60.3\n    *   **NDS**: 67.3\n    *   来源：source_id=paper-002 (Tab. I)\n\n3.  **最佳单模型 (Best Single Model)**：\n    *   **mAP**: 58.0\n    *   **NDS**: 65.5\n    *   来源：source_id=paper-031\n\n这些数据表明，CenterPoint 在融合多种传感器数据时通常能获得更高的 NDS 和 mAP 分数，而纯 LiDAR 或特定单模型配置下的性能略低但仍具有竞争力。",
+      "winner": "candidate",
+      "reason": "Candidate correctly identifies the reference answer's values (58.0 mAP and 65.5 NDS) from evidence (paper-031) and provides additional context with proper citations. Baseline incorrectly claims inability to answer despite evidence containing the exact values, violating faithfulness to retrieved data."
+    },
+    {
+      "id": "eval-006",
+      "question": "根据文档，CARMA项目的主要目标是什么？它在哪些方面促进自动系统的集成？",
+      "reference_answer": "CARMA项目旨在开发合作驾驶自动化的概念，以解决常见交通场景，并测试和评估相关应用。它加速市场准备和合作自动系统的成熟度和集成，同时提升安全、安全、数据和人工智能。",
+      "baseline_answer": "\n\n根据提供的已知参考资料，**未包含关于 CARMA 项目的任何信息**。\n\n现有参考资料主要涵盖以下内容：\n1.  **运动预测技术**：基于占用流场（Occupancy Flow Fields）的自动驾驶运动预测研究。\n2.  **标准与法规**：自动驾驶等级（L0-L5）、测试安全要求、商业化运营标准（ANSI/ATA）及 NHTSA 相关活动。\n3.  **系统架构**：Apollo 自动驾驶系统的规划（Planning）与控制（Control）模块架构。\n\n因此，无法基于当前提供的文档回答 CARMA 项目的主要目标及其在自动系统集成方面的促进作用。如有相关文档，请补充提供。",
+      "candidate_answer": "\n\n根据提供的参考资料（source_id=standard-004，§ Ensuring American Leadership in Automated Vehicle Technologies: AV 4.0），CARMA 项目（文档中称为 **CARMAsm**）的主要目标及其在促进自动系统集成方面的作用如下：\n\n**主要目标：**\n*   **开发概念与应用：** 开发针对常见交通状况的协同驾驶自动化概念，并对由此产生的应用进行测试和评估。\n*   **加速市场准备与集成：** 加速合作式自动驾驶系统的市场准备和集成进程。\n*   **推动技术发展：** 推动安全、安保、数据和人工智能等领域的发展。\n\n**促进自动系统集成的方面：**\n*   **提升导航能力：** 使自动驾驶系统（ADS）能够更安全地进行导航。\n*   **采用开源方式：** 通过采用开源方式进行研究工作，促进合作式自动驾驶系统的整合与落地。\n*   **加速系统落地：** 直接加速合作式自动驾驶系统的市场准备，从而促进其在实际环境中的集成与应用。",
+      "winner": "candidate",
+      "reason": "Baseline错误地声称文档中不包含CARMA项目信息，而证据中明确提供了相关信息。Candidate正确识别了CARMA项目，其答案与reference_answer高度一致，且忠于evidence/retrieved_rows，准确回答了项目目标及促进集成的方面。"
+    },
+    {
+      "id": "eval-007",
+      "question": "UniSim的主要目标是什么？",
+      "reference_answer": "UniSim的目标是构建一个神经闭环传感器模拟器，能够从单个录制的驾驶日志中重建可编辑的数字孪生世界，支持修改或移除现有动态物体、添加新物体以及执行新的自车轨迹，从而实现闭环评估自动驾驶系统。",
+      "baseline_answer": "\n\n根据提供的参考资料，未提及UniSim的相关信息，因此无法回答其主要目标。建议提供更多参考资料或明确问题范围。",
+      "candidate_answer": "\n\n根据提供的参考资料，UniSim 的主要目标是构建一个**可编辑和可控的数字孪生**，用于生成**真实的多模态传感器模拟和反事实场景**，以实现自动驾驶系统的**闭环评估**。\n\n具体而言，UniSim 旨在：\n1.  **场景重建与模拟**：从单个记录日志中重建静态背景和动态物体，支持在新视角下模拟激光雷达（LiDAR）和摄像头数据，并允许动态物体的添加、移除或重定位。\n2.  **安全且低成本的评估**：在不涉及真实世界安全风险且资本投入更低的情况下，准确测量自动驾驶系统的性能，特别是在新型安全关键场景中。\n3.  **高效开发**：通过提供高保真、时间一致的传感器模拟，帮助更高效、安全地开发更安全的自主系统。",
+      "winner": "candidate",
+      "reason": "candidate准确引用了evidence中UniSim的核心目标（构建可编辑数字孪生、支持动态物体修改与闭环评估），与reference_answer高度一致；baseline错误声称未提及UniSim，但evidence明确包含相关描述，且其retrieved_rows未检索到有效信息。"
+    },
+    {
+      "id": "eval-008",
+      "question": "DD3D 的全称是什么？",
+      "reference_answer": "Dense Depth-pre-trained 3D Detector",
+      "baseline_answer": "\n\n根据提供的参考资料，其中并未包含关于“DD3D”的相关信息，因此无法从资料中确认其全称。参考资料主要涉及 UL 4600 安全评估标准、Apollo 规划与感知模块、ISO 26262 功能安全标准以及 Apollo Cyber RT 框架等内容。",
+      "candidate_answer": "\n\n根据提供的参考资料，DD3D 的全称是 **Dense Depth-pre-trained 3D Detector**（密集深度预训练的三维检测器）。",
+      "winner": "candidate",
+      "reason": "candidate准确引用了evidence中的内容，正确给出DD3D全称，而baseline错误声称资料中无相关信息，尽管其retrieved_rows和evidence实际包含正确答案。"
+    },
+    {
+      "id": "eval-009",
+      "question": "UniDepth 主要解决了什么问题？",
+      "reference_answer": "UniDepth 旨在解决单目度量深度估计（MMDE）在未见过的域中泛化能力差的问题，它不需要任何额外信息（如相机内参），仅凭单张图像即可重建度量3D场景。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中**并未包含关于 UniDepth 的相关信息**，因此无法基于现有资料回答其解决的具体问题。\n\n提供的参考资料主要涵盖以下内容：\n1.  **TransFusion**：LiDAR-Camera 多模态融合 3D 目标检测方法。\n2.  **PETRv2**：基于多相机图像的 3D 感知统一框架。\n3.  **Apollo**：自动驾驶系统的 Channel 数据格式及模块通信框架，以及摄像头感知中的 LSS 方法。\n\n若需了解 UniDepth 的相关信息，建议查阅专门针对单目深度估计或相关视觉模型的文献资料。",
+      "candidate_answer": "\n\n根据提供的参考资料，UniDepth 主要解决了**单目度量深度估计（MMDE）方法泛化能力受限以及对外部信息依赖**的问题。具体体现在以下几个方面：\n\n1.  **摆脱对外部信息的依赖**：\n    现有的 MMDE 方法通常假设可访问相机内参或其他场景信息。UniDepth 是首个**无需任何额外外部信息**（如相机参数、场景组成或设置），仅从**单张图像**即可直接预测度量 3D 点的通用模型。\n\n2.  **解决跨域泛化难题**：\n    针对现有方法受限于训练域、在未见过的域（domain gaps）表现不佳的问题，UniDepth 实现了**跨域的零样本（zero-shot）泛化**，能够适应多样化的场景部署，不受场景组成和设置的限制。\n\n3.  **解耦相机与几何信息**：\n    为了解决相机参数与深度预测交织的难题，UniDepth 引入了**自提示相机模块**（self-promptable camera module）和**伪球形输出表示**（pseudo-spherical output representation），并提出了**几何不变性损失**，从而有效解耦了相机信息与场景的底层 3D 几何，确保了深度预测的准确性与一致性。\n\n4.  **实现通用部署**：\n    旨在创建一个可部署于多样化场景的通用 MMDE 模型，在多个基准测试中设定了新的最先进（SOTA）标准，甚至超越了在特定域内训练的方法。",
+      "winner": "candidate",
+      "reason": "candidate的回答准确引用了evidence中关于UniDepth无需额外信息、仅凭单张图像重建3D场景的核心能力，并补充了retrieved_rows中提到的跨域泛化、自提示相机模块等技术细节，与reference_answer高度一致。baseline错误声称资料中无UniDepth信息，但evidence明确存在相关引用，属于检索或分析失误。"
+    },
+    {
+      "id": "eval-010",
+      "question": "文档中提到的“参数无关设计”（parameter-free design）旨在解决BEV感知中的哪个主要挑战？它具体针对什么因素进行解耦？",
+      "reference_answer": "该设计旨在解决BEV感知中的领域自适应（domain adaptation）问题，即模型在一个数据集上训练后如何在另一个数据集上泛化。具体来说，它尝试将网络与相机参数解耦，使特征学习独立于外参和/或内参矩阵，从而应对不同数据集相机/传感器设置（物理位置、重叠区域、视场角、畸变参数等）的差异，以及实际应用中的路面颠簸和摄像头不稳定性。",
+      "baseline_answer": "\n\n根据您提供的已知参考资料，**无法回答**该问题。\n\n提供的参考资料中**并未提及**“参数无关设计”（parameter-free design）、“BEV感知”或“领域自适应”等相关内容，也不存在名为 `paper-038` 的文献来源。\n\n参考资料主要涵盖以下领域：\n1.  **自动驾驶等级与安全职责**：L0-L5 等级的定义、环境监控、后备准备及 ODD 范围。\n2.  **功能安全与预期功能安全**：ISO 26262（ASIL 等级、硬件度量指标）、ISO 21448（SOTIF 场景分类与触发条件）。\n3.  **感知算法细节**：PointPillars 的网格划分、特征增强与聚合流程。\n4.  **硬件与数据**：雷达数据适配器的协议解析与坐标变换。\n\n建议您核对信息来源或补充包含“参数无关设计”及相关 BEV 感知内容的文档。",
+      "candidate_answer": "\n\n根据您提供的参考资料（source_id=paper-038, F.3 节），回答如下：\n\n1.  **主要挑战**：**领域自适应（Domain Adaptation）**。资料指出这是 BEV 感知中最大的挑战之一，即训练好的模型在不同数据集或场景间的泛化能力。\n2.  **解耦因素**：**相机参数（Camera Parameters）**。具体而言，是将网络与**外参（Extrinsic）和/或内参（Intrinsic）矩阵**进行解耦，使特征学习独立于这些参数。\n3.  **目的与效果**：通过这种设计，使算法性能不受**姿态变化（pose variation）**或**传感器位置（sensor location）**的影响，从而鲁棒地解决因**道路颠簸（road bumpiness）**和**相机不稳定性（camera unsteadiness）**导致的检测不准确问题，实现跨场景更好的泛化能力。",
+      "winner": "candidate",
+      "reason": "Candidate 准确回答了主要挑战为“领域自适应”，解耦因素为“相机参数（外参/内参）”，与 reference_answer 和 evidence 内容完全一致。Baseline 错误地声称资料中未提及相关内容，未能利用 evidence 中的关键信息，导致无法回答问题。"
+    },
+    {
+      "id": "eval-011",
+      "question": "多视图3D检测在真实世界场景中的主要性能瓶颈是什么？",
+      "reference_answer": "主要瓶颈是难以预测准确的深度值，特别是在数据损坏（如雾、雪等）时，深度精度大幅下降，导致3D检测精度显著降低。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中**没有直接关于多视图3D检测算法性能瓶颈的具体技术文档**。现有资料主要涵盖Apollo系统架构、控制模块及自动驾驶安全标准（ISO 26262, ISO 21448）。\n\n基于现有资料中关于**感知系统安全**和**运行环境**的描述，可间接推断多视图3D检测在真实世界场景中面临以下系统级挑战：\n\n1.  **环境适应性与功能不足（ISO 21448 SOTIF）**\n    *   **边界场景挑战**：ISO 21448指出系统需应对功能不足带来的风险。真实世界中的光照变化（如逆光、夜间）、天气条件（雨、雾、雪）属于边界场景，可能导致视觉感知性能下降，属于预期功能安全（SOTIF）关注的核心领域。\n    *   **未知场景覆盖**：SOTIF要求通过场景库构建覆盖关键场景和边界场景，但真实世界中存在大量未知不安全场景，难以穷举验证。\n\n2.  **传感器退化与冗余设计（UL 4600 / SOTIF）**\n    *   **单一传感器风险**：标准强调单一传感器失效不应导致系统失控。多视图3D检测依赖摄像头，当摄像头受污损、遮挡或性能退化（如镜头起雾）时，若缺乏雷达、激光雷达等多传感器融合冗余，检测可靠性将降低。\n    *   **数据融合验证**：需验证传感器数据融合的可靠性，确保在部分传感器性能下降时系统仍能安全运行。\n\n3.  **验证覆盖的充分性（ISO 26262 / ISO 21448）**\n    *   **场景库构建**：需基于真实交通数据、事故数据库建立场景库，涵盖长尾场景（如罕见行人姿态、异形车辆）。\n    *   **故障注入测试**：需在传感器数据中注入噪声、遮挡、异常值等干扰，验证系统的鲁棒性，这反映了真实场景中数据质量不稳定的挑战。\n\n4.  **系统实时性与架构约束（Apollo Cyber RT）**\n    *   **低延迟要求**：Apollo Cyber RT框架支持低延迟自动驾驶工作负载。多视图3D检测作为感知模块的一部分，需满足严格的时序要求，复杂的3D重建和检测算法可能成为实时性瓶颈。\n\n**总结**：基于现有资料，多视图3D检测在真实世界的主要瓶颈体现在**环境鲁棒性（光照/天气）、传感器退化下的冗余安全、以及长尾场景的验证覆盖**，而非具体的算法精度细节。",
+      "candidate_answer": "\n\n根据提供的参考资料，多视图3D检测在真实世界场景中的主要性能瓶颈可归纳为以下几点：\n\n1.  **环境敏感性与深度信息缺失**\n    摄像头传感器容易受光照、天气等环境因素影响，且缺乏直接的深度信息，这给视觉感知算法带来了巨大挑战，影响了算法在复杂场景下的精确率和稳定性（来源：`apollo-doc-006`）。\n\n2.  **时间相关目标估计精度低**\n    对于速度等与时间相关的目标，仅使用单帧数据的基于视觉的范式表现远差于使用LiDAR或雷达的方法。例如，领先方法BEVDet在基于视觉的3D物体检测中的速度误差是LiDAR-based方法的3倍（来源：`paper-025`）。\n\n3.  **长尾问题与类别识别困难**\n    多视图3D检测容易受到长尾问题的影响，在真实世界中难以识别所有类别的物体，导致对罕见类别的检测性能不佳（来源：`paper-015`）。\n\n综上，主要瓶颈集中在**环境鲁棒性、深度感知能力、时间属性（如速度）估计精度以及长尾类别的识别能力**。",
+      "winner": "candidate",
+      "reason": "Candidate 更贴近 reference_answer 的核心观点（深度预测瓶颈）。Baseline 完全未提及“深度值预测”，而是泛泛讨论系统安全和架构，与 evidence 中关于深度预测的关键信息脱节。Candidate 正确指出了深度信息缺失这一关键问题，且其他论点均有检索文档支持。"
+    },
+    {
+      "id": "eval-012",
+      "question": "GenAD中如何捕获自车与其他交通参与者之间的高阶交互？这一设计解决了传统端到端地解决了传统流水线中的什么局限？",
+      "reference_answer": "GenAD在场景分词器中添加一个自车令牌，并使用自车-智能体自注意力（ego-agent self-attention）来捕获高阶交互。这解决了传统流水线中预测和规划串行设计忽略自车与其他参与者未来交互的局限。",
+      "baseline_answer": "\n\n根据提供的参考资料，文档中**未包含关于“GenAD”（Generative End-to-End Autonomous Driving）的具体技术细节**。资料中涉及的相关自动驾驶研究为**FusionAD**（source_id=paper-006），以及商汤**Apollo**系统的模块架构（source_id=apollo-doc-003, 007）。基于现有资料，相关解答如下：\n\n**1. 高阶交互捕获机制（参考 FusionAD 资料）**\n*   **场景上下文检索**：通过 **Motion Query** 检索所有场景上下文，捕捉 **agent-agent**（智能体间）、**agent-map**（智能体与地图）和 **agent-goal**（智能体与目标点）的信息。\n*   **模式间注意力**：引入 **Mode Self-Attention**（多头自注意力机制），使不同模式之间能够相互可见（mutual visibility），从而提升交互建模的质量与多样性。\n\n**2. 传统流水线局限与解决（参考 Apollo 与 FusionAD 资料）**\n*   **传统流水线架构**：资料中的 Apollo 系统展示了感知、预测、规划模块通过独立 **Channel** 进行通信（source_id=apollo-doc-007），体现了传统串行流水线的架构特征。\n*   **性能提升**：FusionAD 相比仅依赖相机 BEV 的端到端学习方法，在**预测**和**规划**任务上取得了显著性能提升，并在**感知**任务上有所改进（source_id=paper-006）。\n*   **局限说明**：提供的参考资料中**未明确阐述**该设计具体解决了传统流水线中的哪些特定局限（如交互单向性或不确定性建模缺失等），仅提到了性能对比结果。\n\n建议核实文档来源，若需了解 GenAD 的具体技术细节，可能需要补充相关的 Generative End-to-End 自动驾驶文献。",
+      "candidate_answer": "\n\n根据提供的参考资料（source_id=paper-007），GenAD 捕获高阶交互的方式及其解决的传统流水线局限如下：\n\n## 1. 高阶交互捕获机制\n\nGenAD 将自动驾驶建模为**轨迹生成问题**，通过以下设计实现自车与其他交通参与者的高阶交互：\n\n| 设计 | 具体实现 |\n|------|----------|\n| **联合轨迹生成** | 模型**同时生成自车和其他交通参与者的未来轨迹**（simultaneously generates the future trajectories for the ego vehicle and other agents），在概率潜空间中进行建模，使自车决策能直接影响其他智能体的预测 |\n| **实例中心场景表示** | 提出**实例中心的场景分词器**（instance-centric scene tokenizer），将周围场景转化为包含地图信息的实例令牌（map-aware instance tokens） |\n| **结构潜空间学习** | 利用**变分自编码器**（VAE）学习未来轨迹在结构潜空间中的分布，实现高阶自车 - 智能体交互（high-order ego-agent interactions） |\n\n## 2. 解决的传统流水线局限\n\n| 局限 | 传统方法问题 | GenAD 解决方案 |\n|------|-------------|---------------|\n| **交互单向性** | 传统串行设计（先预测后规划）**忽略了未来自车运动对其他智能体运动预测的反向影响**（ignores the effect of future ego movements on the agent motion prediction） | 通过同时生成所有轨迹，实现双向交互建模 |\n| **不确定性缺失** | 传统方法**缺乏对运动预测和规划中不确定性的显式建模**（lacks modeling of the uncertain nature of motion prediction and planning） | 通过生成式框架学习轨迹分布，有效处理运动的不确定性 |\n| **结构先验忽略** | 传统方法未能充分利用**结构轨迹先验**（structural trajectory prior），如轨迹的连续性和直线性 | 通过生成框架学习了结构先验，产生更准确的未来轨迹 |\n\n**总结**：GenAD 通过生成式框架将自动驾驶转化为轨迹生成问题，联合建模自车与周围智能体的未来演化，解决了传统串行流水线中交互单向、不确定性建模缺失和结构先验利用不足的核心局限。",
+      "winner": "candidate",
+      "reason": "Baseline 未能利用检索到的正确证据（paper-007），错误声称无相关信息并提供了无关的 FusionAD 内容。Candidate 准确基于 paper-007 证据，正确阐述了 GenAD 通过场景分词器和联合轨迹生成捕获高阶交互，并解决了传统串行流水线忽略自车与参与者未来交互的局限，与 reference_answer 高度一致。"
+    },
+    {
+      "id": "eval-013",
+      "question": "Part-A2 Net的核心创新点是什么？它如何利用3D边界框注释中的\"免费\"信息？",
+      "reference_answer": "核心创新是首次充分利用3D边界框注释自动提供的前景点语义掩码和相对位置（即intra-object part locations）作为自由监督，用于同时预测高质量3D提议和精确的部件位置，并在第二阶段通过RoI-aware池化和部件聚合进行框的重新评分和位置细化。",
+      "baseline_answer": "\n\n根据您提供的参考资料，**其中并未包含关于“Part-A² Net”的任何信息**。\n\n您提供的资料主要涉及以下内容：\n1.  **Apollo 感知融合模块**：描述了感知融合模块的输入输出通道（如 `/perception/inner/Prefusedlobjects` 和 `/apollo/perception/obstacles`）及其在自动驾驶中的作用。\n2.  **Apollo 视觉感知**：概述了视觉感知模块及其在自动驾驶中的障碍物理解职责。\n3.  **占用流场用于运动预测**：一篇关于基于占用流场进行自动驾驶运动预测的研究论文。\n4.  **ISO 26262 功能安全标准**：详细介绍了汽车安全完整性等级（ASIL）、硬件和软件的安全要求（如 SPFM、LFM、PMHF 指标）。\n5.  **NHTSA 自动驾驶系统安全**：概述了美国国家公路交通安全管理局（NHTSA）在自动驾驶系统安全方面的活动和规则制定。\n\n因此，关于 Part-A² Net 的核心创新点及其如何利用 3D 边界框注释中的“免费”信息，**无法基于现有参考资料进行回答**。",
+      "candidate_answer": "\n\n根据提供的参考资料，Part-A² Net 的核心创新点及其对“免费”信息的利用方式如下：\n\n**1. 核心创新点**\nPart-A² Net 的核心创新在于提出了一种新颖的**两阶段“部分感知与聚合”神经网络框架**，旨在充分利用 3D 点云中的物体内部结构信息。其创新点具体体现在：\n*   **首次探索物体内部部分位置**：该框架首次利用**3D 物体内部部分位置（intra-object part locations）**这一丰富信息来学习具有判别性的 3D 特征，这是以往 3D 目标检测方法未曾涉及的。\n*   **两阶段设计**：\n    *   **部分感知阶段（Stage-I）**：负责预测精确的物体内部部分位置和学习逐点 3D 特征。\n    *   **部分聚合阶段（Stage-II）**：负责将预测的部分位置和逐点特征进行聚合，以评分边界框并精修其位置，从而显著改善候选框质量。\n*   **性能提升**：通过聚合部分特征，该框架在 KITTI 3D 检测基准上实现了最先进的性能。\n\n**2. 如何利用“免费”信息**\nPart-A² Net 巧妙地利用了 3D 边界框注释中隐含的“免费”信息，无需额外人工标注：\n*   **信息来源**：利用训练数据中已有的 **3D 真实边界框注释**。与 2D 图像不同，3D 边界框天然地将物体分隔，自动提供了框内每个前景点相对于其所属 3D 真实边界框的相对位置（即物体内部部分位置）以及语义掩膜。\n*   **作为监督信号**：在部分感知阶段，将这些由 3D 边界框自动导出的**物体内部部分位置标签和分割标签**作为**额外的监督信号（free-of-charge part supervisions）**。\n*   **具体机制**：网络被训练为同时预测高质量的 3D 候选框和精确的物体内部部分位置。这种“免费”信息提供了丰富的几何线索，增强了特征表示能力，从而提升了最终的检测精度。",
+      "winner": "candidate",
+      "reason": "candidate准确引用了evidence中的关键内容，详细说明了Part-A² Net的核心创新点（两阶段框架、利用3D边界框中的intra-object part locations作为免费监督）及具体实现方式，与reference_answer高度一致。baseline错误声称资料中无相关信息，但实际retrieved_rows和evidence均包含相关论文内容，属于严重检索失败。"
+    },
+    {
+      "id": "eval-014",
+      "question": "StreamPETR采用的时间建模范式是什么？",
+      "reference_answer": "StreamPETR采用对象中心时间建模（object-centric temporal modeling）范式。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中并未包含关于 **StreamPETR** 的相关信息，因此无法回答其采用的时间建模范式。\n\n参考资料主要涵盖了 Apollo 自动驾驶平台的预测模块、Cyber RT 框架、摄像头障碍物检测器、SOTIF 安全标准以及感知融合模块的架构说明。",
+      "candidate_answer": "\n\n根据提供的参考资料，StreamPETR 采用的时间建模范式是**以对象为中心的时间建模**（object-centric temporal modeling）。\n\n该范式的主要实现机制和特点如下：\n\n1.  **基于稀疏对象查询**：StreamPETR 利用稀疏的对象查询（object queries）作为时序传播的隐藏状态，直接在帧间进行 3D 预测，避免了处理密集特征图带来的高计算成本。\n2.  **记忆队列与传播机制**：\n    *   设计了一个**记忆队列**（memory queue），用于递归更新对象查询的时序信息。\n    *   结合**传播 Transformer**（propagation transformer），将历史帧的时序先验信息通过对象查询高效地传播到当前帧，实现帧间的时空交互。\n3.  **运动感知建模**：引入了**运动感知层归一化**（motion-aware layer normalization, MLN），用于隐式编码自车和周围物体在不同时间戳的运动信息，以缓解视频流中的累积误差。\n\n这种以对象为中心的范式相比现有的基于视角（perspective-based）的时间建模方法，在速度和精度上均表现出更优的性能，且计算负担极小。",
+      "winner": "candidate",
+      "reason": "candidate准确回答了StreamPETR采用对象中心时间建模范式，与reference_answer一致，且详细机制均基于retrieved_rows和evidence中的论文内容（如memory queue、propagation transformer等），无无依据扩写。baseline错误声称资料未包含StreamPETR信息，但evidence中明确存在相关引用，导致回答偏离事实。"
+    },
+    {
+      "id": "eval-015",
+      "question": "根据文档，自2016年10月以来，进口豁免计划下共有多少辆ADS装备的车辆获得了临时进口许可？",
+      "reference_answer": "264辆。",
+      "baseline_answer": "\n\n根据提供的参考资料，未找到关于自2016年10月以来进口豁免计划下获得临时进口许可的ADS装备车辆数量的具体数据。参考资料主要涉及Apollo平台的感知、数据格式以及NHTSA的活动概览，但并未提及此特定统计信息。",
+      "candidate_answer": "\n\n根据提供的参考资料，自2016年10月以来，进口豁免计划下共有**264辆**ADS装备的车辆获得了临时进口许可（见资料 source_id=standard-005, [p.4]）。",
+      "winner": "candidate",
+      "reason": "Candidate直接引用了evidence中的关键数据（264辆），与reference_answer完全一致，且其retrieved_rows明确包含该信息。Baseline虽在evidence中存在相同数据，但未能正确提取并回答，反而声称未找到相关数据，导致答案偏离参考标准。"
+    },
+    {
+      "id": "eval-016",
+      "question": "根据NHTSA文档，该机构的核心使命是什么？",
+      "reference_answer": "拯救生命、预防伤害、减少道路碰撞的经济成本。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中**并未包含**关于 NHTSA（美国国家公路交通安全管理局）的文档或相关信息。\n\n提供的资料主要涉及以下领域：\n*   自动驾驶场景表示技术（如 VAD）\n*   Apollo 开放平台（控制模块、感知系统、数据集）\n*   UL 4600 自动驾驶产品安全评估标准\n\n因此，基于当前提供的材料，无法回答该机构的核心使命。如果您有相关的 NHTSA 文档，请补充提供，我将很乐意为您解答。",
+      "candidate_answer": "\n\n根据您提供的NHTSA文档（source_id=standard-006 和 standard-001），该机构的核心使命明确表述为：  \n**“拯救生命、预防伤害，并减少道路交通事故造成的经济损失。”**  \n（原文：\"NHTSA's mission is to save lives, prevent injuries, and reduce the economic costs of roadway crashes\"）",
+      "winner": "candidate",
+      "reason": "Candidate正确检索到包含NHTSA使命的文档（standard-001/006），答案与reference_answer完全一致且严格引用证据。Baseline虽在evidence中存在正确信息，但retrieved_rows未包含相关文档且错误声明无资料，导致答案偏离事实。"
+    },
+    {
+      "id": "eval-017",
+      "question": "CLRNet 的核心创新点是什么？",
+      "reference_answer": "CLRNet 的核心创新在于提出了跨层细化网络（Cross Layer Refinement Network），旨在同时利用高层语义特征和低层细节特征进行车道检测。它首先通过高层语义特征检测车道，然后利用低层特征进行细化，以提升定位精度。此外，还引入了ROIGather全局上下文聚合和Line IoU损失函数。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中**并未包含关于 CLRNet 的相关信息**。\n\n现有资料主要涵盖了以下内容：\n1.  **3D 目标检测算法**：PointPillars、CenterPoint、DETR3D。\n2.  **自动驾驶标准与系统**：自动驾驶分级（L0-L5）、测试安全要求、Apollo 感知融合模块。\n\n因此，无法基于现有参考资料回答 CLRNet 的核心创新点。",
+      "candidate_answer": "\n\n根据提供的参考资料，CLRNet（Cross Layer Refinement Network）的核心创新点主要包括以下三个方面：\n\n1.  **跨层特征融合架构**：\n    提出了一种新颖的网络架构，旨在充分利用低级和高级特征的互补性。具体而言，该网络先利用高层语义特征进行车道的粗检测，再通过低层局部细节特征进行细化，从而在利用全局上下文信息的同时，利用局部特征提高定位精度。\n\n2.  **ROIGather 模块**：\n    提出了一种名为 ROIGather 的模块，用于收集全局上下文信息。它通过消息传递机制建立感兴趣区域（ROI）特征与全局特征图的关系，以增强车道特征的表示能力。该模块设计灵活，可嵌入到其他网络中。\n\n3.  **Line IoU (LIoU) 损失函数**：\n    专门为车道检测设计了一种新的损失函数。与传统的像素级预测方法不同，Line IoU 将车道线作为一个整体单元进行回归，这有助于保持车道的平滑性，并显著提升了定位性能。\n\n此外，该研究还通过大量实验验证了 CLRNet 在多个基准数据集上达到了最先进（SOTA）的性能，并且支持实时检测（在 NVIDIA 1080Ti GPU 上可达 206 FPS）。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地声称资料中未包含 CLRNet 相关信息，忽略了 evidence 字段中明确提供的论文片段。Candidate 准确基于 evidence 和 retrieved_rows 总结了 CLRNet 的三大核心创新点（跨层细化架构、ROIGather 模块、Line IoU 损失函数），与 reference_answer 高度一致，且内容完全忠于提供的证据，无无依据扩写。"
+    },
+    {
+      "id": "eval-018",
+      "question": "BEVDet在训练过程中遇到了什么问题？它对数据增强策略有什么特殊发现？",
+      "reference_answer": "BEVDet在训练过程中遇到了严重的过拟合问题。研究发现，只有在BEV编码器不存在时，在图像视角空间应用复杂的数据增强策略（如Lift-Splat-Shoot中的策略）才能起到正则化效果；否则，这种增强甚至会降低性能。",
+      "baseline_answer": "\n\n根据您提供的参考资料，**无法回答关于 BEVDet 训练过程及数据增强策略的问题**。\n\n**原因说明：**\n您提供的参考资料主要涵盖以下内容，未涉及 BEVDet 模型的具体技术细节：\n1.  **自动驾驶安全标准**：包括 SAE J3016 自动化等级、ISO 21448 SOTIF（预期功能安全）标准、测试安全要求及商业化运营规范。\n2.  **Apollo 平台架构**：涉及感知、预测、规划、控制等模块的通信框架（Channel Data Format）及纵向控制逻辑。\n3.  **数据集信息**：提及 Apollo-SouthBay 和 Apollo-DaoxiangLake 数据集，但未涉及 BEVDet 模型。\n\n**建议：**\n若需了解 BEVDet 的训练问题（如过拟合）及数据增强策略（如 BDA/IDA 机制），请您补充相关的技术论文或文档资料，我将基于准确的信息为您提供解答。",
+      "candidate_answer": "\n\n根据您提供的参考资料，BEVDet在训练过程中遇到的问题及对数据增强策略的特殊发现如下：\n\n**1. 训练过程中遇到的问题**\n*   **严重的过拟合问题**：在训练过程中观察到了严重的过拟合现象（serious over-fitting problem）。\n*   **根本原因**：问题的根源在于BEVDet在BEV空间具有**过度的拟合能力**（excessive fitting capacity of BEVDet in the BEV space）。\n\n**2. 对数据增强策略的特殊发现**\n*   **视图空间的隔离性**：**视图变换器（view transformer）从数据增强的角度将图像视图和BEV视图两个空间隔离开来**，因此不能简单地将图像视图空间的增强策略直接迁移到包含BEV编码器的框架中。\n*   **IDA与BDA的依赖关系**：图像视图空间数据增强（IDA）的效果高度依赖于BEV空间数据增强（BDA）的存在。当BDA缺失时，IDA对性能产生**负面影响**；而当BDA存在时，IDA才能产生**正面影响**。\n*   **BDA的重要性**：在训练BEVDet时，**BDA的作用比IDA更为重要**（BDA plays a more important role than IDA）。\n*   **构建专属策略**：因此，BEVDet为BEV空间**单独构建了专属的数据增强策略**（exclusive data augmentation strategy），并与IDA组合使用。这种定制策略能显著缓解过拟合（将第20 epoch的性能退化减少至-0.4%）并大幅提升性能（mAP峰值提升+8.6%）。",
+      "winner": "candidate",
+      "reason": "Baseline 未能利用提供的 evidence 回答问题，错误地声明无法回答。Candidate 准确回答了问题，其答案与 reference_answer 高度一致，且忠于 evidence 和 retrieved_rows，并提供了更多有依据的细节。"
+    },
+    {
+      "id": "eval-019",
+      "question": "DETR3D中如何将2D特征与3D物体预测联系起来？请简要描述其关键操作。",
+      "reference_answer": "通过几何反投影（geometric back-projection）和相机变换矩阵，将3D物体查询中的参考点反投影到每个相机上，提取对应的图像特征，然后通过自注意力机制进行交互。",
+      "baseline_answer": "",
+      "candidate_answer": "\n\n根据参考资料，DETR3D 通过**几何反投影**（geometric back-projection）机制将 2D 特征与 3D 物体预测联系起来，其关键操作如下：\n\n1.  **预测 3D 参考点**：从稀疏的物体查询（object queries）中预测每个查询对应的 3D 参考点。\n2.  **几何反投影**：利用相机变换矩阵（camera transformation matrices），将这些 3D 参考点反投影到各相机视图的图像空间。\n3.  **特征采样**：在投影位置从多视图的 2D 特征图中采样对应的 2D 特征。\n4.  **解码更新**：将采样得到的 2D 特征与物体查询一同输入解码器，更新查询表示，最终输出 3D 检测结果。\n\n该方法无需依赖密集深度预测模块，实现了从 2D 观察到 3D 预测的端到端转换。",
+      "winner": "candidate",
+      "reason": "candidate的答案准确描述了DETR3D通过几何反投影和相机变换矩阵将3D参考点反投影到相机视图并采样2D特征的关键步骤，与reference_answer的核心内容完全一致，且所有步骤均得到evidence和retrieved_rows的明确支持。baseline的answer为空，无法提供有效信息。"
+    },
+    {
+      "id": "eval-020",
+      "question": "SparseBEV的三个关键设计是什么？",
+      "reference_answer": "尺度自适应自注意力（scale-adaptive self attention）、自适应时空采样（adaptive spatio-temporal sampling）和自适应混合（adaptive mixing）。",
+      "baseline_answer": "\n\n根据提供的参考资料，未找到关于“SparseBEV”及其三个关键设计的相关信息。\n\n参考资料主要涉及以下内容：\n1.  **Apollo雷达数据适配器**：负责协议解析、坐标变换和数据校验。\n2.  **Apollo系统架构**：包括感知、预测、规划、控制等模块的通信框架。\n3.  **纵向控制模块**：涉及位置闭环和速度闭环控制。\n4.  **FusionAD论文片段**：提及了mode self-attention等概念，但未涉及SparseBEV。\n5.  **预测模块场景识别器**：负责识别巡航、路口等驾驶场景。\n\n因此，无法基于现有资料回答SparseBEV的三个关键设计。",
+      "candidate_answer": "\n\n根据提供的参考资料，SparseBEV 的三个关键设计如下：\n\n1.  **尺度自适应自注意力（scale-adaptive self attention）**：用于在 BEV 空间中聚合具有自适应感受野的特征。\n2.  **自适应时空采样（adaptive spatio-temporal sampling）**：在查询（queries）的引导下生成采样位置，以与图像特征进行交互。\n3.  **自适应混合（adaptive mixing）**：利用查询的动态权重解码采样的特征。\n\n这三个设计旨在提高检测器在 BEV 空间和图像空间的适应性，从而在无需显式构建密集 BEV 特征的情况下实现高性能的 3D 物体检测。",
+      "winner": "candidate",
+      "reason": "candidate的答案完全匹配reference_answer的三个关键设计，并正确引用了evidence中的内容。baseline虽检索到相关论文片段，但错误地声称未找到信息，与evidence矛盾。candidate的回答更准确、忠于证据且无无依据扩写。"
+    },
+    {
+      "id": "eval-021",
+      "question": "UN R157法规的主要目的是什么？",
+      "reference_answer": "建立关于配备自动车道保持系统（ALKS）车辆审批的统一规定。",
+      "baseline_answer": "\n\n根据提供的参考资料，未包含UN R157法规的相关信息。因此，无法基于已知资料回答该法规的主要目的。",
+      "candidate_answer": "\n\n根据提供的参考资料，UN R157法规的主要目的是**建立关于车辆自动车道保持系统（ALKS）型式批准的统一规定**。\n\n作为交通领域针对自动驾驶系统（依据ECE/TRANS/WP.29/1140定义）的首个监管步骤，该法规旨在提供确保系统安全性和故障安全响应的创新性规定。",
+      "winner": "candidate",
+      "reason": "candidate的答案与reference_answer高度一致，准确引用了evidence中的standard-009内容，且retrieved_rows包含相关文档。baseline虽引用了相同evidence，但retrieved_rows未包含standard-009，导致错误声明无法回答，属于检索失败。"
+    },
+    {
+      "id": "eval-022",
+      "question": "在SparseFusion中LiDAR视角预测头包含六个独立的MLP，请分别说明每个MLP预测的输出维度。",
+      "reference_answer": "1. 预测类别，输出维度为类别数量；2. 回归BEV平面上物体中心相对于参考点的偏移，输出维度为2（XY坐标）；3. 回归物体中心的高度，输出维度为1；4. 回归3D包围盒XYZ尺寸的对数，输出维度为3；5. 预测物体绕垂直轴（Z轴）的角度，输出维度为2（sin和cos）；6. 预测水平面（XY平面）的速度，输出维度为2（X和Y方向速度）。",
+      "baseline_answer": "\n\n根据您提供的参考资料，无法回答该问题。\n\n所提供的参考资料（包括 `paper-007`, `apollo-doc-006`, `standard-013`, `apollo-doc-008`, `apollo-doc-009`）均未提及“SparseFusion”模型，也没有包含关于其“LiDAR视角预测头”包含六个独立MLP及其各自输出维度的任何具体信息。\n\n因此，基于现有资料，无法提供您所要求的技术细节。",
+      "candidate_answer": "\n\n根据提供的参考资料（source_id=paper-077），在 **SparseFusion** 模型中，**LiDAR 视角预测头（LiDAR View Prediction Head）** 包含六个独立的 MLP，其预测内容及输出维度如下：\n\n1.  **类别预测（Category）**：\n    *   **功能**：预测每个物体的类别。\n    *   **输出维度**：物体类别的数量（表示每个类别的置信度）。\n2.  **中心偏移回归（Center Offset）**：\n    *   **功能**：回归物体中心在 BEV 平面上相对于参考点（由位置编码指示）的偏移量。\n    *   **输出维度**：2（分别表示 X 和 Y 坐标）。\n3.  **高度回归（Height）**：\n    *   **功能**：回归物体中心的高度。\n    *   **输出维度**：1。\n4.  **尺度回归（Scale）**：\n    *   **功能**：回归 3D 边界框 XYZ 尺寸的对数值。\n    *   **输出维度**：3。\n5.  **角度预测（Angle）**：\n    *   **功能**：预测物体绕垂直轴（LiDAR 坐标系中的 Z 轴）的角度。\n    *   **输出维度**：2（表示该角度的正弦和余弦值）。\n6.  **速度预测（Velocity）**：\n    *   **功能**：预测水平平面（LiDAR 坐标系中的 XY 平面）上的速度。\n    *   **输出维度**：2（分别表示沿 X 轴和 Y 轴的速度分量）。\n\n*注：以上信息综合自参考资料中关于 LiDAR 检测器头部及 LiDAR 坐标系（Z 轴垂直，XY 平面水平）的描述片段。*",
+      "winner": "candidate",
+      "reason": "Candidate 正确利用了 evidence 中的信息准确回答了问题，内容与 reference_answer 完全一致。Baseline 虽然 evidence 中包含了正确答案的引用，但其回答却声称无法回答，属于严重的检索或生成失败。"
+    },
+    {
+      "id": "eval-023",
+      "question": "ViP3D提出了哪三种轨迹解码器？请分别简要说明其特点。",
+      "reference_answer": "ViP3D提出了三种轨迹解码器：1) 回归式(regression-based)轨迹解码器，直接通过MLP输出多条未来轨迹；2) 目标式(goal-based)轨迹解码器，包含目标编码器、概率解码器、偏移解码器和轨迹补全模块，通过预测目标点和偏移量生成轨迹；3) 热图式(heatmap-based)轨迹解码器，包含目标编码器、概率解码器和轨迹补全模块，通过生成热图表示最终位置概率分布来选取目标点。",
+      "baseline_answer": "\n\n根据提供的已知参考资料，**无法回答**关于“ViP3D 提出的三种轨迹解码器及其特点”的问题。\n\n**原因说明：**\n提供的参考资料中**未包含**任何关于\"ViP3D\"模型的信息，也未提及“三种轨迹解码器”的相关内容。参考资料的实际内容主要涵盖以下领域：\n\n1.  **NHTSA 活动与法规**：涉及自动驾驶系统（ADS）的安全概述、规则制定活动及豁免信息（source_id=standard-005）。\n2.  **SOTIF 标准**：ISO 21448 预期功能安全标准中的场景分类（已知/未知安全/不安全场景）及触发条件（source_id=standard-011）。\n3.  **Apollo 框架**：Cyber RT 运行时框架、通信通道数据格式及模块功能（source_id=apollo-doc-002, apollo-doc-003）。\n4.  **VAD 架构**：Vectorized Scene Representation（VAD）的骨干网络及场景学习模块概述，其中提到了“agent queries”，但这是 VAD 模型而非 ViP3D（source_id=paper-005）。\n\n**结论：**\n基于当前提供的参考资料，没有证据支持 ViP3D 提出了三种轨迹解码器。建议您核对资料来源或提供包含 ViP3D 相关内容的文档，以便我为您提供准确的回答。",
+      "candidate_answer": "\n\n根据提供的参考资料，ViP3D 并非“提出”了这三种轨迹解码器，而是其框架**兼容并实验了**三种现有的轨迹解码方法。这三种方法及其特点如下：\n\n1.  **基于回归的方法 (Regression-based methods)**\n    *   **特点**：资料中明确描述了其实现细节。该解码器是一个 **2 层 MLP**，以 **agent queries** 为输入，**直接输出多条未来轨迹**。在推理阶段，它直接输出一组预测的轨迹。\n\n2.  **基于目标的方法 (Goal-based methods)**\n    *   **特点**：资料中以 **TNT [63]** 为代表，指出其是近期达到 **最先进性能 (State-of-the-art)** 的方法。ViP3D 对其进行了实验对比。\n\n3.  **基于热图的方法 (Heatmap-based methods)**\n    *   **特点**：资料中以 **HOME [15]** 为代表，同样指出其是近期达到 **最先进性能 (State-of-the-art)** 的方法。ViP3D 对其进行了实验对比。\n\n**共同特点**：\n这三种解码器均以 **agent queries** 为输入，并为每个智能体输出 **K 条可能的未来轨迹**。ViP3D 对这三种方法均进行了实验验证，证明全微分端到端学习有助于避免多阶段管线中的误差累积问题。",
+      "winner": "candidate",
+      "reason": "Baseline 在 evidence 字段中明确包含 ViP3D 三种轨迹解码器（回归式、目标式、热图式）及其特点的描述的情况下，错误地声称参考资料中未包含相关信息并拒绝回答，属于严重的证据利用失败。Candidate 正确识别了三种轨迹解码器，并依据 evidence 准确描述了各自的结构特点（如 MLP 层数、模块组成等），与 reference_answer 高度一致，且忠实于提供的文档内容。"
+    },
+    {
+      "id": "eval-024",
+      "question": "为什么OccWorld选择使用3D occupancy而非3D bounding boxes作为场景表示？请列出三点原因。",
+      "reference_answer": "1) 表达力（expressiveness）：3D occupancy可以描述场景更细粒度的3D结构；2) 效率（efficiency）：3D occupancy更容易从稀疏LiDAR点获取，更经济；3) 通用性（versatility）：3D occupancy可同时适用于视觉和LiDAR。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法回答**该问题。\n\n参考资料内容主要涉及 ISO 21448 SOTIF 标准、NHTSA 自动驾驶安全活动以及 Apollo 系统的模块交互（如感知、规划、控制等），**并未提及“OccWorld”模型，也未包含关于“3D occupancy”与“3D bounding boxes”作为场景表示的对比信息**。\n\n基于“以已知参考资料为主”的原则，无法确认相关信息，因此无法列出具体原因。",
+      "candidate_answer": "\n\n根据提供的参考资料，OccWorld 选择使用 3D occupancy 而非 3D bounding boxes 作为场景表示，主要基于以下三点原因：\n\n1.  **表现力（Expressiveness）**：3D occupancy 能够描述场景中更精细的 3D 结构，而传统的 3D bounding boxes 无法捕捉这些细粒度的场景信息。\n2.  **效率（Efficiency）**：3D occupancy 是一种更经济的场景描述方式，因为它可以有效地从稀疏的 LiDAR 点云中学习和获取。\n3.  **多功能性（Versatility）**：3D occupancy 具有更好的适应性，能够同时适应视觉（vision）和激光雷达（LiDAR）数据。",
+      "winner": "candidate",
+      "reason": "candidate准确引用了evidence中的三个原因（expressiveness/efficiency/versatility），与reference_answer完全一致，且所有论点均有retrieved_rows中的论文内容支持。baseline错误地声称资料未提及OccWorld，但实际evidence明确包含相关论述，属于未充分利用证据的失误。"
+    },
+    {
+      "id": "eval-025",
+      "question": "FusionAD融合了哪两种传感器来优化自动驾驶的预测和规划任务？",
+      "reference_answer": "相机（Camera）和激光雷达（LiDAR）",
+      "baseline_answer": "\n\n根据提供的参考资料，文档主要介绍 Apollo 系统（如定位、规划、控制模块），其中**未直接提及“FusionAD”**这一特定名称或技术。\n\n资料中提到的传感器融合主要涉及：\n*   **定位模块**：MSF（Multi-Sensor Fusion）模块融合了**GPS、IMU 和 LiDAR**三种传感器；RTK 模块融合了**GPS 和 IMU**两种传感器。\n*   **感知模块**：负责识别交通参与者，但未明确说明具体融合的传感器类型。\n\n若指代自动驾驶领域中常见的 FusionAD 技术，通常是指融合**摄像头（Camera）和激光雷达（LiDAR）**，但这部分内容不在当前提供的 Apollo 参考资料范围内。",
+      "candidate_answer": "\n\n根据提供的参考资料，FusionAD 融合了 **摄像头（Camera）** 和 **激光雷达（LiDAR）** 这两种传感器。\n\n资料中指出，自动驾驶算法通常采用摄像头和激光雷达作为感官输入，而 FusionAD 作为一个多模态融合（Multi-modality Fusion）框架，旨在利用这些来自多种传感器的数据来共同优化预测和规划任务。",
+      "winner": "candidate",
+      "reason": "candidate直接引用evidence中的明确陈述，准确指出FusionAD融合Camera和LiDAR，且与reference_answer完全一致；baseline虽提及相同传感器但强调资料未直接提及FusionAD，存在信息完整性不足的问题。"
+    },
+    {
+      "id": "eval-026",
+      "question": "NHTSA的核心使命是什么？",
+      "reference_answer": "拯救生命、预防伤害、减少道路交通事故带来的经济成本。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中未包含关于NHTSA（美国国家公路交通安全管理局）核心使命的任何信息。因此，无法基于已知资料给出回答。",
+      "candidate_answer": "\n\n根据提供的参考资料，NHTSA 的核心使命是：**拯救生命、预防伤害，并减少道路交通事故的经济成本**。",
+      "winner": "candidate",
+      "reason": "candidate的答案与reference_answer完全一致，且正确引用了evidence中的关键信息（'Save lives, prevent injuries, & reduce economic costs due to road traffic crashes'）。baseline虽检索到相同证据，但错误声称资料中无相关信息，违背了evidence内容。"
+    },
+    {
+      "id": "eval-027",
+      "question": "在nuScenes数据集上，HDMapNet在语义分割和实例检测方面相比现有方法提升了多少？",
+      "reference_answer": "在语义分割上提升了12.1 IoU，在实例检测上提升了13.1 mAP。",
+      "baseline_answer": "\n\n根据提供的参考资料，HDMapNet 在 nuScenes 数据集上相比现有方法的性能提升数据存在两种表述：\n\n1.  **数值提升**：有资料指出 HDMapNet 相比现有方法提升了 **12**（原文：`improves over existing methods by 12`）。\n2.  **比例提升**：另有资料指出 HDMapNet 在所有指标上优于现有方法 **超过 50%**（原文：`outperforms existing methods by more than 50% in all metrics`）。\n\n需要注意的是，参考资料中**未明确区分**“语义分割”和“实例检测”各自的具体提升数值，上述数据通常指代整体性能指标（如 mIoU 或 mAP）。\n\n**资料来源**：`source_id=paper-046`, `source_id=paper-024`, `source_id=paper-069`。",
+      "candidate_answer": "\n\n根据提供的参考资料，关于 HDMapNet 在 nuScenes 数据集上相比现有方法的性能提升，信息如下：\n\n1.  **总体提升**：根据 `source_id=paper-046` 的记载，HDMapNet 在**所有指标上**相比现有方法提升了**超过 50%**（原文：\"outperforms existing methods by more than 50% in all metrics\"）。\n2.  **细分数据缺失**：提供的资料中**未明确区分**“语义分割”和“实例检测”各自的具体提升数值。上述“超过 50%”是针对整体性能指标的定性描述。\n3.  **评估指标**：资料（`source_id=paper-059`）指出，HDMapNet 使用 **mIoU**（平均交并比）评估语义分割性能，使用 **mAP**（平均精度均值）评估实例检测性能，但未提供这两个指标相对于基线的具体提升百分比。\n\n**结论**：基于现有资料，HDMapNet 相比现有方法在所有指标上提升了**超过 50%**，但无法提供语义分割和实例检测各自的精确提升数值。",
+      "winner": "baseline",
+      "reason": "两者均检索到了包含正确答案（12.1 IoU 和 13.1 mAP）的证据，但都未能完整提取。Baseline 答案中提到了数值提升“12”，与 Reference Answer 中的“12.1”更为接近；而 Candidate 答案完全忽略了具体数值，仅引用了“超过 50%”的笼统描述，且错误地声称资料未明确区分具体数值。因此 Baseline 在数值准确性上略优。"
+    },
+    {
+      "id": "eval-028",
+      "question": "BEVFusion在视图变换中识别到的关键效率瓶颈是什么？它如何解决这个问题？",
+      "reference_answer": "关键效率瓶颈是BEV池化操作，该操作单独就占用了模型运行时的80%以上。BEVFusion通过提出一种带有预计算和区间归约和区间归约的专用内核来消除这一瓶颈，实现了超过40倍的加速。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中**并未包含**关于 BEVFusion 在视图变换中的效率瓶颈及其解决方案的相关信息。\n\n参考资料主要涵盖了以下内容，与 BEVFusion 的具体算法优化无关：\n1.  **自动驾驶安全标准**：包括 ISO 21448（预期功能安全 SOTIF）和 ISO 26262（功能安全及 ASIL 等级）。\n2.  **Apollo 系统架构**：涉及感知、预测、规划、控制等模块的通信框架、数据格式及纵向控制逻辑。\n3.  **自动驾驶等级与测试**：SAE L0 至 L5 的等级定义、测试安全要求及运营规范。\n\n因此，无法基于现有资料回答 BEVFusion 的技术细节。",
+      "candidate_answer": "\n\n根据提供的参考资料，BEVFusion 在视图变换中识别到的关键效率瓶颈是 **BEV pooling 操作**。\n\n该操作是视图变换过程中的主要性能瓶颈，单独占据了模型超过 **80%** 的运行时间。\n\n为了解决这个问题，BEVFusion 提出了一种**优化的 BEV pooling**方法，通过实现一个带有**预计算（precomputation）**和**区间归约（interval reduction）**的**专用内核（specialized kernel）**来消除该瓶颈。这一优化成功将相机到 BEV 的变换延迟降低了超过 **40 倍**。",
+      "winner": "candidate",
+      "reason": "候选答案准确识别了BEV池化操作为效率瓶颈（占运行时80%以上），并正确描述了通过带有预计算和区间归约的专用内核实现40倍加速的解决方案，与reference_answer高度一致且完全忠于evidence。Baseline答案错误地声称资料中未包含相关信息，尽管其检索到的evidence中明确包含了该问题的答案，属于严重的信息利用失败。"
+    },
+    {
+      "id": "eval-029",
+      "question": "VectorMapNet在论文中宣称是第一个什么样的方法？",
+      "reference_answer": "VectorMapNet是第一个面向从车载传感器观测进行端到端向量化高清地图学习的方法。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中**并未包含**关于 VectorMapNet 的任何信息。因此，基于当前资料无法回答该问题。\n\n建议您提供包含 VectorMapNet 相关内容的参考资料，以便我为您进行准确解答。",
+      "candidate_answer": "\n\n根据提供的参考资料（特别是 **source_id=paper-053** 和 **source_id=paper-084**），VectorMapNet 在论文中宣称是**第一个端到端框架（first end-to-end framework）**，用于从车载观测进行**矢量化高精地图学习（vectorized HD map learning）**。\n\n具体而言，该方法通过端到端的方式直接预测矢量化输出，消除了对地图栅格化（map rasterization）和启发式后处理（heuristic post-processing）的需求。",
+      "winner": "candidate",
+      "reason": "candidate的答案准确引用了evidence中的关键句，并完整覆盖了reference_answer的核心要素（端到端、车载观测、向量化高清地图学习），同时基于retrieved_rows补充了方法特点（如消除栅格化），无无依据扩写。baseline虽在evidence中存在正确信息，但错误声称资料中无相关内容，导致答案完全偏离。"
+    },
+    {
+      "id": "eval-030",
+      "question": "UniAD 如何通过“规划导向”设计来减少模块间的错误累积？请结合文档中的具体机制说明。",
+      "reference_answer": "UniAD 通过将感知、预测和规划统一在一个网络中，并使用统一的查询接口（query interfaces）进行任务间通信，使得特征抽象从全局视角互补。例如，规划器中的注意力掩码（attention mask）能够关注到前序模块（如跟踪）漏检的关键目标，从而在后期任务中恢复错误，体现鲁棒性。",
+      "baseline_answer": "\n\n抱歉，根据您提供的参考资料，其中**未包含关于 UniAD 的任何信息**。\n\n所有参考资料主要涉及以下内容：\n- **Apollo 自动驾驶系统**：包括感知、预测、规划、控制等模块的通信框架和数据格式（source_id=apollo-doc-003, 009, 011）\n- **Apollo 开放平台**：数据集和控制模块介绍（source_id=apollo-doc-004）\n- **DETR3D 视觉检测方法**：基于多视角图像的 3D 目标检测（source_id=paper-008）\n\n这些资料中均没有提及 UniAD 的\"规划导向\"设计机制。\n\n**建议**：如果您希望我基于文档回答关于 UniAD 的问题，请提供包含 UniAD 相关内容的参考资料。否则，我无法基于当前资料给出准确、有据可依的回答。",
+      "candidate_answer": "\n\n根据提供的参考资料（source_id=paper-013），UniAD 通过“规划导向”设计减少模块间错误累积的具体机制如下：\n\n1.  **Query-based 设计连接所有节点**\n    文档指出，UniAD 提出了一种基于 **query** 的设计来连接感知和预测中的所有节点（\"a query-based design is proposed to connect all nodes in UniAD\"）。\n    *   **机制说明**：与传统的边界框（bounding box）表示相比，Query 机制受益于**更大的感受野**（\"benefit from a larger receptive field\"）。\n    *   **减少误差原理**：这种设计能够**软化来自上游预测的累积误差**（\"soften the compounding error from upstream predictions\"），避免了传统级联架构中误差逐级放大的问题。\n\n2.  **统一接口促进任务协作**\n    所有任务通过 **统一的 Query 接口** 进行通信（\"Tasks are communicated with unified query interfaces\"）。\n    *   **机制说明**：这种设计使得各模块能够利用更丰富的环境交互表示（\"richer representations for agent interaction\"），并从全局视角提供互补的特征抽象（\"complementary feature abstractions for agent interaction from a global perspective\"）。\n    *   **减少误差原理**：模块间不再是孤立的堆叠，而是相互促进（\"facilitate each other\"），共同服务于最终的规划目标，从而减少了因单模块优化目标不一致导致的误差传递。\n\n3.  **规划导向的终极目标**\n    UniAD 的设计精神是面向规划的（\"planning-oriented spirit\"），旨在追求规划的终极目标（\"ultimate pursuit for planning\"）。\n    *   **机制说明**：所有全栈驾驶任务都被整合在一个网络中，并明确所有任务都贡献于规划（\"all these tasks contribute to planning\"）。\n    *   **减少误差原理**：这种端到端的统一架构确保了上游感知和预测模块在训练时直接受到规划目标的约束，从而在源头上抑制了误差的累积。\n\n4.  **实验验证**\n    文档中的 Table 7 数据显示，UniAD 在所有时间间隔内均实现了**最低的 L2 误差和碰撞率**（\"lowest L2 error and collision rate\"），甚至在多数情况下优于基于 LiDAR 的方法，验证了该设计在减少错误累积和提升系统安全性方面的有效性。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地声称资料中未包含 UniAD 信息，完全忽略了检索到的 paper-013 内容。Candidate 准确利用了 retrieved_rows 和 evidence 中的 paper-013 内容，正确阐述了 UniAD 通过 'query-based design' 和 'unified query interfaces' 来 'soften the compounding error' 和促进任务协作，这与 reference_answer 中关于统一接口和减少误差累积的核心观点高度一致，且忠实于证据。"
+    },
+    {
+      "id": "eval-031",
+      "question": "根据文档，基于体素的方法和基于点的方法在3D目标检测中各自存在什么根本性局限？PV-RCNN如何通过深度融合两者来克服这些局限？",
+      "reference_answer": "基于体素的方法虽然能通过稀疏卷积高效处理大尺度点云并生成高质量3D建议，但体素化操作会带来量化误差，从而降低定位精度；基于点的方法虽能自然保留精确的点位置，但处理大规模点云时计算量巨大。PV-RCNN通过两个步骤实现深度融合：体素到关键点场景编码（将多尺度体素特征通过集合抽象总结到关键点）和关键点到网格RoI特征抽象（将关键点特征聚合到RoI网格），从而同时利用体素的多尺度编码效率和点的精确位置信息，实现更优性能。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法回答**关于“基于体素和基于点的方法在3D目标检测中的局限”以及“PV-RCNN如何融合两者”的问题。\n\n**原因说明：**\n提供的参考资料主要涵盖以下领域，**未包含**任何关于3D目标检测算法（如PV-RCNN、体素/点方法）的技术细节：\n1.  **自动驾驶安全标准**：UL 4600（安全论证框架、感知/决策/网络安全要求）和 ISO 26262（功能安全、ASIL等级、验证方法）。\n2.  **Apollo 平台系统架构**：规划模块（基于场景的规划）、控制模块（纵向控制逻辑）、感知模块功能描述及通信数据格式（Channel Data Format）。\n\n**建议：**\n请您提供包含 PV-RCNN 算法原理、3D 目标检测方法对比等相关内容的技术文档或论文，以便我基于准确资料为您解答。",
+      "candidate_answer": "\n\n根据提供的参考资料，文档主要强调了基于体素和基于点方法各自的**互补优势**，而非明确列举其“根本性局限”。文档指出现有的最先进方法（State-of-the-art）通常**基于其中一种方法**（\"based on either\"），而 PV-RCNN 通过结合两者的优势来克服单一方法的不足。具体如下：\n\n**1. 两种方法的特性与隐含局限**\n*   **基于体素的方法（3D Voxel CNN）**：\n    *   **优势**：能够**高效编码多尺度特征**（efficiently encodes multi-scale feature representations）并生成**高质量的 3D 候选框**（generate high-quality 3D proposals）。\n    *   **隐含局限**：单一使用可能缺乏灵活的感受野。\n*   **基于点的方法（PointNet-based）**：\n    *   **优势**：提供**灵活的感受野**（flexible receptive fields），有助于捕获准确的上下文信息。\n    *   **隐含局限**：单一使用可能在效率或候选框生成质量上不如体素方法。\n*   **总体局限**：现有基于单一架构的方法无法同时具备上述两种优势。\n\n**2. PV-RCNN 的深度融合机制**\nPV-RCNN 通过两个关键步骤将基于体素的稀疏卷积和基于点的集合抽象深度整合，以同时实现两者的优势：\n*   **体素到关键点场景编码（Voxel-to-Keypoint Scene Encoding）**：将 3D 体素 CNN 提取的高效特征编码到关键点上，保留体素方法在特征编码和高质量候选框生成上的优势。\n*   **关键点到网格 RoI 特征抽象（Keypoint-to-Grid RoI Feature Abstraction）**：在感兴趣区域（RoI）内利用基于点的集合抽象从关键点聚合特征，从而获得灵活的感受野和精细的上下文感知。\n\n通过这种融合，PV-RCNN 在单一框架内同时实现了**高质量的 3D 候选框生成**和**灵活的感受野**，从而显著提升了 3D 目标检测的性能。",
+      "winner": "candidate",
+      "reason": "Baseline 答案错误地声称无法回答，未能利用 evidence 中提供的直接相关引文。Candidate 答案正确利用了 evidence，准确描述了 PV-RCNN 的融合机制（体素到关键点场景编码、关键点到网格 RoI 特征抽象），并正确识别了点方法计算量大的局限，与 reference_answer 的核心内容高度一致。"
+    },
+    {
+      "id": "eval-032",
+      "question": "SparseDrive的并行运动规划器设计基于一个关键观察：运动预测和规划之间存在三个被先前方法忽视的并行性。其中第三个并行性是什么？",
+      "reference_answer": "第三个并行性是：运动预测和规划都是具有内在不确定性的多模态问题，但先前方法只预测确定性的规划轨迹。",
+      "baseline_answer": "\n\n根据您提供的参考资料，**无法确定第三个并行性是什么**。\n\n您提供的参考资料内容主要围绕**Apollo自动驾驶系统**，涵盖了其纵向控制、通信框架、规划模块（基于场景）及预测模块等技术细节。\n\n然而，所有资料中**均未提及“SparseDrive”及其并行运动规划器设计**，也没有关于“运动预测和规划之间存在三个并行性”的相关描述。因此，基于现有资料无法回答您的问题。建议您提供包含SparseDrive相关技术细节的参考资料。",
+      "candidate_answer": "\n\n根据提供的参考资料，**无法确定第三个并行性是什么**。\n\n资料中仅明确提到 SparseDrive 的并行运动规划器设计是基于对**运动预测和规划之间巨大相似性（great similarity）**的回顾，并据此提出了并行设计。然而，提供的文本片段中**并未列举“三个被先前方法忽视的并行性”的具体内容或列表**，因此无法从中提取第三个并行性的定义。\n\n资料中关于该模块的描述主要集中在：\n1.  **设计基础**：基于运动预测和规划任务的相似性。\n2.  **优化策略**：提出了**分层规划选择策略（hierarchical planning selection strategy）**，结合了**碰撞感知重评分模块（collision-aware rescore module）**。\n3.  **目标**：以选择合理且安全的轨迹作为最终规划输出。\n\n因此，关于“第三个并行性”的具体信息不在所提供的参考资料范围内。建议您查阅完整的 SparseDrive 论文原文以获取详细信息。",
+      "winner": "candidate",
+      "reason": "Candidate's retrieved_rows include relevant SparseDrive paper excerpts (paper-076) containing the exact evidence quote matching the reference answer, while baseline's retrieved_rows are entirely about Apollo system with no SparseDrive content. Although both models failed to extract the correct answer from evidence, candidate's evidence source is directly relevant to the question topic."
+    },
+    {
+      "id": "eval-033",
+      "question": "RadarBEVNet由哪两个主要组件构成？",
+      "reference_answer": "由双流雷达骨干网络（dual-stream radar backbone）和RCS感知BEV编码器（RCS-aware BEV encoder）构成。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中**并未包含**关于 RadarBEVNet 及其构成组件的具体信息。\n\n现有资料主要涵盖了以下内容：\n1.  **Apollo 感知融合模块**：涉及输入/输出 channel 定义及传感器融合概述。\n2.  **ISO 26262 功能安全标准**：涉及 ASIL 等级、硬件度量指标（SPFM, LFM, PMHF）及软件开发过程要求。\n3.  **ISO 21448 预期功能安全（SOTIF）**：涉及安全/不安全场景分类、触发条件识别及安全措施。\n4.  **NHTSA 活动概述**：涉及自动驾驶系统安全相关的规则制定和研究活动。\n\n因此，无法基于当前参考资料回答 RadarBEVNet 由哪两个主要组件构成。建议您查阅专门针对 RadarBEVNet 架构的技术文档。",
+      "candidate_answer": "\n\n根据提供的参考资料，RadarBEVNet由以下两个主要组件构成：\n\n1.  **双流雷达骨干网络（dual-stream radar backbone）**\n2.  **RCS感知的BEV编码器（RCS-aware BEV encoder）**",
+      "winner": "candidate",
+      "reason": "candidate的答案准确匹配reference_answer，并正确引用了evidence中的paper-069内容，而baseline错误声称资料中无相关信息，未利用有效证据。"
+    },
+    {
+      "id": "eval-034",
+      "question": "BEVFormer在nuScenes测试集上取得了多少NDS指标？与之前的最好方法相比，提升了多少？",
+      "reference_answer": "56.9% NDS，比之前的最好方法高9.0个百分点。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中**并未包含** BEVFormer 模型在 nuScenes 测试集上的 NDS 指标及相关性能对比信息。\n\n这些资料主要聚焦于百度 Apollo 自动驾驶平台的感知、控制、规划模块架构以及其开放数据集（如 Apollo-SouthBay 和 Apollo-DaoxiangLake），与 BEVFormer 模型或 nuScenes 数据集无关。\n\n因此，无法基于现有资料回答您的问题。建议您查阅 BEVFormer 的原始论文（如 \"BEVFormer: Learning Bird's-Eye-View Representation from Multi-Camera Images via Spatiotemporal Transformers\"）或相关技术报告以获取准确数据。",
+      "candidate_answer": "\n\n根据提供的参考资料，BEVFormer 在 nuScenes 测试集上取得了 **56.9% NDS**（来源：paper-001）。\n\n关于与之前最好方法（DETR3D）的对比：\n*   资料明确指出 BEVFormer **优于 DETR3D**（\"outperforming previous best detection method DETR3D\"）（来源：paper-001）。\n*   提供的参考资料中，**测试集的具体提升百分点未直接给出**，但在验证集（val set）上明确提到提升了 **9.2 个百分点**（51.7% NDS vs. 42.5% NDS）（来源：paper-025）。\n\n注：另一份资料（paper-034）中提到 BEVDet4D 以 56.9% NDS 超过 BEVFormer 3.4 个百分点，这与 BEVFormer 原文（paper-001）数据存在差异，此处以 BEVFormer 原文数据为准。",
+      "winner": "candidate",
+      "reason": "Candidate correctly cites 56.9% NDS from paper-001 matching reference_answer, while baseline incorrectly claims no relevant data exists despite evidence containing the exact quote. Candidate also references DETR3D as prior best method (consistent with evidence), though test-set improvement is partially conflated with val-set data. Baseline fails to utilize available evidence entirely."
+    },
+    {
+      "id": "eval-035",
+      "question": "根据文档分析，PointPillars相比VoxelNet和SECOND的性能提升可能源于哪些因素？",
+      "reference_answer": "文档推测性能提升可能来自多个因素的组合：改进的数据增强超参数（如Section 7.2所述），引入地面真值数据库采样（GT database sampling）贡献了约3%的mAP提升，以及网络设计（层数、类型、特征金字塔）、锚框设计、损失函数、优化器选择等其他超参数的差异。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法回答**该问题。\n\n**原因说明：**\n经核查，当前提供的参考资料（包括 Apollo 系统 Channel 数据格式、模块通信框架、规划模块原理以及 ISO 21448 SOTIF 安全标准文档）中，**并未包含**关于 PointPillars、VoxelNet 或 SECOND 等点云检测算法的技术细节、性能对比或架构描述。\n\n**资料实际覆盖内容：**\n1.  **Apollo 系统架构**：主要介绍感知、预测、规划等模块的通信框架、数据格式及规划模块的状态机原理。\n2.  **安全标准（SOTIF）**：主要涉及预期功能安全的场景分类、触发条件识别及验证方法论。\n\n**建议：**\n若需分析 PointPillars 相比其他算法的性能提升因素，建议补充包含相关算法技术论文（如 PointPillars 原论文）或具体算法实现文档的资料。此前对话中提及的“2D 卷积”、“数据增强”等细节并非源自当前提供的参考资料。",
+      "candidate_answer": "\n\n根据提供的参考资料，PointPillars 相比 VoxelNet 和 SECOND 的优势主要体现在**推理速度**和**速度 - 精度权衡（Operating Point）**上，而非绝对精度（资料指出 VoxelNet 编码器在纯精度上略强于 PointPillars）。其性能提升（综合效率）可能源于以下因素：\n\n1.  **高效的计算架构（2D 卷积 vs 3D 卷积）**：\n    *   **VoxelNet 和 SECOND**：依赖昂贵的 3D 卷积层。VoxelNet 推理速度仅为 4.4 Hz，SECOND 虽有所改进，但 3D 卷积仍是瓶颈。\n    *   **PointPillars**：采用支柱（pillar）表示，将所有计算转化为**密集的 2D 卷积层**，避免了 3D 卷积的计算开销，显著提升了骨干网络的效率（推理速度可达 20 Hz 甚至更高）。\n\n2.  **更优的速度 - 精度权衡**：\n    *   资料明确指出，虽然 VoxelNet 精度略高，但其参数量和推理时间高出数个数量级，比较并不公平。\n    *   在**相似的推理时间**下，PointPillars 提供了更好的操作点（better operating point），即在保证实时性的同时维持了较强的检测性能。\n\n3.  **澄清：关于数据增强和 Ground Truth Sampling**：\n    *   资料中提到的“改进的数据增强超参数”和“地面真值数据库采样（ground truth database sampling）”（约提升 3% mAP），主要是解释**作者复现的 VoxelNet/SECOND 版本相比其原始论文发表结果**性能提升的原因。\n    *   这并非 PointPillars 相比 VoxelNet/SECOND 的核心架构优势，PointPillars 的核心优势在于其独特的 pillar 表示法带来的效率提升。\n\n综上，PointPillars 的核心优势在于通过 pillar 表示和 2D 卷积实现了更高的推理效率，从而在速度 - 精度权衡上优于 VoxelNet 和 SECOND。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地声称无法回答，忽略了 evidence 中明确包含的 paper-068 内容。Candidate 正确检索并利用了 paper-068，详细分析了性能差异来源（包括架构效率和超参数影响），并准确引用了 evidence 中的关键信息（数据增强、GT sampling 等），虽然对部分因素的解释更为细致（区分了架构优势与复现差异），但整体更忠于证据且回答了问题。"
+    },
+    {
+      "id": "eval-036",
+      "question": "MUSDA框架相比于传统单源单模态域适应方法，其核心创新体现在哪些方面？",
+      "reference_answer": "核心创新包括三点：1) 提出层次化空间条件（HSC）域分类器，联合对齐相机和LiDAR两种模态的特征；2) 引入BEV域嵌入，使模型学习域特定表示；3) 构建原型图并采用加权融合策略（PGW）聚合多源检测结果，首次实现了多源多模态无监督域自适应3D目标检测。",
+      "baseline_answer": "\n\n根据当前提供的参考资料，主要涉及 **Apollo 自动驾驶系统**（感知、预测、控制模块等）和 **TransFusion 3D 目标检测框架**（LiDAR-相机融合），**并未包含关于“MUSDA框架”的具体文档**。\n\n因此，严格基于现有参考资料，无法回答 MUSDA 框架的核心创新点。前文对话中提及的 MUSDA 相关内容（如层级空间条件域分类器、BEV 域嵌入等）可能源于未在当前列表中显示的其他资料。\n\n若仅基于当前提供的资料，我们只能确认：\n1.  **Apollo 预测模块** 采用分层预测策略，包括意图分类（如直行、左转等）和交互建模（如注意力机制、图注意力网络）。\n2.  **TransFusion** 采用 deformable cross-attention 机制融合 LiDAR 和相机特征，通过 3D 位置编码和 FFN 精炼输出检测结果。\n\n关于 MUSDA 的具体创新，建议查阅相关的 MUSDA 论文原文以获取准确信息。",
+      "candidate_answer": "\n\n根据提供的参考资料，MUSDA（MUlti-Source multi-modality unsupervised Domain Adaptive 3D object detection）框架旨在解决**多源多模态无监督域适应**问题。相比于传统通常局限于单源域或单模态的域适应方法，其核心创新主要体现在以下三个方面：\n\n1.  **层级空间条件域分类器（Hierarchical Spatially-Conditioned Domain Classifiers）**\n    *   **创新内容**：提出了一种新颖的分类器结构，用于在**模态融合特征图**和**模态特定特征图**（来自 LiDAR 和相机）两个层面同时对齐多模态域特征。\n    *   **具体机制**：首先利用预测热图条件化多模态特征图，生成的多模态域概率图随后作为条件信号，用于条件化 LiDAR 和相机的模态特定特征图，实现细粒度的域对齐。\n\n2.  **BEV 域嵌入策略（BEV Domain Embedding Strategy）**\n    *   **创新内容**：引入了一种新的鸟瞰图（BEV）域嵌入方法。\n    *   **具体机制**：在检测头中为每个源域学习特定的域嵌入信息，从而生成对应于多源域特定表示的多个预测。\n    *   **优势**：使模型能够有效学习并区分多源场景中的域特定信息，应对不同源域之间的分布差异。\n\n3.  **原型图建模与多源预测融合（Prototype Graph & Multi-Source Fusion）**\n    *   **创新内容**：开发了**原型图（prototype graph）**来建模多个域之间的关系。\n    *   **具体机制**：基于原型图，提出了一种加权融合策略，用于聚合来自多个源域检测头的预测结果。\n    *   **优势**：有效利用了来自多个源域的多样化信息，提升了目标域上的 3D 检测性能。\n\n**总结**：传统方法受限于单源或单模态，而 MUSDA 通过上述三个创新点，成功实现了在 Waymo、nuScenes 和 Lyft 等多源多模态数据集上的有效域适应。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地声称未检索到 MUSDA 相关信息，忽略了 evidence 中明确包含的框架细节；Candidate 准确归纳了 HSC 域分类器、BEV 域嵌入及原型图融合策略三个核心创新点，与 reference_answer 高度一致且完全基于提供的 evidence 和 retrieved_rows，无无依据扩写。"
+    },
+    {
+      "id": "eval-037",
+      "question": "MonoGround方法引入的地面平面先验（ground plane prior）主要解决了单目3D目标检测中的哪些具体问题？",
+      "reference_answer": "解决了三个问题：1）将2D到3D的病态映射（ill-posed mapping）变为具有唯一解的良态问题；2）消除深度表达与物体高度之间的相关性；3）将稀疏深度监督变为密集深度监督，均无需额外数据源。",
+      "baseline_answer": "\n\n根据提供的参考资料，无法回答该问题。\n\n参考资料主要涵盖了以下内容：\n1.  **Apollo 自动驾驶系统架构**：包括感知、预测、规划、控制等模块的通信框架、数据格式（Channel）、纵向控制逻辑及速度规划器原理。\n2.  **NHTSA 安全活动**：涉及自动驾驶系统安全概述及规则制定活动。\n\n资料中**未包含**关于\"MonoGround 方法”、“地面平面先验（ground plane prior）”或“单目 3D 目标检测”的相关技术细节。因此，基于现有参考资料无法说明该方法解决了哪些具体问题。",
+      "candidate_answer": "\n\n根据提供的参考资料，MonoGround 方法引入的地面平面先验（ground plane prior）主要解决了单目 3D 目标检测中的以下两个具体问题：\n\n1.  **缓解深度估计的病态映射问题**：\n    单目 3D 检测中，从 2D 图像到 3D 空间的映射本质上是病态的（ill-posed mapping），这导致深度估计不准确，进而影响 3D 检测效果。地面平面先验作为一种额外的几何条件，为映射提供了约束并作为深度估计的额外来源，从而能够获得更准确的深度估计。\n\n2.  **扩展深度监督的稀疏性**：\n    原始方法中的深度监督通常是稀疏的。通过引入并利用地面平面先验，可以将原本稀疏的深度监督扩展为密集的深度监督（dense depth supervision），利用地面平面提供的密集深度信息，使网络能够更有效地学习和预测深度。\n\n此外，引入地面平面后，深度估计不再与物体的高度强相关（depth is no longer correlated with the object's height），这也有助于提高深度估计的稳定性。",
+      "winner": "candidate",
+      "reason": "Baseline 未能利用证据字段中提供的直接相关信息，错误地声称无法回答问题，且其检索到的行与问题无关。Candidate 正确利用了证据和检索到的行（来自 paper-058），准确涵盖了参考回答中的三个要点：将病态映射变为良态问题、消除深度与高度的相关性，以及将稀疏监督变为密集监督。Candidate 的答案在准确性、忠实度和完整性方面均明显优于 Baseline。"
+    },
+    {
+      "id": "eval-038",
+      "question": "在混合深度监督（Hybrid Depth Supervision）实验中，相比于仅使用LiDAR点监督或仅使用伪标签监督，混合监督在深度估计和检测性能上分别有什么效果？",
+      "reference_answer": "混合监督同时降低了绝对相对误差（Abs Rel）和平方相对误差（Sq Rel），并提升了NDS和mAP指标。具体而言，仅用伪标签时检测性能提升但深度估计下降，混合监督则实现了深度和检测性能的双重提升，mAP提升1.4%，NDS提升0.6%。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法回答**关于“混合深度监督（Hybrid Depth Supervision）”实验的具体效果，因为现有资料中**未包含**该实验的相关描述或数据。\n\n现有参考资料主要涵盖以下内容，均不涉及混合深度监督实验：\n1.  **DETR3D 方法**（`source_id=paper-008`）：明确指出该方法为纯视觉检测，**无需依赖 LiDAR 点云数据**，且**无需深度估计**，通过隐式几何变换学习 3D 信息，这与依赖深度监督的实验设定不同。\n2.  **Apollo 平台文档**（`source_id=apollo-doc-004/010/005/009`）：涉及定位、感知融合及控制模块的原理，未提及深度监督实验。\n3.  **UL 4600 标准**（`source_id=standard-012`）：涉及安全论证框架，未涉及具体算法实验数据。\n\n此前对话中提到的相关数据（如 Abs Rel 变化等）引用的来源（如 `paper-037`）未包含在当前提供的参考资料中。建议您查阅该特定文献以获取准确信息。",
+      "candidate_answer": "\n\n根据提供的参考资料（主要来源于 `source_id=paper-037`），混合深度监督（Hybrid Depth Supervision）的实验效果如下：\n\n### 1. 相比于仅使用伪标签监督（Pseudo only）\n*   **检测性能**：**两者均能提升检测性能**。资料指出，仅使用伪标签监督（分布监督）就能带来检测性能的提升（`employing only pseudo-labels results in an improvement in detection performance`）。混合监督在此基础上，通过结合绝对深度监督，进一步优化了模型。\n*   **深度估计性能**：**混合监督显著改善了深度估计**。仅使用伪标签监督会导致深度估计性能下降（`leads to a decrease in depth estimation performance`），因为分布监督缺乏绝对深度监督的精度。而采用混合监督后，深度估计的绝对相对误差（Abs Rel）和平方相对误差（Sq Rel）均降低（`both the absolute relative error (Abs Rel) and squared relative error (Sq Rel) decrease`），有效弥补了伪标签在深度估计上的不足。\n\n### 2. 相比于仅使用 LiDAR 点监督（Explicit Metric Supervision）\n*   **效果对比**：提供的参考资料中**未包含**“仅使用 LiDAR 点监督”的独立实验数据或直接对比结果，因此无法给出确切的定量效果差异。\n*   **设计动机分析**：资料指出，混合监督是为了解决**稀疏 LiDAR 点云导致的监督不足**问题。\n    *   **LiDAR 监督（显式度量监督）**：提供高精度的绝对深度信息（`precision of absolute depth supervision`），但受限于点云稀疏性，只能提供稀疏的 one-hot 像素级深度真值（`sparse one-hot pixel-wise depth ground-truth`）。\n    *   **伪标签监督（隐式分布监督）**：提供更全面的深度图监督信号（`comprehensive supervisory signal for overall depth maps`），但缺乏绝对深度监督的精度。\n    *   **混合监督**：意图是**结合 LiDAR 监督的精度与伪标签监督的全面性**，以克服单一 LiDAR 监督在稀疏场景下的局限性（`address the issue of insufficient supervision for depth estimation due to sparse point clouds`）。\n\n### 总结\n现有资料明确证实，**混合监督优于仅使用伪标签监督**，在保持检测性能提升的同时显著改善了深度估计精度。对于**仅使用 LiDAR 点监督**，资料仅提供了其作为混合监督组成部分的理论特性（精度高但稀疏），并指出混合监督是为了解决其稀疏性导致的监督不足问题，但未提供直接的实验对比数据。",
+      "winner": "candidate",
+      "reason": "Candidate 成功检索到了关键证据 paper-037，准确提取并回答了混合监督相对于伪标签监督的效果（深度误差 Abs Rel/Sq Rel 降低，检测指标 mAP 提升 1.4%/NDS 提升 0.6%），与 reference_answer 高度一致。Baseline 检索到的文档不包含相关信息，导致其回答无法回答，未能完成任务。Candidate 对资料中未提及的 LiDAR 点监督对比部分也做了诚实说明，忠实于证据且无无依据扩写。"
+    },
+    {
+      "id": "eval-039",
+      "question": "在 BEVFormer v2 中，透视损失由哪几个部分组成？请写出其公式（使用原文中的符号），并说明每个子损失对应哪类任务。",
+      "reference_answer": "透视损失 Lpers = L2D + L3D + Lconf。其中 L2D 是2D检测损失（类不可知）检测损失（基于FCOS），L3D 是解耦的L1损失用于3D边界框回归，Lconf 是自监督损失用于3D置信度。均来源于DD3D检测头。",
+      "baseline_answer": "\n\n根据您提供的参考资料，**无法回答关于 BEVFormer v2 中“透视损失”（perspective loss）的具体组成、公式及子任务对应的明确说明**。\n\n**原因说明：**\n1.  **关于 BEVFormer v2 架构（来源：paper-026）：**\n    *   资料仅提到 BEVFormer v2 包含一个 **透视 3D 检测头（perspective 3D detection head）**，但**未给出该头对应的损失函数公式或组成部分**。\n2.  **关于其他模型的损失函数（来源：paper-022, paper-067）：**\n    *   资料 `paper-022` 中提到的损失公式 $\\mathcal {L} =\\alpha_{\\text {depth}}\\mathcal {L}_{\\text {depth}} + \\alpha_{\\text {cls}}\\mathcal {L}_{\\text {cls}}+ \\alpha_{\\text {bbox}}\\mathcal {L}_{\\text {bbox}} + \\alpha_{\\text {seg}}\\mathcal {L}_{\\text {seg}}$ 属于 **HENet++** 模型。\n    *   资料 `paper-067` 中提到的 3D 回归损失和可见性损失属于 **车道线检测任务**。\n    *   这些内容均**未与 BEVFormer v2 建立关联**，且符号体系与您询问的“透视损失”不一致。\n\n**结论：**\n基于现有参考资料，**无法准确写出 BEVFormer v2 透视损失的公式及子任务定义**。资料中仅确认了该模型存在透视检测组件，但具体的损失设计细节未在提供的内容中体现。建议查阅 BEVFormer v2 的原始论文以获取准确信息。",
+      "candidate_answer": "\n\n根据**本次提供**的参考资料，其中**并未包含** BEVFormer v2 中透视损失（perspective loss）的具体组成、公式或子任务对应的明确说明（如之前对话中可能提及的 `source_id=paper-026` 内容在当前列表中缺失）。\n\n**基于当前资料的说明：**\n1.  **资料缺失：** 提供的参考资料主要涉及 `paper-067`（车道线检测损失）、`paper-022`（HENet++ 损失）、`paper-082`（BEVFormer++ 消融实验）和 `paper-038`（BEVFormer 回顾），均未包含 BEVFormer v2 透视损失的定义。\n2.  **现有损失函数参考：**\n    *   **`paper-067`**：提到了 3D 回归损失（L1 loss）和可见性损失（BCE loss）。\n    *   **`paper-022`**：提到了 HENet++ 的多任务损失（深度、分类、边界框、分割）。\n    *   这些内容均**未与 BEVFormer v2 的透视损失建立关联**。\n\n**结论：**\n基于**当前提供**的参考资料，**无法准确写出 BEVFormer v2 透视损失的公式及子任务定义**。建议查阅 BEVFormer v2 的原始论文以获取准确信息。",
+      "winner": "candidate",
+      "reason": "Candidate 的检索结果（retrieved_rows）与问题主题（BEVFormer v2）更相关，包含了 BEVFormer 相关的论文文档（如 paper-082, paper-038），而 Baseline 的检索结果主要是无关的 ISO 标准和 Apollo 官方文档。虽然两者都基于检索内容得出了“无法回答”的结论（假设 evidence 为裁判验证用或模型未有效利用），但 Candidate 在回答中明确指出了特定文档（paper-026）的缺失，显示了对检索内容和领域知识的更准确理解，检索质量明显优于 Baseline。"
+    },
+    {
+      "id": "eval-040",
+      "question": "根据文档内容，为什么直接使用3D占据标签进行监督存在困难？请结合具体数据说明。",
+      "reference_answer": "3D占据标签的标注极其困难且昂贵：创建约30000帧3D占据标签需要约4000人工小时的净化。此外，不同基准测试中即使使用相同原始数据，产生的占据标签仍有10-15%的差异，反映了标注的固有歧义。",
+      "baseline_answer": "\n\n根据您提供的**当前参考资料**，其中**并未包含**关于“3D占据标签”及其监督困难的相关内容，因此无法基于现有文档提供具体数据说明。\n\n经核查，当前提供的参考资料主要涵盖以下主题，均不涉及3D占据标签技术：\n1.  **安全标准**：ISO 21448 (SOTIF) 和 UL 4600 的标准定义、评估方法及验证流程（`standard-011`, `standard-012`）。\n2.  **Apollo 系统架构**：包括 Channel 数据格式、模块通信框架（感知、预测、规划、控制等）（`apollo-doc-003`, `apollo-doc-009`）。\n3.  **规划与控制策略**：基于场景的规划框架（巡航、路口）及纵向控制逻辑（`apollo-doc-015`, `apollo-doc-009`）。\n\n之前回答中提到的“30,000帧”、“4,000人工小时”及 `paper-071` 等来源，**不在当前提供的参考资料范围内**。基于“以已知参考资料为主”的原则，无法确认这些数据的来源，故无法结合具体数据说明该问题。",
+      "candidate_answer": "\n\n根据提供的参考资料（`paper-071`, `paper-060`），直接使用 3D 占据标签进行监督存在困难，主要原因及具体数据说明如下：\n\n1.  **标注成本极高**\n    *   **具体数据**：即使基于其他预标注的 3D 标签创建了约 **30,000 帧** 的 3D 占据标签，仍然需要耗费约 **4,000 人工小时** 进行数据净化处理（来源：`paper-071`）。\n    *   **说明**：这表明直接获取高质量 3D 占据标签的经济和时间成本非常昂贵，难以大规模应用。\n\n2.  **标签存在歧义与质量不稳定**\n    *   **原因**：3D 空间的复杂性会导致生成的占据标签出现模糊（ambiguous）或不一致，从而干扰占据模型的训练过程（来源：`paper-071`）。\n    *   **说明**：这种歧义性使得标签本身不够准确，增加了监督学习的难度。\n\n3.  **技术获取受限**\n    *   **原因**：从图像直接标注 3D 占据是不可能的，因为缺乏准确的深度和几何信息。若依赖 LiDAR 构建标签，则面临 **稀疏性（sparsity）**、**遮挡（occlusion）** 以及 **3D-2D 不对齐（3D-2D mis-alignment）** 三大主要障碍（来源：`paper-060`）。\n    *   **说明**：此外，密集语义标签本身也难以获取，现有工作通常不得不依赖额外的 3D 标签（如 LiDAR 分割）来间接生成占据标签。\n\n综上所述，直接使用 3D 占据标签进行监督不仅面临高昂的人工净化成本（如 4000 小时/3 万帧），还受到 3D 空间复杂性导致的标签歧义及数据采集技术障碍的限制。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地声称参考资料中不包含相关信息，完全忽略了 evidence 字段中明确提供的关键数据（30000帧、4000小时）；Candidate 准确提取了 evidence 和 retrieved_rows 中 paper-071 的内容，提供了与 reference_answer 高度一致的具体数据（30000帧、4000小时）及原因（昂贵、歧义），且补充的 paper-060 内容在检索结果中有依据，未出现无依据扩写。"
+    },
+    {
+      "id": "eval-041",
+      "question": "Waymo Open Dataset包含多少个场景，每个场景的时长是多少？",
+      "reference_answer": "该数据集包含1150个场景，每个场景持续20秒。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法回答**关于 Waymo Open Dataset 的场景数量和时长信息。\n\n参考资料中仅提及了 **Apollo 平台** 的两个开放数据集（Apollo-SouthBay 和 Apollo-DaoxiangLake），并未包含任何关于 Waymo Open Dataset 的具体数据。建议查阅 Waymo 官方文档以获取准确信息。",
+      "candidate_answer": "\n\n根据提供的参考资料，关于 Waymo Open Dataset 的信息如下：\n\n1.  **场景（视频序列）数量**：\n    *   **训练集**：798 个视频序列\n    *   **验证集**：202 个视频序列\n    *   **测试集**：80 个视频序列\n    （注：Occ3D-Waymo 版本提及测试集为 150 个场景）\n\n2.  **每个场景的时长**：\n    *   提供的参考资料中**未提及** Waymo Open Dataset 每个视频序列的具体时长。\n    *   *注意*：资料中提到的“20 秒”时长是针对 **nuScenes Dataset** 的；“500 小时”总时长是针对 **Waymo Open Motion Dataset** 的，均非 Waymo Open Dataset 的单个场景时长。",
+      "winner": "baseline",
+      "reason": "Baseline 虽然未能利用 evidence 中的关键信息给出具体数值，但其回答‘无法回答’至少没有产生与 evidence 和 reference_answer 直接冲突的事实性错误。Candidate 虽然提供了部分场景数量信息，但其关于时长的判断（称 20 秒为 nuScenes 数据集特征）与 evidence 中明确指出的 Waymo 数据集时长（20 秒）直接矛盾，存在严重的事实性错误和误导，且未忠于 evidence 中的核心信息。"
+    },
+    {
+      "id": "eval-042",
+      "question": "根据UN R155法规附件中列举的威胁类型，“中间人攻击”是通过何种方式实现的？请结合原文说明。",
+      "reference_answer": "通过向车辆添加未经授权的电子硬件中添加未经授权的电子硬件来启用“中间人攻击”；还包括用未经授权的电子硬件替换授权电子硬件（如传感器），以及操纵传感器收集的信息（例如使用磁铁干扰连接到变速箱的霍尔效应传感器）。",
+      "baseline_answer": "\n\n根据 UN R155 法规附件（source_id=standard-007, locator=p.23）中列举的威胁类型，“中间人攻击”（man-in-the-middle attack）主要是通过**在车辆上添加未经授权的电子硬件**来实现的。\n\n原文明确说明：\n> \"unauthorized electronic hardware added to a vehicle to enable 'man-in-the-middle' attack\"\n\n此外，该法规附件还列举了具体的实现手段，包括：\n1.  **替换授权电子硬件**：例如将授权的传感器替换为未经授权的硬件。\n2.  **操纵传感器信息**：例如使用磁铁干扰连接变速箱的霍尔效应传感器，从而篡改其收集的数据。\n\n这些操作使得攻击者能够在车辆通信链路中插入恶意硬件，截获或篡改数据传输，从而实施中间人攻击。",
+      "candidate_answer": "\n\n根据UN R155法规附件（source_id=standard-007, locator=p.23）中列举的威胁类型，“中间人攻击”（man-in-the-middle attack）主要是通过**在车辆上添加未经授权的电子硬件**来实现的。\n\n原文明确说明：\n> \"unauthorized electronic hardware added to a vehicle to enable 'man-in-the-middle' attack\"\n\n此外，该法规附件在同一页还列举了相关的硬件层面攻击手段，作为实现此类攻击的具体方式：\n1.  **替换授权电子硬件**：例如将授权的传感器替换为未经授权的硬件。\n2.  **操纵传感器信息**：例如使用磁铁干扰连接变速箱的霍尔效应传感器，从而篡改其收集的信息。\n\n这些操作使得攻击者能够在车辆通信链路中插入恶意硬件，进而截获或篡改数据传输，实现中间人攻击。",
+      "winner": "candidate",
+      "reason": "Both answers accurately reflect the reference_answer and evidence. However, the candidate's retrieved_rows are more relevant (directly citing standard-007 with correct content), while baseline includes irrelevant entries (apollo-doc-008). This makes candidate more faithful to retrieved_rows without compromising answer quality."
+    },
+    {
+      "id": "eval-043",
+      "question": "论文SemLT3D主要解决什么问题？",
+      "reference_answer": "解决相机-only 3D目标检测中的长尾分布问题，特别是稀有但安全关键的类别（如儿童、婴儿车、紧急车辆）因数据不平衡导致的性能下降。",
+      "baseline_answer": "\n\n根据**本次提供**的参考资料，其中**并未包含**关于“SemLT3D”论文的具体内容或描述。\n\n提供的参考资料主要涵盖以下领域：\n*   **NHTSA活动**：自动驾驶系统安全概述及规则制定活动。\n*   **Apollo感知**：Apollo感知模块及障碍物理解职责。\n*   **VAD架构**：Vectorized Scene Representation（向量场景表示）的全流程架构。\n*   **安全标准**：ISO 21448（SOTIF）预期功能安全标准及ANSI/ATA自动驾驶标准体系。\n\n因此，基于**当前提供的参考资料**，无法回答SemLT3D论文主要解决的问题。建议您提供该论文的相关文档或摘要以便进一步分析。",
+      "candidate_answer": "\n\n根据提供的参考资料，论文 **SemLT3D** 主要解决 **基于相机的多视图 3D 目标检测（camera-based multi-view 3D object detection）中的长尾分布挑战（long-tail challenge）**。\n\n具体而言，该框架针对以下核心问题：\n\n1.  **长尾不平衡**：解决长尾分布中 **罕见类别（rare/underrepresented classes）** 样本量少、表示学习不足的问题。\n2.  **视觉模糊与混淆**：处理 **视觉模糊类别（visually ambiguous categories）** 以及 **类间模糊性（inter-class ambiguity）**，增强模型对易混淆类别的判别能力。\n3.  **类内多样性**：应对同一类别内部存在的多样性（intra-class diversity）。\n\n为了解决这些问题，SemLT3D 提出了一种 **语义引导的专家蒸馏框架**，利用 **语义先验（semantic priors）** 来增强对罕见和视觉模糊类别的表示学习，从而在保持可扩展性和效率的同时提升检测性能。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地声称资料中无 SemLT3D 内容，忽略了 evidence 中明确提供的论文信息。Candidate 准确基于 evidence 和 retrieved_rows 作答，核心观点与 reference_answer 高度一致，准确指出了相机-only 3D 检测中的长尾分布及稀有类别问题，且依据充分无扩写。"
+    },
+    {
+      "id": "eval-044",
+      "question": "根据论文，传统离线HD地图构建方法存在哪些主要局限性？NMP是如何在方法论上区别于这些方法的？",
+      "reference_answer": "传统方法依赖人工标注，成本高且无法及时更新；NMP首次提出基于学习的全局地图先验系统，通过自动驾驶车辆的车载传感器数据自动聚合和更新全局地图，与局部推理形成反馈循环，避免了对离线人工标注的依赖。",
+      "baseline_answer": "\n\n根据提供的参考资料，传统离线HD地图构建方法的主要局限性及NMP（Neural Map Prior）在方法论上的区别如下：\n\n### **1. 传统离线HD地图构建方法的主要局限性**\n根据资料（source_id=paper-078），传统离线方法存在以下核心问题：\n*   **依赖复杂的人工标注**：构建过程涉及繁琐的人工标注管线（complex manual annotation pipeline），成本高且效率受限。\n*   **不支持及时更新**：无法动态响应道路环境的变化（do not support timely map updates），可能导致自动驾驶车辆基于过时信息运行，存在安全隐患。\n\n### **2. NMP在方法论上的区别**\nNMP提出了一种**新颖的混合映射方案（novel hybrid mapping solution）**，在方法论上与传统方法的主要区别在于：\n*   **混合架构设计**：结合了**离线全局地图**（提供视线外关键信息）与**在线传感器观测**的优势，而非单纯依赖静态离线构建或纯在线感知。\n*   **神经表示与自动更新**：利用**神经表示（neural representations）**构建全局地图先验。该先验通过**聚合自动驾驶车队的传感器数据**自动开发，并支持**增量更新（incrementally updated）**，解决了离线地图更新滞后的问题。\n*   **利用历史先验信息**：NMP利用**其他行程生成的先验历史信息（prior history information generated by other trips）**，封装了丰富的场景上下文细节，显著增强了在线地图预测的能力。\n*   **反馈循环机制**：方法论包含**全局地图先验更新**和**本地地图推断**两个阶段，两者通过反馈循环相互连接，随着车辆数据的收集不断进化，克服了在线方法感知范围有限及远距离分辨率低的问题。",
+      "candidate_answer": "\n\n根据提供的参考资料（source_id=paper-059, source_id=paper-078），传统离线 HD 地图构建方法的主要局限性及 NMP 在方法论上的区别如下：\n\n### **1. 传统离线 HD 地图构建方法的主要局限性**\n参考资料主要对比了 NMP 与**在线地图预测方法**的局限性，对于传统离线地图，文中通过对比隐含了其局限性：\n*   **缺乏自动更新机制**：文中指出 NMP 的全局地图先验是“通过聚合自动驾驶车队的传感器数据自动开发的”（automatically developed by aggregating sensor data），这暗示传统离线地图通常依赖静态构建，不具备这种基于车队数据的自动开发与更新能力。\n*   **单一视角的局限**：虽然传统离线地图能提供视线外的关键信息（source_id=paper-059），但 NMP 被描述为“结合了两者优势的新颖混合映射方案”（novel hybrid mapping solution that combines the best of both worlds），暗示传统离线地图无法像 NMP 那样融合在线传感器的实时观测与历史先验，难以应对动态变化的道路环境。\n\n*(注：资料中明确指出的局限性主要集中在**在线方法**，如感知范围有限（60m×30m）、依赖单帧输入、缺乏时序信息等（source_id=paper-078）。)*\n\n### **2. NMP 在方法论上的区别**\nNMP 提出了一种**混合映射方案**，在方法论上与传统方法的主要区别包括：\n*   **混合架构设计**：NMP 结合了**离线全局地图**（提供视线外关键信息）与**在线传感器观测**的优势，而非单一依赖静态离线构建或纯在线感知（source_id=paper-059）。\n*   **神经表示与自动聚合**：NMP 利用**神经表示**（neural representations）构建全局地图先验，该先验通过**聚合自动驾驶车队的传感器数据自动开发**，并支持增量更新，解决了传统地图更新滞后的问题（source_id=paper-059）。\n*   **利用历史先验信息**：NMP 利用**其他行程生成的先验历史信息**（prior history information generated by other trips），封装了丰富的场景上下文，显著增强了在线地图预测的能力，克服了在线方法感知范围有限的问题（source_id=paper-059）。\n*   **双阶段反馈机制**：方法论包含**全局地图先验更新**和**本地地图推断**两个阶段，两者通过反馈循环相互连接，随着车辆数据的收集不断进化（source_id=paper-059）。\n\n**总结**：传统离线方法主要受限于静态构建和更新滞后，而 NMP 通过**神经先验融合多车历史数据**，实现了动态更新、更广感知范围及更强的场景鲁棒性。",
+      "winner": "baseline",
+      "reason": "Baseline 更准确地涵盖了参考答案和证据中关于传统方法局限性的核心点（依赖人工标注、成本高、无法及时更新），而 Candidate 漏掉了‘人工标注’和‘成本高’这两个关键信息，且对资料内容的解读（称主要对比在线方法）与证据不符。在 NMP 方法论区别方面，两者均表现良好，但 Baseline 整体更忠于证据。"
+    },
+    {
+      "id": "eval-045",
+      "question": "PointRCNN在生成3D提案的方式上与现有方法（如AVOD、Frustum-PointNet）有何主要不同？",
+      "reference_answer": "与基于融合鸟瞰图和前视图特征图或RGB图像生成提案的方法不同，PointRCNN直接以自底向上的方式从上的方式从原始点云生成3D提案。",
+      "baseline_answer": "\n\n根据提供的参考资料，内容主要涉及 Apollo 自动驾驶平台的系统架构（如 Cyber RT、规划模块、感知融合通道）、通信框架以及 SOTIF 安全标准，**并未包含** PointRCNN、AVOD 或 Frustum-PointNet 等具体感知算法的技术细节或 3D 提案生成方式的对比信息。\n\n因此，基于现有参考资料，无法回答 PointRCNN 在生成 3D 提案方式上与这些方法的主要不同。建议查阅相关算法的原始论文或技术文档以获取准确信息。",
+      "candidate_answer": "\n\n根据提供的参考资料，PointRCNN 与现有方法（如 AVOD、Frustum-PointNet）在生成 3D 提案方式上的主要不同体现在以下几个方面：\n\n### 1. 提案生成策略与输入数据\n\n*   **PointRCNN**：\n    *   **策略**：采用**自底向上（bottom-up）**的**无锚点（anchor-free）**方式生成 3D 提案。\n    *   **输入**：直接从**原始点云（raw point cloud）**出发，无需依赖图像或多视图。\n    *   **机制**：利用 PointNet++ 提取**点级特征（point-wise features）**，通过**分割前景点（segmenting foreground points）**来生成高质量的 3D 提案。\n\n*   **AVOD**：\n    *   **策略**：采用基于锚点（anchor-based）的方式。\n    *   **输入**：同时使用**2D 图像和点云**。\n    *   **机制**：在 3D 空间中放置大量预定义的**锚点框（80-100k 个）**，并从**多视图（如鸟瞰图、前视图）**中为每个锚点池化特征以生成提案。\n\n*   **Frustum-PointNet (F-PointNet)**：\n    *   **策略**：从 2D 图像生成 2D 提案，再转化为 3D 提案。\n    *   **输入**：主要依赖**RGB 图像**。\n    *   **机制**：从 2D 图像生成 2D 提案，再将其投影为 3D 视锥（frustum），进而基于该视锥内的点云估计 3D 框。这种方法可能会遗漏那些**仅在 3D 空间中能清晰观察到的困难物体**。\n\n### 2. 性能表现\n\n*   PointRCNN 在提案生成效率上表现更优。例如，仅使用 50 个提案时，PointRCNN 在 IoU 阈值为 0.5 时的召回率达到 **96.01%**，而 AVOD 在相同提案数量下的召回率为 **91%**，PointRCNN 显著高于现有方法。\n\n### 总结\n\nPointRCNN 的核心不同在于它避免了依赖图像数据或多视图锚点设计，直接在点云层面通过分割前景点进行自底向上的候选生成，从而实现了更高的召回率和鲁棒性。",
+      "winner": "candidate",
+      "reason": "Baseline 忽略了 evidence 中明确包含答案的引文，错误地声称资料不足无法回答。Candidate 准确利用了 evidence 和 retrieved_rows，核心观点（PointRCNN 直接从原始点云自底向上生成提案，而现有方法基于融合特征图或 RGB 图像）与 reference_answer 高度一致，且对 AVOD 和 Frustum-PointNet 的对比描述均有检索内容支持，无无依据扩写。"
+    },
+    {
+      "id": "eval-046",
+      "question": "Apollo Cyber RT 框架的架构是如何组织的？请简要描述其组件和依赖关系。",
+      "reference_answer": "系统的架构由一系列具有特定输入和输出的组件构成，每个组件包含一个特定的算法模块来处理一组数据输入并生成一组输出。Apollo Cyber RT 框架建立在这些组件之上，从组件中提取依赖项并通过 DAG 依赖关系图将它们连接在一起。运行时，框架加载预定义组件，建立轻量级的用户任务并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务进行调度和执行。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法详细描述**Apollo Cyber RT 框架的整体架构组织、核心组件及其依赖关系。\n\n资料中仅在描述激光雷达感知模块时提及：“模块内部各组件通过Cyber RT框架的Channel进行通信”（source_id=apollo-doc-011），并列举了该模块内部的数据流（原始点云 -> 预处理 -> 检测网络 -> NMS -> 融合输出）。\n\n但提供的参考资料**并未包含**关于Cyber RT框架本身的核心组件定义（如Node、Component等）或依赖管理机制（如DAG）的具体信息。因此，基于现有资料无法给出完整的简要描述。如需了解Cyber RT框架的详细架构，建议查阅Apollo官方技术文档。",
+      "candidate_answer": "\n\n根据提供的参考资料，Apollo Cyber RT 框架的架构组织如下：\n\n1.  **架构组成**：框架的架构由一系列具有特定输入和输出的**组件**构成。\n2.  **组件功能**：每一个组件包含一个特定的**算法模块**，负责处理一组数据的输入并生成一组输出。\n3.  **依赖关系**：框架从组件中提取依赖项，并通过 **DAG（有向无环图）依赖关系图**将它们连接在一起。\n4.  **运行时调度**：在运行时，框架加载预定义的组件，建立轻量级的用户任务并与传感器输入数据结合，然后根据资源的可利用性以及任务的优先级对每一个任务进行调度和执行。",
+      "winner": "candidate",
+      "reason": "candidate的答案完整覆盖了reference_answer中的核心要点（组件构成、DAG依赖关系、运行时调度），且所有信息均直接来源于提供的evidence（apollo-doc-002）。baseline虽诚实说明资料不足，但其检索到的文档（如apollo-doc-011）确实未包含Cyber RT框架架构的关键描述，而candidate通过正确检索到apollo-doc-002的完整段落实现了精准匹配，未出现无依据扩写。"
+    },
+    {
+      "id": "eval-047",
+      "question": "SurroundOcc方法的主要目标是什么？",
+      "reference_answer": "从多相机图像预测3D occupancy，以实现对周围3D场景的全面感知，克服传统3D对象检测难以描述任意形状和无限类别的局限性。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中并未提及“SurroundOcc”方法。\n\n所提供的资料主要涵盖了以下主题：\n*   Apollo自动驾驶系统的纵向控制模块。\n*   Apollo的预测模块，特别是基于Transformer的预测架构。\n*   Apollo的规划模块。\n*   Apollo的Channel数据格式。\n*   FusionAD论文，涉及预测和规划任务的多模态融合。\n\n因此，无法基于现有参考资料回答SurroundOcc方法的主要目标。",
+      "candidate_answer": "\n\n根据提供的参考资料，SurroundOcc方法的主要目标是**利用多相机图像（multi-camera images）进行3D占用预测（3D occupancy prediction）**。\n\n该方法旨在克服现有3D物体检测方法难以描述任意形状和无限类别现实世界物体的局限性，从而实现对三维场景**更全面的感知（more comprehensive perception of a 3D scene）**。",
+      "winner": "candidate",
+      "reason": "Candidate 答案准确且完整地回答了问题，与 reference_answer 高度一致，并完全忠实于 evidence 和 retrieved_rows 中的信息。Baseline 答案未能回答问题，错误地声称资料中未提及 SurroundOcc，尽管 evidence 字段明确提供了相关答案，属于严重的信息利用失败。"
+    },
+    {
+      "id": "eval-048",
+      "question": "DriveDreamer 的两阶段训练流程分别赋予了模型什么能力？",
+      "reference_answer": "第一阶段使模型深入理解结构化交通约束（structured traffic constraints），第二阶段使模型能够预测未来状态（anticipate future states）。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法回答**关于 DriveDreamer 两阶段训练流程的问题。\n\n所提供的参考资料主要涵盖以下内容，均未提及 DriveDreamer 模型：\n1.  **Apollo 控制模块**：纵向控制、位置/速度闭环、油门/刹车指令生成（source_id=apollo-doc-009）。\n2.  **Apollo 感知与通信**：感知模块职责、模块间通信框架、Channel 数据格式（source_id=apollo-doc-006, apollo-doc-003）。\n3.  **运动预测**：Occupancy Flow Fields、Regular 与 Speculative Agents 预测对比（source_id=paper-003）。\n4.  **安全标准**：ISO 21448 SOTIF 标准、已知/未知安全场景分类、触发条件及安全措施（source_id=standard-011）。\n\n因此，基于现有资料，没有关于 DriveDreamer 模型及其训练流程的信息。",
+      "candidate_answer": "\n\n根据提供的参考资料，DriveDreamer 的两阶段训练流程分别赋予了模型以下能力：\n\n*   **第一阶段训练**：赋予模型对**结构性交通约束**的深刻理解。\n    *   该阶段包含两个步骤：首先利用单帧结构化条件生成驾驶场景图像，以辅助模型理解交通结构；随后将这种理解扩展到视频生成。\n*   **第二阶段训练**：赋予模型**预测未来状态**及**与环境交互**的能力。\n    *   在此阶段，模型以初始帧图像、结构化信息及连续驾驶动作为输入，生成未来的驾驶视频和驾驶动作，从而实现对驾驶世界的全面理解。\n\n通过这两阶段训练，DriveDreamer 获得了对驾驶世界的全面理解，涵盖交通结构约束、未来驾驶状态预测以及与建立的世界模型的交互，同时显著提升了采样效率并加速了模型收敛。",
+      "winner": "candidate",
+      "reason": "Candidate correctly identifies both stages' capabilities matching the reference answer and supports with evidence from paper-039. Baseline incorrectly claims no relevant information exists despite evidence being present in candidate's retrieved_rows."
+    },
+    {
+      "id": "eval-049",
+      "question": "在 DanceTrack 数据集上，MOTRv2 相比 MOTR 在 HOTA 和 DetA 指标上有显著提升，请结合具体数值说明提升幅度，并分析这种提升主要归因于论文中提出的哪项技术改进？",
+      "reference_answer": "据图1所示，在 DanceTrack 上 MOTR 的 HOTA 为 54.2，DetA 为 32.3；MOTRv2 的 HOTA 为 73.4，DetA 为 43.6。HOTA 提升 19.2，DetA 提升 11.3。这种提升主要归因于 MOTRv2 提出的锚点提议注入机制：利用预训练的 YOLOX 检测器生成高质量提议作为锚点，替换 MOTR 的检测查询，从而显著改善了检测质量（DetA），进而提升了整体跟踪性能（HOTA）。同时，关联任务仍由 track queries 的传播机制完成，实现了端到端的优势。",
+      "baseline_answer": "\n\n根据您提供的参考资料，**无法回答**关于 MOTRv2 在 DanceTrack 数据集上相比 MOTR 的具体提升数值及技术归因。\n\n**原因说明：**\n您提供的参考资料主要包含以下两类内容，均不涉及 MOTRv2 或 DanceTrack 相关信息：\n1.  **自动驾驶安全标准**：UL 4600 标准，涉及安全声明、支撑证据、感知/决策/网络安全设计要求等。\n2.  **Apollo 自动驾驶系统文档**：涉及 Apollo 系统的 Channel 数据格式、控制模块（纵向控制）、预测模块架构（信息容器、场景选择器等）以及摄像头感知模块（基于 YOLO/CenterNet 的障碍物检测）。\n\n**结论：**\n参考资料中**未提及** MOTRv2、MOTR、DanceTrack 数据集，也未包含 HOTA 或 DetA 指标的相关数据。因此，基于现有资料无法提供具体的提升幅度数值或技术改进分析。如需获取该信息，建议查阅 MOTRv2 相关的原始论文或公开技术报告。",
+      "candidate_answer": "\n\n根据提供的参考资料，关于 MOTRv2 在 DanceTrack 数据集上相比 MOTR 的性能提升及技术改进，回答如下：\n\n### 1. 指标提升幅度（基于现有资料）\n*   **HOTA 指标**：\n    *   **MOTRv2 数值**：资料明确显示 MOTRv2 在 DanceTrack 测试集上的基础版本 HOTA 为 **69.9%**，经过额外关联、验证集训练及模型集成优化后，最终达到 **73.4%**。\n    *   **MOTR 数值**：提供的参考资料中**未直接给出**原始 MOTR 在 DanceTrack 数据集上的具体 HOTA 数值。资料仅定性描述 MOTRv2 相比 MOTR 实现了“大幅性能提升”（large performance improvements），并提到 MOTRv2 在 DanceTrack 上比 OC-SORT 高出 14.8% HOTA，但未提供 MOTR 的基准数据。\n    *   **结论**：基于现有资料，**无法计算** MOTRv2 相比 MOTR 的确切 HOTA 提升百分点。\n*   **DetA 指标**：\n    *   提供的参考资料中**未提及** DanceTrack 数据集上的 DetA 指标数值。资料中出现的 DetA 数据（如 Table 2 和 Table 3）分别属于 BDD100K 和 MOT17 数据集。\n\n### 2. 主要技术改进归因\n尽管缺乏具体对比数值，资料明确指出了 MOTRv2 性能提升的核心技术原因：\n\n1.  **引入额外目标检测器（核心改进）**：\n    *   MOTRv2 优雅地融入了一个额外的预训练目标检测器（如 **YOLOX**）。\n    *   **作用**：利用检测器生成提议（proposals）作为查询的锚点（anchors），为 MOTR 提供**检测先验**。\n    *   **效果**：这一简单修改极大地缓解了原始 MOTR 中联合学习检测与关联任务之间的冲突（eases the conflict），在保留查询传播特性的同时显著提升了检测精度，从而带动跟踪性能提升。\n\n2.  **数据与训练策略优化**：\n    *   **联合训练**：采用 **CrowdHuman 数据集** 与 MOT17 验证集进行联合训练，进一步增强了检测能力。\n    *   **后处理与集成**：通过**额外关联策略**（Extra Association，针对 20-100 帧内消失重现的轨迹）、**查询去噪**（Query Denoise）以及 **4 模型集成**（Ensemble of 4 models），将 HOTA 从 69.9% 进一步推高至 73.4%。\n\n**总结**：MOTRv2 的显著提升主要归因于**利用外部预训练检测器（YOLOX）提供检测先验**，解决了原有端到端模型检测能力不足的瓶颈，辅以数据集联合训练和后处理优化。但具体相比 MOTR 的提升数值及 DetA 指标在所提供的资料中缺失。",
+      "winner": "candidate",
+      "reason": "Baseline 的检索结果（retrieved_rows）完全错误（均为 Apollo 自动驾驶文档），导致其无法回答问题，属于严重的检索失败。Candidate 成功检索到了相关论文（paper-050），准确提取了 MOTRv2 的 HOTA 数值（73.4%）和核心技术改进（YOLOX 锚点提议注入），并基于提供的 evidence 文本诚实说明了 MOTR 基准数值缺失的情况。相比之下，Candidate 在检索准确性和关键信息提取上远优于 Baseline。"
+    },
+    {
+      "id": "eval-050",
+      "question": "论文中的自监督学习框架是如何从视觉里程计（VO）中获得监督信号的？请简要描述其关键步骤。",
+      "reference_answer": "首先，VO后端对前端的输出进行光束法平差（Bundle Adjustment），将点轨迹升级为3D点；然后，基于重投影误差（re-projection error）对每个点进行分类，判断其稳定性（stable/unstable）；最后，将稳定的3D点作为监督信号反馈给卷积前端，用于重新训练前端网络。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中**并未包含**关于自监督学习框架从视觉里程计（VO）中获得监督信号的相关信息。\n\n提供的资料主要涉及：\n*   **ISO 21448 (SOTIF)** 预期功能安全标准。\n*   **Apollo 预测模块**的评估指标（如 minADE, minFDE）。\n*   **ISO 26262** 功能安全标准及 ASIL 等级。\n*   **Occupancy Flow Fields** 论文（关于运动预测）。\n*   **Apollo Vision Perception** 概述（关于交通灯和车道线检测）。\n\n这些资料均未提及自监督学习、视觉里程计（VO）或其监督信号获取机制。因此，无法基于现有资料回答您的问题。",
+      "candidate_answer": "\n\n根据论文《Self-Improving Visual Odometry》，该自监督学习框架通过以下关键步骤从视觉里程计（VO）中获得监督信号：\n\n1.  **前端与后端协同**：将**可学习的神经网络前端**（用于提取关键点）与**传统的VO后端**相结合。后端负责跟踪前端提取的关键点并估计相机位姿。\n2.  **评估点稳定性（核心信号）**：利用VO后端计算出的**重投影误差（re-projection error）**来评估每个被跟踪点的稳定性。框架假设重投影误差越小，点越稳定，越适合用于VO任务。\n3.  **生成自监督伪标签**：将上述稳定性评估结果作为**伪标签**，自动构建大规模的关键点对应数据集，无需昂贵的外部真值标注。\n4.  **反馈训练前端**：使用该自监督数据集重新训练前端网络，使其学会预测点的稳定性，并抑制对VO不利的特征点（如动态物体、深度间断处的点），从而实现系统的自我改进。\n\n**简言之**：框架通过**VO输出的重投影误差**来度量点的稳定性，并将此作为**自监督信号**反馈给前端网络进行优化，形成一个自我改进的闭环。",
+      "winner": "candidate",
+      "reason": "Candidate 准确描述了自监督框架的关键步骤（重投影误差评估稳定性、反馈训练），与 reference_answer 和 evidence 高度一致。Baseline 错误地声称无法回答，尽管 evidence 中明确包含了答案信息。Baseline 的 retrieved_rows 检索结果完全无关（ISO 标准等），导致其未能获取正确信息，而 Candidate 检索到了正确的论文（paper-056）并基于此给出了忠实且准确的答案。"
+    },
+    {
+      "id": "eval-051",
+      "question": "MagicDrive 是一个什么类型的框架？它主要支持哪些控制条件来生成街景图像？",
+      "reference_answer": "MagicDrive 是一个新颖的街景生成框架，提供多样的3D几何控制，包括相机位姿、道路地图和3D边界框，同时结合文本描述，通过定制的编码策略实现高保真的多视角街景图像与视频合成。",
+      "baseline_answer": "\n\n根据您提供的参考资料，**无法回答**关于 MagicDrive 框架的问题。\n\n提供的参考资料主要涵盖以下内容，未提及 MagicDrive：\n1.  **自动驾驶安全标准**：如 ISO 21448 预期功能安全（SOTIF）标准、SAE J3018 自动化等级定义及测试要求。\n2.  **Apollo 自动驾驶系统**：包括其感知模块、基于场景的规划框架、纵向控制模块等技术实现。\n\n因此，基于现有参考资料，无法说明 MagicDrive 的框架类型及其支持的控制条件。",
+      "candidate_answer": "\n\n根据提供的参考资料，**MagicDrive** 是一个**新颖的街景图像与视频生成框架**（novel street view generation framework），专注于通过多样的 3D 几何控制实现高保真的街景合成。该框架基于预训练的 Stable Diffusion 模型进行微调。\n\n它主要支持以下**控制条件**来生成街景图像：\n\n1.  **3D 几何控制**：\n    *   **相机位姿**（camera poses）\n    *   **道路地图**（road maps）\n    *   **3D 边界框**（3D bounding boxes / object boxes）\n2.  **文本描述**（textual descriptions）：\n    *   包括**天气条件**（weather conditions，如雨天、晴天）和**场景描述**等属性。\n\n此外，框架引入了**跨视角注意力模块**（cross-view attention module），以确保多相机视图下生成结果的一致性，并采用对象与道路地图分离编码的设计以提升对 3D 数据的可控性。",
+      "winner": "candidate",
+      "reason": "Candidate 答案准确匹配 reference_answer 的核心内容（框架类型及控制条件），并基于 evidence 中的 paper-052 文档详细展开，包含相机位姿、道路地图、3D边界框和文本描述等关键信息，且补充了天气条件等合理细节。Baseline 错误地声称无法回答，未利用 evidence 中的有效信息。"
+    },
+    {
+      "id": "eval-052",
+      "question": "根据论文对数据集的分析，原始的Argoverse2和nuScenes评估协议存在什么主要偏差？论文提出了什么解决方案？",
+      "reference_answer": "主要偏差是训练集和验证集之间存在显著的地理位置重叠（Argoverse2重叠率54%，nuScenes高达85%），导致评估结果不可靠。解决方案是重新划分数据集，按地理跨度确保训练和验证集无重叠。",
+      "baseline_answer": "\n\n根据提供的参考资料（主要涵盖Apollo系统架构及ISO 26262/21448功能安全标准），其中**未包含**关于Argoverse2和nuScenes数据集评估协议的相关论文内容。\n\n因此，基于现有参考资料，**无法回答**关于原始评估协议偏差及解决方案的问题。此前对话中若涉及相关细节，可能超出了当前指定参考资料的范围。请提供相关论文资料以便进一步解答。",
+      "candidate_answer": "\n\n根据提供的参考资料，原始 Argoverse2 和 nuScenes 评估协议存在的主要偏差及论文提出的解决方案如下：\n\n**1. 主要偏差**\n*   **划分不当导致过拟合**：原始的训练/验证划分方案（training/validation division）存在不当之处，导致训练集与验证集之间存在重叠，进而引发严重的过拟合问题（overfitting problem）[source_id=paper-078]。\n*   **评估类别局限**：标准的评估协议通常仅局限于 **10 个类别**（standard 10 classes），未能涵盖所有目标，导致对整体性能的评估不够全面 [source_id=paper-035]。\n\n**2. 解决方案**\n*   **提出新的非重叠划分**：论文为两个数据集提出了**新的、非重叠的划分方案**（new, non-overlapping splits），旨在消除数据重叠带来的过拟合问题，为研究提供更平衡的基准 [source_id=paper-078]。\n*   **扩展评估类别体系**：论文将评估范围从标准的 10 个类别扩展到所有 **18 个类别**（all 18 classes），从而提供了对模型整体性能更全面的评估（more comprehensive assessment of overall performance）[source_id=paper-035]。",
+      "winner": "candidate",
+      "reason": "Baseline虽然检索到了包含正确答案的evidence（paper-078中关于数据集重叠的具体数据），但错误地声称参考资料中未包含相关内容并回答无法回答，属于严重的生成失败。Candidate准确利用了evidence中的关键信息（重叠率54%/85%、过拟合问题、新划分方案），与reference_answer的核心内容高度一致，且结合了retrieved_rows中关于评估类别扩展的信息，回答全面且有据可依。"
+    },
+    {
+      "id": "eval-053",
+      "question": "FCOS3D 如何将常规定义的 7-DoF 3D 目标转换到图像域？请简述其解耦策略。",
+      "reference_answer": "首先将 7-DoF 3D 位置投影到 2D 图像上，得到投影中心点（3D-center）。然后将其解耦为 2D 属性（2D 偏移）和 3D 属性（深度、3D 尺寸和朝向）。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中并未包含关于 FCOS3D 模型的相关信息。\n\n因此，我无法基于现有资料回答其如何将 7-DoF 3D 目标转换到图像域及解耦策略。建议您查阅 FCOS3D 的原始论文或相关技术文档以获取准确信息。",
+      "candidate_answer": "\n\n根据提供的参考资料，FCOS3D 将常规定义的 7-DoF 3D 目标转换到图像域及解耦策略如下：\n\n1.  **目标转换**：\n    FCOS3D 将 3D 坐标投影到 2D 图像上，从而将 3D 检测问题转化为在图像视图中进行的感知任务。\n\n2.  **解耦策略**：\n    它将 7-DoF 3D 目标解耦为 **2D 属性** 和 **3D 属性**，以适配 3D 设置：\n    *   **2D 属性**：包括 **2D 位置**（可简化为图像上的 2D 偏移）、**centerness** 和 **分类**。其中，2D 位置是唯一可以在不同特征层级间归一化的属性。\n    *   **3D 属性**：包括 **深度**、**3D 尺寸** 和 **朝向**。\n\n通过这种基于中心的解耦范式，FCOS3D 能够适配单阶段全卷积检测器（如 FCOS），而无需依赖任何 2D 检测或 2D-3D 对应先验。",
+      "winner": "candidate",
+      "reason": "Baseline 在 evidence 中已包含 FCOS3D 相关描述的情况下，错误地声称无法回答；Candidate 准确依据 evidence 和 retrieved_rows 作答，内容与 reference_answer 高度一致，正确描述了投影及解耦为 2D 偏移与 3D 属性（深度、尺寸、朝向）的策略。"
+    },
+    {
+      "id": "eval-054",
+      "question": "在PETRv2中，如何通过稀疏任务特定查询来支持多任务学习（如BEV分割和3D车道检测）？",
+      "reference_answer": "PETRv2为不同任务在不同空间下定义稀疏初始化任务特定查询：例如，3D车道检测的车道查询在3D空间中以锚点车道形式定义，BEV分割的seg查询在BEV空间初始化。这些稀疏查询被输入到同一个Transformer解码器中更新表示，然后送入不同的任务特定头生成高质量预测，从而以统一方式支持多任务学习。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中并未包含关于 PETRv2 模型、其架构细节或稀疏任务特定查询机制的任何信息。\n\n现有资料主要涉及以下内容：\n- **ISO 21448 (SOTIF)**：预期功能安全标准。\n- **ISO 26262**：功能安全标准、ASIL 等级及验证方法。\n- **Apollo 预测模块**：预测质量评估指标。\n\n因此，基于现有资料，无法回答关于 PETRv2 如何通过稀疏任务特定查询支持多任务学习的问题。建议查阅 PETRv2 相关的学术论文或官方技术文档以获取准确信息。",
+      "candidate_answer": "\n\n根据提供的参考资料，PETRv2 通过以下机制利用**稀疏任务特定查询（sparse task-specific queries）**来支持多任务学习（如 BEV 分割和 3D 车道检测）：\n\n1.  **定义与初始化**：\n    *   PETRv2 为不同任务定义独立的稀疏查询集，避免了 BEVFormer 等模型中密集 BEV 查询（如 >60,000 个）带来的计算冗余，这种设计更适合 Transformer 解码器的全局注意力机制。\n    *   **3D 车道检测**：车道查询（lane queries）在 **3D 空间**中以锚定车道（anchor lane）的方式初始化。\n    *   **BEV 分割**：分割查询（seg queries）在 **BEV 空间**中初始化。\n\n2.  **共享解码与任务分离**：\n    *   这些稀疏任务特定查询被输入到**同一个 Transformer 解码器**中，以更新其表示。\n    *   更新后的查询随后分别被注入到对应的**任务特定头（task-specific heads）**，以生成各自任务的高质量预测结果。\n\n这种设计在统一框架下有效解耦了不同任务，既支持了多任务学习，又保持了计算效率。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地声称资料中无相关信息，忽略了 evidence 中明确提供的 PETRv2 机制描述；Candidate 准确依据 evidence 和 retrieved_rows 回答了问题，内容与 reference_answer 高度一致且忠实于检索内容。"
+    },
+    {
+      "id": "eval-055",
+      "question": "文档中提到自动化对安全最大的潜在影响是什么？",
+      "reference_answer": "通过减少由人为错误（包括分心或酒驾导致的碰撞）引发的交通事故，显著提升安全性。",
+      "baseline_answer": "\n\n根据您提供的参考资料，文档中**并未明确提及**“自动化对安全最大的潜在影响”这一具体结论。\n\n提供的资料主要侧重于自动驾驶的**安全标准、规范体系及技术要求**，具体内容包括：\n\n1.  **安全标准与等级**：\n    *   **ISO 26262**：介绍了功能安全标准，通过严重性（S）、暴露概率（E）和可控性（C）三个因素确定 ASIL 安全等级（A-D）。\n    *   **自动驾驶分级（L0-L5）**：明确了不同等级下驾驶员与系统在环境监控、驾驶任务和后备准备方面的职责划分。\n    *   **中国标准体系**：建立了“功能安全+预期功能安全+网络安全”三位一体的安全保障框架。\n\n2.  **测试与运营安全**：\n    *   规定了测试前的安全检查、风险评估及应急预案。\n    *   提出了商业化运营的许可条件、乘客安全保护及应急响应要求。\n    *   强调了中国典型交通场景库、测试里程要求及安全员制度。\n\n3.  **技术架构安全**：\n    *   涉及 Apollo 系统的通信框架、感知与规划模块的数据格式。\n    *   提到了硬件设计的单点故障度量（SPFM）和潜伏故障度量（LFM）等安全指标。\n\n综上所述，这些资料的核心目的是**规范自动驾驶系统的安全设计与验证流程**，而非宏观阐述自动化技术对社会安全的潜在影响。如果您需要关于“减少人为错误”等宏观安全影响的资料，可能需要查阅其他关于自动驾驶社会效益或政策愿景的文档（如《Automated Driving Systems 2.0: A Vision for Safety》等，但该内容不在当前提供的参考资料范围内）。",
+      "candidate_answer": "\n\n根据提供的参考资料，文档明确指出自动化对安全最大的潜在影响是**显著减少由人为错误导致的交通事故**。\n\n具体依据如下：\n*   **核心观点**：在《Preparing for the Future of Transportation: Automated Vehicles 3.0》（source_id=standard-003）中明确提到：“但最重要的是（But most importantly），自动化有潜力显著影响安全——通过减少由人为错误引起的碰撞”。\n*   **具体场景**：这种安全提升具体包括减少涉及**受损（如酒驾）或分心司机**的碰撞事故。\n*   **数据支持**：《Automated Driving Systems 2.0: A Vision for Safety》（source_id=standard-002）中也指出，94%的致命事故的主要因素是人为错误，这进一步印证了自动化在消除人为错误方面的巨大安全潜力。",
+      "winner": "candidate",
+      "reason": "Candidate 准确引用了 evidence 中的关键信息，与 reference_answer 高度一致；Baseline 错误地声称文档未提及该结论，且检索结果缺失关键文档，导致回答失实。"
+    },
+    {
+      "id": "eval-056",
+      "question": "根据 MapTR 对相机旋转偏差鲁棒性的实验，当旋转偏差的标准差为多大时，MapTR-tiny 仍然能保持与无偏差时相比可比的性能（即 mAP 下降不超过大约 5 个百分点？并给出具体数值。",
+      "reference_answer": "根据实验，当旋转偏差的标准差 σ2 为 0.01 rad 时，MapTR-tiny 的 mAP 为 47.5，相比于无偏差时的 50.3 下降约 2.8 个百分点；当 σ2 为 0.02 rad 时，mAP 为 42.0，下降约 8.3 个百分点。问题要求“保持可比性能”，通常指下降较小，因此选择 σ2=0.01 rad 最合适。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中并未包含 MapTR 模型及其对相机旋转偏差鲁棒性的实验数据。参考资料主要涉及 Apollo 控制模块、DETR3D、TransFusion 以及 ISO 21448 标准。因此，无法根据现有资料回答该问题。",
+      "candidate_answer": "\n\n根据参考资料中的 **Table 12**（相机旋转偏差鲁棒性实验），MapTR-tiny 的性能数据如下：\n\n1.  **无偏差时（σ2 = 0）**：mAP 为 **50.3**。\n2.  **σ2 = 0.01 rad**：mAP 为 **47.5**，较无偏差时下降 **2.8** 个百分点（50.3 - 47.5 = 2.8），满足下降不超过 5 个百分点的条件。\n3.  **σ2 = 0.02 rad**：mAP 为 **42.0**，较无偏差时下降 **8.3** 个百分点（50.3 - 42.0 = 8.3），超过 5 个百分点。\n\n因此，当旋转偏差的标准差为 **0.01 rad** 时，MapTR-tiny 仍能保持与无偏差相比可比的性能（mAP 下降不超过大约 5 个百分点）。",
+      "winner": "candidate",
+      "reason": "Candidate 正确检索并利用了 Evidence 中的 Table 12 数据，准确计算了不同旋转偏差标准差下的 mAP 下降幅度（0.01 rad 时下降 2.8%，0.02 rad 时下降 8.3%），并得出 0.01 rad 满足条件的结论，与 Reference Answer 一致。Baseline 虽然 Evidence 中明确包含 MapTR 旋转偏差实验数据，却错误地声称资料中未包含该信息，导致无法回答问题，严重违背了证据内容。"
+    },
+    {
+      "id": "eval-057",
+      "question": "现有自监督3D occupancy估计方法（如OccNeRF）为什么需要真实6D ego位姿？GaussianOcc如何通过Gaussian Splatting for Projection (GSP)模块消除这一依赖？",
+      "reference_answer": "现有方法使用体渲染进行自监督学习时，需要在真实世界尺度下计算多视图光度损失，这依赖于真实6D ego位姿来提供尺度信息。GaussianOcc的GSP模块利用高斯溅射进行跨视图投影，通过渲染的邻域视图构建跨视图损失，在联合训练6D位姿网络时提供尺度信息，从而消除对真实位姿的需求。",
+      "baseline_answer": "\n\n根据您提供的参考资料（Apollo 系统文档），其中**并未包含**关于 GaussianOcc、OccNeRF 或 3D occupancy 估计的具体技术内容。参考资料主要涉及 Apollo 的规划、控制、感知及数据格式模块。以下回答基于自动驾驶与三维视觉领域的通用技术知识进行解答：\n\n**1. 现有自监督 3D occupancy 估计方法（如 OccNeRF）为何需要真实 6D ego 位姿？**\n*   **几何对齐与投影**：自监督方法通常依赖**多视图光度损失（Multi-view Photometric Loss）**。为了计算相邻帧之间的投影误差，模型必须知道相机在真实世界中的精确运动（6D 位姿），以便将 2D 图像特征正确反投影到 3D 空间。\n*   **体积渲染一致性**：基于 NeRF 等方法需要进行体积渲染，精确的位姿保证了渲染过程的物理正确性。若位姿未知或误差较大，会导致几何对齐失败，渲染出的 2D 图像与真实图像产生巨大差异，自监督信号失效。\n\n**2. GaussianOcc 如何通过 Gaussian Splatting for Projection (GSP) 模块消除这一依赖？**\nGaussianOcc 通过引入**高斯泼溅投影（GSP）**，将位姿估计与场景表示**联合优化**，从而摆脱对真实位姿的依赖：\n*   **可学习位姿参数**：模型不假定已知位姿，而是将 ego 位姿（通常是相邻帧之间的相对运动）作为**网络的可学习参数**一并优化。\n*   **跨视图约束与尺度恢复**：GSP 模块将 3D 高斯体“泼溅”到 2D 图像平面上，通过与真实图像对比计算**跨视图损失（Cross-view Loss）**。该损失会同时反向传播更新 3D 高斯体参数和位姿参数。由于高斯体的分布天然携带了几何信息，模型通过最小化重投影误差，隐式分解出相对位姿并解决尺度模糊问题。\n*   **结果**：模型通过“看”图像，自动学习出如何将 3D 结构与相机运动对齐，实现了**位姿与场景结构的几何联合自监督学习**，无需真实 6D 位姿标注。",
+      "candidate_answer": "\n\n根据提供的 GaussianOcc 论文资料（source_id=paper-045），回答如下：\n\n## 1. 现有自监督方法为何需要真实 6D ego 位姿？\n\n传统自监督 3D occupancy 估计方法在训练时仍需要来自传感器的**真实 6D ego 位姿**（\"traditional methods for self-supervised 3D occupancy estimation still require ground truth 6D ego pose from sensors during training\"）。\n\n**原因**：\n- 需要精确位姿建立**多视图几何对应关系**，将 2D 图像特征正确反投影到 3D 空间\n- 依赖位姿计算**多视图光度损失**（\"requires the ground truth 6D ego pose to calculate the multi-view photometric loss across sequential images\"），实现体积渲染的 2D 监督信号\n- 缺失真实位姿会导致几何对齐错误，自监督信号失效\n\n## 2. GaussianOcc 如何通过 GSP 模块消除依赖？\n\nGaussianOcc 引入**高斯泼溅投影（GSP）模块**，采用**两阶段方法**实现完全自监督：\n\n| 阶段 | 内容 |\n|------|------|\n| **Stage 1** | 训练**尺度感知的 6D 位姿网络**（scale-aware 6D pose network），使用 U-Net 架构预测 2D 图像网格中的高斯属性，通过**跨视图高斯泼溅**（cross-view Gaussian splatting）提供几何尺度信息 |\n| **Stage 2** | 基于 Stage 1 预测的 6D 位姿，进行**自监督 3D occupancy 估计** |\n\n**核心机制**：\n- **GSP 模块**（\"Gaussian Splatting for Projection\"）将位姿估计与场景高斯表示**联合优化**\n- 通过跨视图高斯泼溅构造**跨视图损失**，在联合训练 6D 位姿网络时自动提供**尺度信息**（\"provides scale information in the joint training\"）\n- 模型通过几何一致性**隐式推断位姿**，无需真实 6D ego 位姿标注\n\n**结果**：GaussianOcc\"能够进行 3D occupancy 估计而无需训练时的真实 occupancy 标签和真实 6D ego 位姿\"（\"GaussianOcc is able to perform 3D occupancy estimation without the need for ground truth occupancy label and ground truth 6D ego pose for training\"）。",
+      "winner": "candidate",
+      "reason": "Candidate 准确引用了 evidence 中的论文内容，其关于“体渲染需真实位姿提供尺度”及“GSP 通过跨视图损失联合训练消除依赖”的解释与 reference_answer 高度一致。Baseline 虽逻辑合理，但忽略了 evidence 中提供的关键信息，转而依赖外部知识，且明确声明检索资料不包含相关内容，未能基于给定证据作答。"
+    },
+    {
+      "id": "eval-058",
+      "question": "Lift-Splat模型在设计上保留了哪三种对称性？请简要说明。",
+      "reference_answer": "1. 平移等变性（Translation equivariance）：图像内像素坐标整体平移时，输出也会相应平移。2. 置换不变性（Permutation invariance）：最终的输出不依赖于n个相机的特定顺序。3. 自车坐标系等距等变性（Ego-frame isometry equivariance）：无论相机相对自车的位置如何，同一物体都能被检测到，且自车坐标系旋转/平移时输出会随之旋转/平移。",
+      "baseline_answer": "\n\n根据您提供的参考资料，**无法回答**关于“Lift-Splat模型在设计上保留了哪三种对称性”的问题。\n\n**原因说明：**\n经核查，所有提供的参考资料（包括 ISO 21448 标准、Apollo 平台文档、NHTSA 活动资料等）中，**均未提及“Lift-Splat模型”及其相关的“三种对称性”设计细节**。\n\n**资料内容范围：**\n提供的资料主要涵盖以下领域：\n1.  **ISO 21448 (SOTIF)**：预期功能安全标准，关注系统无故障情况下的安全风险。\n2.  **Apollo 自动驾驶平台**：涉及感知、定位、地图引擎等核心模块及雷达数据处理。\n3.  **NHTSA 活动**：涉及自动驾驶系统安全研究、进口豁免计划等。\n\n**建议：**\n由于现有资料缺乏相关信息，建议您查阅 Lift-Splat-Shoot 模型的原始论文（如 *Lift, Splat, Shoot: Encoding Images From Arbitrary Camera Rigs by Unprojecting to 3D*）以获取关于其对称性设计的准确描述。",
+      "candidate_answer": "\n\n根据您提供的参考资料，**无法具体说明** Lift-Splat 模型保留的三种对称性是什么。\n\n**原因如下：**\n1.  **资料提及存在但未定义**：资料中确实提到 Lift-Splat 模型“preserves the 3 symmetries identified above by design”（在设计上保留了前述的三种对称性），但**提供的片段中并未列出或定义这三种对称性的具体名称与内容**。\n2.  **易混淆概念**：资料中明确提到的“three”相关内容，实指 Lift-Splat 存在的**三个缺陷**（three deficiencies），分别是：\n    *   不准确的深度（inaccurate depth）\n    *   深度模块过拟合（depth module over-fitting）\n    *   不精确的 BEV 语义（imprecise BEV semantics）\n\n**建议：**\n由于现有资料未包含对称性的具体定义，建议您查阅 Lift-Splat-Shoot 模型的原始论文（如 *Lift, Splat, Shoot: Encoding Images From Arbitrary Camera Rigs by Unprojecting to 3D*）的 **Section 3** 以获取关于其对称性设计的准确描述。",
+      "winner": "tie",
+      "reason": "Both models failed to utilize the provided `evidence` which explicitly contains the correct answer. The `evidence` clearly lists the three symmetries (Translation equivariance, Permutation invariance, Ego-frame isometry equivariance) and their definitions, matching the `reference_answer`. Both the baseline and candidate incorrectly stated that the information was unavailable, despite the evidence being present. While the candidate's retrieved rows were more relevant, its answer introduced confusion by mixing up 'symmetries' with 'deficiencies', making it no better than the baseline's simple failure to answer. Since both failed the core task of answering based on the evidence, it is a tie."
+    },
+    {
+      "id": "eval-059",
+      "question": "M3D-RPN的核心思想是什么？",
+      "reference_answer": "M3D-RPN将单目3D检测问题重新表述为一个独立的3D区域建议网络，利用2D和3D几何关系，使3D框能够利用图像空间中强大的卷积特征，并通过深度感知卷积层提升3D场景理解。",
+      "baseline_answer": "\n\n根据提供的参考资料，无法回答关于M3D-RPN核心思想的问题，因为资料中未包含相关信息。参考资料主要涉及Apollo自动驾驶系统的控制、规划、感知模块以及UL 4600安全标准。",
+      "candidate_answer": "\n\n根据提供的参考资料，M3D-RPN（Monocular 3D Region Proposal Network，单目 3D 区域提议网络）的核心思想是**将单目 3D 物体检测问题重构为一个独立的、单阶段的 3D 区域提议网络**。\n\n具体包含以下关键点：\n\n1.  **独立架构**：它是一个单一网络，**不依赖**外部网络、额外数据源或多阶段处理流程。\n2.  **同时生成提议**：据称是首个能**同时生成 2D 和 3D 物体提议**的单目 3D RPN，利用 2D 尺度与 3D 深度之间的强相关性作为先验。\n3.  **深度感知卷积**：引入了**深度感知卷积层**（depth-aware convolution layers），以实现位置特定的特征开发，从而改进对 3D 参数（特别是深度）的估计。\n4.  **几何关系利用**：利用 2D 和 3D 视角之间的几何关系，使 3D 边界框能够直接利用图像空间中强大的卷积特征。",
+      "winner": "candidate",
+      "reason": "Candidate的答案准确提取了M3D-RPN的核心思想，与reference_answer高度一致，且完全基于retrieved_rows中的paper-049内容。Baseline虽声称资料不足，但其evidence实际包含相关论文内容，存在检索与结论矛盾的问题。"
+    },
+    {
+      "id": "eval-060",
+      "question": "GAIA-1的主要目标是什么？",
+      "reference_answer": "GAIA-1是一个生成式世界模型，旨在通过利用视频、文本和动作输入生成逼真的驾驶场景，同时提供对自车行为和场景特征的细粒度控制，以预测未来事件并提升自动驾驶的安全性和效率。",
+      "baseline_answer": "\n\n根据提供的参考资料，无法回答 GAIA-1 的主要目标。\n\n提供的资料主要涵盖了以下内容，均未提及 GAIA-1：\n1.  **ISO 26262 功能安全标准**：涉及 ASIL 等级、硬件度量指标（SPFM, LFM, PMHF）及软件开发要求。\n2.  **Apollo 自动驾驶平台**：涉及预测模块（行为预测器、意图分类）、控制模块（纵向控制）及开放平台数据集。\n3.  **自动驾驶等级与标准**：涉及 SAE L0-L5 分级、测试安全要求及运营规范。\n\n因此，基于现有资料，无法确定 GAIA-1 的主要目标。",
+      "candidate_answer": "\n\n根据提供的参考资料，GAIA-1 的主要目标是作为一个**用于自动驾驶的生成式世界模型（generative world model for autonomous driving）**。其具体目标包括：\n\n1.  **生成逼真场景**：利用视频、文本和动作输入生成多样且逼真的驾驶场景，充当一个高级神经模拟器。\n2.  **提供细粒度控制**：实现对自车行为（ego-vehicle behavior）和场景特征的精确控制。\n3.  **理解与推理环境**：学习环境的高级结构、动态变化、3D 几何以及因果关系，从而具备预测未来事件和 extrapolate（外推）超出训练数据的能力。\n4.  **结合生成与预测**：旨在保持世界模型和生成式视频生成的双重优势，即结合生成式视频模型的扩展性和现实感与世界模型学习未来演变有意义表示的能力。",
+      "winner": "candidate",
+      "reason": "Candidate的答案准确引用了evidence中的关键信息（如生成逼真场景、细粒度控制、预测未来事件），与reference_answer高度一致，且所有要点均基于retrieved_rows中的论文内容。Baseline虽检索到相关证据，但错误声称无法回答，未利用有效信息，存在明显疏漏。"
+    },
+    {
+      "id": "eval-061",
+      "question": "根据文档描述，预测模块的输出通道是什么？该输出中的信息如何为下游规划模块提供支持？",
+      "reference_answer": "输出通道为 /apollo/prediction，包含障碍物在预测时域内的未来轨迹信息。下游规划模块可基于这些预测轨迹进行自车轨迹的规划，以避免碰撞并实现安全行驶。",
+      "baseline_answer": "\n\n根据提供的参考资料，回答如下：\n\n1.  **预测模块的输出通道**：\n    提供的文档中**未明确提及**预测模块的具体输出通道名称（如 `/apollo/prediction` 等具体字符串）。文档仅描述了其输出内容为**障碍物信息**（包含障碍物的未来运动轨迹）。\n\n2.  **对下游规划模块的支持**：\n    根据 `apollo-doc-008` 的描述，规划模块**基于预测模块输入的障碍物信息**，结合地图定位信息、路径导航信息，对车辆的未来的运动轨迹进行规划。这一过程旨在保证自动驾驶车辆**高效、安全、舒适**地行至目标位置。简而言之，预测模块提供的障碍物未来轨迹是规划模块进行决策和轨迹生成的关键输入依据。",
+      "candidate_answer": "\n\n根据文档描述：\n\n1.  **预测模块的输出通道**：\n    通道名称为 **`/apollo/prediction`**。该通道输出**障碍物在预测时域内的未来轨迹信息**。\n\n2.  **对下游规划模块的支持**：\n    规划模块将 `/apollo/prediction` 作为输入通道，利用预测的障碍物未来轨迹信息，结合定位、导航等数据，进行**自车轨迹的规划**，以确保自动驾驶车辆能够安全、高效地避开障碍物并完成行驶任务。",
+      "winner": "candidate",
+      "reason": "Candidate 准确指出了预测模块的输出通道为 /apollo/prediction，这与 reference_answer 及 evidence 中的信息完全一致。相比之下，Baseline 错误地声称文档未明确提及通道名称，未能利用 evidence 中的关键信息，导致事实性缺失。"
+    },
+    {
+      "id": "eval-062",
+      "question": "为什么BEVFusion认为传统的点级融合方法在语义导向任务（如BEV地图分割）上效果不佳？请简要解释。",
+      "reference_answer": "因为点级融合方法将相机特征投影到LiDAR点云上时，会导致语义信息丢失：对于典型的32线LiDAR，只有约5%的相机特征能与LiDAR点匹配，其余都被丢弃。这种密度差异在更稀疏的传感器（如雷达）上更为严重，因此难以处理语义任务。",
+      "baseline_answer": "\n\n根据提供的参考资料，无法回答该问题。\n\n所提供的资料主要涉及 **Apollo 自动驾驶系统** 的规划、控制、感知融合及预测模块的设计与原理（如基于场景的规划框架、纵向控制闭环、目标级感知融合等），**未涉及 BEVFusion 模型**，也没有关于传统点级融合方法在语义导向任务（如 BEV 地图分割）上效果不佳的相关论述。",
+      "candidate_answer": "\n\n根据提供的参考资料，BEVFusion认为传统的点级融合方法在语义导向任务（如BEV地图分割）上效果不佳，主要原因如下：\n\n1.  **语义信息严重丢失**：传统的点级融合方法依赖于相机到LiDAR的投影，而该过程是“语义有损的”。对于典型的32线LiDAR，仅有约5%的相机特征能与LiDAR点匹配，其余95%的相机特征均会被丢弃，导致语义密度大幅降低，难以支持需要完整场景语义理解的BEV地图分割任务。\n\n2.  **设计目标局限**：这些方法本质上是**对象中心（object-centric）**和**几何导向（geometric-oriented）**的。例如，PointPainting仅装饰前景LiDAR点，MVP仅稠化前景3D物体，它们忽略了背景信息，因此对分割地图组件（如道路、车道线等背景语义）没有帮助。",
+      "winner": "candidate",
+      "reason": "Baseline 模型未能利用其检索到的证据（evidence 字段中明确包含正确答案），错误地声称无法回答问题。Candidate 模型正确地从证据中提取了关键信息（相机到 LiDAR 投影的语义信息丢失、5% 匹配率），其答案与 reference_answer 高度一致，且额外补充的‘对象中心/几何导向’局限性也有 retrieved_rows 中的证据支持，因此 Candidate 完胜。"
+    },
+    {
+      "id": "eval-063",
+      "question": "MonoFlex是如何融合多个深度估计器来估计物体深度的？",
+      "reference_answer": "MonoFlex将关键点分为M组，每组恰好足够求解深度，并引入直接回归的深度估计器。通过预测每个估计器的不确定性，将最终深度估计建模为不确定性加权的平均值，从而自适应地选择更合适的估计器，实现鲁棒和准确的深度预测。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中没有关于 MonoFlex 模型及其深度估计融合方法的相关信息。参考资料主要涉及 PointPillars 感知算法、ISO 26262 功能安全标准、ANSI/ATA 标准体系以及 Apollo 控制模块等内容。因此，无法基于现有资料回答该问题。",
+      "candidate_answer": "\n\n根据提供的参考资料，MonoFlex 通过以下机制融合多个深度估计器来估计物体深度：\n\n1.  **基于不确定性的深度集成（Uncertainty-based Depth Ensemble）**：\n    MonoFlex 提出了一种基于不确定性的深度集成方法，利用每个深度估计器的不确定性信息来灵活组合独立的估计器。\n\n2.  **融合的深度来源**：\n    该方法集成了两类深度估计：\n    *   **直接回归的物体深度**（directly regressed object depth）；\n    *   **通过关键点几何求解的深度**（solved depths from different groups of keypoints），例如通过对角关键点对的几何深度进行**平均**（averaging the geometry depth of diagonal paired keypoints）得到的对角关键点深度。\n\n3.  **自适应组合（Adaptively Combines Multiple Approaches）**：\n    该框架能够自适应地组合多种物体深度估计方法，显式地解耦截断物体（truncated objects）和常规物体，从而统一处理不同类型的目标，提升深度估计的准确性和鲁棒性。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地声称资料中没有相关信息，未能利用提供的 evidence 进行回答。Candidate 正确利用了 evidence 中的信息，准确描述了 MonoFlex 通过不确定性集成融合直接回归和几何深度估计器的方法，与 reference_answer 的核心逻辑高度一致，且无无依据扩写。"
+    },
+    {
+      "id": "eval-064",
+      "question": "Apollo感知系统中，大规模深度学习平台和GPU集群如何提升算法性能？训练后的模型如何部署到车辆上？",
+      "reference_answer": "大规模深度学习平台和GPU集群大幅缩短大量数据的学习时间。训练完成后，新模型通过云端无线更新（OTA）部署到车辆上。人工智能与数据驱动解决方案结合使Apollo感知系统持续改进检测识别能力，为其他自动驾驶模块提供准确稳定可靠的输入。",
+      "baseline_answer": "\n\n根据提供的参考资料，无法回答关于Apollo感知系统中大规模深度学习平台和GPU集群如何提升算法性能，以及模型部署的问题。\n\n所提供的参考资料主要涉及以下内容：\n*   Apollo各模块间的通信框架和数据通道格式（`apollo-doc-003`）。\n*   预测模块中的场景识别器功能（`apollo-doc-014`）。\n*   自动驾驶相关的功能安全标准，如ISO 26262（`standard-010`）。\n*   NHTSA关于自动驾驶系统的活动概述（`standard-006`）。\n\n这些资料中并未提及大规模深度学习平台、GPU集群或模型部署的具体技术细节。建议您查阅Apollo的官方技术文档或相关研究论文以获取详细信息。",
+      "candidate_answer": "\n\n根据提供的参考资料（apollo-doc-004, p.3），Apollo感知系统中大规模深度学习平台和GPU集群的作用及模型部署方式如下：\n\n1.  **提升算法性能**：大规模深度学习平台和GPU集群通过**大幅缩短大量数据的学习时间**来提升算法性能。\n2.  **模型部署**：训练后的新模型通过**云端空中升级（over-the-air updates）**的方式部署到车辆上。\n\n这种人工智能与数据驱动相结合的方式，使Apollo感知系统能够持续改进其检测与识别能力，为其他自动驾驶系统模块提供准确、稳定、可靠的输入。",
+      "winner": "candidate",
+      "reason": "Candidate正确引用了evidence中的apollo-doc-004内容，完整回答了深度学习平台/GPU集群缩短训练时间及OTA部署方式，与reference_answer高度一致。Baseline虽检索到相同证据却错误声称无法回答，存在明显事实性错误。"
+    },
+    {
+      "id": "eval-065",
+      "question": "VAD提出了哪三种基于显式向量化场景表示的实例级规划约束？它们分别起到什么作用？",
+      "reference_answer": "三种约束是：1. 自我-智能体碰撞约束（ego-agent collision constraint）：在横向和纵向上保持自我车辆与其他动态智能体之间的安全距离。2. 自我-边界越界约束（ego-boundary overstepping constraint）：将规划轨迹推离道路边界。3. 自我-车道方向约束（ego-lane direction constraint）：正则化未来运动方向，使其符合车道方向。",
+      "baseline_answer": "",
+      "candidate_answer": "\n\n根据提供的参考资料，VAD 确实提出了三种基于显式向量化场景表示的实例级规划约束，但资料内容仅完整披露了其中一种，具体如下：\n\n1.  **自车 - 智能体碰撞约束 (ego-agent collision constraint)**\n    *   **作用**：用于维持自车与智能体之间的安全距离（资料原文为 \"maintaining a safe distance between\"，结合约束名称可知是指自车与智能体之间）。\n\n2.  **关于另外两种约束**\n    *   参考资料中明确提到共有“三种”此类约束（\"proposes three instance-level planning constraints\"），但文本在列举第一种约束的作用后中断，**未包含另外两种约束的具体名称和作用**。\n\n因此，基于现有参考资料，无法提供全部三种约束的完整列表及作用。建议您查阅完整的 VAD 论文以获取详细信息。",
+      "winner": "candidate",
+      "reason": "Candidate correctly identifies the ego-agent collision constraint and acknowledges the existence of three constraints but incorrectly claims incomplete information despite evidence containing all three. Baseline provides no answer. Candidate's partial accuracy and adherence to evidence outweighs baseline's empty response."
+    },
+    {
+      "id": "eval-066",
+      "question": "对于配备ADS的车辆，当系统发生故障或遇到无法处理的场景时，文档建议如何实现“最小风险状态”（Minimal Risk Condition）的过渡？",
+      "reference_answer": "鼓励实体制定一个文档化的过渡过程，以进入最小风险条件的流程，ADS应能通知人类驾驶员此类事件，使得驾驶员能够重新获得对车辆的适当控制，或允许ADS独立返回最小风险条件。该回退动作应以最小化异常驾驶行为的方式执行，并考虑减少对车内人员和其他道路使用者的不利影响。",
+      "baseline_answer": "\n\n根据提供的参考资料，文档中虽未直接使用“最小风险状态”（Minimal Risk Condition）这一术语，但通过**后备准备（Fallback）**和**应急处理**机制描述了相应的过渡要求。具体建议如下：\n\n1.  **责任主体明确**：\n    根据自动驾驶等级划分（L3及以上），**系统**负责**后备准备（Fallback）**职责。当系统失效或超出运行设计域（ODD）时，由系统而非驾驶员执行应急处理，确保车辆过渡到安全状态。\n\n2.  **系统架构支持**：\n    参考 Apollo 系统架构，车辆内部包含**监控模块**和**Guardian模块**，用于持续监测系统状态和安全逻辑，确保在异常情况下能够及时介入并触发后备机制。\n\n3.  **预案与响应机制**：\n    *   **测试阶段**：需制定**应急预案**，并具备实时监控系统状态及安全事件报告的能力。\n    *   **运营阶段**：需建立**应急响应**机制，包括与应急服务的接口及事故现场处理程序，确保车辆能安全进入应急状态。\n\n综上，文档建议通过系统自动执行后备策略、内部安全模块监控以及符合标准的应急预案与应急响应流程，来实现故障场景下的安全过渡。",
+      "candidate_answer": "\n\n根据参考资料《AUTOMATED DRIVING SYSTEMS 2.0: A VISION FOR SAFETY》，对于配备ADS的车辆，当系统发生故障或遇到无法处理的场景时，文档建议通过以下方式实现“最小风险状态”的过渡：\n\n1.  **建立文档化流程**：实体应制定并记录明确的流程，用于指导系统从正常运行过渡到最小风险条件。\n2.  **通知驾驶员并寻求接管**：ADS应能够向人类驾驶员通知此类事件，使驾驶员能够重新获得对车辆的适当控制。\n3.  **系统自主过渡**：若驾驶员无法接管，ADS应能独立地将车辆恢复到最小风险条件。",
+      "winner": "candidate",
+      "reason": "Candidate 准确提取了 evidence 中关于‘文档化流程’、‘通知驾驶员’和‘独立返回’的核心建议，与 reference_answer 高度一致。Baseline 错误地声称文档未使用‘最小风险状态’术语，且过度引入了 Apollo 架构和等级划分等次要信息，未直接回答过渡流程的具体要求。"
+    },
+    {
+      "id": "eval-067",
+      "question": "4DLidarOpen数据集与传统ToF激光雷达数据集的主要区别是什么？",
+      "reference_answer": "4DLidarOpen数据集提供了逐点的径向速度测量，而传统ToF激光雷达数据集主要提供几何测量。",
+      "baseline_answer": "\n\n根据提供的参考资料，未涉及4DLidarOpen数据集与传统ToF激光雷达数据集的相关内容，因此无法基于资料回答该问题。参考资料主要涵盖NHTSA法规、自动驾驶算法（如FusionAD、VAD）及Apollo系统架构，未提及特定激光雷达数据集的对比信息。",
+      "candidate_answer": "\n\n根据提供的参考资料，4DLidarOpen数据集与传统ToF（Time-of-Flight）激光雷达数据集的主要区别在于**测量内容的维度**和**速度信息的获取方式**：\n\n1.  **测量内容维度**：\n    *   **传统ToF数据集**：主要提供**几何测量**，即点云的位置信息（x, y, z）。\n    *   **4DLidarOpen数据集**：基于4D FMCW激光雷达，提供了**逐点径向速度测量**，即点云不仅包含位置信息，还包含每个点的瞬时径向速度（x, y, z, v）。\n\n2.  **速度获取方式**：\n    *   **传统ToF数据集**：无法直接获取速度，通常需要通过**帧间差分**等算法间接估计物体的运动。\n    *   **4DLidarOpen数据集**：能够**直接测量**径向速度，无需依赖帧间计算，从而能更精确地感知动态场景中的物体运动。\n\n3.  **应用优势**：\n    *   由于具备直接的速度感知能力，4DLidarOpen数据集更适用于**运动感知的自动驾驶任务**（如动态场景理解、运动预测），而传统数据集更多侧重于静态几何结构的感知。\n\n此外，4DLidarOpen是一个多模态数据集，集成了多种类型的激光雷达（包括4D FMCW、旋转OT、固态AT、ATX盲点激光雷达）、环视相机及6-DOF车辆位姿，且所有传感器经过硬件同步和联合标定。",
+      "winner": "candidate",
+      "reason": "Baseline 声称资料中未涉及相关内容，但提供的 evidence 字段明确包含了答案所需信息。Candidate 正确利用了 evidence 和 retrieved_rows，其核心回答（4DLidarOpen 提供逐点径向速度，传统 ToF 提供几何测量）与 reference_answer 完全一致，且忠于证据。"
+    },
+    {
+      "id": "eval-068",
+      "question": "SparseDrive 中的并行运动规划器是如何处理规划如何将规划建模为多模态问题，并采用何种选择策略来保证安全？",
+      "reference_answer": "并行运动规划器将规划建模为多模态问题，生成多个轨迹提议。然后提出一种层次化规划选择策略，其中包含碰撞感知重评分模块，用于从多模态轨迹提案中选出合理且安全的最终规划轨迹。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法回答**关于 SparseDrive 并行运动规划器的问题。\n\n提供的参考资料主要介绍了 **Apollo 自动驾驶系统** 的相关技术，具体包括：\n1.  **控制模块**：纵向控制的位置与速度闭环逻辑。\n2.  **通信框架**：各模块（感知、预测、规划等）的 Channel 数据格式。\n3.  **感知与预测**：雷达目标跟踪器（基于贝叶斯滤波）和行为预测器（意图分类与交互建模）。\n4.  **规划模块**：基于场景的规划框架（如巡航、路口场景）及 Lattice Planner。\n\n资料中**未包含**任何关于 **SparseDrive** 系统的信息，也未提及将其规划建模为多模态问题的方法或特定的安全选择策略。因此，基于现有资料无法提供 SparseDrive 相关技术细节。",
+      "candidate_answer": "\n\n根据提供的参考资料，SparseDrive 中的并行运动规划器通过以下方式处理规划建模与安全策略：\n\n1.  **多模态建模**：该规划器采用**并行设计**（parallel design），将规划任务建模为一个**多模态问题**（multi-modal problem）。这种设计是基于对运动预测和规划任务之间高度相似性的认识。\n\n2.  **安全选择策略**：为了确保安全，系统提出了一种**分层规划选择策略**（hierarchical planning selection strategy）。该策略的核心是一个**碰撞感知的重打分模块**（collision-aware rescore module），它用于评估候选轨迹，并从中选择出一条合理且安全的轨迹作为最终的规划输出。",
+      "winner": "candidate",
+      "reason": "Candidate correctly addresses the question by accurately reflecting the reference answer's key points (multi-modal modeling and hierarchical selection with collision-aware rescore) using the provided evidence from paper-075. Baseline incorrectly claims insufficient information despite the evidence containing the exact answer, while candidate properly leverages the retrieved rows and evidence without unsupported elaboration."
+    },
+    {
+      "id": "eval-069",
+      "question": "BEVStereo如何利用动态机制和EM算法解决传统MVS在自动驾驶场景中的问题？请结合参数预测和演化过程说明。",
+      "reference_answer": "BEVStereo首先通过预测两个建模参数——深度中心µ和深度范围σ，来减少构建代价体积时的候选数量，仅采样少量参考候选特征而非沿深度轴的所有候选，从而大幅降低计算和内存开销。然后，通过EM（期望最大化）算法迭代更新µ和σ，使候选特征持续向更重要的方向演化，这一过程中，即使面对移动物体或自车静止导致视差角变化的情况，也能适应性地调整候选，从而改善深度估计的鲁棒性，克服传统MVS在动态场景中的失效问题。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法回答**关于 BEVStereo 如何利用“EM 算法”、“动态机制”、“参数预测”和“演化过程”的具体技术细节，因为资料中**并未提及**这些术语或相关机制。\n\n基于现有资料（`source_id=paper-028`），仅能确认以下事实：\n\n1.  **场景适应性**：BEVStereo 在**移动物体**（moving objects）和**静态自车**（static ego vehicles）等挑战性条件下进行了性能评估。资料指出，当传统 MVS 方法（如 MVSNet）在处理移动物体失败时，BEVStereo 仍能提升性能。\n2.  **优化器**：资料中明确提到训练时使用的优化器是 **AdamW**，而非 EM 算法。\n3.  **性能与资源**：BEVStereo 在 mAP、mATE 和 NDS 指标上优于 BEVDepth，且显著降低了内存占用（例如从 24.04GB 降至 8.01GB）。\n\n因此，关于具体的参数预测和演化过程，现有资料未提供相关信息。建议您补充包含 BEVStereo 具体算法架构的参考资料。",
+      "candidate_answer": "\n\n根据提供的参考资料，**BEVStereo 并未提及使用“EM 算法”**，而是引入了**动态时间立体技术**和**进化技术**来解决传统 MVS 在自动驾驶场景中的问题。以下是结合资料内容的具体说明：\n\n### 1. 动态机制解决内存成本问题\n传统 MVS 技术在构建代价体积时面临巨大的内存开销。BEVStereo 通过引入**动态时间立体技术**，能够**节省极端的内存成本**。\n*   **对比效果**：资料指出，相比使用 MVS 的 BEVDepth，BEVStereo 在大幅提升性能的同时，显著减少了内存使用（例如在部分配置下内存占用从 24.04GB 降至 8.01GB）。\n\n### 2. 进化技术解决动态场景适应性问题\n传统 MVS 在处理**移动物体**和**静态自车**（ego vehicles）场景时存在致命缺陷（如无法处理移动物体或自车低速/静止时的特征匹配）。BEVStereo 设计了**进化技术**来应对这些挑战：\n*   **参数预测与演化过程**：该技术要求**持续改进对代价体积更重要的参考候选特征（reference candidate features）**。通过演化过程，算法能够**更新更有价值的候选者（update more valuable candidates）**，使其具有**对移动候选者的适应性（adaptive to moving candidates）**。\n*   **场景适应**：这一机制使得 BEVStereo 能够适应包括移动物体和静态自车在内的复杂户外情况，而传统 MVS 在这些条件下往往失效。\n\n### 3. 综合性能提升\n*   **检测精度**：在 nuScenes 数据集上，BEVStereo 达到了新的最先进性能（SOTA），实现了 **52.5% mAP 和 61.0% NDS**。\n*   **鲁棒性**：即使在自车速度较低（<1 m/s）导致 MVS 失效的条件下，BEVStereo 仍能提升性能；其对静态物体的感知能力甚至高于 BEVDepth with MVS。\n\n综上所述，BEVStereo 通过**动态时间立体技术**优化内存，并通过**进化技术**（而非资料中未提及的 EM 算法）持续优化特征候选，从而解决了传统 MVS 在自动驾驶场景中的内存与动态适应性难题。",
+      "winner": "candidate",
+      "reason": "Candidate 正确识别了检索文档中的“进化技术”和“动态机制”，并解释了参数预测与演化过程，这与 reference_answer 的核心逻辑高度一致。相比之下，Baseline 错误地声称资料未提及相关机制并直接拒绝回答，完全忽略了 evidence 中明确提供的 EM 算法信息以及 retrieved_rows 中的进化技术描述，导致其回答与 reference_answer 完全脱节。尽管 Candidate 在 EM 算法的表述上与 evidence 有出入，但其整体信息量和逻辑结构远优于 Baseline。"
+    },
+    {
+      "id": "eval-070",
+      "question": "在nuScenes数据集上，VAD-Base相比之前最佳方法在平均碰撞率和运行速度上分别提升了多少？",
+      "reference_answer": "VAD-Base将平均碰撞率降低了29.0%，运行速度快了2.5倍。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法回答**关于 VAD-Base 在 nuScenes 数据集上平均碰撞率和运行速度提升的具体数值。\n\n原因如下：\n1.  **资料缺失**：提供的参考资料中主要包含 Apollo 系统模块介绍、DETR3D 方法介绍以及 FusionAD 方法介绍，**并未包含关于 VAD-Base 模型的相关文档或数据**。\n2.  **指标不匹配**：资料中虽提及 nuScenes 数据集（如 DETR3D 在 nuScenes 上的 NDS 和 mAP 指标），但未涉及 VAD-Base 的碰撞率或运行速度数据。\n\n建议补充包含 VAD-Base 性能评估的参考资料，以便进行准确回答。",
+      "candidate_answer": "\n\n根据提供的参考资料，在 nuScenes 数据集上，VAD-Base 相比之前的最佳方法（UniAD）表现如下：\n\n*   **平均碰撞率**：降低了 **29.0%**（从 0.31% 降至 0.22%）。\n*   **运行速度**：提升了 **2.5 倍**。",
+      "winner": "candidate",
+      "reason": "candidate准确引用了evidence中的关键数据（碰撞率降低29.0%、速度提升2.5倍），与reference_answer完全一致，且retrieved_rows包含直接支持该结论的文档内容。baseline虽正确指出部分资料缺失，但忽略了evidence中明确存在的VAD-Base性能数据，导致未能正确回答问题。"
+    },
+    {
+      "id": "eval-071",
+      "question": "Cross-view Transformer 模型的一个关键特点是什么，它如何避免显式建模几何关系？",
+      "reference_answer": "模型通过使用几何感知的位置嵌入（geometry-aware positional embedding）来学习不同视图之间的映射，而无需执行显式的几何推理或深度估计。具体来说，每个相机使用依赖于其内参和外参的位置编码，通过注意力机制隐式学习从相机视图到地图视图的映射。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中并未直接提及名为“Cross-view Transformer”的模型，但详细介绍了与其机制高度相似的 **DETR3D** 模型（一种基于纯视觉的 3D 目标检测方法）。基于资料中关于 DETR3D 的描述，回答如下：\n\n1.  **关键特点：**\n    **3D-to-2D Query 机制**。该机制通过在 3D 空间中生成 reference points，然后通过相机内外参数将这些 3D 点投影到各视角的 2D 图像上，从而采样对应的图像特征，实现了 3D 检测与多视角 2D 特征的高效融合。\n\n2.  **如何避免显式建模几何关系：**\n    **无需深度估计**。与许多依赖显式深度估计的纯视觉方法不同，DETR3D **隐式地通过几何变换学习 3D 空间信息**，避免了深度估计带来的误差累积问题，实现了从多视角图像中直接进行 3D 目标检测。",
+      "candidate_answer": "\n\n根据提供的参考资料，Cross-view Transformer 模型的关键特点及避免显式几何建模的方式如下：\n\n1.  **关键特点**：\n    模型采用**跨视图 Transformer 架构（cross-view transformer architecture）**，通过**相机感知嵌入（camera-aware embeddings）**，将多视角的相机视图特征映射到统一的规范地图视图（canonical map-view）表示中。\n\n2.  **如何避免显式建模几何关系**：\n    模型通过**隐式学习（implicitly learn）**来替代显式的几何操作：\n    *   **不进行显式几何推理**：Transformer 不执行任何显式的几何变换（如逆透视映射、单应性变换）或深度估计。\n    *   **学习相机标定依赖的映射**：相机几何信息被编码进位置嵌入中，使模型能够学习到一个依赖于相机标定的映射。这个学习到的映射在功能上类似于原始的几何变换，但完全由网络权重隐式学习得到。\n    *   **注意力机制实现对齐**：注意力机制自动关注对目标查询点贡献最大的图像特征区域，从而隐式地实现不同视图之间的对齐，无需依赖显式的几何瓶颈。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地回答了 DETR3D 模型而非问题所问的 Cross-view Transformer，且忽略了直接相关的 evidence。Candidate 准确识别了 Cross-view Transformer，其答案（相机感知嵌入、隐式学习映射、避免显式几何推理）与 reference_answer 和 evidence 高度一致，忠实于检索到的相关论文内容。"
+    },
+    {
+      "id": "eval-072",
+      "question": "MUTR3D提出了哪两个用于评估运动模型的新指标？",
+      "reference_answer": "Average Tracking Velocity Error (ATVE) 和 Tracking Velocity Error (TVE)，它们测量被跟踪对象估计运动的误差。",
+      "baseline_answer": "\n\n根据您提供的参考资料，**无法回答**MUTR3D提出了哪两个用于评估运动模型的新指标。\n\n所提供的资料内容主要围绕**Apollo自动驾驶系统**的架构与模块，具体包括：\n1.  **Channel数据格式**：介绍Apollo各模块间的通信框架。\n2.  **规划模块**：阐述基于场景的规划框架。\n3.  **控制模块**：描述纵向控制的实现原理。\n4.  **定位模块**：介绍MSF多传感器融合定位的原理。\n5.  **ISO 21448标准**：介绍预期功能安全（SOTIF）标准。\n\n以上资料均未提及**MUTR3D**模型或其提出的评估指标。",
+      "candidate_answer": "\n\n根据提供的参考资料，**无法回答**MUTR3D提出了哪两个用于评估运动模型的新指标。\n\n资料中关于MUTR3D（paper-051）的内容仅提及：\n1.  **使用现有指标进行评估**：在“4.5. Evaluating Motion Models”章节及Table 2中，MUTR3D使用了**AMOTA**、**AMOTP**、**MOTA**、**MOTP**、**IDS**等**现有的通用评估指标**来对比其性能与基线方法（如DETR3D + KF, DETR3D + SimpleTrack）。\n2.  **未提出新指标**：资料中明确说明MUTR3D是一个端到端的跟踪框架，引入了“3D track query”并简化了跟踪流程，但**并未提及**该方法提出了任何专门用于评估运动模型的**新指标**。\n\n因此，基于现有资料，无法确认MUTR3D提出了用于评估运动模型的新指标。",
+      "winner": "candidate",
+      "reason": "Candidate 正确识别了资料中包含 MUTR3D 论文（paper-051），并基于检索内容进行了分析，尽管未从 evidence 中提取出具体指标。Baseline 完全忽略了资料中的 MUTR3D 论文（evidence 来源），错误地认为资料仅围绕 Apollo 系统。Candidate 对输入材料的主题识别更准确，检索到的文档也更相关，因此优于 Baseline。"
+    },
+    {
+      "id": "eval-073",
+      "question": "论文中提出的3D IoU导向损失函数主要针对哪个子任务进行优化？它在实验中相比3D GIoU损失表现如何？",
+      "reference_answer": "该损失函数针对物体的尺寸估计（dimension estimation）进行优化。实验表明，该损失函数提升了精度，而不同权重的3D GIoU损失未能提升精度。",
+      "baseline_answer": "\n\n根据您提供的参考资料，**未包含**关于“3D IoU导向损失函数”的具体描述、优化子任务或其与3D GIoU损失的对比实验数据。\n\n提供的资料主要涉及Apollo系统的控制与规划模块、TransFusion多模态融合方法以及PointPillars点云检测方法，其中并未提及该损失函数的相关细节。此前对话中提到的具体实验数据（如11.74、11.12等）可能源自未在当前参考资料中列出的其他文献，建议核实原始论文来源。",
+      "candidate_answer": "\n\n根据提供的参考资料，回答如下：\n\n1.  **优化子任务**：\n    论文提出的3D IoU导向损失函数主要针对 **3D 尺寸估计（3D size estimation）** 子任务进行优化。该损失函数会在样本级别根据每条边（高、宽、长）对3D IoU的贡献率，动态调整其损失权重，以避免定位相关子任务（如深度估计）淹没尺寸估计任务。\n\n2.  **与3D GIoU损失的实验对比**：\n    在KITTI验证集Car类别中等难度设置下（AP40指标），本文提出的IoU导向损失表现优于基线及3D GIoU损失。具体数据如下（Table 10）：\n    *   **本文方法 (Ours)**：**11.74**\n    *   **基线 (Baseline)**：11.12\n    *   **3D GIoU 损失**：权重为 0.5 时为 10.17，权重为 1 时为 10.19，权重为 5 时为 8.48。\n\n    **结论**：实验结果表明，本文的IoU导向优化显著提升了检测精度，而不同权重的3D GIoU损失均未达到基线水平。",
+      "winner": "candidate",
+      "reason": "Candidate准确指出3D IoU导向损失针对尺寸估计优化，并引用具体实验数据（KITTI验证集AP40指标）对比3D GIoU损失，与reference_answer完全一致。其回答严格基于evidence中的论文内容（如Table 10数据），而baseline错误声称资料中无相关信息，未正确利用已提供的证据。"
+    },
+    {
+      "id": "eval-074",
+      "question": "在BEV-SAN中，全局和局部BEV切片特征的融合具体分为哪两个步骤？分别使用了什么机制？",
+      "reference_answer": "首先分别使用高度注意力机制（height attention mechanism）融合全局切片和局部切片内部的特征；然后使用一个transformer将合并后的全局特征和局部特征进一步融合，生成最终特征图。",
+      "baseline_answer": "\n\n根据参考资料（paper-023），在BEV-SAN中，全局和局部BEV切片特征的融合分为以下两个步骤，分别使用了相应的机制：\n\n1.  **第一步**：分别对全局切片（global slices）和局部切片（local slices）进行特征融合。\n    *   **机制**：**高度注意力机制（height attention mechanism）**。\n    *   **依据**：原文提到“To merge the global and local slices, we first use the height attention mechanism to fuse the global and local slices separately.”\n\n2.  **第二步**：将第一步融合后的全局特征与局部特征进一步融合，生成最终的特征图。\n    *   **机制**：**Transformer**（具体为双分支Transformer）。\n    *   **依据**：原文提到“Then we adopt a transformer to fuse the merged global and local features.”",
+      "candidate_answer": "\n\n根据提供的参考资料（paper-023），在BEV-SAN中，全局和局部BEV切片特征的融合具体分为以下两个步骤，分别使用了相应的机制：\n\n1.  **第一步**：分别对全局切片（global slices）和局部切片（local slices）进行特征融合。\n    *   **机制**：**高度注意力机制（height attention mechanism）**。\n    *   **依据**：原文提到“To merge the global and local slices, we first use the height attention mechanism to fuse the global and local slices separately.”\n\n2.  **第二步**：将第一步融合后的全局特征与局部特征进一步融合，生成最终的特征图。\n    *   **机制**：**Transformer**。\n    *   **依据**：原文提到“Then we adopt a transformer to fuse the merged global and local features.”",
+      "winner": "candidate",
+      "reason": "Candidate's answer is more faithful to the evidence (cites only relevant paper-023 sources) and avoids unsupported details like '双分支Transformer' in baseline. Both answers match reference_answer's core content, but candidate's evidence alignment and conciseness give it an edge."
+    },
+    {
+      "id": "eval-075",
+      "question": "Apollo控制模块有几个输入channel？分别是什么？",
+      "reference_answer": "Apollo控制模块有三个输入channel，分别是：/Apollo/planning（规划信息，自车规划的轨迹信息）、/Apollo/localization/pose（定位信息，自车的位置）、/Apollo/canbus/chassis（底盘信息，自车的方向盘、速度信息）。",
+      "baseline_answer": "\n\n根据 Apollo 自动驾驶系统的架构设计及参考资料中提到的模块通信框架与控制模块功能，Apollo 控制模块共有 **3 个主要输入 channel**，分别是：\n\n1.  **`/Apollo/planning`**：**规划信息**。提供由规划模块生成的车辆行驶轨迹（参考资料 5 提到控制模块“根据规划轨迹生成具体的油门、刹车和转向指令”）。\n2.  **`/Apollo/localization/pose`**：**定位信息**。提供自车的实时位置与姿态（参考资料 2 提到各模块间存在数据流动线）。\n3.  **`/Apollo/canbus/chassis`**：**底盘信息**。提供自车的方向盘转角、车速等状态反馈（参考资料 5 提到控制模块需生成指令驱动车辆，需依赖底盘状态）。\n\n*注：具体的 Channel 名称基于 Apollo 系统通信框架的标准配置，参考资料 2 中提到了“Channel 数据格式文档”及模块间的通信框架。*",
+      "candidate_answer": "\n\n根据提供的参考资料，Apollo 控制模块共有 **3 个输入 channel**，具体如下：\n\n1.  **`/Apollo/planning`**：规划信息，提供自车规划的轨迹信息。\n2.  **`/Apollo/localization/pose`**：定位信息，提供自车的位置。\n3.  **`/Apollo/canbus/chassis`**：底盘信息，提供自车的方向盘、速度信息。",
+      "winner": "candidate",
+      "reason": "Candidate答案更简洁且完全基于提供的evidence（apollo-doc-009），准确列出三个输入channel及其路径名称，与reference_answer完全一致。Baseline虽答案正确，但retrieved_rows中未包含直接支持其引用的apollo-doc-009，且存在对参考资料2/5的间接引用，而candidate的检索结果直接匹配证据来源。"
+    },
+    {
+      "id": "eval-076",
+      "question": "PV-RCNN为了高效融合体素CNN和PointNet-based网络，提出了哪两步策略来解决内存密集问题？",
+      "reference_answer": "第一步是“体素到关键点（voxel-to-keypoint）”的场景编码步骤和“关键点到网格（keypoint-to-grid）”的RoI特征抽象步骤。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中**并未提及“PV-RCNN”模型**或其为解决内存密集问题所提出的两步策略。\n\n资料中提到了其改进版本 **“PV-RCNN++”**，并指出它采用了以下两步策略来优化内存和效率：\n1.  **扇区化提案中心关键点采样**（Sectorized proposal-centric keypoint sampling）\n2.  **VectorPool 聚合模块**（VectorPool aggregation module）\n\n但关于您询问的 **“PV-RCNN”** 本身的具体信息，在现有资料中无法找到。",
+      "candidate_answer": "\n\n根据提供的参考资料，需要澄清的是：**原始的PV-RCNN框架**通过“体素到关键点场景编码”和“关键点到网格RoI特征抽象”来融合体素和点特征，但资料明确指出它**并未解决**内存密集问题，反而在处理大规模点云时存在效率瓶颈。\n\n为了解决这些问题，其改进版本**PV-RCNN++**提出了以下两步策略来优化内存和效率：\n\n1.  **扇区化提案中心关键点采样**：用于获得更具代表性的关键点，且速度更快。\n2.  **VectorPool聚合模块**：用于从大规模点云中进行更有效、更高效的局部特征聚合，相比传统方法消耗更少的内存和计算资源。\n\n采用这两步优化策略后，PV-RCNN++显著降低了计算量和GPU内存消耗，并将运行速度从3.3 FPS提升至10 FPS。",
+      "winner": "candidate",
+      "reason": "Candidate 正确识别并引用了 evidence (paper-064) 中关于 PV-RCNN 原始两步策略（voxel-to-keypoint scene encoding 和 keypoint-to-grid RoI feature abstraction）的描述，这与 reference_answer 完全一致。Baseline 错误地声称资料中未提及 PV-RCNN，忽略了 evidence 中的关键信息。此外，Candidate 结合 retrieved_rows (paper-065) 准确区分了 PV-RCNN 和 PV-RCNN++ 的策略，提供了更准确且忠于检索内容的回答。"
+    },
+    {
+      "id": "eval-077",
+      "question": "123D如何解决不同数据集之间模态同步和频率不一致的问题？",
+      "reference_answer": "将每种模态存储为独立的时间戳事件流，没有预设的速率，支持同步或异步访问。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中**并未包含**关于“123D”及其如何解决不同数据集之间模态同步和频率不一致问题的相关信息。\n\n提供的参考资料主要涵盖以下内容：\n1.  **Apollo 控制系统**：纵向控制模块（位置/速度闭环）、Channel 数据格式及模块通信框架。\n2.  **功能安全标准**：ISO 26262 的 ASIL 等级分配、验证确认方法及与其他标准（如 ISO 21448、UL 4600）的关系。\n3.  **感知与规划模型**：PETRv2 的 3D 检测与 BEV 分割架构，以及 GenAD 的端到端自动驾驶生成模型。\n\n因此，无法基于现有资料回答关于 123D 的具体技术实现问题。如果您能提供更多关于 123D 的参考资料，我可以为您进行详细解答。",
+      "candidate_answer": "\n\n根据参考资料，123D 通过以下机制解决不同数据集之间模态同步和频率不一致的问题：\n\n1.  **独立事件流存储**：将每个模态（如传感器数据、标注等）存储为**独立的带时间戳的事件流**（independent timestamped event stream），且不预设固定速率（no prescribed rate），从而兼容不同数据集原有的频率差异。\n2.  **可配置同步表**：通过同步表（sync table）预计算跨模态对齐，记录每个同步帧在各模态数据中的对应索引，实现高效的同步访问。同步表支持保留原始关键帧、指定参考模态，并可选择重采样至目标速率。\n3.  **灵活访问模式**：支持**同步或异步访问**。用户既可以通过同步表对齐数据，也可以绕过同步表，直接按任意时间戳检索特定模态的数据。\n4.  **统一接口与格式**：通过**单一 API** 统一多模态驾驶数据，并将不同来源解析为**统一的日志和地图格式**（uniform log and map format），以消除传感器配置和同步方案上的差异。\n\n这种设计使得 123D 能够有效处理异构数据集中的模态同步和频率不一致问题，支持跨数据集的应用与研究。",
+      "winner": "candidate",
+      "reason": "candidate的答案直接引用了evidence中的关键句，并详细展开与reference_answer核心点（独立时间戳事件流、无预设速率、同步/异步访问）完全一致，且所有论点均有retrieved_rows中的具体段落支持。baseline虽正确指出资料缺失，但未利用evidence中的有效信息，导致答案与问题无关。"
+    },
+    {
+      "id": "eval-078",
+      "question": "论文中指出了现有Lift-splat方法在深度学习方面的三个缺陷，请列举并简要解释。",
+      "reference_answer": "三个缺陷是：1）不准确的深度（Inaccurate Depth）：深度预测模块仅由最终检测损失间接监督，绝对深度质量远不令人满意；2）深度模块过拟合（Depth Module Over-ﬁtting）：大多数像素无法预测合理深度，表明模块在训练阶段未得到充分训练，泛化能力存疑；3）不精确的BEV语义（Imprecise BEV Semantics）：由于深度质量差，只有部分特征被投影到正确的BEV位置，导致BEV语义不精确。",
+      "baseline_answer": "\n\n根据当前提供的参考资料（主要涉及 Apollo 自动驾驶平台的规划、控制、通信及 Cyber RT 框架），其中**并未包含**关于“Lift-splat 方法”或其深度学习缺陷的相关信息。\n\n之前的回答中提到的 `source_id=paper-016` 及具体缺陷内容（如深度不准确、过拟合等）**不在当前提供的参考资料列表中**。基于“以已知参考资料为主”的原则，无法从当前文档中验证或列举该方法的缺陷。\n\n建议您确认是否提供了正确的论文参考资料，或补充相关文档以便进一步解答。",
+      "candidate_answer": "\n\n根据参考资料（source_id=paper-016），现有 Lift-splat 方法在深度学习机制上存在以下三个缺陷：\n\n1.  **深度预测不准确（Inaccurate Depth）**\n    深度预测模块仅通过最终的检测损失进行间接监督，缺乏直接的深度优化目标，导致预测的绝对深度质量远不能满足要求。\n\n2.  **深度模块过拟合（Depth Module Over-fitting）**\n    大多数像素无法预测出合理的深度值，这表明这些像素在训练阶段没有得到充分的学习，从而让人对深度模块的泛化能力产生怀疑。\n\n3.  **BEV 语义不精确（Imprecise BEV Semantics）**\n    Lift-splat 利用学习到的深度将图像特征反投影到 3D 视锥特征并池化为 BEV 特征。由于深度质量较差，只有部分特征能被正确反投影到 BEV 的正确位置，导致最终的 BEV 语义不精确。",
+      "winner": "candidate",
+      "reason": "candidate 答案直接根据 evidence 正确回答了问题，内容与 reference_answer 高度一致。baseline 答案错误地声称参考资料中不存在相关信息，尽管 evidence 字段明确提供了该信息，导致其未能回答问题。"
+    },
+    {
+      "id": "eval-079",
+      "question": "请解释 RayIoU 评估指标的工作原理及其相较于传统 mIoU 的优势。",
+      "reference_answer": "RayIoU 是一种基于射线的占用评估指标。它通过向预测的3D体积投射查询射线，并判断射线的首次触碰占据体素的距离和类别是否正确，从而确定真正例。相比传统体素级 mIoU，RayIoU 同时解决了两个问题：一是未扫描区域标签模糊导致的惩罚不当，二是沿深度方向的不一致惩罚问题，从而形成更公平合理的评价标准。",
+      "baseline_answer": "\n\n根据提供的参考资料，**RayIoU（Ray-level mIoU）** 是一种用于 3D 占用预测的新型评估指标，其工作原理及相较于传统体素级 mIoU 的优势如下：\n\n### 工作原理\n1.  **基于射线的评估单元**：RayIoU 将**查询射线（query rays）** 作为评估的基本元素，而非传统的体素（voxels）。\n2.  **模拟 LiDAR 行为**：通过将查询射线投射到预测的 3D 占用体积中来模拟 LiDAR 的采样过程。\n3.  **距离与类别计算**：对于每条射线，计算其在与任何表面相交前传播的**距离（depth）** 并获取对应的**类别标签**；对 ground-truth 占用执行相同操作以获得真实深度和标签。\n4.  **真阳性判定**：基于预设的**距离阈值（distance threshold）** 来确定真阳性（true positives）。\n\n### 相较于传统 mIoU 的优势\n1.  **缓解过度严格性**：基于距离阈值判定真阳性，减轻了体素级 mIoU 的过度严格性质（overly strict nature）。\n2.  **解决标签歧义问题**：传统 mIoU 因未扫描体素（unscanned voxels）的标签模糊而成为 ill-posed 公式，RayIoU 通过射线级评估解决了这一问题。\n3.  **消除深度轴不一致惩罚**：解决了传统体素级 mIoU 标准中沿深度轴引入的不一致惩罚（inconsistency penalty along the depth axis）。",
+      "candidate_answer": "\n\n根据提供的参考资料，**RayIoU（Ray-level mIoU）** 是一种用于 3D 占用预测（3D Occupancy Prediction）的新型评估指标。以下是其工作原理及相较于传统体素级 mIoU 的优势：\n\n### 工作原理\n1.  **基于射线的评估单元**：RayIoU 不再以体素（voxels）为基本评估元素，而是将**查询射线（query rays）** 作为评估的基本单元。\n2.  **模拟 LiDAR 行为**：通过将查询射线投射到预测的 3D 占用体积中，模拟 LiDAR 的采样过程。对于每条射线，检索其预测的**深度（距离）** 和 **类别标签**。\n3.  **真阳性判定**：基于预设的**距离阈值（distance threshold）**（如 1m, 2m, 4m）来确定真阳性（true positives）。如果预测深度与真实深度的差异在阈值范围内且类别正确，则计为匹配成功（TP）；否则计为假阳性（FP）或假阴性（FN）。\n4.  **计算公式**：RayIoU 为各类别 IoU 的平均值，公式如下：\n    $$ \\text{RayIoU} = \\frac{1}{C} \\sum_{c=1}^{C} \\frac{\\text{TP}_c}{\\text{TP}_c + \\text{FP}_c + \\text{FN}_c} $$\n\n### 相较于传统 mIoU 的优势\n1.  **解决厚表面问题（Thick Surface Issue）**：\n    *   传统 mIoU 中，模型可通过预测更厚的表面来增加与标签的重叠率，从而人为提高 IoU。\n    *   RayIoU 以射线**首次触碰**的体素为准，模型无法通过预测厚表面获得更高分数。\n2.  **缓解过度严格性（Overly Strict Nature）**：\n    *   传统体素级 mIoU 对位置偏差非常敏感，例如薄表面若偏差一个体素，IoU 即降为 0。\n    *   RayIoU 引入距离阈值判定真阳性，允许微小的位置偏移，评估机制更加宽容合理。\n3.  **保留场景补全能力的评估（Scene Completion Ability）**：\n    *   传统方法若仅评估可见区域（visible mask），会将占用预测退化为单纯的深度估计任务。\n    *   RayIoU 的查询射线可源自场景中的**任意位置**（不仅限于传感器原点），因此能评估模型对未观测区域的补全能力。\n4.  **消除深度轴的不一致惩罚（Inconsistency Penalty）**：\n    *   传统 voxel-level mIoU 标准在深度方向上存在不一致的惩罚问题。\n    *   RayIoU 通过射线级评估和距离阈值，同时解决了标签模糊（ill-posed formulation，针对未扫描体素）和深度惩罚不一致的问题。",
+      "winner": "candidate",
+      "reason": "Candidate 的检索结果（retrieved_rows）高度相关，直接来自讨论 RayIoU 的论文（paper-042, paper-045），而 Baseline 的检索结果大部分是无关的 Apollo 规划文档。Candidate 的答案不仅涵盖了 Reference Answer 的核心点（射线评估、解决标签模糊和深度惩罚），还基于检索到的证据补充了“厚表面问题”和“场景补全能力”等优势，内容更详实且有据可依。Baseline 虽然答案简洁，但其检索上下文质量差，无法有效支撑答案生成。"
+    },
+    {
+      "id": "eval-080",
+      "question": "请简述RadarNet中两种融合方法（voxel-based early fusion和attention-based late fusion）各自的作用是什么？",
+      "reference_answer": "Voxel-based early fusion用于在体素层面上将雷达数据与激光雷达点云融合，以利用雷达的远距离感知能力；Attention-based late fusion则在目标检测后再次融合雷达数据，通过注意力机制处理检测和雷达测量中的不确定性，将一维径向速度转换为准确的二维目标速度估计。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中并未包含关于 RadarNet 及其融合方法（voxel-based early fusion 和 attention-based late fusion）的相关信息。\n\n资料主要涉及以下内容：\n*   **Apollo 控制模块**：纵向控制、位置/速度闭环、油门/刹车指令生成。\n*   **ISO 26262 功能安全标准**：ASIL 等级划分、硬件/软件开发要求、验证与确认方法。\n*   **ISO 21448 预期功能安全标准（SOTIF）**：与 ISO 26262 的区别、四区域分析模型。\n*   **自动驾驶等级与测试**：SAE L0-L5 分级、测试安全要求、商业化运营规范。\n\n因此，无法基于现有资料回答关于 RadarNet 融合方法的问题。",
+      "candidate_answer": "\n\n根据提供的参考资料，RadarNet 中两种融合方法的作用如下：\n\n1.  **Voxel-based early fusion（基于体素的早期融合）**\n    *   **作用**：将雷达数据与 LiDAR 点云在体素层面进行融合。\n    *   **目的**：主要利用雷达的**几何信息**和**长感知范围**（long sensing range），从而提升远距离目标的检测能力。\n\n2.  **Attention-based late fusion（基于注意力的后期融合）**\n    *   **作用**：在获得目标检测结果后，通过注意力机制关联并聚合雷达目标与检测对象。\n    *   **目的**：主要利用雷达的**动态信息**（如速度读数/velocity readings），以优化目标的速度估计，同时捕获检测和测量中的不确定性。\n\n这两种方法共同构成了多级融合方案，旨在充分利用雷达数据的几何和动态互补信息。",
+      "winner": "candidate",
+      "reason": "Baseline 回答错误地声称资料中不包含 RadarNet 相关信息，未能利用 evidence 中提供的直接答案。Candidate 回答准确、全面，与 reference_answer 和 evidence 高度一致，正确阐述了两种融合方法的作用。"
+    },
+    {
+      "id": "eval-081",
+      "question": "在端到端自动驾驶系统中，多任务学习面临哪些主要挑战？",
+      "reference_answer": "不同任务关注不同元素（前景或背景），偏向不同的模型架构；当直接共享编码器时，每个任务的预测性能通常低于单任务模型。",
+      "baseline_answer": "\n\n根据您提供的参考资料，在端到端自动驾驶系统中，多任务学习面临以下主要挑战：\n\n1.  **单任务主导与模型割裂**：绝大多数现有的 3D 感知工作是单任务的。即使声称支持多任务兼容的方法，往往也是为每个任务单独训练模型，未能实现真正的端到端多任务共享编码结构（source_id=paper-022）。\n2.  **计算资源与训练成本**：多任务学习需要更多的计算资源，从而显著增加了训练成本（source_id=paper-022）。\n3.  **监督信号不足与幻觉问题**：仅依赖轨迹监督难以使网络学习复杂逻辑，容易导致幻觉。因此，模型仍需引入感知任务解码器来对 3D 特征施加约束，这增加了多任务架构设计的复杂性（source_id=paper-022）。\n4.  **任务间协同不足**：在端到端驾驶中，现有方法对预测和规划任务采用直接的设计，未能充分考虑这两个任务之间的相似性，从而限制了整体性能（source_id=paper-076）。\n5.  **系统设计的复杂性**：当前的端到端方法采用不同的子任务结果、3D 表示和规划模块，导致了复杂的设计，这给多任务的有效整合带来了挑战（source_id=paper-022）。\n6.  **任务独立性与信息共享**：传统范式下各学习模块独立使用 backbone 且任务独立学习，下游任务往往缺乏高层语义信息。端到端多任务学习需解决如何有效共享特征及传递语义信息的问题（source_id=paper-043, source_id=paper-013）。\n7.  **感知输入的鲁棒性**：视觉感知算法易受环境影响且缺乏深度信息，给感知任务带来高精确率和高稳定性的挑战，进而影响端到端系统的整体性能（source_id=apollo-doc-006）。",
+      "candidate_answer": "\n\n根据您提供的参考资料，在端到端自动驾驶系统中，多任务学习面临以下主要挑战：\n\n1.  **计算资源与模型效率挑战**：同时实现更高分辨率、更大编码网络和更多帧的处理存在显著困难。在 3D 感知模型中，超过 80% 的计算负载集中在传感器信息编码部分，如何在单一模型中高效预测多个任务并降低计算成本是关键难点（source_id=paper-022）。\n\n2.  **单任务主导与架构割裂**：绝大多数现有的 3D 感知工作是单任务的。即使声称支持多任务的方法，也往往为每个任务单独训练模型，未能实现真正的端到端多任务共享编码结构。传统范式下各模块独立使用 backbone，任务独立学习（source_id=paper-022, source_id=paper-013, source_id=paper-006）。\n\n3.  **监督信号不足与幻觉问题**：仅依赖轨迹监督难以使网络学习复杂逻辑，容易导致幻觉。因此，模型仍需引入感知任务解码器来对 3D 特征施加约束，这增加了多任务架构设计的复杂性（source_id=paper-022）。\n\n4.  **任务间协同不足与语义信息缺失**：现有端到端方法对预测和规划任务采用直接的设计，未能充分考虑这两个任务之间的相似性，从而限制了整体性能。下游任务通常依赖于感知结果的向量表示，而高层语义信息往往是不可用的（source_id=paper-076, source_id=paper-013, source_id=paper-006）。\n\n5.  **感知输入的鲁棒性**：视觉感知算法易受环境影响且缺乏深度信息，给感知任务带来高精确率和高稳定性的挑战，进而影响端到端系统的整体性能（source_id=apollo-doc-006）。",
+      "winner": "tie",
+      "reason": "Both baseline and candidate fail to capture the core point of the reference answer and evidence regarding 'different tasks focusing on foreground vs. background elements favoring different architectures' and 'shared encoder performance being lower than single-task models'. Both answers list multiple challenges (computational cost, hallucination, etc.) that are largely unsupported by the provided evidence snippet (paper-022 quote) and represent ungrounded expansion. Since both miss the key evidence-based reasoning and exhibit similar levels of ungrounded expansion, their quality is indistinguishable."
+    },
+    {
+      "id": "eval-082",
+      "question": "根据文档描述，VoxelNet在KITTI数据集的车、行人和自行车检测任务上的表现如何？它是否仅限于车辆检测？",
+      "reference_answer": "VoxelNet在KITTI车辆检测基准上大幅超越了当时基于LiDAR的最先进方法。此外，它不仅限于车辆检测，还能有效学习不同几何形状物体的判别性表示，在行人和自行车三维检测上也取得了令人鼓舞的结果。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中并未包含关于VoxelNet在KITTI数据集上的检测性能或应用范围的任何描述。因此，无法根据现有资料回答您的问题。",
+      "candidate_answer": "\n\n根据文档描述，VoxelNet 在 KITTI 数据集上的表现及检测范围如下：\n\n1.  **检测表现**：VoxelNet 在 KITTI 基准上产生了最先进的结果（state-of-the-art results）。文档指出，VoxelNet 在更具挑战性的 3D 检测任务上性能提升显著（鸟瞰视图约提升 8%，3D 检测约提升 12%），表明其在捕捉 3D 形状信息方面更有效。\n2.  **检测范围**：VoxelNet 并不限于车辆检测。文档明确说明实验涵盖了汽车、行人和自行车（Car, Pedestrian, and Cyclist）三个类别。",
+      "winner": "candidate",
+      "reason": "Baseline 的 answer 声称资料中未包含相关信息，但其 evidence 和 retrieved_rows 中明确包含了 VoxelNet 在 KITTI 上的表现及检测范围，属于严重的事实性错误。Candidate 的 answer 准确利用了 evidence 和 retrieved_rows 中的信息，与 reference_answer 高度一致，且未出现无依据扩写。"
+    },
+    {
+      "id": "eval-083",
+      "question": "什么是Occupancy Flow Fields？它由哪两部分组成？",
+      "reference_answer": "Occupancy Flow Fields是一种用于多智能体运动预测的表示方法，它由两个部分组成：一个时空网格，其中每个网格单元包含该单元被任何智能体占据的概率（occupancy），以及一个二维流向量，表示该单元中运动的方向和大小（flow）。",
+      "baseline_answer": "\n\n根据提供的参考资料，**未提及“Occupancy Flow Fields”的相关内容**。\n\n参考资料主要涵盖了以下方面，但不包含该术语的定义或其组成信息：\n*   **Apollo 感知模块**：障碍物理解及视觉感知支持。\n*   **Apollo 预测模块**：输入输出通道（如障碍物、定位、规划信息）及轨迹预测。\n*   **Apollo 定位模块**：MSF（多传感器融合）定位原理。\n*   **Apollo 规划模块**：输入输出通道（如底盘反馈、定位、感知信息等）。\n*   **NHTSA 活动**：自动驾驶系统安全及进口豁免计划。\n\n因此，基于现有参考资料，无法回答关于 Occupancy Flow Fields 的定义及其组成。",
+      "candidate_answer": "\n\n根据提供的参考资料，**Occupancy Flow Fields** 是一种用于自动驾驶中多智能体运动预测的表示方法。它将未来时刻的占据概率与运动信息统一在一个时空网格中，旨在克服传统轨迹集合和占用网格方法的局限性。\n\n它由以下两部分组成：\n\n1.  **占用网格（Occupancy Grid, $O_t$）**：\n    *   空间维度为 $h \\times w$。\n    *   网格中的每个单元格 $(x, y)$ 包含一个 $[0, 1]$ 范围内的值，表示在时间 $t$ 该位置被任何智能体占据的概率。\n\n2.  **流场（Flow Field, $F_t$）**：\n    *   空间维度同样为 $h \\times w$。\n    *   网格中的每个单元格 $(x, y)$ 包含一个二维向量 $(\\Delta x, \\Delta y)$，表示该位置运动的方向和大小。",
+      "winner": "candidate",
+      "reason": "Candidate correctly identifies Occupancy Flow Fields as a motion forecasting representation with two components (occupancy grid and flow field) directly matching the reference answer and evidence. Baseline incorrectly claims no relevant information exists despite evidence containing the exact definition. Candidate's answer is more accurate, evidence-aligned, and avoids unsupported claims."
+    },
+    {
+      "id": "eval-084",
+      "question": "文中提出的新3D MOT评估工具是如何实现3D空间评价的？",
+      "reference_answer": "通过将成本函数从2D IoU修改为3D IoU，并在3D空间中直接将3D MOT结果与3D地面真实轨迹进行匹配。",
+      "baseline_answer": "",
+      "candidate_answer": "\n\n根据参考资料，文中提出的新 3D MOT 评估工具通过以下方式实现 3D 空间评价：\n\n1.  **扩展现有工具**：基于 KITTI 2D MOT 评估工具进行扩展，以支持 3D MOT 评估。\n2.  **修改成本函数**：将匹配的成本函数从 **2D IoU** 修改为 **3D IoU**。\n3.  **直接 3D 空间匹配**：在 3D 空间中直接将 3D MOT 结果与 3D 地面真值轨迹进行匹配，**无需将结果投影到图像平面**。\n4.  **设定匹配阈值**：为每个跟踪对象设定最小 3D IoU 阈值（实验中设为 **0.25**）以判定匹配。\n\n通过这种方式，该工具能够避免投影带来的信息损失，更全面地评估 3D MOT 系统的性能。",
+      "winner": "candidate",
+      "reason": "candidate的答案完整覆盖了reference_answer的核心要点（修改成本函数为3D IoU、3D空间直接匹配），并补充了证据中明确提到的0.25阈值细节，属于合理扩展。baseline的answer字段为空，未提供任何有效回答。"
+    },
+    {
+      "id": "eval-085",
+      "question": "Far3D主要解决了当前环绕视图3D目标检测中的什么问题？",
+      "reference_answer": "解决了长距离检测（long-range detection）问题，扩展了感知范围。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中**未包含关于 Far3D 或环绕视图 3D 目标检测的相关技术内容**，因此无法回答该问题。\n\n现有资料主要涵盖以下内容：\n1.  **Apollo 规划模块**：基于场景（巡航、路口）的规划框架及策略。\n2.  **Apollo 系统通信**：各模块（感知、预测、规划、控制等）的数据通道与消息格式。\n3.  **Apollo 控制模块**：纵向控制逻辑（位置闭环、速度闭环）。\n4.  **Apollo 定位模块**：RTK、MSF 及 NDT 定位方案。\n5.  **预期功能安全（SOTIF）**：ISO 21448 标准下的场景分类与触发条件分析。\n\n如需解答 Far3D 相关问题，请提供相关的技术文档或参考资料。",
+      "candidate_answer": "\n\n根据提供的参考资料，Far3D 主要解决了当前环绕视图 3D 目标检测中的以下关键问题：\n\n1.  **长距离检测探索不足**：现有方法主要聚焦于近距离感知（close-range perception），而长距离检测（long-range detection）未被充分探索。\n2.  **长距离扩展的技术挑战**：直接扩展现有方法以覆盖长距离（如 150 米）会导致**计算成本过高**和**收敛不稳定**（unstable convergence）。\n3.  **近远物体性能冲突**：当训练范围从近距离（如 50m）切换至远距离时，现有方法的**近距离物体检测性能会显著下降**。Far3D 通过自适应查询和 3D 去噪技术，在提升远距离物体性能的同时，有效缓解了近距离物体的性能退化问题。\n4.  **远距离定位不确定性**：解决了远距离物体因**定位不确定性**（localization uncertainty）大而导致的检测困难。\n\n综上，Far3D 通过提出基于稀疏查询的框架（sparse query-based framework），利用 3D 自适应查询和视角感知聚合模块，在控制计算成本的同时实现了稳定的长距离检测，并兼顾了远近物体的性能均衡。",
+      "winner": "candidate",
+      "reason": "Candidate的回答准确指出Far3D解决了长距离检测问题，并详细列举了计算成本、收敛不稳定、近远物体性能冲突等具体挑战，所有内容均与evidence中的引用（如'long-range detection less explored'、'heavy computation costs'、'unstable convergence'）及retrieved_rows中的论文内容完全一致。Baseline错误声称资料中无相关内容，但实际evidence和retrieved_rows均明确包含Far3D的技术细节，因此Baseline的回答既偏离reference_answer又违背证据。"
+    },
+    {
+      "id": "eval-086",
+      "question": "TPVFormer模型在训练时使用什么类型的监督信号？它能够完成什么预测任务？",
+      "reference_answer": "使用稀疏的LiDAR语义标签作为监督信号，能够有效预测所有体素（voxel）的语义占用（semantic occupancy）。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中**并未包含**关于 TPVFormer 模型的任何信息。\n\n现有资料主要涵盖以下内容：\n1.  **ISO 21448 预期功能安全标准（SOTIF）**：涉及安全场景分类、触发条件识别及安全措施。\n2.  **Apollo 规划模块**：介绍基于场景的规划框架（如巡航、路口场景）。\n3.  **自动驾驶标准体系（SAE J3018 / ANSI/ATA）**：涉及自动驾驶等级定义、测试要求及商业化运营规范。\n4.  **Apollo 通信系统**：关于 Channel 数据格式及模块间通信的说明。\n5.  **VAD 模型架构**：简要提及向量场景表示（Vectorized Scene Representation）。\n\n因此，无法基于现有参考资料回答关于 TPVFormer 模型在训练时使用的监督信号及其预测任务的问题。",
+      "candidate_answer": "\n\n根据提供的参考资料，TPVFormer 模型的相关信息如下：\n\n**1. 训练时使用的监督信号：**\n*   **主要监督信号**：TPVFormer 在训练时主要使用**稀疏点监督**（sparse point supervision），具体为稀疏的 LiDAR 语义标签。\n*   **对比变体**：为了进行公平比较，还有一个变体模型（TPVFormer*）使用了**密集的占用标签**（dense occupancy labels）进行训练。\n*   **预测类型**：监督信号涉及**体素和点预测**。\n\n**2. 能够完成的预测任务：**\n*   **LiDAR 分割**（LiDAR segmentation）：模型能够在仅使用 RGB 图像作为输入的情况下，实现与基于 LiDAR 的方法相当的 LiDAR 分割性能。\n*   **3D 语义占用预测**（3D semantic occupancy prediction）：模型能够进行 3D 语义场景完成（Semantic Scene Completion, SSC），即预测场景中每个体素的语义类别，这也被称为 3D 语义占用预测。",
+      "winner": "candidate",
+      "reason": "基线模型错误地声称资料中不包含 TPVFormer 信息，忽略了证据中明确给出的答案。候选模型准确回答了监督信号（稀疏 LiDAR 语义标签）和预测任务（语义占用预测），与参考答案和证据高度一致，且额外信息均有检索内容支持。"
+    },
+    {
+      "id": "eval-087",
+      "question": "红绿灯检测模块在矫正阶段是如何处理识别置信度不高的情况的？",
+      "reference_answer": "矫正器通过查询前面几帧的检测状态对当前的红绿灯颜色进行矫正。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中**并未提及**红绿灯检测模块在矫正阶段处理识别置信度不高的具体逻辑。\n\n参考资料主要涵盖了以下内容：\n1.  **ISO 21448 (SOTIF)**：预期功能安全标准及四区域分析模型。\n2.  **Apollo 通信框架**：感知、预测、规划等模块的数据通道和消息格式。\n3.  **自动驾驶等级**：L0-L5 的划分及测试安全要求。\n4.  **Apollo 控制模块**：纵向控制的闭环逻辑。\n\n资料中未包含红绿灯检测算法的矫正细节。建议查阅具体的感知算法技术文档或代码实现以获取准确信息。",
+      "candidate_answer": "\n\n根据提供的参考资料，红绿灯检测模块在矫正阶段，对于识别置信度不高的情况，矫正器会通过**查询前面几帧的检测状态**，对当前的红绿灯颜色进行矫正。",
+      "winner": "candidate",
+      "reason": "Candidate 成功检索到了包含正确答案的文档（apollo-doc-006），其回答与 reference_answer 高度一致且完全忠实于 evidence 中的引用内容。Baseline 未能检索到相关证据，错误地声称资料中未提及该逻辑，导致未能回答用户问题，属于检索或理解失败。"
+    },
+    {
+      "id": "eval-088",
+      "question": "在 Apollo 的规划控制流程中，控制（Control）模块的主要功能是什么？它是如何与硬件交互的？",
+      "reference_answer": "控制模块根据规划线目标生成控制车辆指令（转角、速度、加速度），并通过 CANBUS 模块将指令发送至底盘，实现车辆控制。",
+      "baseline_answer": "\n\n根据提供的参考资料，关于 Apollo 控制（Control）模块的功能及硬件交互方式，信息如下：\n\n**1. 主要功能**\n提供的参考资料（如 apollo-doc-003）中仅将“控制模块”列为 Apollo 系统通信框架中的核心组成部分之一，与感知、预测、规划、CANBUS 等模块并列。**资料中未详细描述**控制模块的具体功能细节（如横向/纵向控制算法、轨迹跟踪等）。\n\n**2. 与硬件的交互方式**\n资料中提到了**CANBUS 模块**也存在于 Apollo 通信框架中，并指出系统中有“数据流动线”和“控制逻辑线”。**但资料未明确说明**控制模块如何通过 CANBUS 模块与底层硬件（如转向、制动系统）进行具体的信号交互或指令下发。\n\n**总结：**\n基于当前提供的参考资料，仅能确认控制模块和 CANBUS 模块是 Apollo 通信架构中的关键组件，但**无法获取**其具体功能定义及硬件交互的技术细节。",
+      "candidate_answer": "\n\n根据提供的参考资料，Apollo 控制（Control）模块的功能及硬件交互方式如下：\n\n**1. 主要功能**\n控制模块是自动驾驶软件系统中的**执行环节**。其核心目标是根据**规划模块**输出的目标轨迹和**定位模块**输出的车辆状态，生成具体的车辆控制命令：\n*   **横向控制模块**：根据规划轨迹生成**方向盘**指令（包括方向盘闭环和开环控制）。\n*   **纵向控制模块**：根据规划轨迹生成**油门**和**刹车**指令（包括位置闭环和速度闭环控制）。\n\n**2. 与硬件的交互方式**\n控制模块通过 **canbus 模块** 与车辆底层硬件进行交互，形成闭环控制：\n*   **指令下发**：控制模块生成的控制命令（方向盘、油门、刹车）通过 canbus 模块发送给车辆**底层执行器**。\n*   **状态反馈**：canbus 模块会将车辆底层的实际状态（如实际方向盘角度、实际车速）反馈给控制模块，用于修正控制指令。",
+      "winner": "candidate",
+      "reason": "Candidate 准确回答了问题，内容与 reference_answer 高度一致，且详细说明了控制指令生成及 CANBUS 交互，这些信息在 retrieved_rows (apollo-doc-009) 中有明确支持。Baseline 错误地声称资料未详细描述具体功能及交互细节，未能有效利用提供的 evidence 回答问题，导致回答无效。"
+    },
+    {
+      "id": "eval-089",
+      "question": "根据该法规，制造商在软件更新管理系统（SUMS）证书有效期结束时，应如何操作以确保合规？",
+      "reference_answer": "制造商应在证书有效期结束前通知型式认证机构，并提交更新后的合规声明供重新评估，否则证书可能被撤销。",
+      "baseline_answer": "",
+      "candidate_answer": "\n\n根据提供的参考资料，**无法确切回答**制造商在软件更新管理系统（SUMS）证书有效期结束时的具体操作步骤，因为相关资料中关于该时间点的条款内容不完整。\n\n具体情况如下：\n\n1.  **关键条款信息缺失**：参考资料中提及了条款 **\"6.9. At the end of the period of validity of the Certificate of Compliance for Sof…\"**，但该句子在“Sof…”处被截断，未包含制造商在此时点应执行的具体操作（如申请延期、重新认证等）。\n2.  **相关合规要求**：虽然有效期结束的具体流程缺失，但资料中提到了以下相关合规逻辑：\n    *   **通知义务**：制造商应通知审批机构（\"The manufacturer shall inform the Approval Auth…\"）。\n    *   **新证书颁发**：如果制造商对系统进行了变更，且已提请审批机构注意并经过积极的重新评估，审批机构将颁发新证书（\"The Approval Authority shall issue a new certificate in cases where changes have been brought to the attention... and the changes have been positively re-assessed.\"）。\n    *   **持续合规**：若不再满足法规要求，合规证书可能会被撤销。\n\n**建议**：\n为确保准确合规，建议查阅完整的 **UN Regulation No. 156** 法规原文，以获取关于证书有效期结束时制造商具体义务的完整规定。",
+      "winner": "candidate",
+      "reason": "Baseline 答案为空白，完全未回答问题。Candidate 答案虽然指出证据片段不完整，但基于现有证据准确提取了‘通知审批机构’和‘重新评估后颁发新证书’的核心合规要求，并明确说明了信息缺失的原因，在忠实于证据的同时提供了最接近参考答案的解答。"
+    },
+    {
+      "id": "eval-090",
+      "question": "TransFusion提出了一种全新的LiDAR与相机融合策略，该策略的核心创新点是什么？",
+      "reference_answer": "TransFusion的核心创新点是采用基于Transformer的软关联（软关联）逐级融合方法，利用两个Transformer解码器层作为检测头：第一层通过稀疏的物体查询从LiDAR点云预测初始边界框，第二层自适应地将物体查询与有用的图像特征融合，从而实现对图像质量和传感器校准误差的鲁棒性。",
+      "baseline_answer": "\n\n根据提供的参考资料（source_id=paper-080），TransFusion 提出的 LiDAR 与相机融合策略的核心创新点在于提出了一种**基于 Transformer 的软关联机制（soft-association mechanism）**。具体创新内容如下：\n\n1.  **软关联替代硬关联**：\n    *   **问题背景**：传统融合方法依赖标定矩阵建立 LiDAR 点与图像像素的刚性对应（硬关联），容易受光照不良、传感器未对准等恶劣图像条件影响。\n    *   **创新方案**：TransFusion 通过软关联机制，不再依赖严格的几何投影对应，而是利用注意力机制**自适应地决定从图像中获取什么信息以及在何处获取**。\n\n2.  **基于 Transformer 解码器的融合架构**：\n    *   **第一层**：利用稀疏物体查询（sparse object queries）直接从 LiDAR 点云预测初始 3D 边界框。\n    *   **第二层**：将物体查询与图像特征进行自适应融合，同时利用空间和上下文信息（spatial and contextual information）。\n\n3.  **鲁棒性与性能提升**：\n    *   该策略显著提升了系统在恶劣图像条件下的鲁棒性。\n    *   在 nuScenes 检测和跟踪榜单上达到了当时的最优结果（State-of-the-art）。",
+      "candidate_answer": "\n\n根据提供的参考资料（source_id=paper-080），TransFusion 提出的 LiDAR 与相机融合策略的核心创新点在于提出了一种**基于 Transformer 的软关联机制（soft-association mechanism）**。具体创新内容如下：\n\n1.  **软关联替代硬关联**：\n    *   **痛点**：传统融合方法依赖校准矩阵建立 LiDAR 点与图像像素的刚性对应（硬关联），易受光照不良、传感器未对准等恶劣图像条件影响。\n    *   **创新**：TransFusion 通过软关联机制，不再依赖严格的几何投影对应，而是利用注意力机制**自适应地决定从图像中获取什么信息以及在何处获取**。\n\n2.  **基于 Transformer 解码器的融合架构**：\n    *   **第一层**：利用稀疏物体查询（sparse object queries）直接从 LiDAR 点云预测初始 3D 边界框。\n    *   **第二层**：将物体查询与图像特征进行自适应融合，同时利用空间和上下文信息（spatial and contextual information）。\n\n3.  **鲁棒性与性能提升**：\n    *   该策略显著提升了系统在恶劣图像条件（如退化图像质量、标定误差）下的鲁棒性。\n    *   在 nuScenes 检测和跟踪榜单上达到了当时的最优结果（State-of-the-art）。",
+      "winner": "candidate",
+      "reason": "candidate的答案更精确地对应reference_answer中的‘传感器校准误差’，并明确提及‘标定误差’，与evidence中‘inferior image conditions’和‘sensor misalignment’的表述更一致。两者均基于相同evidence，但candidate在鲁棒性描述上更贴近原文细节，且未出现无依据扩写。"
+    },
+    {
+      "id": "eval-091",
+      "question": "PETR 这个名称代表什么？它解决的是哪类视觉任务？",
+      "reference_answer": "PETR 代表 Position Embedding Transformation（位置嵌入变换），用于多视图 3D 目标检测（multi-view 3D object detection）。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中并未提及“PETR”这一术语。参考资料主要涉及ISO 21448（SOTIF）、ISO 26262功能安全标准以及Apollo自动驾驶系统的规划、控制和预测模块。因此，无法基于现有资料回答PETR的名称含义及解决的视觉任务。",
+      "candidate_answer": "\n\n根据提供的参考资料，PETR 代表 **Position Embedding Transformation**（位置嵌入变换）。它主要解决的是 **多视图 3D 目标检测**（Multi-View 3D Object Detection）任务。",
+      "winner": "candidate",
+      "reason": "Candidate 的答案完全匹配 reference_answer 中的 PETR 全称及任务描述，且其 retrieved_rows 和 evidence 均直接支持该结论。Baseline 虽引用了 evedence 中的正确信息，但错误地声称资料未提及 PETR，导致回答与 reference_answer 偏离。"
+    },
+    {
+      "id": "eval-092",
+      "question": "Apollo感知融合模块能够支持哪三种传感器的感知结果进行融合？",
+      "reference_answer": "摄像头（Camera）、毫米波雷达（Radar）和激光雷达（Lidar）。",
+      "baseline_answer": "\n\n根据提供的参考资料，文档中并未明确列出Apollo感知融合模块支持的具体传感器类型（如摄像头、雷达等）。资料仅提及感知模块的功能是“识别交通参与者（汽车、自行车、行人等），识别交通信号灯等”，以及预测模块会利用“感知信息容器”维护障碍物的历史轨迹序列，但未具体说明融合的是哪三种传感器的数据。建议查阅Apollo感知模块的详细技术文档以获取准确信息。",
+      "candidate_answer": "\n\n根据参考资料，Apollo感知融合模块能够支持对**摄像头（Camera）、毫米波雷达（Radar）和激光雷达（Lidar）**三种传感器的感知结果进行目标级融合。",
+      "winner": "candidate",
+      "reason": "Candidate 准确回答了问题，与 reference_answer 完全一致，且忠实于 evidence 和 retrieved_rows 中 apollo-doc-005 的内容。Baseline 未能检索到关键文档，错误地声称文档未明确列出传感器类型，而 evidence 中明确提供了答案，导致其回答不准确。"
+    },
+    {
+      "id": "eval-093",
+      "question": "在SE-SSD的ODIoU损失函数中，作者对加权系数γ进行了消融实验，最终选取的γ值是多少？并说明选择该值的理由。",
+      "reference_answer": "最终选取的γ值为1.25。理由是通过实验发现，方向约束（orientation constraint）是进一步提升精度的关键因素，而权衡后1.25能达到最佳性能。",
+      "baseline_answer": "\n\n根据提供的参考资料，**无法回答**关于SE-SSD的ODIoU损失函数中加权系数γ的选取值及理由。\n\n**原因说明：**\n1.  **资料缺失**：提供的五份参考资料中，均未提及“SE-SSD”模型、“ODIoU”损失函数或加权系数“γ”的相关内容。\n2.  **内容不符**：资料中涉及损失函数的部分仅关于**DETR3D**模型（公式为 $L = \\lambda_{cls} * L_{cls} + \\lambda_{iou} * L_{iou} + \\lambda_{L1} * L_{L1}$），且主要讨论其在nuScenes数据集上的表现及局限性，与SE-SSD无关。\n3.  **主题偏差**：其他资料主要涉及自动驾驶等级标准、Apollo系统模块功能及通信框架，不包含SE-SSD的消融实验数据。\n\n因此，基于现有参考资料，无法提供γ的具体数值及其选择依据。",
+      "candidate_answer": "\n\n根据提供的参考资料，在SE-SSD的ODIoU损失函数中，作者最终选取的加权系数γ值为**1.25**。\n\n选择该值的理由是：**方向约束是进一步提升检测精度的重要因素**。作者在KITTI验证集上对不同的γ值进行了消融实验，最终确定γ=1.25能够有效利用这一约束来提升精度。",
+      "winner": "candidate",
+      "reason": "Candidate 准确回答了γ值为1.25及理由，与 reference_answer 一致且忠于 evidence。Baseline 错误地声称无法回答，忽略了 evidence 中明确提供的信息。"
+    },
+    {
+      "id": "eval-094",
+      "question": "MSF（Multi-Sensor Fusion）定位系统以哪些数据为输入，输出什么结果？",
+      "reference_answer": "MSF定位系统以多种传感器数据和离线制作的高精度Lidar定位地图为输入，输出高精度的车辆位置和姿态。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中**并未包含**关于MSF（Multi-Sensor Fusion）定位系统的具体技术细节。\n\n参考资料主要涵盖了以下内容：\n1.  **Apollo感知模块**：环境监控、障碍物理解及视觉感知概述。\n2.  **Apollo预测模块**：架构设计（信息容器、场景选择器、评估器、预测器）。\n3.  **自动驾驶标准体系**：中国智能网联汽车标准体系、功能安全、预期功能安全及测试验证体系。\n4.  **CenterPoint算法**：3D目标检测与跟踪的架构与局限。\n\n因此，无法基于现有资料回答MSF定位系统的输入数据和输出结果。建议您补充相关的定位模块技术文档。",
+      "candidate_answer": "\n\n根据参考资料，MSF（Multi-Sensor Fusion）定位系统的输入与输出如下：\n\n**1. 输入数据**\nMSF定位系统以**多种传感器数据**和**离线制作的高精度Lidar定位地图**为输入，具体包括：\n*   **GNSS定位模块**：输入车端 **GPS信号** 和 **基站数据**。\n*   **LiDAR定位模块**：输入 **在线Lidar扫描数据** 和 **高精度Lidar定位地图**。\n*   **SINS模块**：输入 **IMU数据**（用于惯性导航）。\n\n**2. 输出结果**\n系统后端采用 **error-state Kalman filter** 融合多种传感器量测信息，最终输出 **高精度的车辆位置和姿态**。",
+      "winner": "candidate",
+      "reason": "Candidate的答案完全匹配reference_answer的核心内容，并详细分解了输入（GNSS、LiDAR、SINS模块的具体数据）和输出（高精度位置和姿态），且所有信息均直接来源于evidence中的apollo-doc-010。Baseline错误声称资料中无相关信息，但实际evidence已明确包含MSF定位系统的输入输出描述，属于对证据的误判。"
+    },
+    {
+      "id": "eval-095",
+      "question": "在PersFormer的消融实验中（Table 9），哪种设计对生成BEV特征最为关键？其表现相对于其他设计有何优势？",
+      "reference_answer": "IPM先验（IPM Prior）最为关键。基于IPM的交叉注意力设计在3D F-Score上达到52.68%，远高于朴素的一对一映射（36.15%）和全连接学习映射（13.45%），也优于多尺度可变形注意力（51.35%）和无自注意力（47.18%）的设计。",
+      "baseline_answer": "\n\n根据当前提供的参考资料，**无法回答该问题**。\n\n提供的参考资料主要涉及 **Apollo 自动驾驶平台** 的相关文档（包括数据集、感知模块、通信框架及雷达适配器等），其中**并未包含**关于 **PersFormer** 模型、其消融实验（Table 9）或 BEV 特征生成设计的相关信息。\n\n因此，基于现有资料无法分析哪种设计对生成 BEV 特征最为关键及其优势。建议提供包含 PersFormer 相关内容的文档以便进一步分析。",
+      "candidate_answer": "\n\n根据参考资料（source_id=paper-067），在PersFormer的消融实验（Table 9）中，**IPM Prior（逆透视映射先验）** 对生成BEV特征最为关键。\n\n其表现相对于其他设计的优势如下：\n\n1.  **核心指导作用**：资料明确指出，IPM Prior在指导BEV特征生成方面起着“至关重要的作用”（plays a vital role）。\n2.  **对比优势**：相比于**Naive one-to-one mapping**（朴素一对一映射）和**Learned reference-target mapping**（学习型参考-目标映射），IPM Prior能更有效地引导特征从前视图转换到鸟瞰图。\n3.  **与其他组件对比**：虽然使用MSDeformAttn进行多尺度映射具有竞争力（competitive），且BEV query的自注意力模块在Transformer结构中也很重要（important），但IPM Prior被强调为最核心的设计要素。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地声称无法回答，尽管证据和检索行中包含了 PersFormer 消融实验的相关信息。Candidate 正确识别出 IPM Prior 是关键设计，并基于提供的证据（paper-067）准确阐述了其相对于其他设计的优势，忠实于上下文。"
+    },
+    {
+      "id": "eval-096",
+      "question": "MapTracker如何通过记忆机制实现时间一致性？具体描述其两种潜伏表示和融合策略。",
+      "reference_answer": "MapTracker维护两个记忆缓存：BEV空间中的栅格潜伏和道路元素上的向量潜伏。它从过去的帧中选择一个子集的记忆潜伏，基于距离步长（distance strides）进行选择，然后通过查询传播范式（query propagation paradigm）将跟踪的道路元素从前一帧显式关联到当前帧，从而融合信息并增强时间一致性。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中**未包含**关于 MapTracker 的任何描述，因此无法基于现有资料回答其如何通过记忆机制实现时间一致性、具体潜伏表示及融合策略。\n\n提供的参考资料主要涵盖以下内容：\n- **Apollo 控制模块**：纵向控制（位置/速度闭环）、油门/刹车查表机制。\n- **Apollo 感知模块**：激光雷达输出延迟、精度及通道数据格式。\n- **Apollo 系统架构**：各模块（感知、预测、规划等）的通信框架与数据通道。\n- **自动驾驶标准**：L0-L5 等级划分、测试安全要求及运营规范。\n- **路径规划**：基于采样的 RRT/RRT* 算法。\n\n建议提供 MapTracker 相关的技术文档或参考资料，以便我为您提供准确的解答。",
+      "candidate_answer": "\n\n根据提供的参考资料，MapTracker 通过以下机制实现时间一致性：\n\n1.  **核心机制**：MapTracker 将向量高清地图构建公式化为**跟踪任务（tracking task）**，而非检测任务。它利用来自过去帧的一系列**记忆潜伏（memory latents）**作为记忆机制，避免了在单一潜伏中累积整个历史（特别是在车辆遮挡严重的杂乱环境中）带来的挑战。\n\n2.  **两种潜伏表示**：MapTracker 将传感器流累积到两个记忆缓冲区中，分别存储：\n    *   **光栅潜伏（Raster latents）**：对应鸟瞰视角（BEV）空间中的栅格化特征。\n    *   **向量潜伏（Vector latents）**：针对被跟踪的道路元素（如人行横道等）的向量化表示。\n\n3.  **融合策略**：\n    *   **查询传播（Query Propagation）**：通过该机制显式关联跨帧的跟踪道路元素。\n    *   **距离步长记忆融合（Strided Memory Fusion）**：从记忆缓冲区中按照**距离步长（distance strides）**选择一部分历史记忆条目进行融合，而不是依赖单一的潜伏记忆。这种选择性融合策略增强了时间一致性，实验表明其显著优于现有方法。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地声称资料中未包含 MapTracker 相关信息，忽略了 evidence 字段中明确提供的关键引文；Candidate 准确利用了 evidence 和 retrieved_rows 中的信息，详细描述了两种潜伏表示（BEV 栅格潜伏和道路元素向量潜伏）及融合策略（基于距离步长的子集选择和查询传播），与 reference_answer 高度一致且忠实于证据，无无依据扩写。"
+    },
+    {
+      "id": "eval-097",
+      "question": "BEVDet4D的主要创新点是什么？",
+      "reference_answer": "将BEVDet范式从纯空间的3D工作空间扩展到时空4D工作空间，通过融合前一帧的BEV特征与当前帧的对应特征，以极小计算代价利用时间线索，并简化速度误差降低62.9%。",
+      "baseline_answer": "\n\n根据提供的参考资料，其中并未包含关于 **BEVDet4D** 的具体技术细节或创新点描述。\n\n现有资料主要涵盖了以下内容：\n- **自动驾驶分级与标准**：包括L0-L5等级定义、SAE J3018测试要求及商业化运营规范。\n- **功能安全（SOTIF）**：涉及ISO 21448标准下的场景分类（已知/未知安全/不安全场景）及触发条件识别。\n- **感知与规划算法**：提到了 **FusionAD** 的多模态融合方法、**PointPillars** 的点云处理架构，以及 **Apollo** 平台的控制模块与数据集。\n\n由于参考资料中未提及 BEVDet4D，无法基于现有材料总结其主要创新点。建议补充相关文献或技术资料以获取准确信息。",
+      "candidate_answer": "\n\n根据提供的参考资料，BEVDet4D 的主要创新点包括：\n\n1.  **工作空间扩展（3D 到 4D）**：\n    提出了一种名为 BEVDet4D 的新范式，将可扩展的 BEVDet 框架从仅处理空间信息的 3D 工作空间，提升到了处理**时空 4D 工作空间**（spatial-temporal 4D working space），首次探索了基于视觉的自动驾驶在时序域中的信息利用。\n\n2.  **时序特征融合机制**：\n    通过融合**前一帧与当前帧**的对应特征，使模型能够以可忽略的额外计算预算（negligible additional computing budget）获取时间线索（temporal cues）。具体做法是保留前一帧的中间 BEV 特征，并将其与当前帧生成的特征进行拼接。\n\n3.  **速度预测任务简化**：\n    在融合前，先在平面内进行**空间对齐**（spatial alignment），以简化速度预测任务。实验表明，这有助于抵抗前一帧特征的误导性位置，并显著降低速度预测误差（例如从 0.909 mAVE 降至 0.838）。\n\n4.  **性能与简洁性的平衡**：\n    在保持 BEVDet 原有简洁性和可扩展性的前提下，实现了优越的泛化性能。在 nuScenes 基准上，BEVDet4D-Base 配置取得了 **54.5% NDS** 的新纪录，相比 BEVDet-Base 提升了 **+7.3% NDS**，且推理速度保持不变。",
+      "winner": "candidate",
+      "reason": "Baseline 错误地声称资料中未提及 BEVDet4D，完全忽略了 evidence 中提供的直接引文，导致未能回答问题。Candidate 准确提取了 evidence 和 retrieved_rows 中的关键信息，其回答的核心点（3D到4D扩展、时序特征融合、速度预测简化）与 reference_answer 高度一致，且内容详实有据。"
+    },
+    {
+      "id": "eval-098",
+      "question": "论文中提出的自动标签生成管道包含哪三个主要步骤？每个步骤解决的主要问题是什么？",
+      "reference_answer": "该管道包含三个步骤：体素致密化（voxel densification）、遮挡推理（occlusion reasoning）和图像引导体素细化（image-guided voxel refinement）。它们分别旨在解决稀疏性、遮挡和3D-2D不对齐这三个主要问题。",
+      "baseline_answer": "\n\n根据参考资料（source_id=paper-060），论文提出的自动标签生成管道包含以下三个主要步骤，分别对应解决三个关键挑战：\n\n1.  **体素稠密化（Voxel Densification）**\n    *   **解决的问题**：**稀疏性（Sparsity）**。\n    *   **说明**：针对 LiDAR 扫描数据稀疏、难以获取密集体素的问题，通过物体分割、多帧聚合和标签分配来生成密集的体素表示。\n\n2.  **遮挡推理（Occlusion Reasoning）**\n    *   **解决的问题**：**遮挡（Occlusion）**。\n    *   **说明**：针对体素在稠密化后可能因遮挡而在当前图像视图中不可见的问题，识别并处理被遮挡的体素，生成可见性感知的标签。\n\n3.  **图像引导的体素细化（Image-guided Voxel Refinement）**\n    *   **解决的问题**：**3D-2D 不对齐（3D-2D Misalignment）**。\n    *   **说明**：针对将 3D 体素投影到 2D 图像时因传感器噪声或位姿误差导致的偏差问题，利用图像信息对体素进行精细化调整。\n\n每个步骤均通过 3D-2D 一致性指标进行验证，以确保生成密集且可见性感知的高质量标注。",
+      "candidate_answer": "\n\n根据参考资料（source_id=paper-060），论文提出的自动标签生成管道包含以下三个主要步骤，分别对应解决三个关键问题：\n\n1.  **体素稠密化（Voxel Densification）**\n    *   **解决的问题**：**稀疏性（Sparsity）**。\n    *   **说明**：通过物体分割、多帧聚合和标签分配，将稀疏的点云数据转化为密集的体素表示。\n\n2.  **遮挡推理（Occlusion Reasoning）**\n    *   **解决的问题**：**遮挡（Occlusion）**。\n    *   **说明**：识别并处理因遮挡而缺失的几何和语义信息，生成可见性感知的标签。\n\n3.  **图像引导的体素细化（Image-guided Voxel Refinement）**\n    *   **解决的问题**：**3D-2D 不对齐（3D-2D Misalignment）**。\n    *   **说明**：利用图像信息对体素进行精细化调整，确保三维标签与二维观测一致。\n\n每个步骤均通过 3D-2D 一致性指标进行验证，最终生成密集且可见性感知的高质量标注。",
+      "winner": "candidate",
+      "reason": "两个答案在核心步骤和问题上与 reference_answer 完全一致。但 candidate 更优，因为其 retrieved_rows 来自正确的论文（paper-060），且答案中的详细说明（如体素稠密化的具体方法）均有 retrieved_rows 直接支持。相比之下，baseline 的 retrieved_rows 均为无关文档，其答案中的详细说明在给定上下文中缺乏依据，属于无依据扩写。"
+    },
+    {
+      "id": "eval-099",
+      "question": "FusionAD融合了哪两种传感器的信息？",
+      "reference_answer": "FusionAD融合了摄像头（camera）和激光雷达（LiDAR）两种传感器的信息。",
+      "baseline_answer": "\n\n根据您提供的参考资料，其中并未提及“FusionAD”这一模型或框架。\n\n资料内容主要涉及：\n1.  **Apollo自动驾驶平台**：介绍了其感知、定位、规划、控制等模块的原理和通信框架。其中提到的传感器融合案例（如MSF定位模块）涉及GPS、IMU和Lidar，但并非FusionAD。\n2.  **DETR3D**：这是一种纯视觉的3D目标检测方法，明确指出其“无需依赖LiDAR点云数据”。\n\n因此，**基于现有参考资料，无法回答FusionAD融合了哪两种传感器的信息。**",
+      "candidate_answer": "\n\n根据提供的参考资料，FusionAD融合了**摄像头（camera）**和**激光雷达（LiDAR）**这两种传感器的信息。\n\n资料明确指出，FusionAD是首个融合这两个最关键传感器信息的统一框架，旨在通过多模态融合优化自动驾驶中的预测和规划任务。",
+      "winner": "candidate",
+      "reason": "Candidate正确引用了evidence中明确说明FusionAD融合camera和LiDAR的原文，与reference_answer完全一致。Baseline虽检索到相关证据但错误判断资料未提及FusionAD，导致结论与证据矛盾。"
+    },
+    {
+      "id": "eval-100",
+      "question": "在语义占用预测中，OccNeRF如何利用预训练的开放词汇2D分割模型？",
+      "reference_answer": "设计了若干策略来精炼提示（prompts）并过滤预训练开放词汇2D分割模型的输出，从而获得语义标签。",
+      "baseline_answer": "",
+      "candidate_answer": "\n\n根据提供的参考资料，OccNeRF 在语义占用预测中利用预训练的开放词汇 2D 分割模型主要通过以下策略：\n\n1.  **提供语义监督信号**：\n    OccNeRF 利用该模型生成 2D 语义标签，作为 3D 语义占用预测的监督信号。这使得该方法能够在无需昂贵 3D 标注（如 LiDAR 数据）的情况下，利用大规模无标注图像数据进行训练。\n\n2.  **优化提示与过滤输出**：\n    针对开放词汇模型对模糊语义提示（如“other”和“other flat”）处理能力较弱的问题，OccNeRF 设计了多种策略来**优化提示（polish prompts）** 并**过滤模型的输出（filter the outputs）**，以提升 2D 语义标签的质量。\n\n3.  **排除模糊类别**：\n    在评估和训练过程中，OccNeRF 会**排除**那些开放词汇模型难以准确识别的模糊类别（如“other”和“other flat”），以减少歧义对 3D 语义占用预测结果的影响。\n\n通过上述方法，OccNeRF 有效地将 2D 开放词汇分割模型的能力迁移到 3D 语义占用预测任务中，特别是在大面积类别（如“可行驶空间”和“人造结构”）上取得了良好的性能。",
+      "winner": "candidate",
+      "reason": "candidate的答案更完整地回答了问题，明确指出了OccNeRF通过优化提示和过滤输出（与reference_answer一致），并补充了排除模糊类别等细节，这些内容在retrieved_rows中有直接依据（如paper-040中关于排除'other'类别的描述）。baseline的answer为空，未提供有效信息。"
+    }
+  ]
+}

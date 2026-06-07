@@ -1,0 +1,35 @@
+{
+  "run_id": "eval_set-20260522-071034",
+  "strategies": {
+    "baseline": {
+      "sample_count": 100,
+      "answered_count": 100,
+      "answered_ratio": 1.0,
+      "retrieved_row_count": 500,
+      "evidence_source_hit_count": 97,
+      "evidence_source_hit_ratio": 0.97,
+      "evidence_locator_hit_count": 0,
+      "evidence_locator_hit_ratio": 0.0
+    },
+    "doc_type_aware": {
+      "sample_count": 100,
+      "answered_count": 100,
+      "answered_ratio": 1.0,
+      "retrieved_row_count": 500,
+      "evidence_source_hit_count": 95,
+      "evidence_source_hit_ratio": 0.95,
+      "evidence_locator_hit_count": 0,
+      "evidence_locator_hit_ratio": 0.0
+    },
+    "semantic": {
+      "sample_count": 100,
+      "answered_count": 98,
+      "answered_ratio": 0.98,
+      "retrieved_row_count": 500,
+      "evidence_source_hit_count": 97,
+      "evidence_source_hit_ratio": 0.97,
+      "evidence_locator_hit_count": 0,
+      "evidence_locator_hit_ratio": 0.0
+    }
+  }
+}
