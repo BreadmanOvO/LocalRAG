@@ -1,0 +1,66 @@
+Visit http://ip:port for Web UI, e.g., http://127.0.0.1:7860
+[WARNING|2026-06-06 12:02:51] llamafactory.hparams.parser:149 >> We recommend enable `upcast_layernorm` in quantized training.
+[INFO|2026-06-06 12:02:51] llamafactory.hparams.parser:523 >> Process rank: 0, world size: 1, device: cuda:0, distributed training: False, compute dtype: torch.bfloat16
+[WARNING|2026-06-06 12:02:52] llamafactory.data.template:149 >> You are using reasoning template, please add `_nothink` suffix if the model is not a reasoning model. e.g., qwen3_vl_nothink
+[INFO|2026-06-06 12:02:52] llamafactory.data.loader:144 >> Loading dataset ../datasets/localrag_sft_e1.jsonl...
+training example:
+input_ids:
+[151644, 872, 198, 14880, 100345, 89012, 22382, 112872, 102104, 86119, 3837, 101097, 37029, 101111, 101047, 27369, 24968, 101111, 102004, 13343, 14880, 66394, 101068, 60610, 8997, 86119, 5122, 100345, 111116, 15946, 20742, 16, 18, 9370, 32320, 99368, 102140, 3837, 39165, 37029, 101474, 100900, 110480, 9909, 98223, 51629, 7552, 13343, 3837, 44063, 5366, 15843, 51154, 81800, 45181, 2403, 9909, 85248, 7552, 101940, 26939, 19, 15, 24, 21, 3837, 32664, 44, 3627, 9909, 42140, 53772, 35243, 104363, 110480, 7552, 112881, 111588, 99564, 11319, 91572, 96050, 2537, 33108, 2336, 49567, 104118, 17447, 104423, 99387, 100535, 102111, 100682, 26850, 112872, 28311, 58, 16, 60, 2530, 842, 17385, 3191, 12, 15, 18, 15, 47117, 28, 2893, 28, 17, 198, 1, 970, 220, 19, 15, 24, 21, 1379, 19556, 7949, 279, 39270, 315, 386, 3627, 553, 220, 22, 21, 13, 19, 4, 320, 17, 16, 13, 15, 16, 1011, 311, 220, 19, 13, 24, 21, 1011, 8, 389, 220, 17, 20, 21, 24768, 220, 17, 20, 21, 1379, 7206, 53, 5827, 13, 2503, 279, 5068, 21025, 389, 3007, 43903, 16734, 320, 68, 1302, 2572, 362, 2446, 11, 362, 52865, 11, 362, 4491, 8, 525, 803, 5089, 1091, 10106, 11, 25538, 429, 279, 23850, 3922, 646, 10306, 1181, 5068, 11, 714, 279, 30549, 3922, 46421, 504, 978, 1561, 974, 8865, 7206, 53, 4419, 311, 69780, 6171, 6, 8201, 1189, 151645, 198, 151644, 77091, 198, 151667, 271, 151668, 271, 37029, 19, 15, 24, 21, 18947, 51154, 13343, 3837, 44, 3627, 112881, 110823, 22, 21, 13, 19, 4, 9909, 45181, 17, 16, 13, 15, 16, 1011, 112299, 19, 13, 24, 21, 1011, 74276, 102111, 99522, 3837, 2537, 45181, 2403, 13343, 9370, 20, 21, 13, 24, 4, 112299, 20, 19, 13, 15, 69982, 2336, 45181, 15, 13, 18, 17, 20, 99294, 56137, 15, 13, 18, 21, 22, 3837, 91676, 70538, 102111, 112743, 102008, 3837, 77288, 105162, 104118, 9909, 29524, 2336, 5373, 18746, 36, 5373, 9493, 7552, 102008, 33126, 104656, 3407, 103346, 28311, 12, 5567, 12, 15, 18, 15, 2150, 28, 17, 151645, 198]
+inputs:
+<|im_start|>user
+请根据给定参考资料回答问题，只能使用资料中的信息；资料不足时请说明无法确定。
+问题：根据文档中表13的消融实验，当使用稀疏聚合（sparse aggregation）时，将Top-K查询数量从All（全部）减少到4096，对MFA（多模态特征聚合）延迟有多大影响？同时，在AP和ATE等指标上出现了怎样的性能变化？
+
+参考资料：
+[1] source_id=paper-030 locator=page=2
+"using 4096 size queries reduce the latency of MFA by 76.4% (21.01ms to 4.96ms) on 256 × 256 size BEV grid. ... the performance drops on True Positive metrics (e.g., ATE, AOE, AVE) are more significant than AP, assuming that the classification network can maintain its performance, but the regression network suffers from sparsely spread BEV features to regress objects' attributes."<|im_end|>
+<|im_start|>assistant
+<think>
+
+</think>
+
+使用4096个查询时，MFA延迟降低了76.4%（从21.01ms降至4.96ms）。性能方面，AP从All时的56.9%降至54.0%，ATE从0.325升至0.367，即分类性能略有下降，但回归指标（如ATE、AOE、AVE）下降更显著。
+
+引用：
+- paper-030 page=2<|im_end|>
+
+label_ids:
+[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 151667, 271, 151668, 271, 37029, 19, 15, 24, 21, 18947, 51154, 13343, 3837, 44, 3627, 112881, 110823, 22, 21, 13, 19, 4, 9909, 45181, 17, 16, 13, 15, 16, 1011, 112299, 19, 13, 24, 21, 1011, 74276, 102111, 99522, 3837, 2537, 45181, 2403, 13343, 9370, 20, 21, 13, 24, 4, 112299, 20, 19, 13, 15, 69982, 2336, 45181, 15, 13, 18, 17, 20, 99294, 56137, 15, 13, 18, 21, 22, 3837, 91676, 70538, 102111, 112743, 102008, 3837, 77288, 105162, 104118, 9909, 29524, 2336, 5373, 18746, 36, 5373, 9493, 7552, 102008, 33126, 104656, 3407, 103346, 28311, 12, 5567, 12, 15, 18, 15, 2150, 28, 17, 151645, 198]
+labels:
+<think>
+
+</think>
+
+使用4096个查询时，MFA延迟降低了76.4%（从21.01ms降至4.96ms）。性能方面，AP从All时的56.9%降至54.0%，ATE从0.325升至0.367，即分类性能略有下降，但回归指标（如ATE、AOE、AVE）下降更显著。
+
+引用：
+- paper-030 page=2<|im_end|>
+
+[INFO|2026-06-06 12:04:42] llamafactory.model.model_utils.quantization:144 >> Quantizing model to 4 bit with bitsandbytes.
+[INFO|2026-06-06 12:04:42] llamafactory.model.model_utils.kv_cache:144 >> KV cache is disabled during training.
+[INFO|2026-06-06 12:04:55] llamafactory.model.model_utils.checkpointing:144 >> Gradient checkpointing enabled.
+[INFO|2026-06-06 12:04:55] llamafactory.model.model_utils.attention:144 >> Using torch SDPA for faster training and inference.
+[INFO|2026-06-06 12:04:55] llamafactory.model.adapter:144 >> Upcasting trainable params to float32.
+[INFO|2026-06-06 12:04:55] llamafactory.model.adapter:144 >> Fine-tuning method: LoRA
+[INFO|2026-06-06 12:04:55] llamafactory.model.model_utils.misc:144 >> Found linear modules: v_proj,down_proj,o_proj,up_proj,q_proj,gate_proj,k_proj
+[INFO|2026-06-06 12:04:56] llamafactory.model.loader:144 >> trainable params: 16,515,072 || all params: 4,038,983,168 || trainable%: 0.4089
+[INFO|2026-06-06 12:05:00] llamafactory.train.callbacks:144 >> {'loss': 3.3349, 'learning_rate': 9.0451e-05, 'epoch': 0.25, 'throughput': 326.80}
+{'loss': '3.335', 'grad_norm': '3.652', 'learning_rate': '9.045e-05', 'epoch': '0.25', 'num_input_tokens_seen': 1272, 'train_runtime': '3.9', 'train_tokens_per_second': '326.2'}
+[INFO|2026-06-06 12:05:03] llamafactory.train.callbacks:144 >> {'loss': 1.5448, 'learning_rate': 5.7822e-05, 'epoch': 0.50, 'throughput': 373.84}
+{'loss': '1.545', 'grad_norm': '3.296', 'learning_rate': '5.782e-05', 'epoch': '0.5', 'num_input_tokens_seen': 2384, 'train_runtime': '6.384', 'train_tokens_per_second': '373.4'}
+[INFO|2026-06-06 12:05:05] llamafactory.train.callbacks:144 >> {'loss': 0.8793, 'learning_rate': 2.0611e-05, 'epoch': 0.75, 'throughput': 397.85}
+{'loss': '0.8793', 'grad_norm': '2.288', 'learning_rate': '2.061e-05', 'epoch': '0.75', 'num_input_tokens_seen': 3520, 'train_runtime': '8.855', 'train_tokens_per_second': '397.5'}
+[INFO|2026-06-06 12:05:08] llamafactory.train.callbacks:144 >> {'loss': 1.2226, 'learning_rate': 6.1558e-07, 'epoch': 1.00, 'throughput': 408.07}
+{'loss': '1.223', 'grad_norm': '2.391', 'learning_rate': '6.156e-07', 'epoch': '1', 'num_input_tokens_seen': 4712, 'train_runtime': '11.55', 'train_tokens_per_second': '407.8'}
+{'train_runtime': '11.94', 'train_samples_per_second': '1.676', 'train_steps_per_second': '1.676', 'train_loss': '1.745', 'epoch': '1', 'num_input_tokens_seen': 4712}
+***** train metrics *****
+  epoch                    =        1.0
+  num_input_tokens_seen    =       4712
+  total_flos               =    96106GF
+  train_loss               =     1.7454
+  train_runtime            = 0:00:11.93
+  train_samples_per_second =      1.676
+  train_steps_per_second   =      1.676
+Figure saved at: saves\Qwen3-4B-Thinking\lora\localrag_sft_e1_qlora_smoke\training_loss.png
+[WARNING|2026-06-06 12:05:09] llamafactory.extras.ploting:149 >> No metric eval_loss to plot.
+[WARNING|2026-06-06 12:05:09] llamafactory.extras.ploting:149 >> No metric eval_accuracy to plot.

@@ -1,11 +1,19 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-SUPPORTED_PROVIDERS = ("bailian", "modelscope", "sensenova", "local_embedding", "local_sentence_transformer")
+SUPPORTED_PROVIDERS = (
+    "bailian",
+    "modelscope",
+    "sensenova",
+    "local_embedding",
+    "local_sentence_transformer",
+    "local_transformers",
+)
 UNIFIED_REQUIRED_FIELDS = (
     "provider",
     "api_key",
@@ -15,6 +23,7 @@ UNIFIED_REQUIRED_FIELDS = (
 )
 DEFAULT_RUNTIME_CONFIG_NAME = "runtime_models.json"
 LEGACY_RUNTIME_CONFIG_NAME = "key.json"
+RUNTIME_CONFIG_ENV_VAR = "LOCALRAG_RUNTIME_CONFIG"
 
 
 @dataclass(frozen=True)
@@ -24,6 +33,10 @@ class RuntimeProviderConfig:
     base_url: str
     chat_model_name: str
     embedding_model_name: str
+    device: str = "auto"
+    torch_dtype: str = "float16"
+    max_new_tokens: int = 128
+    adapter_path: str | None = None
 
 
 def get_default_runtime_config_path() -> Path:
@@ -37,6 +50,10 @@ def _get_legacy_runtime_config_path() -> Path:
 def _resolve_runtime_config_path(path: Path | None) -> Path:
     if path is not None:
         return path
+
+    env_path = os.environ.get(RUNTIME_CONFIG_ENV_VAR)
+    if env_path:
+        return Path(env_path)
 
     default_path = get_default_runtime_config_path()
     if default_path.exists():
@@ -89,6 +106,33 @@ def _read_required_string(raw_data: dict[str, Any], field: str, aliases: tuple[s
     raise RuntimeError(f"Missing required runtime config field: {field}")
 
 
+def _read_optional_string(raw_data: dict[str, Any], field: str, default: str) -> str:
+    if field not in raw_data:
+        return default
+    value = raw_data[field]
+    if not isinstance(value, str) or not value.strip():
+        raise RuntimeError(f"Empty optional runtime config field: {field}")
+    return value.strip()
+
+
+def _read_optional_nullable_string(raw_data: dict[str, Any], field: str) -> str | None:
+    if field not in raw_data:
+        return None
+    value = raw_data[field]
+    if not isinstance(value, str) or not value.strip():
+        raise RuntimeError(f"Empty optional runtime config field: {field}")
+    return value.strip()
+
+
+def _read_optional_int(raw_data: dict[str, Any], field: str, default: int) -> int:
+    if field not in raw_data:
+        return default
+    value = raw_data[field]
+    if not isinstance(value, int) or value <= 0:
+        raise RuntimeError(f"Invalid optional runtime config field: {field}")
+    return value
+
+
 def load_runtime_config(path: Path | None = None) -> RuntimeProviderConfig:
     config_path = _resolve_runtime_config_path(path)
     raw_data = _load_raw_json(config_path)
@@ -103,5 +147,9 @@ def load_runtime_config(path: Path | None = None) -> RuntimeProviderConfig:
         "base_url": _read_required_string(raw_data, "base_url", aliases=base_url_aliases),
         "chat_model_name": _read_required_string(raw_data, "chat_model_name"),
         "embedding_model_name": _read_required_string(raw_data, "embedding_model_name"),
+        "device": _read_optional_string(raw_data, "device", "auto"),
+        "torch_dtype": _read_optional_string(raw_data, "torch_dtype", "float16"),
+        "max_new_tokens": _read_optional_int(raw_data, "max_new_tokens", 128),
+        "adapter_path": _read_optional_nullable_string(raw_data, "adapter_path"),
     }
     return RuntimeProviderConfig(**values)

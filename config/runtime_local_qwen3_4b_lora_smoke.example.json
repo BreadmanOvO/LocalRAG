@@ -1,0 +1,11 @@
+{
+  "provider": "local_transformers",
+  "api_key": "local",
+  "base_url": "local",
+  "chat_model_name": "models/Qwen3-4B",
+  "embedding_model_name": "models/bge-m3",
+  "device": "auto",
+  "torch_dtype": "float16",
+  "max_new_tokens": 256,
+  "adapter_path": "saves/Qwen3-4B-Thinking/lora/localrag_sft_e1_qlora_smoke"
+}

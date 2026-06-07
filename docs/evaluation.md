@@ -179,12 +179,29 @@ Sparse Retrieval 对比实验：
 结果目录合同：
 - `results/inspection/<run_id>/`
 
+### 9. finetune_behavior_eval
+入口：`eval/eval_finetune_behavior.py`
+
+用于微调前后 predictions 的离线行为检查，不调用 LLM：
+- 统计拒答比例
+- 统计 evidence source / locator 命中
+- 统计答案是否显式引用 evidence
+- 标记 `unsupported_claim_risk`：有回答、非拒答、但未召回 evidence source
+- 标记 `over_refusal_risk`：已召回 evidence source 但仍拒答
+- 可传入 baseline predictions 输出 candidate 相对 baseline 的 ratio delta
+
+结果目录合同：
+- `results/finetune_behavior_eval/<run_id>/summary.json`
+- `results/finetune_behavior_eval/<run_id>/manifest.json`
+
 ## 数据集合同
 数据文件：
 - `data/evaluation/gold/eval_set.json`
 - `data/evaluation/gold/gold_set_100.json`
 - `data/evaluation/gold/gold_set_extended.json`
 - `data/evaluation/train/train_set.json`
+- `data/finetuning/sft_train.jsonl`
+- `data/finetuning/sft_validation.jsonl`
 - `data/evaluation/shared/eval_schema.py`
 
 每条样本必须包含：
@@ -210,6 +227,11 @@ Sparse Retrieval 对比实验：
 - 清洗后的评测集需覆盖核心自动驾驶主题，例如 `perception`、`planning_control`、`safety`、`sensor_fusion`
 - 清洗后的评测集必须包含论文类样本（`paper`）
 
+`data/finetuning/*.jsonl` 由 `scripts/prepare_sft_dataset.py` 从 `train_set.json` 派生，每行是一个 chat record：
+- `messages[0]`: system prompt，约束只依据证据回答
+- `messages[1]`: user prompt，包含 question 与 evidence quote/source/locator
+- `messages[2]`: assistant answer，包含 reference answer 与引用列表
+
 ## 当前口径下的指标解释
 
 ### baseline_eval
@@ -234,6 +256,14 @@ Sparse Retrieval 对比实验：
 - 比较不同 chunking 策略的 source hit / locator hit
 - 做 retrieval inspection
 - 观察不同 `doc_type` 的切分收益差异
+
+### finetune_behavior_eval
+当前适合用于：
+- 在跑昂贵的 LLM Judge / Ragas 之前快速发现微调版本是否更爱编造或过度拒答
+- 确认微调后答案是否保留 evidence citation 习惯
+- 作为 SFT / QLoRA 训练前后的轻量回归闸门
+
+它不能单独证明语义质量提升；最终仍应结合 pairwise judge、Ragas 或人工抽检。
 
 ## 与目标态的差距
 当前评测链路已覆盖 baseline、chunking、retrieval、hybrid、reranker 与 judge formal run。后续可继续增强：

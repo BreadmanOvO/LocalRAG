@@ -6,6 +6,8 @@ from typing import Any
 from langchain_core.documents import Document
 from rank_bm25 import BM25Okapi
 
+BM25_BATCH_SIZE = 500
+
 
 def _tokenize(text: str) -> list[str]:
     return re.findall(r"\w+", text.lower())
@@ -34,15 +36,29 @@ class HybridRetriever:
 
     def _build_bm25_index(self) -> None:
         collection = self.vector_store._collection
-        result = collection.get(include=["documents", "metadatas"])
-        if not result["ids"]:
+        offset = 0
+        while True:
+            result = collection.get(
+                include=["documents", "metadatas"],
+                limit=BM25_BATCH_SIZE,
+                offset=offset,
+            )
+            ids = result["ids"]
+            if not ids:
+                break
+
+            self._bm25_ids.extend(ids)
+            self._bm25_docs.extend(
+                Document(page_content=text, metadata=meta or {})
+                for text, meta in zip(result["documents"], result["metadatas"])
+            )
+            if len(ids) < BM25_BATCH_SIZE:
+                break
+            offset += BM25_BATCH_SIZE
+
+        if not self._bm25_docs:
             return
 
-        self._bm25_ids = result["ids"]
-        self._bm25_docs = [
-            Document(page_content=text, metadata=meta or {})
-            for text, meta in zip(result["documents"], result["metadatas"])
-        ]
         tokenized = [_tokenize(doc.page_content) for doc in self._bm25_docs]
         self._bm25 = BM25Okapi(tokenized)
 

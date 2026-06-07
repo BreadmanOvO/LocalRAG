@@ -1,0 +1,45 @@
+{
+  "run_id": "qwen3-smoke-20260602-010623",
+  "created_at": "2026-06-02T01:06:23",
+  "model_path": "models\\Qwen3-4B",
+  "prompt": "请用一句话说明自动驾驶感知模块的作用。",
+  "device_requested": "auto",
+  "torch_dtype_requested": "float16",
+  "max_new_tokens": 64,
+  "success": true,
+  "tokenizer_loaded": true,
+  "model_loaded": true,
+  "generated_text": "自动驾驶感知模块的作用是通过传感器和算法实时感知车辆周围环境，识别道路、障碍物、行人、交通标志等关键信息，为自动驾驶系统提供决策和控制依据。",
+  "error": null,
+  "traceback": null,
+  "memory_before": {
+    "cuda_available": true,
+    "gpu_name": "NVIDIA GeForce RTX 4080 SUPER",
+    "memory_free_bytes": 15794700288,
+    "memory_total_bytes": 17170956288,
+    "memory_allocated_bytes": 0,
+    "memory_reserved_bytes": 0,
+    "max_memory_allocated_bytes": 0
+  },
+  "memory_after_load": {
+    "cuda_available": true,
+    "gpu_name": "NVIDIA GeForce RTX 4080 SUPER",
+    "memory_free_bytes": 7691304960,
+    "memory_total_bytes": 17170956288,
+    "memory_allocated_bytes": 8101709824,
+    "memory_reserved_bytes": 8103395328,
+    "max_memory_allocated_bytes": 8101709824
+  },
+  "memory_after_generate": {
+    "cuda_available": true,
+    "gpu_name": "NVIDIA GeForce RTX 4080 SUPER",
+    "memory_free_bytes": 7596933120,
+    "memory_total_bytes": 17170956288,
+    "memory_allocated_bytes": 8110231040,
+    "memory_reserved_bytes": 8139046912,
+    "max_memory_allocated_bytes": 8122992640
+  },
+  "device": "cuda",
+  "torch_version": "2.6.0+cu124",
+  "transformers_version": "5.8.0"
+}

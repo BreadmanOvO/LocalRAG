@@ -1,6 +1,7 @@
 import ast
 import json
 import re
+import shutil
 import shlex
 import subprocess
 import sys
@@ -356,12 +357,13 @@ class JudgeFormalRunTests(unittest.TestCase):
 
         expected_interpreter = str(Path(sys.executable))
         for command, expected_fragments in zip(commands, expected_python_fragments, strict=True):
-            subprocess.run(
-                ['bash', '-n', '-c', command],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
+            if shutil.which('bash'):
+                subprocess.run(
+                    ['bash', '-n', '-c', command],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
             parts = shlex.split(command)
             self.assertEqual(['cd', str(formal_runner.REPO_ROOT), '&&', expected_interpreter, '-c'], parts[:5])
             self.assertEqual(6, len(parts))

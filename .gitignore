@@ -31,6 +31,11 @@ md5.txt
 # Local Streamlit cache/config
 .streamlit/
 
+# Local agent/runtime state
+.codex/
+.omx/
+.playwright-mcp/
+
 # Local git worktrees (both locations)
 .worktrees/
 .claude/worktrees/
@@ -45,6 +50,11 @@ results/chunking_eval/stores/
 models/bge-m3/
 models/bge-reranker-base/
 models/Qwen3-8B/
+models/Qwen3-4B/
+
+# Local training/WebUI outputs
+llamaboard_cache/
+saves/
 
 # oh-my-claudecode state
 .omc/

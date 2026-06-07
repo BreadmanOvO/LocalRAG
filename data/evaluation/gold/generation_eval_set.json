@@ -1,0 +1,192 @@
+[
+  {
+    "id": "gen-eval-001",
+    "question": "自动驾驶视觉感知模块在 Apollo 中主要处理哪些任务？",
+    "reference_answer": "Apollo 视觉感知算法主要用于红绿灯检测、车道线检测、基于摄像头的障碍物检测；每个模块通常包含预处理、神经网络模型和后处理。",
+    "evidence": [
+      {
+        "quote": "视觉感知算法在Apollo平台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。每个模块又可以分为3部分，分别是图像的预处理、神经网络模型以及后处理。",
+        "source_id": "apollo-doc-006",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc",
+      "generation_category": "normal_answerable",
+      "expected_behavior": "answer"
+    }
+  },
+  {
+    "id": "gen-eval-002",
+    "question": "CRN 融合了哪两类传感器来构建 BEV 特征？",
+    "reference_answer": "CRN 融合摄像头和雷达数据，构建语义丰富且空间准确的 BEV 特征图。",
+    "evidence": [
+      {
+        "quote": "CRN: Camera Radar Net for Accurate, Robust, Efficient 3D Perception ... we propose Camera Radar Net (CRN), a novel camera-radar fusion framework that generates a semantically rich and spatially accurate bird's-eye-view (BEV) feature map.",
+        "source_id": "paper-030",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "paper",
+      "generation_category": "normal_answerable",
+      "expected_behavior": "answer"
+    }
+  },
+  {
+    "id": "gen-eval-003",
+    "question": "Apollo 感知融合模块是否只依赖摄像头结果？请根据资料回答。",
+    "reference_answer": "不是。Apollo 感知融合模块支持对摄像头、毫米波雷达和激光雷达传感器的感知结果进行目标级融合。",
+    "evidence": [
+      {
+        "quote": "Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "source_id": "apollo-doc-005",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc",
+      "generation_category": "hallucination_prone",
+      "expected_behavior": "answer"
+    }
+  },
+  {
+    "id": "gen-eval-004",
+    "question": "使用稀疏聚合时，把 Top-K 查询数从 All 减少到 4096，会让 MFA 延迟和检测指标发生什么变化？",
+    "reference_answer": "MFA 延迟从 21.01ms 降到 4.96ms，降低 76.4%；AP 从 56.9% 降到 54.0%，ATE 从 0.325 升到 0.367，说明延迟显著降低但回归相关指标下降更明显。",
+    "evidence": [
+      {
+        "quote": "using 4096 size queries reduce the latency of MFA by 76.4% (21.01ms to 4.96ms) ... the performance drops on True Positive metrics (e.g., ATE, AOE, AVE) are more significant than AP.",
+        "source_id": "paper-030",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_object_detection",
+      "doc_type": "paper",
+      "generation_category": "hallucination_prone",
+      "expected_behavior": "answer"
+    }
+  },
+  {
+    "id": "gen-eval-005",
+    "question": "资料是否给出了 Apollo 视觉感知模块在雨夜施工区域的具体误检率？",
+    "reference_answer": "无法从给定证据确认。资料只说明摄像头容易受环境影响、视觉感知算法面临挑战，没有给出雨夜施工区域的具体误检率。",
+    "evidence": [
+      {
+        "quote": "但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。",
+        "source_id": "apollo-doc-006",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc",
+      "generation_category": "insufficient_context",
+      "expected_behavior": "refuse"
+    }
+  },
+  {
+    "id": "gen-eval-006",
+    "question": "资料是否说明 CRN 已经在某量产车型上部署，并给出了部署成本？",
+    "reference_answer": "无法从给定证据确认。证据说明 CRN 是 camera-radar fusion framework，但没有说明量产车型部署情况或部署成本。",
+    "evidence": [
+      {
+        "quote": "we propose Camera Radar Net (CRN), a novel camera-radar fusion framework that generates a semantically rich and spatially accurate bird's-eye-view (BEV) feature map.",
+        "source_id": "paper-030",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "paper",
+      "generation_category": "insufficient_context",
+      "expected_behavior": "refuse"
+    }
+  },
+  {
+    "id": "gen-eval-007",
+    "question": "Apollo 规划模块输入中的感知红绿灯信息对应哪个 channel？",
+    "reference_answer": "对应的 channel 是 /apollo/perception/traffic_light。",
+    "evidence": [
+      {
+        "quote": "规划模块的输入 channel名称 输入channel说明 ... /apollo/perception/traffic_light 输入是感知红绿灯信息。",
+        "source_id": "apollo-doc-008",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc",
+      "generation_category": "distractor_context",
+      "expected_behavior": "answer"
+    }
+  },
+  {
+    "id": "gen-eval-008",
+    "question": "Apollo 感知融合模块最终输出到哪个障碍物 channel？",
+    "reference_answer": "最终融合输出到 /apollo/perception/obstacles。",
+    "evidence": [
+      {
+        "quote": "/perception/inner/PrefusedObjects 激光雷达感知 ... /apollo/perception/obstacles 视觉感知 融合感知 ... 毫米波雷达感知。",
+        "source_id": "apollo-doc-005",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc",
+      "generation_category": "distractor_context",
+      "expected_behavior": "answer"
+    }
+  },
+  {
+    "id": "gen-eval-009",
+    "question": "文档中提到的 parameter-free design 主要想解决 BEV 感知中的什么问题？它试图与哪些相机因素解耦？",
+    "reference_answer": "它主要针对 BEV 感知中的领域自适应问题，试图让特征学习与相机外参和/或内参矩阵解耦，以缓解不同数据集相机位置、重叠区域、视场角、畸变参数等差异带来的迁移困难。",
+    "evidence": [
+      {
+        "quote": "One of the biggest challenges in BEV perception is the domain adaptation ... it urges us to decouple the network from camera parameters, aka, making the feature learning independent of the extrinsic and/or intrinsic matrix.",
+        "source_id": "paper-038",
+        "locator": "page=26"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "review",
+      "doc_type": "paper",
+      "generation_category": "hard_case_pattern_d",
+      "expected_behavior": "answer"
+    }
+  },
+  {
+    "id": "gen-eval-010",
+    "question": "Part-A2 Net 如何利用 3D 边界框标注中自动提供的免费监督信息？",
+    "reference_answer": "Part-A2 Net 利用 3D 边界框标注自动提供的前景点语义掩码和物体内部相对位置作为免费监督，用于预测高质量 3D proposal 和物体内部部件位置。",
+    "evidence": [
+      {
+        "quote": "the training data with 3D box annotations automatically provides free-of-charge semantic masks and even the relative location of each foreground point within the 3D ground truth bounding boxes ... part-aware stage ... utilizes free-of-charge part supervisions.",
+        "source_id": "paper-066",
+        "locator": "page=1 and page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "lidar_perception",
+      "doc_type": "paper",
+      "generation_category": "hard_case_pattern_d",
+      "expected_behavior": "answer"
+    }
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "localrag_sft_e1": {
+    "file_name": "../datasets/localrag_sft_e1.jsonl",
+    "formatting": "alpaca",
+    "ranking": false,
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output"
+    }
+  },
+  "localrag_sft_e1_validation": {
+    "file_name": "../datasets/localrag_sft_e1_validation.jsonl",
+    "formatting": "alpaca",
+    "ranking": false,
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output"
+    }
+  }
+}

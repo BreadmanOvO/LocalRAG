@@ -1,0 +1,242 @@
+[
+  {
+    "id": "gen-eval-001",
+    "question": "自动驾驶视觉感知模块在 Apollo 中主要处理哪些任务？",
+    "reference_answer": "Apollo 视觉感知算法主要用于红绿灯检测、车道线检测、基于摄像头的障碍物检测；每个模块通常包含预处理、神经网络模型和后处理。",
+    "answer": "在 Apollo 平台中，自动驾驶视觉感知模块主要处理以下任务：\n\n1. **红绿灯检测**：检测摄像头视野内的红绿灯状态，属于典型的目标检测任务，包含数据预处理、红绿灯位置检测、红绿灯识别和矫正等步骤。\n\n2. **车道线检测**：识别道路中的车道线，帮助车辆保持在正确的车道内。\n\n3. **基于摄像头的障碍物检测**：通过摄像头进行障碍物的检测，为自动驾驶系统提供周围环境中的障碍物信息。\n\n这些任务共同构成了视觉感知模块的核心功能，为自动驾驶系统提供关键的环境感知数据。",
+    "retrieved_context": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。\n1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p. 1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.6314300244570827,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p. 1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.6176434531343813,
+        "rank": 2
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.6314300244570827,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p. 1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.6176434531343813,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "## Evidence-ready excerpts\n- [p. 1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障碍物信息 摄像头障碍物 摄像头障碍 2D到3D转换 多传感器 其他传感器 障碍物信息 每个模块又可以分为3部分，分别是图像的预处理、神经网络模型以及后处理。 ·预处理：对上游信息做一些处理和整合，以方便把信息直接输入到模型中做预测。 ·神经网络模型：主要涉及一些深度学习算法，包括目标检测、语义分割、图像分类等。 ·后处理：为了优化模型效果，我们会利用一些传统的算法进一步优化网络模型的预测，让我们的算法可以在实车 上跑得更加流畅。",
+        "score": 0.5546900542128113,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": 0.5455649243354146,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "视觉感知算法在Apollo平台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。每个模块又可以分为3部分，分别是图像的预处理、神经网络模型以及后处理。",
+        "source_id": "apollo-doc-006",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc",
+      "generation_category": "normal_answerable",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  },
+  {
+    "id": "gen-eval-002",
+    "question": "CRN 融合了哪两类传感器来构建 BEV 特征？",
+    "reference_answer": "CRN 融合摄像头和雷达数据，构建语义丰富且空间准确的 BEV 特征图。",
+    "answer": "CRN 融合了相机和雷达两种传感器来构建 BEV 特征。",
+    "retrieved_context": "be adaptive in order to tackle noisy and ambiguous radar\nmeasurements. To this end, we design a novel two-stage fusion method\nfor BEV feature encoding, Camera Radar Net (CRN). The\nkey idea of the proposed method is to generate semantically\nrich and spatially accurate BEV feature map by fusing com-\nplementary characteristics of camera and radar sensors. In\nparticular, we first transform image features in perspective\nview into BEV not solely relying on estimated depth but us-\ning radar, named radar-assisted view transformation (RVT). Since transformed image features in BEV is not completely\naccurate, following multi-modal feature aggregation (MFA)\nlayers consecutively encodes the multi-modal feature maps\ninto a unified feature map using an attention mechanism. We conduct extensive experiments on nuScenes and demon-\nstrate that our proposed method can generate a fine-grained\nBEV feature map to set the new state-of-the-art on various\nkr\nAbstract\nAutonomous driving requires an accurate and fast 3D\nperception system that includes 3D object detection, track-\ning, and segmentation. Although recent low-cost camera-\nbased approaches have shown promising results, they are\nsusceptible to poor illumination or bad weather conditions\nand have a large localization error. Hence, fusing cam-\nera with low-cost radar, which provides precise long-range\nmeasurement and operates reliably in all environments, is\npromising but has not yet been thoroughly investigated. In\nthis paper, we propose Camera Radar Net (CRN), a novel\ncamera-radar fusion framework that generates a semanti-\ncally rich and spatially accurate bird’s-eye-view (BEV) fea-\nture map for various tasks. To overcome the lack of spa-\ntial information in an image, we transform perspective view\nimage features to BEV with the help of sparse but accu-\nrate radar points. We further aggregate image and radar\nfeature maps in BEV using multi-modal deformable atten-",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "be adaptive in order to tackle noisy and ambiguous radar\nmeasurements. To this end, we design a novel two-stage fusion method\nfor BEV feature encoding, Camera Radar Net (CRN). The\nkey idea of the proposed method is to generate semantically\nrich and spatially accurate BEV feature map by fusing com-\nplementary characteristics of camera and radar sensors. In\nparticular, we first transform image features in perspective\nview into BEV not solely relying on estimated depth but us-\ning radar, named radar-assisted view transformation (RVT). Since transformed image features in BEV is not completely\naccurate, following multi-modal feature aggregation (MFA)\nlayers consecutively encodes the multi-modal feature maps\ninto a unified feature map using an attention mechanism. We conduct extensive experiments on nuScenes and demon-\nstrate that our proposed method can generate a fine-grained\nBEV feature map to set the new state-of-the-art on various",
+        "score": 0.5836950938895233,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "kr\nAbstract\nAutonomous driving requires an accurate and fast 3D\nperception system that includes 3D object detection, track-\ning, and segmentation. Although recent low-cost camera-\nbased approaches have shown promising results, they are\nsusceptible to poor illumination or bad weather conditions\nand have a large localization error. Hence, fusing cam-\nera with low-cost radar, which provides precise long-range\nmeasurement and operates reliably in all environments, is\npromising but has not yet been thoroughly investigated. In\nthis paper, we propose Camera Radar Net (CRN), a novel\ncamera-radar fusion framework that generates a semanti-\ncally rich and spatially accurate bird’s-eye-view (BEV) fea-\nture map for various tasks. To overcome the lack of spa-\ntial information in an image, we transform perspective view\nimage features to BEV with the help of sparse but accu-\nrate radar points. We further aggregate image and radar\nfeature maps in BEV using multi-modal deformable atten-",
+        "score": 0.5173681769194444,
+        "rank": 2
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "be adaptive in order to tackle noisy and ambiguous radar\nmeasurements. To this end, we design a novel two-stage fusion method\nfor BEV feature encoding, Camera Radar Net (CRN). The\nkey idea of the proposed method is to generate semantically\nrich and spatially accurate BEV feature map by fusing com-\nplementary characteristics of camera and radar sensors. In\nparticular, we first transform image features in perspective\nview into BEV not solely relying on estimated depth but us-\ning radar, named radar-assisted view transformation (RVT). Since transformed image features in BEV is not completely\naccurate, following multi-modal feature aggregation (MFA)\nlayers consecutively encodes the multi-modal feature maps\ninto a unified feature map using an attention mechanism. We conduct extensive experiments on nuScenes and demon-\nstrate that our proposed method can generate a fine-grained\nBEV feature map to set the new state-of-the-art on various",
+        "score": 0.5836950938895233,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "kr\nAbstract\nAutonomous driving requires an accurate and fast 3D\nperception system that includes 3D object detection, track-\ning, and segmentation. Although recent low-cost camera-\nbased approaches have shown promising results, they are\nsusceptible to poor illumination or bad weather conditions\nand have a large localization error. Hence, fusing cam-\nera with low-cost radar, which provides precise long-range\nmeasurement and operates reliably in all environments, is\npromising but has not yet been thoroughly investigated. In\nthis paper, we propose Camera Radar Net (CRN), a novel\ncamera-radar fusion framework that generates a semanti-\ncally rich and spatially accurate bird’s-eye-view (BEV) fea-\nture map for various tasks. To overcome the lack of spa-\ntial information in an image, we transform perspective view\nimage features to BEV with the help of sparse but accu-\nrate radar points. We further aggregate image and radar\nfeature maps in BEV using multi-modal deformable atten-",
+        "score": 0.5173681769194444,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-038",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "dataset, benchmark)\nready to conduct BEV perception research?",
+        "score": 0.4717746434310264,
+        "rank": 3
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "Conclusion\nWe present CRN, a novel camera-radar fusion method\nfor accurate, robust, and efficient multi-task 3D percep-\ntion. Our method effectively overcomes the limitation of\neach modality and fuses multi-modal information to gener-\nate contextually rich and spatially accurate BEV scene rep-\nresentation. CRN is also suitable for long-range percep-\ntion in real-time and achieves state-of-the-art performance\non various tasks. We hope that CRN will inspire future re-\nsearch on camera-radar fusion for 3D perception.",
+        "score": 0.47161242021110794,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "CRN: Camera Radar Net for Accurate, Robust, Efficient 3D Perception ... we propose Camera Radar Net (CRN), a novel camera-radar fusion framework that generates a semantically rich and spatially accurate bird's-eye-view (BEV) feature map.",
+        "source_id": "paper-030",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "paper",
+      "generation_category": "normal_answerable",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  },
+  {
+    "id": "gen-eval-003",
+    "question": "Apollo 感知融合模块是否只依赖摄像头结果？请根据资料回答。",
+    "reference_answer": "不是。Apollo 感知融合模块支持对摄像头、毫米波雷达和激光雷达传感器的感知结果进行目标级融合。",
+    "answer": "根据资料，Apollo 感知融合模块**并不只依赖摄像头结果**。相反，它支持对摄像头、毫米波雷达和激光雷达传感器感知结果进行目标级融合。模块通过结合多种传感器的数据，利用各自的优势，对障碍物进行更准确的检测和识别。因此，Apollo 感知融合模块是多传感器融合的，旨在通过不同传感器的互补性提升整体感知性能。",
+    "retrieved_context": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里，不同的传感器各有各的优缺点，而Apollo感知模块则是把各个传感器的优点结合起来，在目标级别 上进行融合。 下图表示了摄像头（Camera）、毫米波雷达（Radar）和激光雷达（Lidar）传感器在不同任务和不同条件下的性 能。 其中， ·摄像头：对于分类任务尤其准确， ·毫米波雷达：在穿透性、距离估计和极端天气抗干扰性具有卓越的性能， 数据格式 ·激光雷达：擅长目标检测任务。 如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。\n1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p. 1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p. 1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里，不同的传感器各有各的优缺点，而Apollo感知模块则是把各个传感器的优点结合起来，在目标级别 上进行融合。 下图表示了摄像头（Camera）、毫米波雷达（Radar）和激光雷达（Lidar）传感器在不同任务和不同条件下的性 能。 其中， ·摄像头：对于分类任务尤其准确， ·毫米波雷达：在穿透性、距离估计和极端天气抗干扰性具有卓越的性能， 数据格式 ·激光雷达：擅长目标检测任务。 如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。",
+        "score": 0.5955406763977527,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p. 1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p. 1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。",
+        "score": 0.5951628720477011,
+        "rank": 2
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里，不同的传感器各有各的优缺点，而Apollo感知模块则是把各个传感器的优点结合起来，在目标级别 上进行融合。 下图表示了摄像头（Camera）、毫米波雷达（Radar）和激光雷达（Lidar）传感器在不同任务和不同条件下的性 能。 其中， ·摄像头：对于分类任务尤其准确， ·毫米波雷达：在穿透性、距离估计和极端天气抗干扰性具有卓越的性能， 数据格式 ·激光雷达：擅长目标检测任务。 如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。",
+        "score": 0.5955406763977527,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p. 1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p. 1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。",
+        "score": 0.5951628720477011,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": 0.5755857030612392,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "apollo. auto/Apollo-Homepage-Document/Apollo_Doc_CN_6_0/%E4%B8%8A%E6%9C%BA%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/%E4%B8%8A%E6%9C%BA%E5%AE%9E%E8%B7%B5Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B/Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B%E4%BB%8B%E7%BB%8D\n- Language: zh\n- Version: Apollo Doc CN 6. 0\n- Pages: 1\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception-fusion material describing the multi-sensor fusion workflow and the role of fused perception in downstream driving tasks. ## Key points\n- Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo…\n- +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "score": 0.570068006241587,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "source_id": "apollo-doc-005",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc",
+      "generation_category": "hallucination_prone",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  }
+]

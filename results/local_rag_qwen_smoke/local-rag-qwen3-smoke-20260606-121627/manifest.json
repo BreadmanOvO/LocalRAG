@@ -1,0 +1,9 @@
+{
+  "pipeline": "local_rag_qwen_smoke",
+  "contract_version": "v1.1",
+  "run_id": "local-rag-qwen3-smoke-20260606-121627",
+  "created_at": "2026-06-06T12:16:27",
+  "runtime_config_path": "config\\runtime_local_qwen3_4b_lora_smoke.example.json",
+  "store_dir": "D:\\Code\\Learn\\LLM\\LocalRAG\\results\\chunking_eval\\stores\\eval_set-20260522-071034\\semantic",
+  "question": "自动驾驶感知模块的作用是什么？"
+}

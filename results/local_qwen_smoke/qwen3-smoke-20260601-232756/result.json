@@ -1,0 +1,18 @@
+{
+  "run_id": "qwen3-smoke-20260601-232756",
+  "created_at": "2026-06-01T23:27:56",
+  "model_path": "models\\Qwen3-4B",
+  "prompt": "请用一句话说明自动驾驶感知模块的作用。",
+  "device_requested": "auto",
+  "torch_dtype_requested": "float16",
+  "max_new_tokens": 64,
+  "success": false,
+  "tokenizer_loaded": false,
+  "model_loaded": false,
+  "generated_text": "",
+  "error": "FileNotFoundError: model path does not exist: models\\Qwen3-4B",
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\Code\\Learn\\LLM\\LocalRAG\\scripts\\smoke_local_qwen3.py\", line 127, in run_smoke\n    raise FileNotFoundError(f\"model path does not exist: {model_path}\")\nFileNotFoundError: model path does not exist: models\\Qwen3-4B\n",
+  "memory_before": null,
+  "memory_after_load": null,
+  "memory_after_generate": null
+}

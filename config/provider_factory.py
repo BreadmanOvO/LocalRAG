@@ -2,15 +2,134 @@ from __future__ import annotations
 
 import hashlib
 import math
+from typing import Any
 
 import httpx
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_core.runnables import Runnable
 
 from config.model_paths import get_bge_m3_path
 from config.runtime_keys import RuntimeProviderConfig
 
 OPENAI_COMPATIBLE_PROVIDERS = {"bailian", "modelscope", "sensenova", "local_embedding", "local_sentence_transformer"}
+
+
+def _resolve_torch_dtype(torch_module: Any, dtype_name: str):
+    if dtype_name == "auto":
+        return "auto"
+    if dtype_name == "float16":
+        return torch_module.float16
+    if dtype_name == "bfloat16":
+        return torch_module.bfloat16
+    if dtype_name == "float32":
+        return torch_module.float32
+    raise ValueError(f"unsupported torch dtype: {dtype_name}")
+
+
+def _select_device(torch_module: Any, requested_device: str) -> str:
+    if requested_device != "auto":
+        return requested_device
+    return "cuda" if torch_module.cuda.is_available() else "cpu"
+
+
+def _message_role(message: Any) -> str:
+    message_type = getattr(message, "type", "")
+    if message_type == "system":
+        return "system"
+    if message_type == "ai":
+        return "assistant"
+    return "user"
+
+
+def _message_content(message: Any) -> str:
+    content = getattr(message, "content", message)
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        return "".join(
+            item.get("text", "") if isinstance(item, dict) else str(item)
+            for item in content
+        )
+    return str(content)
+
+
+class LocalTransformersChatModel(Runnable):
+    def __init__(
+        self,
+        model_name: str,
+        *,
+        device: str = "auto",
+        torch_dtype: str = "float16",
+        max_new_tokens: int = 128,
+        adapter_path: str | None = None,
+    ) -> None:
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+
+        self.torch = torch
+        self.device = _select_device(torch, device)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            model_name,
+            trust_remote_code=True,
+            local_files_only=True,
+        )
+        self.model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype=_resolve_torch_dtype(torch, torch_dtype),
+            trust_remote_code=True,
+            local_files_only=True,
+        )
+        if self.device == "cuda":
+            self.model = self.model.to(self.device)
+        if adapter_path:
+            from peft import PeftModel
+
+            self.model = PeftModel.from_pretrained(
+                self.model,
+                adapter_path,
+                local_files_only=True,
+            )
+        self.model.eval()
+        self.max_new_tokens = max_new_tokens
+
+    def _format_prompt(self, value: Any) -> str:
+        if hasattr(value, "to_messages"):
+            messages = [
+                {"role": _message_role(message), "content": _message_content(message)}
+                for message in value.to_messages()
+            ]
+            try:
+                return self.tokenizer.apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True,
+                    enable_thinking=False,
+                )
+            except TypeError:
+                return self.tokenizer.apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True,
+                )
+        return str(value)
+
+    def invoke(self, input: Any, config: Any | None = None, **kwargs: Any) -> str:
+        prompt = self._format_prompt(input)
+        inputs = self.tokenizer(prompt, return_tensors="pt")
+        if self.device == "cuda":
+            inputs = inputs.to(self.device)
+        input_length = inputs["input_ids"].shape[-1]
+        max_new_tokens = int(kwargs.get("max_new_tokens", self.max_new_tokens))
+        with self.torch.inference_mode():
+            outputs = self.model.generate(
+                **inputs,
+                max_new_tokens=max_new_tokens,
+                do_sample=False,
+                pad_token_id=self.tokenizer.eos_token_id,
+            )
+        generated_ids = outputs[0][input_length:]
+        return self.tokenizer.decode(generated_ids, skip_special_tokens=True).strip()
 
 
 class LocalSentenceTransformerEmbeddings:
@@ -48,6 +167,15 @@ class LocalHashEmbeddings:
 
 
 def build_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
+    if runtime_config.provider == "local_transformers":
+        return LocalTransformersChatModel(
+            runtime_config.chat_model_name,
+            device=overrides.pop("device", runtime_config.device),
+            torch_dtype=overrides.pop("torch_dtype", runtime_config.torch_dtype),
+            max_new_tokens=int(overrides.pop("max_new_tokens", runtime_config.max_new_tokens)),
+            adapter_path=overrides.pop("adapter_path", runtime_config.adapter_path),
+        )
+
     if runtime_config.provider not in OPENAI_COMPATIBLE_PROVIDERS:
         raise ValueError(f"Unsupported runtime provider: {runtime_config.provider}")
 
@@ -86,7 +214,7 @@ def build_embedding_model(runtime_config: RuntimeProviderConfig):
     if runtime_config.provider == "local_embedding":
         return LocalHashEmbeddings()
 
-    if runtime_config.provider in ("local_sentence_transformer", "sensenova"):
+    if runtime_config.provider in ("local_sentence_transformer", "local_transformers", "sensenova"):
         return LocalSentenceTransformerEmbeddings(model_name=runtime_config.embedding_model_name)
 
     raise ValueError(f"Unsupported runtime provider: {runtime_config.provider}")

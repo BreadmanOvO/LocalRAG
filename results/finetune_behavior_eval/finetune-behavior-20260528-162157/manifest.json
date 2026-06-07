@@ -1,0 +1,9 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "finetune_behavior_eval",
+  "run_id": "finetune-behavior-20260528-162157",
+  "predictions_path": "results\\baseline_eval\\eval_set-20260522-055220\\predictions.json",
+  "baseline_predictions_path": null,
+  "created_at": "2026-05-28T16:21:57",
+  "runner_script": "eval/eval_finetune_behavior.py"
+}

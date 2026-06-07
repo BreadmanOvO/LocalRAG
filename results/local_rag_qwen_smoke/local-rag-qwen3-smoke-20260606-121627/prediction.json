@@ -1,0 +1,79 @@
+{
+  "run_id": "local-rag-qwen3-smoke-20260606-121627",
+  "created_at": "2026-06-06T12:16:27",
+  "runtime_config_path": "config\\runtime_local_qwen3_4b_lora_smoke.example.json",
+  "store_dir": "D:\\Code\\Learn\\LLM\\LocalRAG\\results\\chunking_eval\\stores\\eval_set-20260522-071034\\semantic",
+  "question": "自动驾驶感知模块的作用是什么？",
+  "success": true,
+  "answer": "自动驾驶感知模块的作用是通过传感器（如摄像头、雷达、激光雷达等）采集环境数据，并对其进行处理与分析，以实现对车辆周围环境的感知与理解。其核心功能包括：\n\n1. **环境感知**：检测和识别道路上的车辆、行人、交通标志、标线、红绿灯等关键元素。\n2. **目标识别与跟踪**：对检测到的物体进行分类和跟踪，获取其类型、位置、速度等信息。\n3. **语义理解**：理解环境中的语义信息，如交通信号、车道信息、障碍物状态等，为自动驾驶决策提供依据。\n4. **多传感器融合**：结合多种传感器数据，提升感知的准确性与鲁棒性，弥补单一传感器的局限性。\n\n在Apollo平台中，视觉感知模块主要负责红绿灯检测、车道线检测和基于摄像头的障碍物检测等任务，是实现自动驾驶安全与可靠性的关键组成部分。",
+  "retrieved_context": "1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p. 1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。\nauto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+  "retrieved_rows": [
+    {
+      "source_id": "apollo-doc-006",
+      "doc_type": "official_doc",
+      "locator": "",
+      "chunk_strategy": "semantic",
+      "content": "1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p. 1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+      "score": 0.6026884868772607,
+      "rank": 1
+    },
+    {
+      "source_id": "apollo-doc-006",
+      "doc_type": "official_doc",
+      "locator": "",
+      "chunk_strategy": "semantic",
+      "content": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+      "score": 0.5907179811100451,
+      "rank": 2
+    }
+  ],
+  "retrieval_debug_candidates": [
+    {
+      "source_id": "apollo-doc-006",
+      "doc_type": "official_doc",
+      "locator": "",
+      "chunk_strategy": "semantic",
+      "content": "1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p. 1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+      "score": 0.6026884868772607,
+      "rank": 1
+    },
+    {
+      "source_id": "apollo-doc-006",
+      "doc_type": "official_doc",
+      "locator": "",
+      "chunk_strategy": "semantic",
+      "content": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+      "score": 0.5907179811100451,
+      "rank": 2
+    },
+    {
+      "source_id": "apollo-doc-005",
+      "doc_type": "official_doc",
+      "locator": "",
+      "chunk_strategy": "semantic",
+      "content": "1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+      "score": 0.5396347784562348,
+      "rank": 3
+    },
+    {
+      "source_id": "apollo-doc-006",
+      "doc_type": "official_doc",
+      "locator": "",
+      "chunk_strategy": "semantic",
+      "content": "## Evidence-ready excerpts\n- [p. 1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障碍物信息 摄像头障碍物 摄像头障碍 2D到3D转换 多传感器 其他传感器 障碍物信息 每个模块又可以分为3部分，分别是图像的预处理、神经网络模型以及后处理。 ·预处理：对上游信息做一些处理和整合，以方便把信息直接输入到模型中做预测。 ·神经网络模型：主要涉及一些深度学习算法，包括目标检测、语义分割、图像分类等。 ·后处理：为了优化模型效果，我们会利用一些传统的算法进一步优化网络模型的预测，让我们的算法可以在实车 上跑得更加流畅。",
+      "score": 0.5246973874349432,
+      "rank": 4
+    }
+  ],
+  "memory_after": {
+    "cuda_available": true,
+    "gpu_name": "NVIDIA GeForce RTX 4080 SUPER",
+    "memory_free_bytes": 3647025152,
+    "memory_total_bytes": 17170956288,
+    "memory_allocated_bytes": 10457009152,
+    "memory_reserved_bytes": 11089739776,
+    "max_memory_allocated_bytes": 10954250752
+  },
+  "error": null,
+  "traceback": null
+}

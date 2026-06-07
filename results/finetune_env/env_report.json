@@ -1,0 +1,70 @@
+{
+  "created_at": "2026-06-05T00:38:54",
+  "platform": {
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26200",
+    "machine": "AMD64"
+  },
+  "python": {
+    "version": "3.12.7",
+    "executable": "D:\\Programs\\Anaconda\\python.exe"
+  },
+  "packages": {
+    "torch": {
+      "available": true,
+      "version": "2.6.0+cu124",
+      "cuda_available": true,
+      "cuda_version": "12.4",
+      "gpu_name": "NVIDIA GeForce RTX 4080 SUPER",
+      "gpu_memory_total_bytes": 17170956288,
+      "gpu_memory_free_bytes": 15794700288,
+      "error": null
+    },
+    "transformers": {
+      "available": true,
+      "version": "5.6.0"
+    },
+    "peft": {
+      "available": true,
+      "version": "0.18.1"
+    },
+    "trl": {
+      "available": true,
+      "version": "0.24.0"
+    },
+    "accelerate": {
+      "available": true,
+      "version": "1.11.0"
+    },
+    "bitsandbytes": {
+      "available": true,
+      "version": "0.49.2"
+    },
+    "flash_attn": {
+      "available": false,
+      "version": null
+    }
+  },
+  "commands": {
+    "llamafactory-cli": {
+      "available": true,
+      "path": "D:\\Programs\\Anaconda\\Scripts\\llamafactory-cli.EXE",
+      "version_output": "----------------------------------------------------------\n| Welcome to LLaMA Factory, version 0.9.5                |\n|                                                        |\n| Project page: https://github.com/hiyouga/LLaMA-Factory |\n----------------------------------------------------------"
+    }
+  },
+  "local_paths": {
+    "qwen3_8b": {
+      "path": "D:\\Code\\Learn\\LLM\\LocalRAG\\models\\Qwen3-8B",
+      "exists": true
+    },
+    "qwen3_4b": {
+      "path": "D:\\Code\\Learn\\LLM\\LocalRAG\\models\\Qwen3-4B",
+      "exists": true
+    },
+    "bge_m3": {
+      "path": "D:\\Code\\Learn\\LLM\\LocalRAG\\models\\bge-m3",
+      "exists": true
+    }
+  }
+}

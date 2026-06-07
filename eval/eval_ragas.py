@@ -203,21 +203,23 @@ def build_manifest(
         "dataset_path": str(dataset_path),
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "runner_script": runner_script,
-        "provider": runtime_config.provider,
-        "chat_model_name": runtime_config.chat_model_name,
-        "embedding_model_name": runtime_config.embedding_model_name,
+        **build_runtime_manifest_fields(runtime_config),
     }
     if store_dir is not None:
         manifest["store_dir"] = str(store_dir)
     return manifest
 
 
-def build_runtime_manifest_fields(runtime_config: Any) -> dict[str, str]:
-    return {
+def build_runtime_manifest_fields(runtime_config: Any) -> dict[str, Any]:
+    fields = {
         "provider": runtime_config.provider,
         "chat_model_name": runtime_config.chat_model_name,
         "embedding_model_name": runtime_config.embedding_model_name,
     }
+    for field in ("device", "torch_dtype", "max_new_tokens"):
+        if hasattr(runtime_config, field):
+            fields[field] = getattr(runtime_config, field)
+    return fields
 
 
 def run_baseline_to_dir(

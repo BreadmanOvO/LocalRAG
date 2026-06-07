@@ -13,10 +13,12 @@ _MODELS_DIR = _REPO_ROOT / "models"
 BGE_M3_LOCAL = str(_MODELS_DIR / "bge-m3")
 BGE_RERANKER_BASE_LOCAL = str(_MODELS_DIR / "bge-reranker-base")
 QWEN3_8B_LOCAL = str(_MODELS_DIR / "Qwen3-8B")
+QWEN3_4B_LOCAL = str(_MODELS_DIR / "Qwen3-4B")
 
 BGE_M3_HF = "BAAI/bge-m3"
 BGE_RERANKER_BASE_HF = "BAAI/bge-reranker-base"
 QWEN3_8B_HF = "Qwen/Qwen3-8B"
+QWEN3_4B_HF = "Qwen/Qwen3-4B"
 
 
 def get_bge_m3_path() -> str:
@@ -32,3 +34,8 @@ def get_bge_reranker_path() -> str:
 def get_qwen3_8b_path() -> str:
     """Return local path if available, else HuggingFace model name."""
     return QWEN3_8B_LOCAL if (_MODELS_DIR / "Qwen3-8B").exists() else QWEN3_8B_HF
+
+
+def get_qwen3_4b_path() -> str:
+    """Return local path if available, else HuggingFace model name."""
+    return QWEN3_4B_LOCAL if (_MODELS_DIR / "Qwen3-4B").exists() else QWEN3_4B_HF

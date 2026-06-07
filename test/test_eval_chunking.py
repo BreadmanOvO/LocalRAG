@@ -627,13 +627,14 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
 
     def test_repo_usage_guide_files_exist_and_link_core_entrypoints(self):
         repo_root = Path(__file__).resolve().parents[1]
-        repo_guide = repo_root / "docs" / "repo_guide.md"
+        docs_root = repo_root / "RAG_md" / "docs"
+        repo_guide = docs_root / "repo_guide.md"
         self.assertTrue(repo_guide.exists())
 
         readme_text = (repo_root / "README.md").read_text(encoding="utf-8")
         guide_text = repo_guide.read_text(encoding="utf-8")
 
-        self.assertIn("docs/repo_guide.md", readme_text)
+        self.assertIn("RAG_md/docs/repo_guide.md", readme_text)
         self.assertIn("eval_chunking.py", readme_text)
         self.assertIn("eval_judge_formal_run.py", readme_text)
         self.assertIn("runtime_models.json", readme_text)
@@ -647,7 +648,7 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
         self.assertIn("results/judge_eval/<baseline_run_id>-vs-<candidate_run_id>/", guide_text)
         self.assertIn(
             "eval_judge_formal_run.py",
-            (repo_root / "docs" / "evaluation.md").read_text(encoding="utf-8"),
+            (docs_root / "evaluation.md").read_text(encoding="utf-8"),
         )
 
 

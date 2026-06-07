@@ -71,45 +71,74 @@ LocalRAG/
 ### 运行评测
 
 ```bash
-# Baseline 评测
-python eval/eval_ragas.py
+# Baseline 评测（使用 chunking_eval 生成的当前 store）
+python eval/eval_ragas.py \
+  --dataset data/evaluation/gold/eval_set.json \
+  --store-dir results/chunking_eval/stores/<run_id>/baseline \
+  --predictions-out results/ragas_eval/eval_set-current/predictions.json \
+  --metrics-out results/ragas_eval/eval_set-current/metrics.json
 
 # 分块策略对比（baseline / doc_type_aware / semantic）
-python eval/eval_chunking.py
+python eval/eval_chunking.py \
+  --dataset data/evaluation/gold/eval_set.json
 
-# 纯检索评测（dense / sparse / hybrid）
-python eval/eval_retrieval_only.py
+# 纯检索评测（以 semantic store 为例）
+python eval/eval_retrieval_only.py \
+  --dataset data/evaluation/gold/eval_set.json \
+  --store-dir results/chunking_eval/stores/<run_id>/semantic
 
 # Hybrid Retrieval 对比
-python eval/eval_hybrid.py
+python eval/eval_hybrid.py \
+  --dataset data/evaluation/gold/eval_set.json \
+  --store-dir results/chunking_eval/stores/<run_id>/semantic \
+  --alpha 0.5
 
 # Reranker 效果评估
-python eval/eval_reranker.py
-
-# Pairwise LLM Judge
-python eval/eval_llm_judge.py
+python eval/eval_reranker.py \
+  --dataset data/evaluation/gold/eval_set.json \
+  --store-dir results/chunking_eval/stores/<run_id>/semantic \
+  --alpha 0.5
 
 # Formal Judge 流水线汇总
-python eval/eval_judge_formal_run.py
+python eval/eval_judge_formal_run.py \
+  --dataset data/evaluation/gold/eval_set.json
 ```
 
-### 最新评测结果（100 题，bge-m3，100 篇文档 — 待重跑）
+### 微调数据与行为评测
+
+```bash
+# 将 203 条训练样本导出为 Qwen/TRL 常用 chat JSONL
+python scripts/prepare_sft_dataset.py \
+  --input data/evaluation/train/train_set.json \
+  --train-output data/finetuning/sft_train.jsonl \
+  --validation-output data/finetuning/sft_validation.jsonl \
+  --validation-count 20
+
+# 对 baseline / 微调后 predictions 做离线行为对比
+python eval/eval_finetune_behavior.py \
+  --baseline-predictions results/baseline_eval/<run_id>/predictions.json \
+  --predictions results/finetuned_eval/<run_id>/predictions.json
+```
+
+### 最新评测结果（100 题，bge-m3，100 篇文档，sensenova-6.7-flash-lite）
 
 | 分块策略 | Reranker | Hit@5 | MRR | Hit@1 | Hit@3 |
 |---------|:--------:|:-----:|:---:|:-----:|:-----:|
-| baseline | No | 0.960 | 0.865 | 0.790 | 0.940 |
-| baseline | Yes | 0.960 | 0.899 | 0.850 | 0.950 |
-| doc_type_aware | No | 0.940 | 0.870 | 0.830 | 0.900 |
-| doc_type_aware | Yes | 0.960 | 0.904 | 0.860 | 0.950 |
-| **semantic** | No | **0.970** | 0.864 | 0.800 | 0.920 |
-| **semantic** | Yes | **0.980** | 0.897 | 0.840 | 0.950 |
+| baseline | No | 0.920 | 0.874 | 0.840 | 0.910 |
+| baseline | Yes | 0.930 | 0.889 | 0.860 | 0.920 |
+| doc_type_aware | No | 0.930 | 0.870 | 0.830 | 0.920 |
+| **doc_type_aware** | **Yes** | **0.940** | 0.892 | 0.850 | **0.940** |
+| semantic | No | 0.930 | 0.798 | 0.710 | 0.870 |
+| **semantic** | **Yes** | **0.940** | **0.893** | **0.860** | 0.930 |
 
-最优配置：semantic chunking + reranker = 98% Hit@5，0.897 MRR。
+最优 Hit@5：doc_type_aware + reranker 与 semantic + reranker 均为 94%；semantic + reranker 的 MRR 最高（0.893）。
+
+Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/stores/eval_set-20260522-071034/baseline`）重跑后，`answered_ratio=1.00`、`context_hit_ratio=1.00`、`evidence_source_hit_ratio=0.97`。
 
 ## 文档
 
-- [评估框架与指标](docs/evaluation.md) — 评测体系、指标口径、结果目录合同
-- [仓库使用说明](docs/repo_guide.md) — 详细模块说明与使用方式
+- [评估框架与指标](RAG_md/docs/evaluation.md) — 评测体系、指标口径、结果目录合同
+- [仓库使用说明](RAG_md/docs/repo_guide.md) — 详细模块说明与使用方式
 
 ## 版本
 
