@@ -1,0 +1,183 @@
+{
+  "created_at": "2026-06-17T14:44:55",
+  "train_path": "finetune\\datasets\\localrag_sft_e3.jsonl",
+  "validation_path": "finetune\\datasets\\localrag_sft_e3_validation.jsonl",
+  "eval_set_path": "data\\evaluation\\gold\\eval_set.json",
+  "generation_eval_set_path": "data\\evaluation\\gold\\generation_eval_set.json",
+  "train": {
+    "record_count": 211,
+    "issue_count": 0,
+    "issue_rows": [],
+    "duplicate_source_sample_ids": [],
+    "output_citation_count": 211,
+    "output_citation_ratio": 1.0,
+    "input_source_marker_count": 211,
+    "input_source_marker_ratio": 1.0,
+    "input_locator_marker_count": 211,
+    "input_locator_marker_ratio": 1.0,
+    "instruction_length": {
+      "min": 77,
+      "max": 165,
+      "mean": 86.4,
+      "median": 77
+    },
+    "input_length": {
+      "min": 127,
+      "max": 1368,
+      "mean": 466.2,
+      "median": 444
+    },
+    "output_length": {
+      "min": 28,
+      "max": 285,
+      "mean": 116.4,
+      "median": 110
+    },
+    "doc_type_distribution": {
+      "official_doc": 19,
+      "paper": 171,
+      "report": 1,
+      "standard": 20
+    },
+    "topic_distribution": {
+      "3d_detection": 17,
+      "3d_geometry": 1,
+      "3d_lane": 1,
+      "3d_object_detection": 12,
+      "3d_perception": 1,
+      "3d_queries": 1,
+      "autonomous_driving": 7,
+      "benchmark": 1,
+      "bev_perception": 10,
+      "camera_fusion": 1,
+      "camera_radar_fusion": 1,
+      "dataset": 2,
+      "depth_estimation": 3,
+      "distillation": 1,
+      "domain_adaptation": 1,
+      "end_to_end": 4,
+      "end_to_end_driving": 3,
+      "gaussian_splatting": 1,
+      "generation": 1,
+      "hd_map": 5,
+      "lane_detection": 1,
+      "lidar": 3,
+      "lidar_perception": 1,
+      "localization": 2,
+      "map_construction": 4,
+      "mapping": 1,
+      "monocular_3d": 5,
+      "monocular_3d_detection": 2,
+      "monocular_perception": 1,
+      "motion": 1,
+      "multi_modal": 1,
+      "multi_object_tracking": 5,
+      "multi_view": 4,
+      "neural_prior": 1,
+      "occupancy_prediction": 7,
+      "online_mapping": 1,
+      "perception": 16,
+      "planning": 1,
+      "planning_control": 14,
+      "point_cloud": 2,
+      "prediction": 1,
+      "radar_perception": 2,
+      "rendering": 1,
+      "review": 1,
+      "safety": 14,
+      "segmentation": 2,
+      "self_supervised": 2,
+      "sensor_fusion": 14,
+      "sensor_simulation": 1,
+      "simulation": 1,
+      "sparse_representation": 1,
+      "surround_view": 1,
+      "survey": 1,
+      "system_architecture": 10,
+      "transformer": 5,
+      "vector_map": 2,
+      "vectorized": 1,
+      "vision_perception": 1,
+      "world_model": 3
+    },
+    "difficulty_distribution": {
+      "easy": 66,
+      "hard": 74,
+      "medium": 71
+    },
+    "data_type_distribution": {
+      "e2_hardcase_distractor_context": 4,
+      "e2_hardcase_refusal_insufficient_context": 4,
+      "e2_hardcase_strict_citation_grounded_qa": 4,
+      "e3_hardcase_partial_context_insufficient_metric": 8,
+      "e3_hardcase_strict_distractor_target_only_citation": 8,
+      "normal_grounded_qa": 183
+    },
+    "dataset_version_distribution": {
+      "v1.3-e3": 211
+    }
+  },
+  "validation": {
+    "record_count": 20,
+    "issue_count": 0,
+    "issue_rows": [],
+    "duplicate_source_sample_ids": [],
+    "output_citation_count": 20,
+    "output_citation_ratio": 1.0,
+    "input_source_marker_count": 20,
+    "input_source_marker_ratio": 1.0,
+    "input_locator_marker_count": 20,
+    "input_locator_marker_ratio": 1.0,
+    "instruction_length": {
+      "min": 77,
+      "max": 77,
+      "mean": 77,
+      "median": 77.0
+    },
+    "input_length": {
+      "min": 163,
+      "max": 936,
+      "mean": 441.9,
+      "median": 408.0
+    },
+    "output_length": {
+      "min": 31,
+      "max": 239,
+      "mean": 139.9,
+      "median": 137.0
+    },
+    "doc_type_distribution": {
+      "official_doc": 8,
+      "paper": 10,
+      "report": 1,
+      "standard": 1
+    },
+    "topic_distribution": {
+      "3d_detection": 2,
+      "lidar": 1,
+      "monocular_3d_detection": 1,
+      "online_mapping": 1,
+      "perception": 2,
+      "planning_control": 4,
+      "safety": 1,
+      "sensor_fusion": 1,
+      "sparse": 1,
+      "system_architecture": 4,
+      "tracking": 1,
+      "world_model": 1
+    },
+    "difficulty_distribution": {
+      "easy": 6,
+      "medium": 14
+    },
+    "data_type_distribution": {
+      "normal_grounded_qa_validation": 20
+    },
+    "dataset_version_distribution": {
+      "v1.3-e3": 20
+    }
+  },
+  "split_overlap_source_sample_ids": [],
+  "eval_set_overlap_source_sample_ids": [],
+  "generation_eval_set_overlap_source_sample_ids": []
+}

@@ -6,6 +6,10 @@ from pathlib import Path
 from eval import eval_finetune_behavior
 from eval import eval_finetune_compare
 from scripts import prepare_sft_dataset
+from scripts import prepare_sft_e2_draft
+from scripts import prepare_sft_e2_dataset
+from scripts import prepare_sft_e3_draft
+from scripts import prepare_sft_e3_dataset
 from scripts import audit_sft_dataset
 from scripts import check_finetune_env
 from scripts import run_local_qwen3_e0
@@ -126,9 +130,252 @@ class PrepareSftDatasetTests(unittest.TestCase):
         self.assertIn("input", train_rows[0])
         self.assertIn("output", train_rows[0])
 
+    def test_default_llamafactory_instruction_requires_citations(self):
+        record = prepare_sft_dataset.build_llamafactory_record(_sample())
+
+        self.assertIn("引用", record["instruction"])
+        self.assertIn("source_id", record["instruction"])
+        self.assertIn("locator", record["instruction"])
+
     def test_split_records_rejects_validation_count_equal_to_dataset_size(self):
         with self.assertRaisesRegex(ValueError, "smaller than record count"):
             prepare_sft_dataset.split_records([_sample()], 1)
+
+
+class PrepareSftE2DraftTests(unittest.TestCase):
+    def test_build_refusal_row_marks_missing_evidence_and_keeps_citation(self):
+        row = prepare_sft_e2_draft.build_refusal_row(
+            row_id="e2-draft-001",
+            source_record=_sample("train-001"),
+            unsupported_question="资料是否说明 CRN 已在量产车型上部署并给出了部署成本？",
+            unsupported_focus="CRN 的量产部署情况和部署成本",
+            review_focus="refusal_insufficient_context",
+        )
+
+        self.assertEqual("e2-draft-001", row["metadata"]["source_sample_id"])
+        self.assertEqual("refusal_insufficient_context", row["metadata"]["data_type"])
+        self.assertEqual(["train-001"], row["metadata"]["source_record_ids"])
+        self.assertIn("无法根据资料确定", row["output"])
+        self.assertIn("paper-030 page=1", row["output"])
+
+    def test_build_distractor_row_cites_only_target_record(self):
+        target = _sample("train-target")
+        distractor = _sample("train-distractor")
+        distractor["evidence"][0]["source_id"] = "paper-999"
+        distractor["evidence"][0]["locator"] = "page=9"
+
+        row = prepare_sft_e2_draft.build_distractor_row(
+            row_id="e2-draft-002",
+            target_record=target,
+            distractor_record=distractor,
+            question="CRN 融合了哪些传感器？",
+            answer="CRN 融合了摄像头和雷达。",
+            review_focus="distractor_context",
+        )
+
+        self.assertEqual("distractor_context", row["metadata"]["data_type"])
+        self.assertIn("source_id=paper-030", row["input"])
+        self.assertIn("source_id=paper-999", row["input"])
+        self.assertIn("paper-030 page=1", row["output"])
+        self.assertNotIn("paper-999 page=9", row["output"])
+
+    def test_e2_draft_alks_refusal_uses_constraint_language(self):
+        required_ids = {
+            "train-001",
+            "train-003",
+            "train-007",
+            "train-038",
+            "train-045",
+            "train-085",
+            "train-099",
+            "train-110",
+            "train-136",
+            "train-144",
+            "train-149",
+            "train-164",
+            "train-178",
+        }
+        records = [_sample(sample_id) for sample_id in sorted(required_ids)]
+        for record in records:
+            if record["id"] == "train-099":
+                record["question"] = "根据UN R157，ALKS系统可以在哪些道路条件下被激活？"
+                record["reference_answer"] = "在禁止行人和自行车、且设计有物理隔离分隔对向交通的道路上。"
+                record["evidence"] = [
+                    {
+                        "quote": "ALKS can be activated under certain conditions on roads where pedestrians and cyclists are prohibited and which, by design, are equipped with a physical separation that divides the traffic moving in opposite directions…",
+                        "source_id": "standard-009",
+                        "locator": "page=3",
+                    }
+                ]
+                record["metadata"] = {
+                    "difficulty": "medium",
+                    "topic": "planning_control",
+                    "doc_type": "standard",
+                }
+
+        rows = prepare_sft_e2_draft.build_e2_rows(records)
+        row = next(row for row in rows if row["metadata"]["source_sample_id"] == "e2-draft-refusal-004")
+
+        self.assertEqual("e2-draft-refusal-004", row["metadata"]["source_sample_id"])
+        self.assertIn("不能根据资料得出", row["output"])
+        self.assertIn("行人和自行车被禁止", row["output"])
+        self.assertIn("物理隔离", row["output"])
+
+
+class PrepareSftE2DatasetTests(unittest.TestCase):
+    def test_build_e2_dataset_merges_e1_train_with_hardcase_slice(self):
+        e1_row = prepare_sft_dataset.build_llamafactory_record(
+            _sample("train-001"),
+            dataset_version="v1.3-e1",
+            data_type="normal_grounded_qa",
+        )
+        hardcase_row = prepare_sft_e2_draft.build_refusal_row(
+            row_id="e2-draft-001",
+            source_record=_sample("train-002"),
+            unsupported_question="资料是否说明 CRN 已量产？",
+            unsupported_focus="CRN 量产情况",
+            review_focus="refusal_insufficient_context",
+        )
+
+        merged = prepare_sft_e2_dataset.build_e2_train_rows(
+            e1_rows=[e1_row],
+            hardcase_rows=[hardcase_row],
+            dataset_version="v1.3-e2",
+        )
+
+        self.assertEqual(2, len(merged))
+        self.assertEqual("v1.3-e2", merged[0]["metadata"]["dataset_version"])
+        self.assertEqual("normal_grounded_qa", merged[0]["metadata"]["data_type"])
+        self.assertEqual("e2_hardcase_refusal_insufficient_context", merged[1]["metadata"]["data_type"])
+        self.assertEqual("v1.3-e2", merged[1]["metadata"]["dataset_version"])
+        self.assertEqual("e2-draft-001", merged[1]["metadata"]["source_sample_id"])
+
+    def test_build_e2_validation_rows_copies_validation_with_e2_version(self):
+        validation_row = prepare_sft_dataset.build_llamafactory_record(
+            _sample("train-003"),
+            dataset_version="v1.3-e1",
+            data_type="normal_grounded_qa",
+        )
+
+        rows = prepare_sft_e2_dataset.build_e2_validation_rows(
+            validation_rows=[validation_row],
+            dataset_version="v1.3-e2",
+        )
+
+        self.assertEqual(1, len(rows))
+        self.assertEqual("train-003", rows[0]["metadata"]["source_sample_id"])
+        self.assertEqual("v1.3-e2", rows[0]["metadata"]["dataset_version"])
+        self.assertEqual("normal_grounded_qa_validation", rows[0]["metadata"]["data_type"])
+
+
+class PrepareSftE3DraftTests(unittest.TestCase):
+    def test_build_partial_context_row_answers_supported_part_and_refuses_missing_metric(self):
+        source = _sample("train-001")
+        source["evidence"][0]["quote"] = (
+            "using 4096 size queries reduce the latency of MFA by 76.4%."
+        )
+
+        row = prepare_sft_e3_draft.build_partial_context_row(
+            row_id="e3-draft-partial-001",
+            source_record=source,
+            question="4096 个 Top-K 查询会让 MFA 延迟和 AP 指标发生什么变化？",
+            answer=(
+                "资料只说明 4096 个查询会让 MFA 延迟降低 76.4%；"
+                "没有给出 AP 指标变化，不能根据资料确定 AP 是提升还是下降。"
+            ),
+            review_focus="partial_context_numeric_no_guess",
+        )
+
+        self.assertEqual("e3-draft-partial-001", row["metadata"]["source_sample_id"])
+        self.assertEqual("partial_context_insufficient_metric", row["metadata"]["data_type"])
+        self.assertEqual(["train-001"], row["metadata"]["source_record_ids"])
+        self.assertIn("不能根据资料确定", row["output"])
+        self.assertIn("paper-030 page=1", row["output"])
+
+    def test_build_strict_distractor_row_cites_only_target_record(self):
+        target = _sample("train-target")
+        distractor = _sample("train-distractor")
+        distractor["evidence"][0]["source_id"] = "apollo-doc-007"
+        distractor["evidence"][0]["locator"] = "page=9"
+
+        row = prepare_sft_e3_draft.build_strict_distractor_row(
+            row_id="e3-draft-distractor-001",
+            target_record=target,
+            distractor_record=distractor,
+            question="CRN 融合了哪些传感器？",
+            answer="CRN 融合了摄像头和雷达。",
+            review_focus="strict_target_only_citation",
+        )
+
+        self.assertEqual("strict_distractor_target_only_citation", row["metadata"]["data_type"])
+        self.assertIn("source_id=paper-030", row["input"])
+        self.assertIn("source_id=apollo-doc-007", row["input"])
+        self.assertIn("paper-030 page=1", row["output"])
+        self.assertNotIn("apollo-doc-007 page=9", row["output"])
+
+    def test_build_e3_rows_creates_two_balanced_hardcase_groups(self):
+        required_ids = set()
+        for spec in prepare_sft_e3_draft.PARTIAL_CONTEXT_SPECS:
+            required_ids.add(spec["source_id"])
+        for spec in prepare_sft_e3_draft.STRICT_DISTRACTOR_SPECS:
+            required_ids.add(spec["target_id"])
+            required_ids.add(spec["distractor_id"])
+        records = [_sample(sample_id) for sample_id in sorted(required_ids)]
+
+        rows = prepare_sft_e3_draft.build_e3_rows(records)
+        data_types = [row["metadata"]["data_type"] for row in rows]
+
+        self.assertEqual(16, len(rows))
+        self.assertEqual(8, data_types.count("partial_context_insufficient_metric"))
+        self.assertEqual(8, data_types.count("strict_distractor_target_only_citation"))
+
+
+class PrepareSftE3DatasetTests(unittest.TestCase):
+    def test_build_e3_dataset_merges_e2_train_with_e3_hardcase_slice(self):
+        e2_row = prepare_sft_dataset.build_llamafactory_record(
+            _sample("train-001"),
+            dataset_version="v1.3-e2",
+            data_type="normal_grounded_qa",
+        )
+        hardcase_row = prepare_sft_e3_draft.build_partial_context_row(
+            row_id="e3-draft-partial-001",
+            source_record=_sample("train-002"),
+            question="资料是否说明 CRN 已量产？",
+            answer="资料没有说明 CRN 是否已量产，无法根据资料确定。",
+            review_focus="partial_context_numeric_no_guess",
+        )
+
+        merged = prepare_sft_e3_dataset.build_e3_train_rows(
+            e2_rows=[e2_row],
+            hardcase_rows=[hardcase_row],
+            dataset_version="v1.3-e3",
+        )
+
+        self.assertEqual(2, len(merged))
+        self.assertEqual("v1.3-e3", merged[0]["metadata"]["dataset_version"])
+        self.assertEqual("normal_grounded_qa", merged[0]["metadata"]["data_type"])
+        self.assertEqual(
+            "e3_hardcase_partial_context_insufficient_metric",
+            merged[1]["metadata"]["data_type"],
+        )
+        self.assertEqual("e3_hardcase_slice", merged[1]["metadata"]["e3_source"])
+
+    def test_build_e3_validation_rows_copies_validation_with_e3_version(self):
+        validation_row = prepare_sft_dataset.build_llamafactory_record(
+            _sample("train-003"),
+            dataset_version="v1.3-e2",
+            data_type="normal_grounded_qa_validation",
+        )
+
+        rows = prepare_sft_e3_dataset.build_e3_validation_rows(
+            validation_rows=[validation_row],
+            dataset_version="v1.3-e3",
+        )
+
+        self.assertEqual(1, len(rows))
+        self.assertEqual("train-003", rows[0]["metadata"]["source_sample_id"])
+        self.assertEqual("v1.3-e3", rows[0]["metadata"]["dataset_version"])
+        self.assertEqual("normal_grounded_qa_validation", rows[0]["metadata"]["data_type"])
 
 
 class AuditSftDatasetTests(unittest.TestCase):
@@ -173,6 +420,36 @@ class AuditSftDatasetTests(unittest.TestCase):
         self.assertEqual(["train-001"], summary["split_overlap_source_sample_ids"])
         self.assertEqual(["train-001"], summary["eval_set_overlap_source_sample_ids"])
         self.assertEqual([], summary["generation_eval_set_overlap_source_sample_ids"])
+
+    def test_write_audit_accepts_run_name_for_e2_outputs(self):
+        train_row = prepare_sft_dataset.build_llamafactory_record(
+            _sample("train-001"),
+            dataset_version="v1.3-e2",
+        )
+        validation_row = prepare_sft_dataset.build_llamafactory_record(
+            _sample("train-002"),
+            dataset_version="v1.3-e2",
+        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir = Path(temp_dir)
+            summary = {
+                "created_at": "2026-06-13T00:00:00",
+                "train_path": "train.jsonl",
+                "validation_path": "validation.jsonl",
+                "eval_set_path": "eval.json",
+                "generation_eval_set_path": "generation.json",
+                "train": audit_sft_dataset.summarize_rows([train_row]),
+                "validation": audit_sft_dataset.summarize_rows([validation_row]),
+                "split_overlap_source_sample_ids": [],
+                "eval_set_overlap_source_sample_ids": [],
+                "generation_eval_set_overlap_source_sample_ids": [],
+            }
+
+            artifacts = audit_sft_dataset.write_audit(summary, temp_dir, run_name="sft-e2-audit")
+            report = Path(artifacts["report"]).read_text(encoding="utf-8")
+
+        self.assertIn("sft-e2-audit-", artifacts["run_dir"])
+        self.assertIn("# LocalRAG SFT Dataset Audit", report)
 
 
 class FinetuneBehaviorEvalTests(unittest.TestCase):
@@ -263,6 +540,17 @@ class FinetuneBehaviorEvalTests(unittest.TestCase):
         self.assertTrue(evaluated["correct_refusal"])
         self.assertFalse(evaluated["over_refusal_risk"])
 
+    def test_is_refusal_recognizes_natural_chinese_missing_evidence_phrases(self):
+        refusal_answers = [
+            "没有提到 CRN 在量产车型上的部署或成本。",
+            "资料没有说明该模块在雨夜施工区域的误检率。",
+            "现有材料未给出具体数值。",
+        ]
+
+        for answer in refusal_answers:
+            with self.subTest(answer=answer):
+                self.assertTrue(eval_finetune_behavior.is_refusal(answer))
+
 
 class FinetuneCompareTests(unittest.TestCase):
     def test_build_side_by_side_rows_requires_matching_ids_and_records_answer_lengths(self):
@@ -312,12 +600,74 @@ class FinetuneCompareTests(unittest.TestCase):
 
         self.assertEqual("adapter_improved", verdict)
 
+    def test_analyze_answer_hardening_flags_unsupported_numeric_claims(self):
+        row = {
+            "id": "gen-eval-004",
+            "answer": "延迟降低76%，检测指标提升1.3%。\n\n引用：\n- paper-030 unknown",
+            "reference_answer": "MFA 延迟从 21.01ms 降到 4.96ms，降低 76.4%；AP 从 56.9% 降到 54.0%，ATE 从 0.325 升到 0.367，说明延迟显著降低但回归相关指标下降更明显。",
+            "retrieved_context": "using 4096 size queries reduce the latency of MFA by 76.",
+            "retrieved_rows": [
+                {
+                    "source_id": "paper-030",
+                    "content": "using 4096 size queries reduce the latency of MFA by 76.",
+                }
+            ],
+            "evidence": [
+                {
+                    "source_id": "paper-030",
+                    "quote": "using 4096 size queries reduce the latency of MFA by 76.4% ... the performance drops on True Positive metrics.",
+                }
+            ],
+        }
+
+        hardening = eval_finetune_compare.analyze_answer_hardening(row)
+
+        self.assertIn("1.3", hardening["unsupported_answer_numbers"])
+        self.assertTrue(hardening["unsupported_numeric_claim_risk"])
+        self.assertTrue(hardening["directional_contradiction_risk"])
+        self.assertTrue(hardening["citation_support_risk"])
+
+    def test_analyze_answer_hardening_flags_missing_reference_terms(self):
+        row = {
+            "id": "gen-eval-009",
+            "answer": "主要解决 BEV 感知中的 domain adaptation 问题，并与 intrinsic parameters 解耦。\n\n引用：\n- paper-038 unknown",
+            "reference_answer": "One challenge is domain adaptation; feature learning should be independent of the extrinsic and/or intrinsic matrix.",
+            "retrieved_context": "independent of the extrinsic and/or intrinsic matrix",
+            "retrieved_rows": [{"source_id": "paper-038", "content": "extrinsic and intrinsic matrix"}],
+            "evidence": [
+                {
+                    "source_id": "paper-038",
+                    "quote": "independent of the extrinsic and/or intrinsic matrix",
+                }
+            ],
+        }
+
+        hardening = eval_finetune_compare.analyze_answer_hardening(row)
+
+        self.assertIn("extrinsic", hardening["missing_reference_terms"])
+        self.assertTrue(hardening["reference_coverage_risk"])
+
+    def test_classify_verdict_does_not_call_hardcase_regression_improved(self):
+        verdict = eval_finetune_compare.classify_verdict(
+            {
+                "answer_cites_evidence_ratio_delta": 0.2,
+                "unsupported_claim_risk_ratio_delta": 0.0,
+                "over_refusal_risk_ratio_delta": 0.0,
+                "refusal_ratio_delta": 0.0,
+                "unsupported_numeric_claim_risk_ratio_delta": 0.1,
+                "citation_support_risk_ratio_delta": 0.1,
+            }
+        )
+
+        self.assertEqual("mixed_or_regressed", verdict)
+
     def test_write_compare_outputs_summary_manifest_and_side_by_side_report(self):
         baseline = [
             {
                 "id": "gen-eval-001",
                 "question": "问题1",
                 "answer": "base answer",
+                "reference_answer": "doc-1",
                 "retrieved_rows": [{"source_id": "doc-1"}],
                 "evidence": [{"source_id": "doc-1", "locator": "page=1"}],
                 "metadata": {"generation_category": "normal_answerable"},
@@ -328,6 +678,7 @@ class FinetuneCompareTests(unittest.TestCase):
                 "id": "gen-eval-001",
                 "question": "问题1",
                 "answer": "adapter answer with doc-1 citation",
+                "reference_answer": "doc-1",
                 "retrieved_rows": [{"source_id": "doc-1"}],
                 "evidence": [{"source_id": "doc-1", "locator": "page=1"}],
                 "metadata": {"generation_category": "normal_answerable"},
@@ -398,13 +749,17 @@ class GenerationEvalSetTests(unittest.TestCase):
 
 
 class LlamaFactoryDatasetInfoTests(unittest.TestCase):
-    def test_llamafactory_dataset_info_points_to_e1_train_and_validation_files(self):
+    def test_llamafactory_dataset_info_points_to_train_and_validation_files(self):
         info_path = Path("finetune/llamafactory_data/dataset_info.json")
         dataset_info = json.loads(info_path.read_text(encoding="utf-8"))
 
         expected_counts = {
             "localrag_sft_e1": 183,
             "localrag_sft_e1_validation": 20,
+            "localrag_sft_e2": 195,
+            "localrag_sft_e2_validation": 20,
+            "localrag_sft_e3": 211,
+            "localrag_sft_e3_validation": 20,
         }
         expected_columns = {
             "prompt": "instruction",

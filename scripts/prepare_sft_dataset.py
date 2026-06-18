@@ -16,7 +16,8 @@ DEFAULT_SYSTEM_PROMPT = (
 )
 DEFAULT_INSTRUCTION = (
     "请根据给定参考资料回答问题，只能使用资料中的信息；"
-    "资料不足时请说明无法确定。"
+    "资料不足时请说明无法确定；"
+    "答案末尾必须用“引用：”列出使用到的 source_id 和 locator。"
 )
 
 

@@ -101,6 +101,7 @@ class RuntimeKeysTests(unittest.TestCase):
                         "torch_dtype": "bfloat16",
                         "max_new_tokens": 256,
                         "adapter_path": "saves/Qwen3-4B-Thinking/lora/localrag_sft_e1_qlora_smoke",
+                        "rag_system_prompt": "请只根据参考资料回答，并在末尾列出引用。",
                     }
                 ),
                 encoding="utf-8",
@@ -118,6 +119,7 @@ class RuntimeKeysTests(unittest.TestCase):
                 "saves/Qwen3-4B-Thinking/lora/localrag_sft_e1_qlora_smoke",
                 config.adapter_path,
             )
+            self.assertEqual("请只根据参考资料回答，并在末尾列出引用。", config.rag_system_prompt)
 
     def test_local_transformers_generation_options_have_defaults(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -141,6 +143,7 @@ class RuntimeKeysTests(unittest.TestCase):
             self.assertEqual("float16", config.torch_dtype)
             self.assertEqual(128, config.max_new_tokens)
             self.assertIsNone(config.adapter_path)
+            self.assertIsNone(config.rag_system_prompt)
 
     def test_runtime_config_path_can_come_from_environment(self):
         with tempfile.TemporaryDirectory() as tmpdir:

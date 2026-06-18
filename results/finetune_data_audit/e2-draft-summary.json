@@ -1,0 +1,41 @@
+{
+  "created_at": "2026-06-13T19:49:57",
+  "dataset_version": "v1.3-e2-draft",
+  "record_count": 12,
+  "data_type_distribution": {
+    "distractor_context": 4,
+    "refusal_insufficient_context": 4,
+    "strict_citation_grounded_qa": 4
+  },
+  "review_focus_distribution": {
+    "distractor_context_apollo_table": 1,
+    "distractor_context_channel_or_module": 1,
+    "distractor_context_metric_change": 1,
+    "distractor_context_similar_topic": 1,
+    "refusal_insufficient_context": 4,
+    "strict_citation_long_answer": 1,
+    "strict_citation_short_answer": 1,
+    "strict_citation_standard_doc": 1,
+    "strict_citation_temporal_fusion": 1
+  },
+  "source_record_ids": [
+    "train-001",
+    "train-003",
+    "train-007",
+    "train-038",
+    "train-045",
+    "train-085",
+    "train-099",
+    "train-110",
+    "train-136",
+    "train-144",
+    "train-149",
+    "train-164",
+    "train-178"
+  ],
+  "duplicate_e2_source_sample_ids": [],
+  "generation_eval_source_record_overlap": [],
+  "output_citation_count": 12,
+  "input_source_marker_count": 12,
+  "input_locator_marker_count": 12
+}

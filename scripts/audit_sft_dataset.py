@@ -192,7 +192,7 @@ def render_report(summary: dict[str, Any]) -> str:
     train = summary["train"]
     validation = summary["validation"]
     lines = [
-        "# E1 SFT Dataset Audit",
+        "# LocalRAG SFT Dataset Audit",
         "",
         f"- Created at: `{summary['created_at']}`",
         f"- Train path: `{summary['train_path']}`",
@@ -244,8 +244,8 @@ def render_report(summary: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def write_audit(summary: dict[str, Any], out_dir: Path) -> dict[str, str]:
-    run_id = f"sft-e1-audit-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+def write_audit(summary: dict[str, Any], out_dir: Path, run_name: str = "sft-e1-audit") -> dict[str, str]:
+    run_id = f"{run_name}-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
     run_dir = out_dir / run_id
     json_path = run_dir / "summary.json"
     report_path = run_dir / "report.md"
@@ -261,6 +261,7 @@ def main() -> dict[str, Any]:
     parser.add_argument("--eval-set", default=Path("data/evaluation/gold/eval_set.json"), type=Path)
     parser.add_argument("--generation-eval-set", default=Path("data/evaluation/gold/generation_eval_set.json"), type=Path)
     parser.add_argument("--out-dir", default=Path("results/finetune_data_audit"), type=Path)
+    parser.add_argument("--run-name", default="sft-e1-audit")
     args = parser.parse_args()
 
     summary = audit_sft_dataset(
@@ -269,7 +270,7 @@ def main() -> dict[str, Any]:
         eval_set_path=args.eval_set,
         generation_eval_set_path=args.generation_eval_set,
     )
-    artifacts = write_audit(summary, args.out_dir)
+    artifacts = write_audit(summary, args.out_dir, args.run_name)
     output = {"summary": summary, "artifacts": artifacts}
     print(json.dumps(output, ensure_ascii=False, indent=2))
     return output

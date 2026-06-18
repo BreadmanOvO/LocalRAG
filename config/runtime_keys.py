@@ -37,6 +37,7 @@ class RuntimeProviderConfig:
     torch_dtype: str = "float16"
     max_new_tokens: int = 128
     adapter_path: str | None = None
+    rag_system_prompt: str | None = None
 
 
 def get_default_runtime_config_path() -> Path:
@@ -151,5 +152,6 @@ def load_runtime_config(path: Path | None = None) -> RuntimeProviderConfig:
         "torch_dtype": _read_optional_string(raw_data, "torch_dtype", "float16"),
         "max_new_tokens": _read_optional_int(raw_data, "max_new_tokens", 128),
         "adapter_path": _read_optional_nullable_string(raw_data, "adapter_path"),
+        "rag_system_prompt": _read_optional_nullable_string(raw_data, "rag_system_prompt"),
     }
     return RuntimeProviderConfig(**values)

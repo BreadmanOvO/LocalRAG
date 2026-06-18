@@ -18,5 +18,45 @@
       "query": "input",
       "response": "output"
     }
+  },
+  "localrag_sft_e2": {
+    "file_name": "../datasets/localrag_sft_e2.jsonl",
+    "formatting": "alpaca",
+    "ranking": false,
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output"
+    }
+  },
+  "localrag_sft_e2_validation": {
+    "file_name": "../datasets/localrag_sft_e2_validation.jsonl",
+    "formatting": "alpaca",
+    "ranking": false,
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output"
+    }
+  },
+  "localrag_sft_e3": {
+    "file_name": "../datasets/localrag_sft_e3.jsonl",
+    "formatting": "alpaca",
+    "ranking": false,
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output"
+    }
+  },
+  "localrag_sft_e3_validation": {
+    "file_name": "../datasets/localrag_sft_e3_validation.jsonl",
+    "formatting": "alpaca",
+    "ranking": false,
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output"
+    }
   }
 }

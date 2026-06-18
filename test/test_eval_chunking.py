@@ -91,6 +91,85 @@ class RagEvaluationHelperTests(unittest.TestCase):
         mock_embeddings.assert_called_once_with(runtime_config)
         mock_chat.assert_called_once_with(runtime_config)
 
+    def test_rag_service_uses_runtime_system_prompt_when_configured(self):
+        runtime_config = SimpleNamespace(
+            provider="local_transformers",
+            api_key="local",
+            base_url="local",
+            chat_model_name="models/Qwen3-4B",
+            embedding_model_name="models/bge-m3",
+            rag_system_prompt="只能使用参考资料回答，答案末尾必须列出引用。",
+        )
+
+        with (
+            mock.patch.object(rag, "load_runtime_config", return_value=runtime_config),
+            mock.patch.object(rag, "build_embedding_model", return_value=object()),
+            mock.patch.object(rag, "VectorStoreService", return_value=mock.Mock()),
+            mock.patch.object(rag, "build_chat_model", return_value=mock.Mock()),
+            mock.patch.object(rag.RagService, "_RagService__get_chain", return_value=mock.Mock()),
+        ):
+            service = rag.RagService()
+
+        messages = service.prompt_template.messages
+        self.assertIn("答案末尾必须列出引用", messages[0].prompt.template)
+
+    def test_rag_service_default_prompt_requires_citations(self):
+        runtime_config = SimpleNamespace(
+            provider="local_transformers",
+            api_key="local",
+            base_url="local",
+            chat_model_name="models/Qwen3-4B",
+            embedding_model_name="models/bge-m3",
+        )
+
+        with (
+            mock.patch.object(rag, "load_runtime_config", return_value=runtime_config),
+            mock.patch.object(rag, "build_embedding_model", return_value=object()),
+            mock.patch.object(rag, "VectorStoreService", return_value=mock.Mock()),
+            mock.patch.object(rag, "build_chat_model", return_value=mock.Mock()),
+            mock.patch.object(rag.RagService, "_RagService__get_chain", return_value=mock.Mock()),
+        ):
+            service = rag.RagService()
+
+        messages = service.prompt_template.messages
+        self.assertIn("答案末尾必须包含“引用：”小节", messages[0].prompt.template)
+        self.assertIn("source_id 和 locator", messages[0].prompt.template)
+
+    def test_format_documents_keeps_source_metadata_separate_from_content(self):
+        documents = [
+            Document(
+                page_content="Alpha content with locator-looking text locator=bad.",
+                metadata={"source_id": "doc-1", "locator": "page=1"},
+            ),
+            Document(
+                page_content="Beta content.",
+                metadata={"source_id": "doc-2", "locator": ""},
+            ),
+        ]
+
+        formatted = rag._format_documents(documents)
+
+        self.assertIn("[1] source_id=doc-1 locator=page=1", formatted)
+        self.assertIn("content:\nAlpha content with locator-looking text locator=bad.", formatted)
+        self.assertIn("[2] source_id=doc-2 locator=unknown", formatted)
+        self.assertNotIn("资料来源：", formatted)
+        self.assertNotIn("locator=bad。资料来源", formatted)
+
+    def test_eval_session_ids_are_isolated_per_run(self):
+        service = object.__new__(rag.RagService)
+
+        generic_eval_id = service._get_effective_session_id("eval-session")
+        sample_eval_id_1 = service._get_effective_session_id("eval-session-sample-1")
+        sample_eval_id_2 = service._get_effective_session_id("eval-session-sample-1")
+        normal_session_id = service._get_effective_session_id("local-rag-qwen3-smoke")
+
+        self.assertNotEqual("eval-session", generic_eval_id)
+        self.assertTrue(generic_eval_id.startswith("eval-session-"))
+        self.assertNotEqual("eval-session-sample-1", sample_eval_id_1)
+        self.assertTrue(sample_eval_id_1.startswith("eval-session-sample-1-"))
+        self.assertNotEqual(sample_eval_id_1, sample_eval_id_2)
+        self.assertEqual("local-rag-qwen3-smoke", normal_session_id)
+
     def test_retrieval_debug_top_k_is_at_least_generation_top_k(self):
         self.assertGreaterEqual(config.retrieval_debug_top_k, config.similarity_top_k)
 

@@ -1,0 +1,36 @@
+{
+  "created_at": "2026-06-17T14:44:28",
+  "dataset_version": "v1.3-e3-draft",
+  "record_count": 16,
+  "data_type_distribution": {
+    "partial_context_insufficient_metric": 8,
+    "strict_distractor_target_only_citation": 8
+  },
+  "review_focus_distribution": {
+    "partial_context_numeric_no_guess": 8,
+    "strict_target_only_citation": 8
+  },
+  "source_record_ids": [
+    "train-001",
+    "train-004",
+    "train-047",
+    "train-052",
+    "train-060",
+    "train-063",
+    "train-148",
+    "train-164",
+    "train-170",
+    "train-177",
+    "train-178",
+    "train-184",
+    "train-186",
+    "train-192",
+    "train-201",
+    "train-202"
+  ],
+  "duplicate_e3_source_sample_ids": [],
+  "generation_eval_source_record_overlap": [],
+  "output_citation_count": 16,
+  "input_source_marker_count": 16,
+  "input_locator_marker_count": 16
+}

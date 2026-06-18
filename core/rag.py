@@ -11,6 +11,13 @@ from config.runtime_keys import load_runtime_config
 from config.provider_factory import build_chat_model, build_embedding_model
 from uuid import uuid4
 
+DEFAULT_RAG_SYSTEM_PROMPT = (
+    "你是 LocalRAG 的证据约束回答助手。只能使用参考资料中的信息回答问题；"
+    "如果参考资料不足以支持答案，请明确说明无法根据资料确定。"
+    "回答必须简洁、直接，并且答案末尾必须包含“引用：”小节，"
+    "逐条列出使用到的 source_id 和 locator。参考资料：\n{context}"
+)
+
 
 def _normalize_retrieved_row(doc: Document, score: float | None = None, rank: int | None = None) -> dict:
     row = {
@@ -37,12 +44,15 @@ def _normalize_scored_rows(scored_documents: list[tuple[Document, float]]) -> li
 def _format_documents(documents: list[Document]) -> str:
     if not documents:
         return "无相关参考资料"
-    formatted_str = ""
-    for doc in documents:
-        source_id = doc.metadata.get("source_id", "")
-        locator = doc.metadata.get("locator", "")
-        formatted_str += f"资料内容：{doc.page_content}。资料来源：source_id={source_id}, locator={locator}\n"
-    return formatted_str
+    formatted_blocks = []
+    for index, doc in enumerate(documents, start=1):
+        source_id = doc.metadata.get("source_id", "") or "unknown"
+        locator = doc.metadata.get("locator", "") or "unknown"
+        formatted_blocks.append(
+            f"[{index}] source_id={source_id} locator={locator}\n"
+            f"content:\n{doc.page_content}"
+        )
+    return "\n\n".join(formatted_blocks)
 
 
 class RagService(object):
@@ -52,10 +62,10 @@ class RagService(object):
             embedding=build_embedding_model(runtime_config),
         )
 
+        system_prompt = getattr(runtime_config, "rag_system_prompt", None) or DEFAULT_RAG_SYSTEM_PROMPT
         self.prompt_template = ChatPromptTemplate.from_messages(
             [
-                ("system", "以我提供的已知参考资料为主，"
-                 "简洁和专业的回答用户问题。参考资料：{context}。"),
+                ("system", system_prompt),
                 MessagesPlaceholder("chat_history", optional=True),
                 ("user", "请回答用户提问：{question}")
             ]
@@ -96,8 +106,8 @@ class RagService(object):
         return chain_with_history
 
     def _get_effective_session_id(self, session_id: str) -> str:
-        if session_id == "eval-session":
-            return f"eval-session-{uuid4().hex}"
+        if session_id.startswith("eval-session"):
+            return f"{session_id}-{uuid4().hex}"
         return session_id
 
     def retrieve_documents(self, question: str) -> list[Document]:
