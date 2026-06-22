@@ -1,0 +1,9 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "finetune_behavior_eval",
+  "run_id": "finetune-behavior-20260610-001814",
+  "predictions_path": "results\\qwen3_base_eval\\generation_eval_set-qwen3-4b-base-hardened-prompt-clean-20260610-001646\\predictions.json",
+  "baseline_predictions_path": null,
+  "created_at": "2026-06-10T00:18:14",
+  "runner_script": "eval/eval_finetune_behavior.py"
+}

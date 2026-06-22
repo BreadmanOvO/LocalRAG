@@ -1,0 +1,11 @@
+{
+  "contract_version": "v1.1",
+  "pipeline": "finetune_compare",
+  "run_id": "finetune-compare-20260609-235530",
+  "created_at": "2026-06-09T23:55:30",
+  "runner_script": "eval/eval_finetune_compare.py",
+  "baseline_predictions_path": "results\\qwen3_base_eval\\generation_eval_set-qwen3-4b-base-citation-20260609-235107\\predictions.json",
+  "candidate_predictions_path": "results\\qwen3_adapter_eval\\generation_eval_set-qwen3-4b-e1-webui-adapter-citation-20260609-235249\\predictions.json",
+  "baseline_label": "qwen3-4b-base-citation",
+  "candidate_label": "qwen3-4b-webui-e1-adapter-citation"
+}

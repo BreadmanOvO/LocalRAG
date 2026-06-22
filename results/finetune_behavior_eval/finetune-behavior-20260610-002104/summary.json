@@ -1,0 +1,133 @@
+{
+  "summary": {
+    "sample_count": 10,
+    "answered_count": 10,
+    "answered_ratio": 1.0,
+    "refusal_count": 1,
+    "refusal_ratio": 0.1,
+    "evidence_source_hit_count": 10,
+    "evidence_source_hit_ratio": 1.0,
+    "evidence_locator_hit_count": 0,
+    "evidence_locator_hit_ratio": 0.0,
+    "answer_cites_evidence_count": 7,
+    "answer_cites_evidence_ratio": 0.7,
+    "unsupported_claim_risk_count": 0,
+    "unsupported_claim_risk_ratio": 0.0,
+    "over_refusal_risk_count": 0,
+    "over_refusal_risk_ratio": 0.0,
+    "correct_refusal_count": 1,
+    "correct_refusal_ratio": 0.1
+  },
+  "rows": [
+    {
+      "id": "gen-eval-001",
+      "answered": true,
+      "refusal": false,
+      "evidence_source_hit": true,
+      "evidence_locator_hit": false,
+      "answer_cites_evidence": false,
+      "unsupported_claim_risk": false,
+      "over_refusal_risk": false,
+      "correct_refusal": false
+    },
+    {
+      "id": "gen-eval-002",
+      "answered": true,
+      "refusal": false,
+      "evidence_source_hit": true,
+      "evidence_locator_hit": false,
+      "answer_cites_evidence": true,
+      "unsupported_claim_risk": false,
+      "over_refusal_risk": false,
+      "correct_refusal": false
+    },
+    {
+      "id": "gen-eval-003",
+      "answered": true,
+      "refusal": false,
+      "evidence_source_hit": true,
+      "evidence_locator_hit": false,
+      "answer_cites_evidence": true,
+      "unsupported_claim_risk": false,
+      "over_refusal_risk": false,
+      "correct_refusal": false
+    },
+    {
+      "id": "gen-eval-004",
+      "answered": true,
+      "refusal": false,
+      "evidence_source_hit": true,
+      "evidence_locator_hit": false,
+      "answer_cites_evidence": true,
+      "unsupported_claim_risk": false,
+      "over_refusal_risk": false,
+      "correct_refusal": false
+    },
+    {
+      "id": "gen-eval-005",
+      "answered": true,
+      "refusal": true,
+      "evidence_source_hit": true,
+      "evidence_locator_hit": false,
+      "answer_cites_evidence": false,
+      "unsupported_claim_risk": false,
+      "over_refusal_risk": false,
+      "correct_refusal": true
+    },
+    {
+      "id": "gen-eval-006",
+      "answered": true,
+      "refusal": false,
+      "evidence_source_hit": true,
+      "evidence_locator_hit": false,
+      "answer_cites_evidence": true,
+      "unsupported_claim_risk": false,
+      "over_refusal_risk": false,
+      "correct_refusal": false
+    },
+    {
+      "id": "gen-eval-007",
+      "answered": true,
+      "refusal": false,
+      "evidence_source_hit": true,
+      "evidence_locator_hit": false,
+      "answer_cites_evidence": true,
+      "unsupported_claim_risk": false,
+      "over_refusal_risk": false,
+      "correct_refusal": false
+    },
+    {
+      "id": "gen-eval-008",
+      "answered": true,
+      "refusal": false,
+      "evidence_source_hit": true,
+      "evidence_locator_hit": false,
+      "answer_cites_evidence": false,
+      "unsupported_claim_risk": false,
+      "over_refusal_risk": false,
+      "correct_refusal": false
+    },
+    {
+      "id": "gen-eval-009",
+      "answered": true,
+      "refusal": false,
+      "evidence_source_hit": true,
+      "evidence_locator_hit": false,
+      "answer_cites_evidence": true,
+      "unsupported_claim_risk": false,
+      "over_refusal_risk": false,
+      "correct_refusal": false
+    },
+    {
+      "id": "gen-eval-010",
+      "answered": true,
+      "refusal": false,
+      "evidence_source_hit": true,
+      "evidence_locator_hit": false,
+      "answer_cites_evidence": true,
+      "unsupported_claim_risk": false,
+      "over_refusal_risk": false,
+      "correct_refusal": false
+    }
+  ]
+}

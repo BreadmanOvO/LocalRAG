@@ -1,0 +1,125 @@
+Visit http://ip:port for Web UI, e.g., http://127.0.0.1:7860
+* Running on local URL:  http://0.0.0.0:7860
+* To create a public link, set `share=True` in `launch()`.
+[WARNING|2026-06-08 21:31:59] llamafactory.webui.common:149 >> Cannot open data\dataset_info.json due to [Errno 2] No such file or directory: 'data\\dataset_info.json'.
+[WARNING|2026-06-08 21:32:03] llamafactory.webui.common:149 >> Cannot open data\dataset_info.json due to [Errno 2] No such file or directory: 'data\\dataset_info.json'.
+[WARNING|2026-06-08 21:32:04] llamafactory.webui.common:149 >> Cannot open data\dataset_info.json due to [Errno 2] No such file or directory: 'data\\dataset_info.json'.
+[WARNING|2026-06-08 21:32:04] llamafactory.webui.common:149 >> Cannot open data\dataset_info.json due to [Errno 2] No such file or directory: 'data\\dataset_info.json'.
+[WARNING|2026-06-08 21:32:04] llamafactory.webui.common:149 >> Cannot open data\dataset_info.json due to [Errno 2] No such file or directory: 'data\\dataset_info.json'.
+[INFO|2026-06-08 22:10:20] llamafactory.hparams.parser:523 >> Process rank: 0, world size: 1, device: cuda:0, distributed training: False, compute dtype: torch.bfloat16
+[WARNING|2026-06-08 22:10:21] llamafactory.data.template:149 >> You are using reasoning template, please add `_nothink` suffix if the model is not a reasoning model. e.g., qwen3_vl_nothink
+[INFO|2026-06-08 22:10:21] llamafactory.data.loader:144 >> Loading dataset ../datasets/localrag_sft_e1.jsonl...
+[INFO|2026-06-08 22:11:05] llamafactory.data.loader:144 >> Loading dataset ../datasets/localrag_sft_e1_validation.jsonl...
+training example:
+input_ids:
+[151644, 872, 198, 14880, 100345, 89012, 22382, 112872, 102104, 86119, 3837, 101097, 37029, 101111, 101047, 27369, 24968, 101111, 102004, 13343, 14880, 66394, 101068, 60610, 24968, 102349, 100072, 101143, 100645, 11622, 2073, 103346, 5122, 854, 114116, 37029, 26939, 9370, 2530, 842, 58143, 47117, 8997, 86119, 5122, 100345, 111116, 15946, 20742, 16, 18, 9370, 32320, 99368, 102140, 3837, 39165, 37029, 101474, 100900, 110480, 9909, 98223, 51629, 7552, 13343, 3837, 44063, 5366, 15843, 51154, 81800, 45181, 2403, 9909, 85248, 7552, 101940, 26939, 19, 15, 24, 21, 3837, 32664, 44, 3627, 9909, 42140, 53772, 35243, 104363, 110480, 7552, 112881, 111588, 99564, 11319, 91572, 96050, 2537, 33108, 2336, 49567, 104118, 17447, 104423, 99387, 100535, 102111, 100682, 26850, 112872, 28311, 58, 16, 60, 2530, 842, 17385, 3191, 12, 15, 18, 15, 47117, 28, 2893, 28, 17, 198, 1, 970, 220, 19, 15, 24, 21, 1379, 19556, 7949, 279, 39270, 315, 386, 3627, 553, 220, 22, 21, 13, 19, 4, 320, 17, 16, 13, 15, 16, 1011, 311, 220, 19, 13, 24, 21, 1011, 8, 389, 220, 17, 20, 21, 24768, 220, 17, 20, 21, 1379, 7206, 53, 5827, 13, 2503, 279, 5068, 21025, 389, 3007, 43903, 16734, 320, 68, 1302, 2572, 362, 2446, 11, 362, 52865, 11, 362, 4491, 8, 525, 803, 5089, 1091, 10106, 11, 25538, 429, 279, 23850, 3922, 646, 10306, 1181, 5068, 11, 714, 279, 30549, 3922, 46421, 504, 978, 1561, 974, 8865, 7206, 53, 4419, 311, 69780, 6171, 6, 8201, 1189, 151645, 198, 151644, 77091, 198, 151667, 271, 151668, 271, 37029, 19, 15, 24, 21, 18947, 51154, 13343, 3837, 44, 3627, 112881, 110823, 22, 21, 13, 19, 4, 9909, 45181, 17, 16, 13, 15, 16, 1011, 112299, 19, 13, 24, 21, 1011, 74276, 102111, 99522, 3837, 2537, 45181, 2403, 13343, 9370, 20, 21, 13, 24, 4, 112299, 20, 19, 13, 15, 69982, 2336, 45181, 15, 13, 18, 17, 20, 99294, 56137, 15, 13, 18, 21, 22, 3837, 91676, 70538, 102111, 112743, 102008, 3837, 77288, 105162, 104118, 9909, 29524, 2336, 5373, 18746, 36, 5373, 9493, 7552, 102008, 33126, 104656, 3407, 103346, 28311, 12, 5567, 12, 15, 18, 15, 2150, 28, 17, 151645, 198]
+inputs:
+<|im_start|>user
+请根据给定参考资料回答问题，只能使用资料中的信息；资料不足时请说明无法确定；答案末尾必须用“引用：”列出使用到的 source_id 和 locator。
+问题：根据文档中表13的消融实验，当使用稀疏聚合（sparse aggregation）时，将Top-K查询数量从All（全部）减少到4096，对MFA（多模态特征聚合）延迟有多大影响？同时，在AP和ATE等指标上出现了怎样的性能变化？
+
+参考资料：
+[1] source_id=paper-030 locator=page=2
+"using 4096 size queries reduce the latency of MFA by 76.4% (21.01ms to 4.96ms) on 256 × 256 size BEV grid. ... the performance drops on True Positive metrics (e.g., ATE, AOE, AVE) are more significant than AP, assuming that the classification network can maintain its performance, but the regression network suffers from sparsely spread BEV features to regress objects' attributes."<|im_end|>
+<|im_start|>assistant
+<think>
+
+</think>
+
+使用4096个查询时，MFA延迟降低了76.4%（从21.01ms降至4.96ms）。性能方面，AP从All时的56.9%降至54.0%，ATE从0.325升至0.367，即分类性能略有下降，但回归指标（如ATE、AOE、AVE）下降更显著。
+
+引用：
+- paper-030 page=2<|im_end|>
+
+label_ids:
+[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 151667, 271, 151668, 271, 37029, 19, 15, 24, 21, 18947, 51154, 13343, 3837, 44, 3627, 112881, 110823, 22, 21, 13, 19, 4, 9909, 45181, 17, 16, 13, 15, 16, 1011, 112299, 19, 13, 24, 21, 1011, 74276, 102111, 99522, 3837, 2537, 45181, 2403, 13343, 9370, 20, 21, 13, 24, 4, 112299, 20, 19, 13, 15, 69982, 2336, 45181, 15, 13, 18, 17, 20, 99294, 56137, 15, 13, 18, 21, 22, 3837, 91676, 70538, 102111, 112743, 102008, 3837, 77288, 105162, 104118, 9909, 29524, 2336, 5373, 18746, 36, 5373, 9493, 7552, 102008, 33126, 104656, 3407, 103346, 28311, 12, 5567, 12, 15, 18, 15, 2150, 28, 17, 151645, 198]
+labels:
+<think>
+
+</think>
+
+使用4096个查询时，MFA延迟降低了76.4%（从21.01ms降至4.96ms）。性能方面，AP从All时的56.9%降至54.0%，ATE从0.325升至0.367，即分类性能略有下降，但回归指标（如ATE、AOE、AVE）下降更显著。
+
+引用：
+- paper-030 page=2<|im_end|>
+
+eval example:
+input_ids:
+[151644, 872, 198, 14880, 100345, 89012, 22382, 112872, 102104, 86119, 3837, 101097, 37029, 101111, 101047, 27369, 24968, 101111, 102004, 13343, 14880, 66394, 101068, 60610, 24968, 102349, 100072, 101143, 100645, 11622, 2073, 103346, 5122, 854, 114116, 37029, 26939, 9370, 2530, 842, 58143, 47117, 8997, 86119, 5122, 3027, 2227, 6954, 107359, 113195, 13343, 32044, 101164, 104238, 36407, 54542, 87140, 31196, 26850, 112872, 28311, 58, 16, 60, 2530, 842, 17385, 3191, 12, 15, 22, 23, 47117, 28, 2893, 28, 17, 198, 65120, 2621, 1493, 4714, 11, 582, 3042, 9203, 2227, 6954, 11, 458, 835, 4686, 13068, 2860, 15301, 429, 59780, 6249, 6803, 448, 264, 35915, 36508, 8282, 311, 9245, 35915, 68504, 18128, 1550, 22092, 4621, 1506, 14043, 18202, 264, 6884, 2088, 13, 2503, 1205, 10902, 264, 16842, 8282, 369, 1039, 35915, 36508, 5486, 13, 12090, 315, 74072, 5248, 14087, 3786, 11, 1039, 1714, 1882, 1817, 4034, 31299, 1393, 16992, 1095, 264, 8177, 1584, 3941, 882, 311, 21129, 35915, 1995, 11, 438, 20459, 304, 19037, 220, 16, 1189, 151645, 198, 151644, 77091, 198, 151667, 271, 151668, 271, 76509, 104238, 3837, 91676, 100062, 116226, 54542, 62926, 99960, 20450, 101170, 71694, 44091, 23031, 104465, 13343, 32044, 27369, 3837, 109093, 100405, 100537, 101684, 42140, 116226, 3407, 103346, 28311, 12, 5567, 12, 15, 22, 23, 2150, 28, 17, 151645, 198]
+inputs:
+<|im_start|>user
+请根据给定参考资料回答问题，只能使用资料中的信息；资料不足时请说明无法确定；答案末尾必须用“引用：”列出使用到的 source_id 和 locator。
+问题：StreamMapNet采用了哪种时序融合策略来处理视频输入？
+
+参考资料：
+[1] source_id=paper-078 locator=page=2
+"To address these issues, we present StreamMapNet, an end-to-end online pipeline that utilizes camera videos with a temporal fusion strategy to construct temporal-consistent high-quality vectorized maps covering a wide range. ... We adopt a streaming strategy for our temporal fusion approach. Instead of stacking multiple frames together, our method process each frame individually while propagating a hidden state across time to preserve temporal information, as demonstrated in Figure 1."<|im_end|>
+<|im_start|>assistant
+<think>
+
+</think>
+
+Streaming策略，即逐帧处理并跨时间传播隐藏状态以保留时序信息，而非简单堆叠多帧。
+
+引用：
+- paper-078 page=2<|im_end|>
+
+label_ids:
+[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 151667, 271, 151668, 271, 76509, 104238, 3837, 91676, 100062, 116226, 54542, 62926, 99960, 20450, 101170, 71694, 44091, 23031, 104465, 13343, 32044, 27369, 3837, 109093, 100405, 100537, 101684, 42140, 116226, 3407, 103346, 28311, 12, 5567, 12, 15, 22, 23, 2150, 28, 17, 151645, 198]
+labels:
+<think>
+
+</think>
+
+Streaming策略，即逐帧处理并跨时间传播隐藏状态以保留时序信息，而非简单堆叠多帧。
+
+引用：
+- paper-078 page=2<|im_end|>
+
+[INFO|2026-06-08 22:13:40] llamafactory.model.model_utils.quantization:144 >> Quantizing model to 4 bit with bitsandbytes.
+[INFO|2026-06-08 22:13:40] llamafactory.model.model_utils.kv_cache:144 >> KV cache is disabled during training.
+[INFO|2026-06-08 22:13:50] llamafactory.model.model_utils.checkpointing:144 >> Upcasting layernorm weights in float32.
+[INFO|2026-06-08 22:13:50] llamafactory.model.model_utils.checkpointing:144 >> Gradient checkpointing enabled.
+[INFO|2026-06-08 22:13:50] llamafactory.model.model_utils.attention:144 >> Using torch SDPA for faster training and inference.
+[INFO|2026-06-08 22:13:50] llamafactory.model.adapter:144 >> Upcasting trainable params to float32.
+[INFO|2026-06-08 22:13:50] llamafactory.model.adapter:144 >> Fine-tuning method: LoRA
+[INFO|2026-06-08 22:13:50] llamafactory.model.model_utils.misc:144 >> Found linear modules: v_proj,gate_proj,o_proj,q_proj,up_proj,down_proj,k_proj
+[INFO|2026-06-08 22:13:51] llamafactory.model.loader:144 >> trainable params: 16,515,072 || all params: 4,038,983,168 || trainable%: 0.4089
+[INFO|2026-06-08 22:14:04] llamafactory.train.callbacks:144 >> {'loss': 2.7901, 'learning_rate': 9.8857e-05, 'epoch': 0.13, 'throughput': 405.59}
+{'loss': '2.79', 'grad_norm': '4.23', 'learning_rate': '9.886e-05', 'epoch': '0.1311', 'num_input_tokens_seen': 5520, 'train_runtime': '13.61', 'train_tokens_per_second': '405.5'}
+{'eval_loss': '0.9036', 'eval_runtime': '2.757', 'eval_samples_per_second': '7.253', 'eval_steps_per_second': '7.253', 'epoch': '0.2186', 'num_input_tokens_seen': 9000}
+[INFO|2026-06-08 22:14:19] llamafactory.train.callbacks:144 >> {'loss': 0.9996, 'learning_rate': 9.0027e-05, 'epoch': 0.26, 'throughput': 389.29}
+{'loss': '0.9996', 'grad_norm': '1.306', 'learning_rate': '9.003e-05', 'epoch': '0.2623', 'num_input_tokens_seen': 10904, 'train_runtime': '28.01', 'train_tokens_per_second': '389.2'}
+[INFO|2026-06-08 22:14:31] llamafactory.train.callbacks:144 >> {'loss': 0.9404, 'learning_rate': 7.3962e-05, 'epoch': 0.39, 'throughput': 416.13}
+{'loss': '0.9404', 'grad_norm': '0.9063', 'learning_rate': '7.396e-05', 'epoch': '0.3934', 'num_input_tokens_seen': 16616, 'train_runtime': '39.93', 'train_tokens_per_second': '416.1'}
+{'eval_loss': '0.799', 'eval_runtime': '2.937', 'eval_samples_per_second': '6.809', 'eval_steps_per_second': '6.809', 'epoch': '0.4372', 'num_input_tokens_seen': 18448}
+[INFO|2026-06-08 22:14:46] llamafactory.train.callbacks:144 >> {'loss': 0.8510, 'learning_rate': 5.3567e-05, 'epoch': 0.52, 'throughput': 399.47}
+{'loss': '0.851', 'grad_norm': '1.408', 'learning_rate': '5.357e-05', 'epoch': '0.5246', 'num_input_tokens_seen': 22032, 'train_runtime': '55.16', 'train_tokens_per_second': '399.4'}
+[INFO|2026-06-08 22:14:58] llamafactory.train.callbacks:144 >> {'loss': 0.8553, 'learning_rate': 3.2527e-05, 'epoch': 0.66, 'throughput': 418.85}
+{'loss': '0.8553', 'grad_norm': '0.9597', 'learning_rate': '3.253e-05', 'epoch': '0.6557', 'num_input_tokens_seen': 28168, 'train_runtime': '67.26', 'train_tokens_per_second': '418.8'}
+{'eval_loss': '0.7803', 'eval_runtime': '2.847', 'eval_samples_per_second': '7.026', 'eval_steps_per_second': '7.026', 'epoch': '0.6557', 'num_input_tokens_seen': 28168}
+[INFO|2026-06-08 22:15:13] llamafactory.train.callbacks:144 >> {'loss': 0.8004, 'learning_rate': 1.4645e-05, 'epoch': 0.79, 'throughput': 418.72}
+{'loss': '0.8004', 'grad_norm': '1.075', 'learning_rate': '1.464e-05', 'epoch': '0.7869', 'num_input_tokens_seen': 34240, 'train_runtime': '81.78', 'train_tokens_per_second': '418.7'}
+{'eval_loss': '0.7717', 'eval_runtime': '2.744', 'eval_samples_per_second': '7.288', 'eval_steps_per_second': '7.288', 'epoch': '0.8743', 'num_input_tokens_seen': 38432}
+[INFO|2026-06-08 22:15:27] llamafactory.train.callbacks:144 >> {'loss': 0.8983, 'learning_rate': 3.1525e-06, 'epoch': 0.92, 'throughput': 421.09}
+{'loss': '0.8983', 'grad_norm': '0.9914', 'learning_rate': '3.153e-06', 'epoch': '0.918', 'num_input_tokens_seen': 40672, 'train_runtime': '96.59', 'train_tokens_per_second': '421.1'}
+{'eval_loss': '0.7711', 'eval_runtime': '2.748', 'eval_samples_per_second': '7.277', 'eval_steps_per_second': '7.277', 'epoch': '1', 'num_input_tokens_seen': 43960}
+{'train_runtime': '107.1', 'train_samples_per_second': '1.709', 'train_steps_per_second': '0.429', 'train_loss': '1.123', 'epoch': '1', 'num_input_tokens_seen': 43960}
+***** train metrics *****
+  epoch                    =        1.0
+  num_input_tokens_seen    =      43960
+  total_flos               =   896613GF
+  train_loss               =     1.1231
+  train_runtime            = 0:01:47.10
+  train_samples_per_second =      1.709
+  train_steps_per_second   =      0.429
+Figure saved at: saves\Qwen3-4B-Thinking\lora\localrag_sft_e1_qlora_webui\training_loss.png
+Figure saved at: saves\Qwen3-4B-Thinking\lora\localrag_sft_e1_qlora_webui\training_eval_loss.png
+[WARNING|2026-06-08 22:15:38] llamafactory.extras.ploting:149 >> No metric eval_accuracy to plot.
+***** eval metrics *****
+  epoch                   =        1.0
+  eval_loss               =     0.7711
+  eval_runtime            = 0:00:02.74
+  eval_samples_per_second =      7.283
+  eval_steps_per_second   =      7.283
+  num_input_tokens_seen   =      43960
