@@ -1,0 +1,892 @@
+[
+  {
+    "id": "gen-eval-001",
+    "question": "自动驾驶视觉感知模块在 Apollo 中主要处理哪些任务？",
+    "reference_answer": "Apollo 视觉感知算法主要用于红绿灯检测、车道线检测、基于摄像头的障碍物检测；每个模块通常包含预处理、神经网络模型和后处理。",
+    "answer": "自动驾驶视觉感知模块在 Apollo 中主要处理红绿灯检测、车道线检测和基于摄像头的障碍物检测任务。引用：\n- source_id unknown locator unknown\n- source_id unknown locator unknown\n- source_id unknown locator unknown",
+    "retrieved_context": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。\n1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p. 1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。\n## Evidence-ready excerpts\n- [p. 1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障碍物信息 摄像头障碍物 摄像头障碍 2D到3D转换 多传感器 其他传感器 障碍物信息 每个模块又可以分为3部分，分别是图像的预处理、神经网络模型以及后处理。 ·预处理：对上游信息做一些处理和整合，以方便把信息直接输入到模型中做预测。 ·神经网络模型：主要涉及一些深度学习算法，包括目标检测、语义分割、图像分类等。 ·后处理：为了优化模型效果，我们会利用一些传统的算法进一步优化网络模型的预测，让我们的算法可以在实车 上跑得更加流畅。",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.6314300244570827,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p. 1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.6176434531343813,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "## Evidence-ready excerpts\n- [p. 1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障碍物信息 摄像头障碍物 摄像头障碍 2D到3D转换 多传感器 其他传感器 障碍物信息 每个模块又可以分为3部分，分别是图像的预处理、神经网络模型以及后处理。 ·预处理：对上游信息做一些处理和整合，以方便把信息直接输入到模型中做预测。 ·神经网络模型：主要涉及一些深度学习算法，包括目标检测、语义分割、图像分类等。 ·后处理：为了优化模型效果，我们会利用一些传统的算法进一步优化网络模型的预测，让我们的算法可以在实车 上跑得更加流畅。",
+        "score": 0.5546900542128113,
+        "rank": 3
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.6314300244570827,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障…\n- [p. 1] 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.6176434531343813,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "## Evidence-ready excerpts\n- [p. 1] 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 神经网络模型 红绿灯识别 红绿灯信息 多个目标投 红绿灯检测 提取检测ROI 票(voting) 车道线后处 车道线检测 图像预处理 camera 障碍物信息 摄像头障碍物 摄像头障碍 2D到3D转换 多传感器 其他传感器 障碍物信息 每个模块又可以分为3部分，分别是图像的预处理、神经网络模型以及后处理。 ·预处理：对上游信息做一些处理和整合，以方便把信息直接输入到模型中做预测。 ·神经网络模型：主要涉及一些深度学习算法，包括目标检测、语义分割、图像分类等。 ·后处理：为了优化模型效果，我们会利用一些传统的算法进一步优化网络模型的预测，让我们的算法可以在实车 上跑得更加流畅。",
+        "score": 0.5546900542128113,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": 0.5455649243354146,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "视觉感知算法在Apollo平台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。每个模块又可以分为3部分，分别是图像的预处理、神经网络模型以及后处理。",
+        "source_id": "apollo-doc-006",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "perception",
+      "doc_type": "official_doc",
+      "generation_category": "normal_answerable",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  },
+  {
+    "id": "gen-eval-002",
+    "question": "CRN 融合了哪两类传感器来构建 BEV 特征？",
+    "reference_answer": "CRN 融合摄像头和雷达数据，构建语义丰富且空间准确的 BEV 特征图。",
+    "answer": "CRN 融合了相机和雷达两种传感器来构建 BEV 特征。引用：\n- source_id paper-030 locator unknown\n- source_id paper-030 locator unknown\n- source_id paper-038 locator unknown",
+    "retrieved_context": "be adaptive in order to tackle noisy and ambiguous radar\nmeasurements. To this end, we design a novel two-stage fusion method\nfor BEV feature encoding, Camera Radar Net (CRN). The\nkey idea of the proposed method is to generate semantically\nrich and spatially accurate BEV feature map by fusing com-\nplementary characteristics of camera and radar sensors. In\nparticular, we first transform image features in perspective\nview into BEV not solely relying on estimated depth but us-\ning radar, named radar-assisted view transformation (RVT). Since transformed image features in BEV is not completely\naccurate, following multi-modal feature aggregation (MFA)\nlayers consecutively encodes the multi-modal feature maps\ninto a unified feature map using an attention mechanism. We conduct extensive experiments on nuScenes and demon-\nstrate that our proposed method can generate a fine-grained\nBEV feature map to set the new state-of-the-art on various\nkr\nAbstract\nAutonomous driving requires an accurate and fast 3D\nperception system that includes 3D object detection, track-\ning, and segmentation. Although recent low-cost camera-\nbased approaches have shown promising results, they are\nsusceptible to poor illumination or bad weather conditions\nand have a large localization error. Hence, fusing cam-\nera with low-cost radar, which provides precise long-range\nmeasurement and operates reliably in all environments, is\npromising but has not yet been thoroughly investigated. In\nthis paper, we propose Camera Radar Net (CRN), a novel\ncamera-radar fusion framework that generates a semanti-\ncally rich and spatially accurate bird’s-eye-view (BEV) fea-\nture map for various tasks. To overcome the lack of spa-\ntial information in an image, we transform perspective view\nimage features to BEV with the help of sparse but accu-\nrate radar points. We further aggregate image and radar\nfeature maps in BEV using multi-modal deformable atten-\ndataset, benchmark)\nready to conduct BEV perception research?",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "be adaptive in order to tackle noisy and ambiguous radar\nmeasurements. To this end, we design a novel two-stage fusion method\nfor BEV feature encoding, Camera Radar Net (CRN). The\nkey idea of the proposed method is to generate semantically\nrich and spatially accurate BEV feature map by fusing com-\nplementary characteristics of camera and radar sensors. In\nparticular, we first transform image features in perspective\nview into BEV not solely relying on estimated depth but us-\ning radar, named radar-assisted view transformation (RVT). Since transformed image features in BEV is not completely\naccurate, following multi-modal feature aggregation (MFA)\nlayers consecutively encodes the multi-modal feature maps\ninto a unified feature map using an attention mechanism. We conduct extensive experiments on nuScenes and demon-\nstrate that our proposed method can generate a fine-grained\nBEV feature map to set the new state-of-the-art on various",
+        "score": 0.5836950938895233,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "kr\nAbstract\nAutonomous driving requires an accurate and fast 3D\nperception system that includes 3D object detection, track-\ning, and segmentation. Although recent low-cost camera-\nbased approaches have shown promising results, they are\nsusceptible to poor illumination or bad weather conditions\nand have a large localization error. Hence, fusing cam-\nera with low-cost radar, which provides precise long-range\nmeasurement and operates reliably in all environments, is\npromising but has not yet been thoroughly investigated. In\nthis paper, we propose Camera Radar Net (CRN), a novel\ncamera-radar fusion framework that generates a semanti-\ncally rich and spatially accurate bird’s-eye-view (BEV) fea-\nture map for various tasks. To overcome the lack of spa-\ntial information in an image, we transform perspective view\nimage features to BEV with the help of sparse but accu-\nrate radar points. We further aggregate image and radar\nfeature maps in BEV using multi-modal deformable atten-",
+        "score": 0.5173681769194444,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-038",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "dataset, benchmark)\nready to conduct BEV perception research?",
+        "score": 0.4717746434310264,
+        "rank": 3
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "be adaptive in order to tackle noisy and ambiguous radar\nmeasurements. To this end, we design a novel two-stage fusion method\nfor BEV feature encoding, Camera Radar Net (CRN). The\nkey idea of the proposed method is to generate semantically\nrich and spatially accurate BEV feature map by fusing com-\nplementary characteristics of camera and radar sensors. In\nparticular, we first transform image features in perspective\nview into BEV not solely relying on estimated depth but us-\ning radar, named radar-assisted view transformation (RVT). Since transformed image features in BEV is not completely\naccurate, following multi-modal feature aggregation (MFA)\nlayers consecutively encodes the multi-modal feature maps\ninto a unified feature map using an attention mechanism. We conduct extensive experiments on nuScenes and demon-\nstrate that our proposed method can generate a fine-grained\nBEV feature map to set the new state-of-the-art on various",
+        "score": 0.5836950938895233,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "kr\nAbstract\nAutonomous driving requires an accurate and fast 3D\nperception system that includes 3D object detection, track-\ning, and segmentation. Although recent low-cost camera-\nbased approaches have shown promising results, they are\nsusceptible to poor illumination or bad weather conditions\nand have a large localization error. Hence, fusing cam-\nera with low-cost radar, which provides precise long-range\nmeasurement and operates reliably in all environments, is\npromising but has not yet been thoroughly investigated. In\nthis paper, we propose Camera Radar Net (CRN), a novel\ncamera-radar fusion framework that generates a semanti-\ncally rich and spatially accurate bird’s-eye-view (BEV) fea-\nture map for various tasks. To overcome the lack of spa-\ntial information in an image, we transform perspective view\nimage features to BEV with the help of sparse but accu-\nrate radar points. We further aggregate image and radar\nfeature maps in BEV using multi-modal deformable atten-",
+        "score": 0.5173681769194444,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-038",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "dataset, benchmark)\nready to conduct BEV perception research?",
+        "score": 0.4717746434310264,
+        "rank": 3
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "Conclusion\nWe present CRN, a novel camera-radar fusion method\nfor accurate, robust, and efficient multi-task 3D percep-\ntion. Our method effectively overcomes the limitation of\neach modality and fuses multi-modal information to gener-\nate contextually rich and spatially accurate BEV scene rep-\nresentation. CRN is also suitable for long-range percep-\ntion in real-time and achieves state-of-the-art performance\non various tasks. We hope that CRN will inspire future re-\nsearch on camera-radar fusion for 3D perception.",
+        "score": 0.47161242021110794,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "CRN: Camera Radar Net for Accurate, Robust, Efficient 3D Perception ... we propose Camera Radar Net (CRN), a novel camera-radar fusion framework that generates a semantically rich and spatially accurate bird's-eye-view (BEV) feature map.",
+        "source_id": "paper-030",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "sensor_fusion",
+      "doc_type": "paper",
+      "generation_category": "normal_answerable",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  },
+  {
+    "id": "gen-eval-003",
+    "question": "Apollo 感知融合模块是否只依赖摄像头结果？请根据资料回答。",
+    "reference_answer": "不是。Apollo 感知融合模块支持对摄像头、毫米波雷达和激光雷达传感器的感知结果进行目标级融合。",
+    "answer": "不，Apollo 感知融合模块不仅仅依赖摄像头结果。根据资料，Apollo 感知融合模块支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。通过融合这三种传感器的数据，模块能够结合各传感器的优点，提高感知的准确性和可靠性。引用：\n- source_id locator",
+    "retrieved_context": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里，不同的传感器各有各的优缺点，而Apollo感知模块则是把各个传感器的优点结合起来，在目标级别 上进行融合。 下图表示了摄像头（Camera）、毫米波雷达（Radar）和激光雷达（Lidar）传感器在不同任务和不同条件下的性 能。 其中， ·摄像头：对于分类任务尤其准确， ·毫米波雷达：在穿透性、距离估计和极端天气抗干扰性具有卓越的性能， 数据格式 ·激光雷达：擅长目标检测任务。 如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。\n1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p. 1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p. 1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。\n1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里，不同的传感器各有各的优缺点，而Apollo感知模块则是把各个传感器的优点结合起来，在目标级别 上进行融合。 下图表示了摄像头（Camera）、毫米波雷达（Radar）和激光雷达（Lidar）传感器在不同任务和不同条件下的性 能。 其中， ·摄像头：对于分类任务尤其准确， ·毫米波雷达：在穿透性、距离估计和极端天气抗干扰性具有卓越的性能， 数据格式 ·激光雷达：擅长目标检测任务。 如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。",
+        "score": 0.5955406763977527,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p. 1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p. 1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。",
+        "score": 0.5951628720477011,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": 0.5755857030612392,
+        "rank": 3
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里，不同的传感器各有各的优缺点，而Apollo感知模块则是把各个传感器的优点结合起来，在目标级别 上进行融合。 下图表示了摄像头（Camera）、毫米波雷达（Radar）和激光雷达（Lidar）传感器在不同任务和不同条件下的性 能。 其中， ·摄像头：对于分类任务尤其准确， ·毫米波雷达：在穿透性、距离估计和极端天气抗干扰性具有卓越的性能， 数据格式 ·激光雷达：擅长目标检测任务。 如果能有效将三种传感器进行融合感知，就能在各种情况下都能达到优良的性能。",
+        "score": 0.5955406763977527,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p. 1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p. 1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。",
+        "score": 0.5951628720477011,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": 0.5755857030612392,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "apollo. auto/Apollo-Homepage-Document/Apollo_Doc_CN_6_0/%E4%B8%8A%E6%9C%BA%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/%E4%B8%8A%E6%9C%BA%E5%AE%9E%E8%B7%B5Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B/Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B%E4%BB%8B%E7%BB%8D\n- Language: zh\n- Version: Apollo Doc CN 6. 0\n- Pages: 1\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception-fusion material describing the multi-sensor fusion workflow and the role of fused perception in downstream driving tasks. ## Key points\n- Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo…\n- +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "score": 0.570068006241587,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "source_id": "apollo-doc-005",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc",
+      "generation_category": "hallucination_prone",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  },
+  {
+    "id": "gen-eval-004",
+    "question": "使用稀疏聚合时，把 Top-K 查询数从 All 减少到 4096，会让 MFA 延迟和检测指标发生什么变化？",
+    "reference_answer": "MFA 延迟从 21.01ms 降到 4.96ms，降低 76.4%；AP 从 56.9% 降到 54.0%，ATE 从 0.325 升到 0.367，说明延迟显著降低但回归相关指标下降更明显。",
+    "answer": "使用稀疏聚合时，将 Top-K 查询数从 All 减少到 4096，会显著降低 MFA 的延迟。具体来说，使用 4096 大小的查询可以将 MFA 的延迟减少 76%。此外，由于 BEV 特征图在 top-k 抽样后变得稀疏和离散化，检测指标（如 True Positive 指标）会有所下降。引用：  \n- source_id paper-030 locator unknown  \n- source_id paper-080 locator unknown",
+    "retrieved_context": "ing a small set of features for MFA significantly reduces\nthe computation of Multi-modal Deformable Cross Atten-\ntion (MDCA). More specifically, using 4096 size queries\nreduce the latency of MFA by 76.\nthe query positions to reduce\noptimization difficulty.\n4% (21. 01ms to 4. 96ms)\non 256 × 256 size BEV grid. However, as the BEV fea-\nture map becomes sparse and discretized after top-k sam-\npling, the performance is degraded. We find that the per-\nformance drops on True Positive metrics (e.",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "ing a small set of features for MFA significantly reduces\nthe computation of Multi-modal Deformable Cross Atten-\ntion (MDCA). More specifically, using 4096 size queries\nreduce the latency of MFA by 76.",
+        "score": 0.4927059906601432,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-080",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "the query positions to reduce\noptimization difficulty.",
+        "score": 0.42263913094060146,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "4% (21. 01ms to 4. 96ms)\non 256 × 256 size BEV grid. However, as the BEV fea-\nture map becomes sparse and discretized after top-k sam-\npling, the performance is degraded. We find that the per-\nformance drops on True Positive metrics (e.",
+        "score": 0.40426188273124486,
+        "rank": 3
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "ing a small set of features for MFA significantly reduces\nthe computation of Multi-modal Deformable Cross Atten-\ntion (MDCA). More specifically, using 4096 size queries\nreduce the latency of MFA by 76.",
+        "score": 0.4927059906601432,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-080",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "the query positions to reduce\noptimization difficulty.",
+        "score": 0.42263913094060146,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "4% (21. 01ms to 4. 96ms)\non 256 × 256 size BEV grid. However, as the BEV fea-\nture map becomes sparse and discretized after top-k sam-\npling, the performance is degraded. We find that the per-\nformance drops on True Positive metrics (e.",
+        "score": 0.40426188273124486,
+        "rank": 3
+      },
+      {
+        "source_id": "paper-024",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": ",\nfrom 137 milliseconds to merely 64 milliseconds).",
+        "score": 0.3938957810462934,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "using 4096 size queries reduce the latency of MFA by 76.4% (21.01ms to 4.96ms) ... the performance drops on True Positive metrics (e.g., ATE, AOE, AVE) are more significant than AP.",
+        "source_id": "paper-030",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_object_detection",
+      "doc_type": "paper",
+      "generation_category": "hallucination_prone",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  },
+  {
+    "id": "gen-eval-005",
+    "question": "资料是否给出了 Apollo 视觉感知模块在雨夜施工区域的具体误检率？",
+    "reference_answer": "无法从给定证据确认。资料只说明摄像头容易受环境影响、视觉感知算法面临挑战，没有给出雨夜施工区域的具体误检率。",
+    "answer": "资料中没有给出Apollo视觉感知模块在雨夜施工区域的具体误检率。引用：  \n- source_id=apollo-doc-006 locator=unknown  \n- source_id=apollo-doc-005 locator=unknown",
+    "retrieved_context": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。\napollo. auto/Apollo-Homepage-Document/Apollo_Doc_CN_6_0/%E4%B8%8A%E6%9C%BA%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/%E4%B8%8A%E6%9C%BA%E5%AE%9E%E8%B7%B5Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B/Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B%E4%BB%8B%E7%BB%8D\n- Language: zh\n- Version: Apollo Doc CN 6. 0\n- Pages: 1\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception-fusion material describing the multi-sensor fusion workflow and the role of fused perception in downstream driving tasks. ## Key points\n- Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo…\n- +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。\n1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.47453104732363893,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "apollo. auto/Apollo-Homepage-Document/Apollo_Doc_CN_6_0/%E4%B8%8A%E6%9C%BA%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/%E4%B8%8A%E6%9C%BA%E5%AE%9E%E8%B7%B5Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B/Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B%E4%BB%8B%E7%BB%8D\n- Language: zh\n- Version: Apollo Doc CN 6. 0\n- Pages: 1\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception-fusion material describing the multi-sensor fusion workflow and the role of fused perception in downstream driving tasks. ## Key points\n- Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo…\n- +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "score": 0.435187680735144,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": 0.4225188859817999,
+        "rank": 3
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.47453104732363893,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "apollo. auto/Apollo-Homepage-Document/Apollo_Doc_CN_6_0/%E4%B8%8A%E6%9C%BA%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/%E4%B8%8A%E6%9C%BA%E5%AE%9E%E8%B7%B5Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B/Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B%E4%BB%8B%E7%BB%8D\n- Language: zh\n- Version: Apollo Doc CN 6. 0\n- Pages: 1\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception-fusion material describing the multi-sensor fusion workflow and the role of fused perception in downstream driving tasks. ## Key points\n- Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo…\n- +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "score": 0.435187680735144,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": 0.4225188859817999,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-007",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。 感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子…\n- [p. 1] ·预测器：预测器直接或结合评估器的结果给出障碍物的完整预测时域的预测轨迹。 预测模块的输入输出 channel名称 输入输出channel说明 /apollo/perception/obstacles输入 感知信息，包含障碍物的位置、朝向、速度、加速度 /apollo/localization/pose 定位信息，自车的位置、速度信息 /apollo/planning 规划信息，自车规划的轨迹信息 /apollo/prediction…\n\n## Evidence-ready excerpts\n- [p. 1] Apollo预测能力介绍 本文为开发者介绍Apollo预测模块的基本知识，包括预测模块在自动驾驶系统中的主要作用，预测模块的基本组成以及预测模 块的输入输出。 Apollo预测能力介绍 预测模块通过障碍物的历史状态信息，来预测障碍物的未来轨迹。 感知模块作为预测模块的上游，提供障碍物的位置、朝向、 速度、加速度等信息，预测模块根据这些信息，给出障碍物未来的预测轨迹，供下游规戏模块进行自车轨迹的规划。 预测模块的原理 预测模块主要有四个子模块组成，分别是：信息容器（container）、场景选择（scenario)、评估器（evaluator）和预测器 (predictor)。 ·信息容器：储存上游信息，为之后的轨迹预测提供输入，当期储存的主要有：感知信息、定位信息以及自车轨迹规划信息。 Apollo预测模块实践 ·场景选择：预测模块针对不同的场景采用不同的预测方法（如巡航、路口等场景），便于后续扩展，提高算法的泛化能力。 ·评估器：评估器基于障碍物的状态信息，结合预测模型，给出障碍物预测轨迹的概率或短预测时域的轨迹信息。",
+        "score": 0.41744760858157504,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。",
+        "source_id": "apollo-doc-006",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "perception",
+      "doc_type": "official_doc",
+      "generation_category": "insufficient_context",
+      "expected_behavior": "refuse"
+    },
+    "error": null
+  },
+  {
+    "id": "gen-eval-006",
+    "question": "资料是否说明 CRN 已经在某量产车型上部署，并给出了部署成本？",
+    "reference_answer": "无法从给定证据确认。证据说明 CRN 是 camera-radar fusion framework，但没有说明量产车型部署情况或部署成本。",
+    "answer": "资料中没有说明 CRN 已经在某量产车型上部署，也没有给出部署成本。引用：- paper-069 unknown - paper-030 unknown - paper-073 unknown",
+    "retrieved_context": "We report Car class mAP in the\nsame manner as CRN [13].\n0%), while CRN still\n\n\n## Page 8\n\nFigure 5.\nThe code is available at\nhttps://github. com/sshaoshuai/PointRCNN.",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-069",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "We report Car class mAP in the\nsame manner as CRN [13].",
+        "score": 0.3977553786986786,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "0%), while CRN still\n\n\n## Page 8\n\nFigure 5.",
+        "score": 0.35909474890921167,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-073",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "The code is available at\nhttps://github. com/sshaoshuai/PointRCNN.",
+        "score": 0.3556970385696574,
+        "rank": 3
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "paper-069",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "We report Car class mAP in the\nsame manner as CRN [13].",
+        "score": 0.3977553786986786,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "0%), while CRN still\n\n\n## Page 8\n\nFigure 5.",
+        "score": 0.35909474890921167,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-073",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "The code is available at\nhttps://github. com/sshaoshuai/PointRCNN.",
+        "score": 0.3556970385696574,
+        "rank": 3
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "We empha-\nsize that CRN with a small image input and backbone\n(256 × 704 and R18) already outperforms competitors with\na large image input and backbone (BEVFormer [36] and\nBEVDepth [35] with 512×1408 and R101) in terms of mAP\nwhile running an order of magnitude faster, showing the ef-\nfectiveness of using radar over camera-only methods. CRN\nalso outperforms the LiDAR method CenterPoint-P [84],\ndemonstrating the potential of cost-effective camera and\nradar to replace LiDAR for autonomous driving.",
+        "score": 0.34564699610168925,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "we propose Camera Radar Net (CRN), a novel camera-radar fusion framework that generates a semantically rich and spatially accurate bird's-eye-view (BEV) feature map.",
+        "source_id": "paper-030",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "paper",
+      "generation_category": "insufficient_context",
+      "expected_behavior": "refuse"
+    },
+    "error": null
+  },
+  {
+    "id": "gen-eval-007",
+    "question": "Apollo 规划模块输入中的感知红绿灯信息对应哪个 channel？",
+    "reference_answer": "对应的 channel 是 /apollo/perception/traffic_light。",
+    "answer": "感知红绿灯信息对应的 channel 是 /apollo/perception/traffic_light。引用：\n- source_id locator",
+    "retrieved_context": "1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /apollo/relative_map /apollo/routing_response 输入导航routing信息 规划模块的输出 输出channel说明 channel名称 /apollo/planning输出自动驾驶车辆的轨迹信息 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问题。 我 们会根据反馈意见对文档进行迭代优化。 < apollo规划模块实践\n\n## Cleaning notes\n- Extracted from the raw PDF text layer using pypdf. - OCR fallback is used when the PDF has no extractable text layer.\nauto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。\n## Summary\nOfficial Apollo planning material describing scenario-based planning, planner responsibilities, and the inputs and outputs of the planning module. ## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。 规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。 - Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。 开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。 - handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…\n- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /apollo/relative_map /apollo/routing_response 输入导航routing信息 规划模块的输出 输出channel说明 channel名称 /apollo/planning输出自动驾驶车辆的轨迹信息 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问题。 我 们会根据反馈意见对文档进行迭代优化。 < apollo规划模块实践\n\n## Cleaning notes\n- Extracted from the raw PDF text layer using pypdf. - OCR fallback is used when the PDF has no extractable text layer.",
+        "score": 0.6001108699160316,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.5304714635340873,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "## Summary\nOfficial Apollo planning material describing scenario-based planning, planner responsibilities, and the inputs and outputs of the planning module. ## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。 规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。 - Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。 开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。 - handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…\n- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+        "score": 0.4979651165641811,
+        "rank": 3
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction 局部地图信息 /apollo/relative_map /apollo/routing_response 输入导航routing信息 规划模块的输出 输出channel说明 channel名称 /apollo/planning输出自动驾驶车辆的轨迹信息 如果您在使用文档的过程中，遇到任何问题，请到我们在【开发者社区】建立的反馈意见收集问答页面，反馈相关的问题。 我 们会根据反馈意见对文档进行迭代优化。 < apollo规划模块实践\n\n## Cleaning notes\n- Extracted from the raw PDF text layer using pypdf. - OCR fallback is used when the PDF has no extractable text layer.",
+        "score": 0.6001108699160316,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-006",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "auto/platform/perception_cn. html\n- Language: zh\n- Version: Apollo Perception CN\n- Pages: 4\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception material describing the perception module, its obstacle understanding responsibilities, and how visual perception supports autonomous driving. ## Key points\n- 但摄像头有着容易受环境影响、缺乏深度信息等缺点，给无人驾驶系统中的视觉感知算法带来了巨大的挑战。 因 此，如何建立一套高精确率和高稳定性的视觉感知算法，是无人车感知模块的核心问题。 视觉感知算法在Apollo平 台上主要有3个应用场景，分别是红绿灯检测、车道线检测、基于摄像头的障碍物检测。 - 视觉感知模块的原理 红绿灯检测模块原理 红绿灯检测模块的主要作用是检测当前路况下在摄像头的视觉范围内的红绿灯的状态，这是一个典型的目标检测任 务。 如下图所示，红绿灯检测模块一共包含4个部分，分别是数据预处理、红绿灯位置检测、红绿灯识别和矫正。",
+        "score": 0.5304714635340873,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-008",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "## Summary\nOfficial Apollo planning material describing scenario-based planning, planner responsibilities, and the inputs and outputs of the planning module. ## Key points\n- apollo规划能力介绍 规划是自动驾驶中重要的模块。 规划模块基于预测模块输入的障碍物信息、地图定位信息、路径导航信息对车辆的未来的运动 轨迹进行规划，保证自动驾驶车辆高效、安全、舒适的行至目标位置。 - Apollo规划模块原理 Apolo规划模块功能的实现是基于场景（scenario-based）实现的，针对不同的场景，规划模块通过一系列独立的任务 (task）组合来完成轨迹的规划。 开发者可以根据自己的使用需求，调整apollo/modules/planning/conf/scenario/下 的配置文件，调配任务组合实现自己的规划要求。 - handler handler handler handler handler handler handler Apollo规划架构示意图如上，其中部分重要模块如下： ·状态机（ApolloFSM（FiniteStateMachine)）：一个有限状态机，结合导航、环境等信息确定自动驾驶车辆的驾驶场景 ·规划分发器（PlanningDispatcher)：…\n- 规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 输入车身底盘反馈信息 /apollo/canbus/chassis 输入车辆定位信息 /apollo/localization/pose /apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/predicti…",
+        "score": 0.4979651165641811,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-009",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] /Apollo/planning 规划模块 /Apollo/control /Apollo/localization/pose 定位模块 控制模块 canbus模块 /Apollo/canbus/chassis chassis模块 控制模块输入channel 控制模块有三个输入channel： channel名称 输入输出channel说明 /Apollo/planing 规划信息，自车规划的轨迹信息 定位信息，自车的位置 /Apollo/localizatio/pose /Apollo/canbus/chassis 底盘信息，自车的方向盘、速度信息 控制模块输出channel 控制模块有一个输出channel： 输入输出channel说明 channel名称 控制信息，方向盘角度、油门刹车 /Apollo/control 输出\n\n## Cleaning notes\n- Extracted from the raw PDF text layer using pypdf.",
+        "score": 0.49632311749304514,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "规划模块的输入 channel名称 输入channel说明 ... /apollo/perception/traffic_light 输入是感知红绿灯信息。",
+        "source_id": "apollo-doc-008",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "easy",
+      "topic": "planning_control",
+      "doc_type": "official_doc",
+      "generation_category": "distractor_context",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  },
+  {
+    "id": "gen-eval-008",
+    "question": "Apollo 感知融合模块最终输出到哪个障碍物 channel？",
+    "reference_answer": "最终融合输出到 /apollo/perception/obstacles。",
+    "answer": "Apollo 感知融合模块最终输出到 /apollo/perception/obstacles 障碍物 channel。\n\n引用：\n- source_id apollo-doc-005 locator unknown\n- source_id apollo-doc-005 locator unknown",
+    "retrieved_context": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p. 1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p. 1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。\n1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。\n1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+    "retrieved_rows": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p. 1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p. 1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。",
+        "score": 0.5861940648314313,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。",
+        "score": 0.5613579385283257,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": 0.5248714960661418,
+        "rank": 3
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo感知模块里，多传感器融合是一个重要的环节，并且也是感知的最后环节。 在感知模块里…\n- [p. 1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障…\n- [p. 1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。",
+        "score": 0.5861940648314313,
+        "rank": 1
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] channel名称 channel说明 统一输入channel。 各传感器感知的结果都会输出到该 /perception/inner/Prefusedlobjects chamnel里作为感知融合模块的源数据。 感知融合模块的主要输出channel。 该channel 输出的是多传 /apollo /perception/obstacles 感器融合之后的障碍物信息。",
+        "score": 0.5613579385283257,
+        "rank": 2
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "1] +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。 通过对各传感器检测算法输出的障碍物分析，结合每个障碍物的传感器来源、位置、形状、速度、类别等信息，以 及历史目标跟踪的信息，过滤掉一些检测不准确的障碍物。 并且感知融合模块根据各个传感器的优缺点，调整障碍物的类别、位置、形状、速度等属性，最络融合输出，得到 当前的经果。 /perception/inner/PrefusedObjects 激光雷达感知 /perception/inner/PrefusedObjects /apollo/perception/obstacles 视觉感知 融合感知 /perception/inner/PrefusedObjects 毫米波雷达感知 感知融合模块的相关参数 以下是感知融合模块的输入和输出的channel说明。",
+        "score": 0.5248714960661418,
+        "rank": 3
+      },
+      {
+        "source_id": "apollo-doc-005",
+        "doc_type": "official_doc",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "apollo. auto/Apollo-Homepage-Document/Apollo_Doc_CN_6_0/%E4%B8%8A%E6%9C%BA%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/%E4%B8%8A%E6%9C%BA%E5%AE%9E%E8%B7%B5Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B/Apollo%E6%84%9F%E7%9F%A5%E8%9E%8D%E5%90%88%E8%83%BD%E5%8A%9B%E4%BB%8B%E7%BB%8D\n- Language: zh\n- Version: Apollo Doc CN 6. 0\n- Pages: 1\n- Topic tags: [perception, sensor_fusion]\n\n## Summary\nOfficial Apollo perception-fusion material describing the multi-sensor fusion workflow and the role of fused perception in downstream driving tasks. ## Key points\n- Apollo感知融合能力介绍 传感群性能比较 感知融合模块的原理 感知融合模块的相关参数 文栏意见反馈 本文档旨在简要介绍Apollo感知融合模块的原理和过程，并且说明运行Apollo感知融合模块的步骤。 通过本文 档，您可以了解到以下内容： ·Apollo的感知融合原理 Apollo感知融合模块的输入与输出channel信息 传感器性能比较 在Apollo…\n- +Radar+Lidar 目标检测 目标分类 距离估计 速度估计 可见范围 车道跟踪 极端天气下的性能 不良光照下的性能 感知融合模块的原理 Apollo感知融合模块能支持对摄像头、毫米波雷达和激光雷达传感器感知的结果进行目标级融合。",
+        "score": 0.4668237374301487,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "/perception/inner/PrefusedObjects 激光雷达感知 ... /apollo/perception/obstacles 视觉感知 融合感知 ... 毫米波雷达感知。",
+        "source_id": "apollo-doc-005",
+        "locator": "page=1"
+      }
+    ],
+    "metadata": {
+      "difficulty": "medium",
+      "topic": "sensor_fusion",
+      "doc_type": "official_doc",
+      "generation_category": "distractor_context",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  },
+  {
+    "id": "gen-eval-009",
+    "question": "文档中提到的 parameter-free design 主要想解决 BEV 感知中的什么问题？它试图与哪些相机因素解耦？",
+    "reference_answer": "它主要针对 BEV 感知中的领域自适应问题，试图让特征学习与相机外参和/或内参矩阵解耦，以缓解不同数据集相机位置、重叠区域、视场角、畸变参数等差异带来的迁移困难。",
+    "answer": "文档中提到的 parameter-free design 主要想解决 BEV 感知中的领域适应问题。它试图与相机的位置和姿态变化解耦。引用：  \n- source_id paper-038 locator unknown",
+    "retrieved_context": "3\nParameter-free Design to Improve Generalization\nOne of the biggest challenges in BEV perception is the do-\nmain adaptation.\nA simple baseline for bev perception\nwithout lidar.\n5\nCONLUSION\nIn this survey, we conduct a thorough review on BEV\nperception in recent years and provide a practical recipe\naccording to our analysis in BEV design pipeline. Grand\nchallenges and future endeavors could be: (a) how to devise\na more accurate depth estimator; (b) how to better align\nfeature representations from multiple sensors in a novel fu-\nsion mechanism; (c) how to design a parameter-free network\nsuch that the algorithm performance is free to pose variation\nor sensor location, achieving better generalization ablity\nacross various scenarios; and (d) how to incorporate the\nsuccessful knowledge from foundation models to facilitate\nBEV perception.",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-038",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "3\nParameter-free Design to Improve Generalization\nOne of the biggest challenges in BEV perception is the do-\nmain adaptation.",
+        "score": 0.4862249433240775,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-078",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "A simple baseline for bev perception\nwithout lidar.",
+        "score": 0.4617031060703176,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-038",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "5\nCONLUSION\nIn this survey, we conduct a thorough review on BEV\nperception in recent years and provide a practical recipe\naccording to our analysis in BEV design pipeline. Grand\nchallenges and future endeavors could be: (a) how to devise\na more accurate depth estimator; (b) how to better align\nfeature representations from multiple sensors in a novel fu-\nsion mechanism; (c) how to design a parameter-free network\nsuch that the algorithm performance is free to pose variation\nor sensor location, achieving better generalization ablity\nacross various scenarios; and (d) how to incorporate the\nsuccessful knowledge from foundation models to facilitate\nBEV perception.",
+        "score": 0.4586959705759138,
+        "rank": 3
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "paper-038",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "3\nParameter-free Design to Improve Generalization\nOne of the biggest challenges in BEV perception is the do-\nmain adaptation.",
+        "score": 0.4862249433240775,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-078",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "A simple baseline for bev perception\nwithout lidar.",
+        "score": 0.4617031060703176,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-038",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "5\nCONLUSION\nIn this survey, we conduct a thorough review on BEV\nperception in recent years and provide a practical recipe\naccording to our analysis in BEV design pipeline. Grand\nchallenges and future endeavors could be: (a) how to devise\na more accurate depth estimator; (b) how to better align\nfeature representations from multiple sensors in a novel fu-\nsion mechanism; (c) how to design a parameter-free network\nsuch that the algorithm performance is free to pose variation\nor sensor location, achieving better generalization ablity\nacross various scenarios; and (d) how to incorporate the\nsuccessful knowledge from foundation models to facilitate\nBEV perception.",
+        "score": 0.4586959705759138,
+        "rank": 3
+      },
+      {
+        "source_id": "paper-038",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "original information and avoiding hand-crafted design. an efficient camera-to-BEV transformation method, which\nefficiently projects camera features into BEV, and then fuses\nit with lidar BEV features using convolutional layers. BEV-\nFusion [88] regards the BEV fusion as a robustness topic to\nmaintain the stability of the perception system. It encodes\ncamera and lidar features into the same BEV to ensure\nthe independence of camera and lidar streams. This design\nenables the perception system to maintain stability against\nsensor failures.",
+        "score": 0.4489345918733968,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "One of the biggest challenges in BEV perception is the domain adaptation ... it urges us to decouple the network from camera parameters, aka, making the feature learning independent of the extrinsic and/or intrinsic matrix.",
+        "source_id": "paper-038",
+        "locator": "page=26"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "review",
+      "doc_type": "paper",
+      "generation_category": "hard_case_pattern_d",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  },
+  {
+    "id": "gen-eval-010",
+    "question": "Part-A2 Net 如何利用 3D 边界框标注中自动提供的免费监督信息？",
+    "reference_answer": "Part-A2 Net 利用 3D 边界框标注自动提供的前景点语义掩码和物体内部相对位置作为免费监督，用于预测高质量 3D proposal 和物体内部部件位置。",
+    "answer": "Part-A2 Net 利用 3D 边界框标注中自动提供的免费监督信息，通过使用这些标注来学习更具判别性的 3D 特征。具体来说，Part-A2 Net 将 3D 边界框内的部分位置作为额外的监督信息，在第一阶段学习更好的 3D 特征。然后，在第二阶段，通过聚合每个 3D 候选框内的预测 3D 部分位置和点-wise 3D 特征，对框进行评分并细化其位置。引用：  \n- source_id paper-066 locator unknown  \n- source_id paper-066 locator unknown  \n- source_id paper-066 locator unknown",
+    "retrieved_context": "Part-A2 net), which directly operates on 3D point cloud\nand achieves state-of-the-art 3D detection performance by fully\nexploring the informative 3D box annotations from the training\ndata. Our key observation is that, unlike object detection from\n2D images, 3D objects in autonomous driving scenes are naturally\nand well separated by annotated 3D bounding boxes, which means\nthe training data with 3D box annotations automatically provides\nfree-of-charge semantic masks and even the relative location\nof each foreground point within the 3D ground truth bounding\nboxes (see Fig.\nto their corresponding\nboxes the intra-object part locations. Those intra-object part locations provide rich information for\nlearning discriminative 3D features from point cloud but were\nnever explored in previous 3D object detection methods. With\nsuch rich supervisions, we propose a novel part-aware and aggre-\ngation 3D object detector, Part-A2 net, for 3D object detection\nfrom point cloud. Speciﬁcally, we propose to use the free-of-\ncharge 3D intra-object part location labels and segmentation labels\nas extra supervisions to learn better 3D features in the ﬁrst stage. The predicted 3D intra-object part locations and point-wise 3D\nfeatures within each 3D proposal are then aggregated in the second\nstage to score the boxes and reﬁne their locations.\n(1) We proposed the Part-A2 net framework for 3D object\ndetection from point cloud, which boosts the 3D detection perfor-\nmance by using the free-of-charge intra-object part information to\nlearning discriminative 3D features and by effectively aggregating\nthe part features with RoI-aware pooling and sparse convolutions. (2) We present two strategies for 3D proposal generation to handle\ndifferent scenarios.",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-066",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "Part-A2 net), which directly operates on 3D point cloud\nand achieves state-of-the-art 3D detection performance by fully\nexploring the informative 3D box annotations from the training\ndata. Our key observation is that, unlike object detection from\n2D images, 3D objects in autonomous driving scenes are naturally\nand well separated by annotated 3D bounding boxes, which means\nthe training data with 3D box annotations automatically provides\nfree-of-charge semantic masks and even the relative location\nof each foreground point within the 3D ground truth bounding\nboxes (see Fig.",
+        "score": 0.4846119412847171,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-066",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "to their corresponding\nboxes the intra-object part locations. Those intra-object part locations provide rich information for\nlearning discriminative 3D features from point cloud but were\nnever explored in previous 3D object detection methods. With\nsuch rich supervisions, we propose a novel part-aware and aggre-\ngation 3D object detector, Part-A2 net, for 3D object detection\nfrom point cloud. Speciﬁcally, we propose to use the free-of-\ncharge 3D intra-object part location labels and segmentation labels\nas extra supervisions to learn better 3D features in the ﬁrst stage. The predicted 3D intra-object part locations and point-wise 3D\nfeatures within each 3D proposal are then aggregated in the second\nstage to score the boxes and reﬁne their locations.",
+        "score": 0.45885680294983144,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-066",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "(1) We proposed the Part-A2 net framework for 3D object\ndetection from point cloud, which boosts the 3D detection perfor-\nmance by using the free-of-charge intra-object part information to\nlearning discriminative 3D features and by effectively aggregating\nthe part features with RoI-aware pooling and sparse convolutions. (2) We present two strategies for 3D proposal generation to handle\ndifferent scenarios.",
+        "score": 0.4432926461443345,
+        "rank": 3
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "paper-066",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "Part-A2 net), which directly operates on 3D point cloud\nand achieves state-of-the-art 3D detection performance by fully\nexploring the informative 3D box annotations from the training\ndata. Our key observation is that, unlike object detection from\n2D images, 3D objects in autonomous driving scenes are naturally\nand well separated by annotated 3D bounding boxes, which means\nthe training data with 3D box annotations automatically provides\nfree-of-charge semantic masks and even the relative location\nof each foreground point within the 3D ground truth bounding\nboxes (see Fig.",
+        "score": 0.4846119412847171,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-066",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "to their corresponding\nboxes the intra-object part locations. Those intra-object part locations provide rich information for\nlearning discriminative 3D features from point cloud but were\nnever explored in previous 3D object detection methods. With\nsuch rich supervisions, we propose a novel part-aware and aggre-\ngation 3D object detector, Part-A2 net, for 3D object detection\nfrom point cloud. Speciﬁcally, we propose to use the free-of-\ncharge 3D intra-object part location labels and segmentation labels\nas extra supervisions to learn better 3D features in the ﬁrst stage. The predicted 3D intra-object part locations and point-wise 3D\nfeatures within each 3D proposal are then aggregated in the second\nstage to score the boxes and reﬁne their locations.",
+        "score": 0.45885680294983144,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-066",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "(1) We proposed the Part-A2 net framework for 3D object\ndetection from point cloud, which boosts the 3D detection perfor-\nmance by using the free-of-charge intra-object part information to\nlearning discriminative 3D features and by effectively aggregating\nthe part features with RoI-aware pooling and sparse convolutions. (2) We present two strategies for 3D proposal generation to handle\ndifferent scenarios.",
+        "score": 0.4432926461443345,
+        "rank": 3
+      },
+      {
+        "source_id": "paper-066",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "5\nBeneﬁts of intra-object part location prediction for 3D\nobject detection\nTo validate the effectiveness of utilizing the free-of-charge intra-\nobject part locations for 3D detection, we test removing the\npart location supervisions from our Part-A2-anchor model. In\nthe backbone network, we only remove the branch for predicting\nintra-object part locations and keep other modules unchanged.",
+        "score": 0.42184858250308266,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "the training data with 3D box annotations automatically provides free-of-charge semantic masks and even the relative location of each foreground point within the 3D ground truth bounding boxes ... part-aware stage ... utilizes free-of-charge part supervisions.",
+        "source_id": "paper-066",
+        "locator": "page=1 and page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "lidar_perception",
+      "doc_type": "paper",
+      "generation_category": "hard_case_pattern_d",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  }
+]
