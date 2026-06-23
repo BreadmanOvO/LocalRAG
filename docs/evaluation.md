@@ -326,6 +326,34 @@ v1.1 已完成收口，详见 `RAG_md/docs/reports/v1.1-closure-report.md`。
 2. doc_type_aware + reranker 与 semantic + reranker 的 Hit@5 均为 94%；semantic + reranker 的 MRR 最高（0.893）。
 3. Hybrid 生成评测中 dense-only source_hit_ratio 最高（0.97），但纯检索排名指标仍以 reranker 配置更稳。
 
+## E4 微调阶段（已完成训练，门禁未过）
+
+### 已完成
+- E4 SFT 数据链已补齐：`v1.3-e4` 训练集 / 验证集已落盘
+- E4 QLoRA 训练已完成，并产出训练日志与 loss 曲线
+- E4 数据审计与草案复核已完成
+- E4 topk3 诊断通过，但 topk2 硬化门禁未过
+
+### 关键结果
+- `results/finetune_data_audit/e4-dataset-summary.json`
+  - 训练集 219 条，验证集 20 条
+  - 训练 / 验证 source sample 无重叠
+  - 缺失指标覆盖 AP、ATE、mAP、mATE、mIoU、内存占用、推理 FPS、显存占用、测试里程
+- `results/finetune_compare_runs/e4_gate_summary.json`
+  - `data_gate=pass`
+  - `smoke_training=pass`
+  - `formal_training=pass`
+  - `topk2_hardening_gate=fail`
+  - `topk3_diagnostic=pass`
+  - `final_verdict=fail`
+
+### 关键失败点
+- topk2 硬化样本 `gen-eval-004` 仍出现不应有的数值 / 方向性推断
+- 当前结论：E4 训练链完成，但门禁未收口，下一步应进入 E5 pairwise context-contrast 数据设计
+
+### E4 报告
+- `RAG_md/docs/reports/e4-draft-review.md`
+
 ## 使用建议
 - 看当前真实实验能力时，优先参考 `eval/eval_chunking.py` 与 `results/chunking_eval/`
 - 看 baseline / judge 合同时，优先参考 `eval/eval_ragas.py`、`eval/eval_llm_judge.py` 与对应测试
