@@ -1,0 +1,45 @@
+stage: sft
+do_train: true
+do_eval: true
+
+model_name_or_path: models/Qwen3-4B
+template: qwen3
+trust_remote_code: true
+upcast_layernorm: true
+
+dataset_dir: finetune/llamafactory_data
+dataset: localrag_sft_e5
+eval_dataset: localrag_sft_e5_validation
+cutoff_len: 1024
+preprocessing_num_workers: 1
+overwrite_cache: true
+
+finetuning_type: lora
+quantization_bit: 4
+quantization_method: bnb
+double_quantization: true
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0
+lora_target: all
+
+output_dir: saves/Qwen3-4B-Thinking/lora/localrag_sft_e5_qlora_smoke
+overwrite_output_dir: true
+save_only_model: false
+plot_loss: true
+logging_steps: 1
+save_steps: 10
+eval_steps: 10
+eval_strategy: steps
+save_strategy: steps
+
+learning_rate: 0.0001
+max_steps: 10
+per_device_train_batch_size: 1
+per_device_eval_batch_size: 1
+gradient_accumulation_steps: 4
+lr_scheduler_type: cosine
+warmup_steps: 2
+bf16: true
+
+report_to: none

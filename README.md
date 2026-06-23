@@ -140,6 +140,7 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 - [评估框架与指标](RAG_md/docs/evaluation.md) — 评测体系、指标口径、结果目录合同
 - [仓库使用说明](RAG_md/docs/repo_guide.md) — 详细模块说明与使用方式
 - [E4 数据草案复核](RAG_md/docs/reports/e4-draft-review.md) — E4 multi-metric partial-context 草案与复核标准
+- [E5 pairwise contrast 数据报告](RAG_md/docs/reports/e5-pairwise-contrast-review.md) — E5 完整上下文 / 部分上下文对照样本与设计原则
 
 ## 版本
 
@@ -150,3 +151,4 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 | v1.2 | 检索层（hybrid retrieval + reranker + semantic chunking） | 已完成 |
 | v1.3 | 数据扩充（源文档 41→100 篇）+ 评测集重建（eval 100 题 + train 203 题） | 已完成 |
 | E4 | SFT 数据链补齐（v1.3-e4 数据集 + QLoRA 训练 + topk2 硬化评测） | 已完成训练，门禁未过 |
+| E5 | pairwise context-contrast（完整上下文 / 部分上下文对照） | 已完成训练与 topk2 评估，修复 E4 核心样本，但整体仍需 E6 收口 |

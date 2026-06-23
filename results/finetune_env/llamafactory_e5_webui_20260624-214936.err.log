@@ -1,0 +1,609 @@
+[INFO|configuration_utils.py:769] 2026-06-24 21:49:56,683 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-24 21:49:56,689 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|configuration_utils.py:769] 2026-06-24 21:49:57,065 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-24 21:49:57,066 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|configuration_utils.py:769] 2026-06-24 21:49:57,066 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-24 21:49:57,067 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+
+Converting format of dataset: 100%|██████████| 16/16 [00:00<?, ? examples/s]
+Converting format of dataset: 32 examples [00:00, 701.23 examples/s]        
+
+Converting format of dataset: 100%|██████████| 20/20 [00:00<?, ? examples/s]
+Converting format of dataset: 40 examples [00:00, 1112.39 examples/s]       
+
+Running tokenizer on dataset: 100%|██████████| 16/16 [00:00<?, ? examples/s]
+Running tokenizer on dataset: 32 examples [00:00, 737.03 examples/s]        
+
+Running tokenizer on dataset: 100%|██████████| 20/20 [00:00<?, ? examples/s]
+Running tokenizer on dataset: 40 examples [00:00, 568.78 examples/s]        
+[INFO|configuration_utils.py:769] 2026-06-24 21:50:02,097 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-24 21:50:02,098 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|modeling_utils.py:748] 2026-06-24 21:50:04,486 >> loading weights file models/Qwen3-4B\model.safetensors.index.json
+[INFO|modeling_utils.py:821] 2026-06-24 21:50:04,487 >> Will use dtype=torch.bfloat16 as defined in model's config object
+[INFO|configuration_utils.py:1027] 2026-06-24 21:50:04,488 >> Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "eos_token_id": 151645,
+  "output_attentions": false,
+  "output_hidden_states": false,
+  "use_cache": false
+}
+
+
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/398 [00:00<01:41,  3.90it/s]
+Loading weights:   1%|          | 4/398 [00:00<00:29, 13.15it/s]
+Loading weights:   4%|▍         | 16/398 [00:00<00:08, 47.05it/s]
+Loading weights:   9%|▉         | 36/398 [00:00<00:03, 93.14it/s]
+Loading weights:  13%|█▎        | 52/398 [00:00<00:03, 113.52it/s]
+Loading weights:  18%|█▊        | 70/398 [00:00<00:02, 130.51it/s]
+Loading weights:  22%|██▏       | 88/398 [00:00<00:02, 144.69it/s]
+Loading weights:  26%|██▌       | 104/398 [00:01<00:02, 133.64it/s]
+Loading weights:  31%|███▏      | 125/398 [00:01<00:01, 151.99it/s]
+Loading weights:  36%|███▌      | 143/398 [00:01<00:01, 159.51it/s]
+Loading weights:  40%|████      | 160/398 [00:01<00:01, 154.75it/s]
+Loading weights:  45%|████▍     | 179/398 [00:01<00:01, 163.53it/s]
+Loading weights:  49%|████▉     | 196/398 [00:01<00:01, 160.60it/s]
+Loading weights:  54%|█████▎    | 213/398 [00:01<00:01, 161.09it/s]
+Loading weights:  59%|█████▉    | 234/398 [00:01<00:00, 169.48it/s]
+Loading weights:  63%|██████▎   | 252/398 [00:01<00:00, 167.82it/s]
+Loading weights:  68%|██████▊   | 269/398 [00:02<00:00, 156.38it/s]
+Loading weights:  73%|███████▎  | 289/398 [00:02<00:00, 162.05it/s]
+Loading weights:  77%|███████▋  | 306/398 [00:02<00:00, 147.43it/s]
+Loading weights:  81%|████████  | 323/398 [00:02<00:00, 151.22it/s]
+Loading weights:  86%|████████▌ | 341/398 [00:02<00:00, 156.85it/s]
+Loading weights:  90%|████████▉ | 357/398 [00:02<00:00, 151.10it/s]
+Loading weights:  95%|█████████▍| 378/398 [00:02<00:00, 160.11it/s]
+Loading weights: 100%|█████████▉| 397/398 [00:02<00:00, 167.55it/s]
+Loading weights: 100%|██████████| 398/398 [00:02<00:00, 141.24it/s]
+[INFO|configuration_utils.py:978] 2026-06-24 21:50:08,713 >> loading configuration file models/Qwen3-4B\generation_config.json
+[INFO|configuration_utils.py:1027] 2026-06-24 21:50:08,713 >> Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "do_sample": true,
+  "eos_token_id": [
+    151645,
+    151643
+  ],
+  "pad_token_id": 151643,
+  "temperature": 0.6,
+  "top_k": 20,
+  "top_p": 0.95
+}
+
+[INFO|dynamic_module_utils.py:406] 2026-06-24 21:50:08,714 >> Could not locate the custom_generate/generate.py inside models/Qwen3-4B.
+[WARNING|trainer_utils.py:1238] 2026-06-24 21:50:09,071 >> The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[INFO|trainer.py:1469] 2026-06-24 21:50:09,320 >> ***** Running training *****
+[INFO|trainer.py:1470] 2026-06-24 21:50:09,320 >>   Num examples = 16
+[INFO|trainer.py:1471] 2026-06-24 21:50:09,320 >>   Num Epochs = 1
+[INFO|trainer.py:1472] 2026-06-24 21:50:09,320 >>   Num update steps per epoch = 4
+[INFO|trainer.py:1473] 2026-06-24 21:50:09,320 >>   Instantaneous batch size per device = 1
+[INFO|trainer.py:1476] 2026-06-24 21:50:09,320 >>   Total train batch size (w. parallel, distributed & accumulation) = 4
+[INFO|trainer.py:1477] 2026-06-24 21:50:09,320 >>   Gradient Accumulation steps = 4
+[INFO|trainer.py:1478] 2026-06-24 21:50:09,320 >>   Total optimization steps = 4
+[INFO|trainer.py:1479] 2026-06-24 21:50:09,326 >>   Number of trainable parameters = 16,515,072
+
+  0%|          | 0/4 [00:00<?, ?it/s]
+ 25%|██▌       | 1/4 [00:02<00:07,  2.48s/it]
+ 50%|█████     | 2/4 [00:04<00:04,  2.07s/it]
+ 75%|███████▌  | 3/4 [00:06<00:02,  2.10s/it]
+100%|██████████| 4/4 [00:08<00:00,  1.96s/it][INFO|trainer.py:2668] 2026-06-24 21:50:17,475 >> 
+***** Running Evaluation *****
+[INFO|trainer.py:2670] 2026-06-24 21:50:17,475 >>   Num examples = 20
+[INFO|trainer.py:2673] 2026-06-24 21:50:17,475 >>   Batch size = 1
+
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+
+ 10%|█         | 2/20 [00:00<00:01, 16.22it/s][A
+
+ 20%|██        | 4/20 [00:00<00:01,  9.79it/s][A
+
+ 30%|███       | 6/20 [00:00<00:01,  8.99it/s][A
+
+ 35%|███▌      | 7/20 [00:00<00:01,  8.84it/s][A
+
+ 40%|████      | 8/20 [00:00<00:01,  8.53it/s][A
+
+ 45%|████▌     | 9/20 [00:01<00:01,  7.73it/s][A
+
+ 50%|█████     | 10/20 [00:01<00:01,  7.74it/s][A
+
+ 55%|█████▌    | 11/20 [00:01<00:01,  7.89it/s][A
+
+ 60%|██████    | 12/20 [00:01<00:00,  8.04it/s][A
+
+ 65%|██████▌   | 13/20 [00:01<00:00,  8.00it/s][A
+
+ 70%|███████   | 14/20 [00:01<00:00,  7.98it/s][A
+
+ 75%|███████▌  | 15/20 [00:01<00:00,  7.44it/s][A
+
+ 80%|████████  | 16/20 [00:02<00:00,  6.27it/s][A
+
+ 85%|████████▌ | 17/20 [00:02<00:00,  5.75it/s][A
+
+ 90%|█████████ | 18/20 [00:02<00:00,  5.48it/s][A
+
+ 95%|█████████▌| 19/20 [00:02<00:00,  5.54it/s][A
+
+100%|██████████| 20/20 [00:02<00:00,  6.00it/s][A
+                                             
+
+
+                                               
+[A
+100%|██████████| 4/4 [00:11<00:00,  1.96s/it]
+
+100%|██████████| 20/20 [00:02<00:00,  6.00it/s][A
+
+                                               [A[INFO|trainer.py:3815] 2026-06-24 21:50:20,365 >> Saving model checkpoint to saves/Qwen3-4B-Thinking/lora/localrag_sft_e5_qlora_webui\checkpoint-4
+[INFO|configuration_utils.py:769] 2026-06-24 21:50:20,408 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-24 21:50:20,410 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|tokenization_utils_base.py:3278] 2026-06-24 21:50:20,486 >> chat template saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e5_qlora_webui\checkpoint-4\chat_template.jinja
+[INFO|tokenization_utils_base.py:2111] 2026-06-24 21:50:20,487 >> tokenizer config file saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e5_qlora_webui\checkpoint-4\tokenizer_config.json
+[INFO|trainer.py:1823] 2026-06-24 21:50:20,684 >> 
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+
+                                             
+
+100%|██████████| 4/4 [00:11<00:00,  1.96s/it]
+100%|██████████| 4/4 [00:11<00:00,  2.84s/it]
+[INFO|trainer.py:3815] 2026-06-24 21:50:20,692 >> Saving model checkpoint to saves/Qwen3-4B-Thinking/lora/localrag_sft_e5_qlora_webui
+[INFO|configuration_utils.py:769] 2026-06-24 21:50:20,731 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-24 21:50:20,732 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|tokenization_utils_base.py:3278] 2026-06-24 21:50:20,812 >> chat template saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e5_qlora_webui\chat_template.jinja
+[INFO|tokenization_utils_base.py:2111] 2026-06-24 21:50:20,812 >> tokenizer config file saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e5_qlora_webui\tokenizer_config.json
+[INFO|trainer.py:2668] 2026-06-24 21:50:20,999 >> 
+***** Running Evaluation *****
+[INFO|trainer.py:2670] 2026-06-24 21:50:20,999 >>   Num examples = 20
+[INFO|trainer.py:2673] 2026-06-24 21:50:20,999 >>   Batch size = 1
+
+  0%|          | 0/20 [00:00<?, ?it/s]
+ 10%|█         | 2/20 [00:00<00:01, 15.54it/s]
+ 20%|██        | 4/20 [00:00<00:01, 10.17it/s]
+ 30%|███       | 6/20 [00:00<00:01,  8.56it/s]
+ 35%|███▌      | 7/20 [00:00<00:01,  8.36it/s]
+ 40%|████      | 8/20 [00:00<00:01,  8.27it/s]
+ 45%|████▌     | 9/20 [00:01<00:01,  8.10it/s]
+ 50%|█████     | 10/20 [00:01<00:01,  7.85it/s]
+ 55%|█████▌    | 11/20 [00:01<00:01,  7.96it/s]
+ 60%|██████    | 12/20 [00:01<00:01,  7.83it/s]
+ 65%|██████▌   | 13/20 [00:01<00:00,  7.91it/s]
+ 70%|███████   | 14/20 [00:01<00:00,  7.69it/s]
+ 75%|███████▌  | 15/20 [00:01<00:00,  7.69it/s]
+ 80%|████████  | 16/20 [00:01<00:00,  7.60it/s]
+ 85%|████████▌ | 17/20 [00:02<00:00,  7.48it/s]
+ 90%|█████████ | 18/20 [00:02<00:00,  7.05it/s]
+ 95%|█████████▌| 19/20 [00:02<00:00,  7.19it/s]
+100%|██████████| 20/20 [00:02<00:00,  7.13it/s]
+100%|██████████| 20/20 [00:02<00:00,  7.91it/s]
+[INFO|modelcard.py:263] 2026-06-24 21:50:23,684 >> Dropping the following result as it does not have all the necessary fields:
+{'task': {'name': 'Causal Language Modeling', 'type': 'text-generation'}}

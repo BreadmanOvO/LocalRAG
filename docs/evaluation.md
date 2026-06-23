@@ -354,6 +354,39 @@ v1.1 已完成收口，详见 `RAG_md/docs/reports/v1.1-closure-report.md`。
 ### E4 报告
 - `RAG_md/docs/reports/e4-draft-review.md`
 
+## E5 pairwise context-contrast（已完成训练，局部修复但整体未收口）
+
+### 目标
+构造同题 pair：
+- 完整上下文版本：正常回答
+- 部分上下文版本：只回答已支持指标，并明确拒答缺失指标
+
+### 当前状态
+- E5 数据生成脚本已完成：`scripts/prepare_sft_e5_dataset.py`
+- 目标数据版本：`v1.3-e5`
+- 数据形态已修正为 LLaMA-Factory 可直接消费的 flat SFT 样本：8 对 / 16 条，覆盖 `pairwise_complete_context` 与 `pairwise_partial_context_refusal`
+- E5 QLoRA smoke 与 formal training 已完成
+- E5 topk2 评估修复了 E4 的核心失败样本 `gen-eval-004`：不再输出“检测指标提升 12.5%”，并改为说明检测指标变化无法根据当前资料确定
+
+### E5 关键产物
+- `finetune/datasets/localrag_sft_e5.jsonl`
+- `finetune/datasets/localrag_sft_e5_validation.jsonl`
+- `results/finetune_data_audit/e5-dataset-summary.json`
+- `results/finetune_data_audit/e5-draft-review.md`
+- `results/finetune_env/llamafactory_e5_smoke_20260624-214731.out.log`
+- `results/finetune_env/llamafactory_e5_webui_20260624-214936.out.log`
+- `results/qwen3_adapter_eval/generation_eval_set-qwen3-4b-e5-webui-adapter-hardened-clean-20260626-211453/`
+- `results/finetune_compare_runs/base_vs_e5/finetune-compare-20260626-211700/`
+- `results/finetune_compare_runs/e4_vs_e5/finetune-compare-20260626-211700/`
+
+### E5 判定
+- 训练链路：通过。smoke `train_loss=2.3474`、`eval_loss=1.2172`；formal `train_loss=3.5783`、`eval_loss=1.9233`。
+- topk2 生成评估：10/10 answered，`context_hit_ratio=1.0`，`evidence_source_hit_ratio=1.0`。
+- base -> E5：`mixed_or_regressed`。引用覆盖略升，但 `citation_support_risk` 从 0.6 升到 0.7，不能宣称整体优于 base。
+- E4 -> E5：`mixed`。E5 将 unsupported numeric 与 directional contradiction 从 0.1 降到 0.0，并修复 `gen-eval-004`，但 citation support 风险仍高。
+
+当前结论：E5 证明 pairwise context-contrast 能修复 E4 的核心 topk2 臆测样本，但还不是最终收口版本。下一步应进入 E6，优先降低 citation support risk，并把 `gen-eval-004` 固化为局部回归门禁。
+
 ## 使用建议
 - 看当前真实实验能力时，优先参考 `eval/eval_chunking.py` 与 `results/chunking_eval/`
 - 看 baseline / judge 合同时，优先参考 `eval/eval_ragas.py`、`eval/eval_llm_judge.py` 与对应测试

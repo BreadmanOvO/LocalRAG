@@ -1,0 +1,35 @@
+{
+  "created_at": "2026-06-26T21:13:52",
+  "dataset_version": "v1.3-e5",
+  "record_count": 16,
+  "pair_count": 8,
+  "data_type_distribution": {
+    "pairwise_complete_context": 8,
+    "pairwise_partial_context_refusal": 8
+  },
+  "review_focus_distribution": {
+    "pairwise_complete_vs_partial_no_direction_guess": 4,
+    "pairwise_complete_vs_partial_no_metric_improvement_guess": 2,
+    "pairwise_complete_vs_partial_no_missing_speed_guess": 2,
+    "pairwise_complete_vs_partial_no_missing_value_guess": 8
+  },
+  "missing_metric_distribution": {
+    "AP": 2,
+    "ATE": 1,
+    "mAP": 1,
+    "mATE": 1,
+    "mIoU": 1,
+    "内存占用": 1,
+    "推理 FPS": 1,
+    "显存占用": 1,
+    "测试里程": 1
+  },
+  "source_record_ids": [
+    "train-186",
+    "train-192"
+  ],
+  "output_citation_count": 16,
+  "e4_train_path": "finetune\\datasets\\localrag_sft_e4.jsonl",
+  "train_output_path": "finetune\\datasets\\localrag_sft_e5.jsonl",
+  "report_path": "results\\finetune_data_audit\\e5-draft-review.md"
+}
