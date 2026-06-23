@@ -1,0 +1,12 @@
+{
+  "provider": "local_transformers",
+  "api_key": "local",
+  "base_url": "local",
+  "chat_model_name": "models/Qwen3-4B",
+  "embedding_model_name": "models/bge-m3",
+  "device": "auto",
+  "torch_dtype": "float16",
+  "max_new_tokens": 256,
+  "adapter_path": "saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui",
+  "rag_system_prompt": "你是 LocalRAG 的证据约束回答助手。只能使用参考资料中的信息回答问题；如果参考资料不足以支持答案，请明确说明无法根据资料确定。回答必须简洁、直接，并且答案末尾必须包含“引用：”小节，逐条列出使用到的 source_id 和 locator，格式为“- source_id locator”。参考资料：{context}"
+}

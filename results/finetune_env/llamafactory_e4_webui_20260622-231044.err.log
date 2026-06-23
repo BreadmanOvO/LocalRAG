@@ -1,0 +1,1100 @@
+[INFO|configuration_utils.py:769] 2026-06-22 23:11:02,386 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-22 23:11:02,392 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|configuration_utils.py:769] 2026-06-22 23:11:02,798 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-22 23:11:02,800 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|configuration_utils.py:769] 2026-06-22 23:11:02,800 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-22 23:11:02,801 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+
+Converting format of dataset: 100%|��������������������| 219/219 [00:00<?, ? examples/s]
+Converting format of dataset: 438 examples [00:00, 7821.53 examples/s]        
+
+Converting format of dataset: 100%|��������������������| 20/20 [00:00<?, ? examples/s]
+Converting format of dataset: 40 examples [00:00, 1333.51 examples/s]       
+
+Running tokenizer on dataset: 100%|��������������������| 219/219 [00:00<?, ? examples/s]
+Running tokenizer on dataset: 438 examples [00:00, 1981.31 examples/s]        
+Running tokenizer on dataset: 438 examples [00:00, 1717.21 examples/s]
+
+Running tokenizer on dataset: 100%|��������������������| 20/20 [00:00<?, ? examples/s]
+Running tokenizer on dataset: 40 examples [00:00, 769.21 examples/s]        
+[INFO|configuration_utils.py:769] 2026-06-22 23:11:09,336 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-22 23:11:09,337 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|modeling_utils.py:748] 2026-06-22 23:11:11,751 >> loading weights file models/Qwen3-4B\model.safetensors.index.json
+[INFO|modeling_utils.py:821] 2026-06-22 23:11:11,752 >> Will use dtype=torch.bfloat16 as defined in model's config object
+[INFO|configuration_utils.py:1027] 2026-06-22 23:11:11,753 >> Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "eos_token_id": 151645,
+  "output_attentions": false,
+  "output_hidden_states": false,
+  "use_cache": false
+}
+
+
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/398 [00:00<01:45,  3.77it/s]
+Loading weights:   1%|��         | 5/398 [00:00<00:24, 15.97it/s]
+Loading weights:   6%|��         | 25/398 [00:00<00:05, 73.28it/s]
+Loading weights:  10%|��         | 38/398 [00:00<00:04, 89.25it/s]
+Loading weights:  15%|����        | 58/398 [00:00<00:02, 117.27it/s]
+Loading weights:  18%|����        | 71/398 [00:00<00:02, 117.87it/s]
+Loading weights:  23%|������       | 91/398 [00:00<00:02, 135.80it/s]
+Loading weights:  27%|������       | 106/398 [00:01<00:02, 135.02it/s]
+Loading weights:  31%|������       | 124/398 [00:01<00:01, 140.69it/s]
+Loading weights:  35%|��������      | 139/398 [00:01<00:01, 137.61it/s]
+Loading weights:  39%|��������      | 157/398 [00:01<00:01, 142.43it/s]
+Loading weights:  43%|����������     | 172/398 [00:01<00:01, 142.35it/s]
+Loading weights:  48%|����������     | 190/398 [00:01<00:01, 148.51it/s]
+Loading weights:  52%|������������    | 205/398 [00:01<00:01, 147.25it/s]
+Loading weights:  56%|������������    | 223/398 [00:01<00:01, 151.64it/s]
+Loading weights:  60%|������������    | 239/398 [00:01<00:01, 150.82it/s]
+Loading weights:  64%|��������������   | 256/398 [00:02<00:00, 154.25it/s]
+Loading weights:  68%|��������������   | 272/398 [00:02<00:00, 148.24it/s]
+Loading weights:  73%|����������������  | 289/398 [00:02<00:00, 148.28it/s]
+Loading weights:  76%|����������������  | 304/398 [00:02<00:00, 142.51it/s]
+Loading weights:  81%|����������������  | 322/398 [00:02<00:00, 145.30it/s]
+Loading weights:  85%|������������������ | 337/398 [00:02<00:00, 142.09it/s]
+Loading weights:  89%|������������������ | 355/398 [00:02<00:00, 146.44it/s]
+Loading weights:  93%|��������������������| 370/398 [00:02<00:00, 143.00it/s]
+Loading weights:  97%|��������������������| 388/398 [00:02<00:00, 149.55it/s]
+Loading weights: 100%|��������������������| 398/398 [00:03<00:00, 132.42it/s]
+[INFO|configuration_utils.py:978] 2026-06-22 23:11:16,337 >> loading configuration file models/Qwen3-4B\generation_config.json
+[INFO|configuration_utils.py:1027] 2026-06-22 23:11:16,337 >> Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "do_sample": true,
+  "eos_token_id": [
+    151645,
+    151643
+  ],
+  "pad_token_id": 151643,
+  "temperature": 0.6,
+  "top_k": 20,
+  "top_p": 0.95
+}
+
+[INFO|dynamic_module_utils.py:406] 2026-06-22 23:11:16,337 >> Could not locate the custom_generate/generate.py inside models/Qwen3-4B.
+[WARNING|trainer_utils.py:1238] 2026-06-22 23:11:16,670 >> The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[INFO|trainer.py:1469] 2026-06-22 23:11:16,894 >> ***** Running training *****
+[INFO|trainer.py:1470] 2026-06-22 23:11:16,894 >>   Num examples = 219
+[INFO|trainer.py:1471] 2026-06-22 23:11:16,894 >>   Num Epochs = 1
+[INFO|trainer.py:1472] 2026-06-22 23:11:16,894 >>   Num update steps per epoch = 55
+[INFO|trainer.py:1473] 2026-06-22 23:11:16,894 >>   Instantaneous batch size per device = 1
+[INFO|trainer.py:1476] 2026-06-22 23:11:16,894 >>   Total train batch size (w. parallel, distributed & accumulation) = 4
+[INFO|trainer.py:1477] 2026-06-22 23:11:16,894 >>   Gradient Accumulation steps = 4
+[INFO|trainer.py:1478] 2026-06-22 23:11:16,894 >>   Total optimization steps = 55
+[INFO|trainer.py:1479] 2026-06-22 23:11:16,899 >>   Number of trainable parameters = 16,515,072
+
+  0%|          | 0/55 [00:00<?, ?it/s]
+  2%|��         | 1/55 [00:02<02:13,  2.46s/it]
+  4%|��         | 2/55 [00:04<02:00,  2.27s/it]
+  5%|��         | 3/55 [00:06<01:59,  2.30s/it]
+  7%|��         | 4/55 [00:08<01:52,  2.20s/it]
+  9%|��         | 5/55 [00:11<01:47,  2.15s/it]
+                                              
+
+  9%|��         | 5/55 [00:11<01:47,  2.15s/it]
+ 11%|��         | 6/55 [00:13<01:42,  2.09s/it]
+ 13%|����        | 7/55 [00:14<01:37,  2.04s/it]
+ 15%|����        | 8/55 [00:17<01:37,  2.07s/it]
+ 16%|����        | 9/55 [00:19<01:33,  2.02s/it]
+ 18%|����        | 10/55 [00:20<01:30,  2.00s/it]
+                                               
+
+ 18%|����        | 10/55 [00:20<01:30,  2.00s/it][INFO|trainer.py:2668] 2026-06-22 23:11:37,880 >> 
+***** Running Evaluation *****
+[INFO|trainer.py:2670] 2026-06-22 23:11:37,880 >>   Num examples = 20
+[INFO|trainer.py:2673] 2026-06-22 23:11:37,880 >>   Batch size = 1
+
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+
+ 10%|��         | 2/20 [00:00<00:01, 13.73it/s][A
+
+ 20%|����        | 4/20 [00:00<00:01,  9.16it/s][A
+
+ 30%|������       | 6/20 [00:00<00:01,  8.17it/s][A
+
+ 35%|��������      | 7/20 [00:00<00:01,  7.83it/s][A
+
+ 40%|��������      | 8/20 [00:00<00:01,  7.69it/s][A
+
+ 45%|����������     | 9/20 [00:01<00:01,  7.61it/s][A
+
+ 50%|����������     | 10/20 [00:01<00:01,  7.45it/s][A
+
+ 55%|������������    | 11/20 [00:01<00:01,  7.48it/s][A
+
+ 60%|������������    | 12/20 [00:01<00:01,  7.49it/s][A
+
+ 65%|��������������   | 13/20 [00:01<00:00,  7.58it/s][A
+
+ 70%|��������������   | 14/20 [00:01<00:00,  7.44it/s][A
+
+ 75%|����������������  | 15/20 [00:01<00:00,  7.40it/s][A
+
+ 80%|����������������  | 16/20 [00:02<00:00,  7.44it/s][A
+
+ 85%|������������������ | 17/20 [00:02<00:00,  7.39it/s][A
+
+ 90%|������������������ | 18/20 [00:02<00:00,  7.45it/s][A
+
+ 95%|��������������������| 19/20 [00:02<00:00,  7.36it/s][A
+
+100%|��������������������| 20/20 [00:02<00:00,  7.53it/s][A
+                                               
+
+
+                                               
+[A
+ 18%|����        | 10/55 [00:23<01:30,  2.00s/it]
+
+100%|��������������������| 20/20 [00:02<00:00,  7.53it/s][A
+
+                                               [A
+ 20%|����        | 11/55 [00:25<02:05,  2.86s/it]
+ 22%|������       | 12/55 [00:27<01:52,  2.62s/it]
+ 24%|������       | 13/55 [00:29<01:41,  2.42s/it]
+ 25%|������       | 14/55 [00:31<01:34,  2.29s/it]
+ 27%|������       | 15/55 [00:33<01:27,  2.19s/it]
+                                               
+
+ 27%|������       | 15/55 [00:33<01:27,  2.19s/it]
+ 29%|������       | 16/55 [00:35<01:25,  2.20s/it]
+ 31%|������       | 17/55 [00:37<01:21,  2.14s/it]
+ 33%|��������      | 18/55 [00:39<01:17,  2.08s/it]
+ 35%|��������      | 19/55 [00:41<01:13,  2.04s/it]
+ 36%|��������      | 20/55 [00:43<01:09,  1.99s/it]
+                                               
+
+ 36%|��������      | 20/55 [00:43<01:09,  1.99s/it][INFO|trainer.py:2668] 2026-06-22 23:12:00,658 >> 
+***** Running Evaluation *****
+[INFO|trainer.py:2670] 2026-06-22 23:12:00,658 >>   Num examples = 20
+[INFO|trainer.py:2673] 2026-06-22 23:12:00,658 >>   Batch size = 1
+
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+
+ 10%|��         | 2/20 [00:00<00:01, 15.21it/s][A
+
+ 20%|����        | 4/20 [00:00<00:01,  9.66it/s][A
+
+ 30%|������       | 6/20 [00:00<00:01,  8.23it/s][A
+
+ 35%|��������      | 7/20 [00:00<00:01,  7.94it/s][A
+
+ 40%|��������      | 8/20 [00:00<00:01,  7.82it/s][A
+
+ 45%|����������     | 9/20 [00:01<00:01,  7.69it/s][A
+
+ 50%|����������     | 10/20 [00:01<00:01,  7.59it/s][A
+
+ 55%|������������    | 11/20 [00:01<00:01,  7.44it/s][A
+
+ 60%|������������    | 12/20 [00:01<00:01,  7.33it/s][A
+
+ 65%|��������������   | 13/20 [00:01<00:00,  7.43it/s][A
+
+ 70%|��������������   | 14/20 [00:01<00:00,  7.35it/s][A
+
+ 75%|����������������  | 15/20 [00:01<00:00,  7.39it/s][A
+
+ 80%|����������������  | 16/20 [00:02<00:00,  7.30it/s][A
+
+ 85%|������������������ | 17/20 [00:02<00:00,  7.22it/s][A
+
+ 90%|������������������ | 18/20 [00:02<00:00,  7.34it/s][A
+
+ 95%|��������������������| 19/20 [00:02<00:00,  7.32it/s][A
+
+100%|��������������������| 20/20 [00:02<00:00,  7.45it/s][A
+                                               
+
+
+                                               
+[A
+ 36%|��������      | 20/55 [00:46<01:09,  1.99s/it]
+
+100%|��������������������| 20/20 [00:02<00:00,  7.45it/s][A
+
+                                               [A[INFO|trainer.py:3815] 2026-06-22 23:12:03,385 >> Saving model checkpoint to saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui\checkpoint-20
+[INFO|configuration_utils.py:769] 2026-06-22 23:12:03,429 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-22 23:12:03,430 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|tokenization_utils_base.py:3278] 2026-06-22 23:12:03,508 >> chat template saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui\checkpoint-20\chat_template.jinja
+[INFO|tokenization_utils_base.py:2111] 2026-06-22 23:12:03,509 >> tokenizer config file saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui\checkpoint-20\tokenizer_config.json
+
+ 38%|��������      | 21/55 [00:48<01:38,  2.90s/it]
+ 40%|��������      | 22/55 [00:50<01:25,  2.59s/it]
+ 42%|����������     | 23/55 [00:52<01:16,  2.39s/it]
+ 44%|����������     | 24/55 [00:54<01:09,  2.26s/it]
+ 45%|����������     | 25/55 [00:56<01:06,  2.21s/it]
+                                               
+
+ 45%|����������     | 25/55 [00:56<01:06,  2.21s/it]
+ 47%|����������     | 26/55 [00:58<01:04,  2.21s/it]
+ 49%|����������     | 27/55 [01:00<00:59,  2.12s/it]
+ 51%|����������     | 28/55 [01:02<00:55,  2.05s/it]
+ 53%|������������    | 29/55 [01:04<00:52,  2.00s/it]
+ 55%|������������    | 30/55 [01:06<00:49,  2.00s/it]
+                                               
+
+ 55%|������������    | 30/55 [01:06<00:49,  2.00s/it][INFO|trainer.py:2668] 2026-06-22 23:12:23,374 >> 
+***** Running Evaluation *****
+[INFO|trainer.py:2670] 2026-06-22 23:12:23,374 >>   Num examples = 20
+[INFO|trainer.py:2673] 2026-06-22 23:12:23,374 >>   Batch size = 1
+
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+
+ 10%|��         | 2/20 [00:00<00:01, 11.72it/s][A
+
+ 20%|����        | 4/20 [00:00<00:01,  8.65it/s][A
+
+ 25%|������       | 5/20 [00:00<00:01,  8.15it/s][A
+
+ 30%|������       | 6/20 [00:00<00:01,  8.06it/s][A
+
+ 35%|��������      | 7/20 [00:00<00:01,  7.95it/s][A
+
+ 40%|��������      | 8/20 [00:00<00:01,  7.91it/s][A
+
+ 45%|����������     | 9/20 [00:01<00:01,  7.77it/s][A
+
+ 50%|����������     | 10/20 [00:01<00:01,  7.69it/s][A
+
+ 55%|������������    | 11/20 [00:01<00:01,  7.79it/s][A
+
+ 60%|������������    | 12/20 [00:01<00:01,  7.63it/s][A
+
+ 65%|��������������   | 13/20 [00:01<00:00,  7.68it/s][A
+
+ 70%|��������������   | 14/20 [00:01<00:00,  7.54it/s][A
+
+ 75%|����������������  | 15/20 [00:01<00:00,  7.59it/s][A
+
+ 80%|����������������  | 16/20 [00:02<00:00,  7.63it/s][A
+
+ 85%|������������������ | 17/20 [00:02<00:00,  7.69it/s][A
+
+ 90%|������������������ | 18/20 [00:02<00:00,  7.77it/s][A
+
+ 95%|��������������������| 19/20 [00:02<00:00,  7.74it/s][A
+
+100%|��������������������| 20/20 [00:02<00:00,  7.81it/s][A
+                                               
+
+
+                                               
+[A
+ 55%|������������    | 30/55 [01:09<00:49,  2.00s/it]
+
+100%|��������������������| 20/20 [00:02<00:00,  7.81it/s][A
+
+                                               [A
+ 56%|������������    | 31/55 [01:11<01:06,  2.79s/it]
+ 58%|������������    | 32/55 [01:12<00:57,  2.51s/it]
+ 60%|������������    | 33/55 [01:14<00:51,  2.34s/it]
+ 62%|��������������   | 34/55 [01:16<00:46,  2.21s/it]
+ 64%|��������������   | 35/55 [01:18<00:42,  2.13s/it]
+                                               
+
+ 64%|��������������   | 35/55 [01:18<00:42,  2.13s/it]
+ 65%|��������������   | 36/55 [01:20<00:39,  2.06s/it]
+ 67%|��������������   | 37/55 [01:22<00:37,  2.06s/it]
+ 69%|��������������   | 38/55 [01:24<00:34,  2.04s/it]
+ 71%|��������������   | 39/55 [01:26<00:32,  2.06s/it]
+ 73%|����������������  | 40/55 [01:28<00:30,  2.02s/it]
+                                               
+
+ 73%|����������������  | 40/55 [01:28<00:30,  2.02s/it][INFO|trainer.py:2668] 2026-06-22 23:12:45,648 >> 
+***** Running Evaluation *****
+[INFO|trainer.py:2670] 2026-06-22 23:12:45,648 >>   Num examples = 20
+[INFO|trainer.py:2673] 2026-06-22 23:12:45,648 >>   Batch size = 1
+
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+
+ 10%|��         | 2/20 [00:00<00:01, 15.32it/s][A
+
+ 20%|����        | 4/20 [00:00<00:01,  9.57it/s][A
+
+ 30%|������       | 6/20 [00:00<00:01,  8.31it/s][A
+
+ 35%|��������      | 7/20 [00:00<00:01,  8.12it/s][A
+
+ 40%|��������      | 8/20 [00:00<00:01,  7.99it/s][A
+
+ 45%|����������     | 9/20 [00:01<00:01,  7.96it/s][A
+
+ 50%|����������     | 10/20 [00:01<00:01,  7.28it/s][A
+
+ 55%|������������    | 11/20 [00:01<00:01,  7.05it/s][A
+
+ 60%|������������    | 12/20 [00:01<00:01,  6.84it/s][A
+
+ 65%|��������������   | 13/20 [00:01<00:01,  6.73it/s][A
+
+ 70%|��������������   | 14/20 [00:01<00:00,  6.49it/s][A
+
+ 75%|����������������  | 15/20 [00:02<00:00,  6.47it/s][A
+
+ 80%|����������������  | 16/20 [00:02<00:00,  6.80it/s][A
+
+ 85%|������������������ | 17/20 [00:02<00:00,  7.06it/s][A
+
+ 90%|������������������ | 18/20 [00:02<00:00,  7.33it/s][A
+
+ 95%|��������������������| 19/20 [00:02<00:00,  7.41it/s][A
+
+100%|��������������������| 20/20 [00:02<00:00,  7.41it/s][A
+                                               
+
+
+                                               
+[A
+ 73%|����������������  | 40/55 [01:31<00:30,  2.02s/it]
+
+100%|��������������������| 20/20 [00:02<00:00,  7.41it/s][A
+
+                                               [A[INFO|trainer.py:3815] 2026-06-22 23:12:48,454 >> Saving model checkpoint to saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui\checkpoint-40
+[INFO|configuration_utils.py:769] 2026-06-22 23:12:48,501 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-22 23:12:48,503 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|tokenization_utils_base.py:3278] 2026-06-22 23:12:48,578 >> chat template saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui\checkpoint-40\chat_template.jinja
+[INFO|tokenization_utils_base.py:2111] 2026-06-22 23:12:48,578 >> tokenizer config file saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui\checkpoint-40\tokenizer_config.json
+
+ 75%|����������������  | 41/55 [01:33<00:41,  2.94s/it]
+ 76%|����������������  | 42/55 [01:35<00:34,  2.63s/it]
+ 78%|����������������  | 43/55 [01:37<00:28,  2.40s/it]
+ 80%|����������������  | 44/55 [01:39<00:24,  2.25s/it]
+ 82%|������������������ | 45/55 [01:41<00:21,  2.14s/it]
+                                               
+
+ 82%|������������������ | 45/55 [01:41<00:21,  2.14s/it]
+ 84%|������������������ | 46/55 [01:43<00:18,  2.07s/it]
+ 85%|������������������ | 47/55 [01:45<00:16,  2.05s/it]
+ 87%|������������������ | 48/55 [01:47<00:14,  2.02s/it]
+ 89%|������������������ | 49/55 [01:49<00:11,  1.99s/it]
+ 91%|������������������ | 50/55 [01:51<00:09,  1.97s/it]
+                                               
+
+ 91%|������������������ | 50/55 [01:51<00:09,  1.97s/it][INFO|trainer.py:2668] 2026-06-22 23:13:07,995 >> 
+***** Running Evaluation *****
+[INFO|trainer.py:2670] 2026-06-22 23:13:07,995 >>   Num examples = 20
+[INFO|trainer.py:2673] 2026-06-22 23:13:07,995 >>   Batch size = 1
+
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+
+ 10%|��         | 2/20 [00:00<00:01, 14.18it/s][A
+
+ 20%|����        | 4/20 [00:00<00:01,  9.23it/s][A
+
+ 30%|������       | 6/20 [00:00<00:01,  8.16it/s][A
+
+ 35%|��������      | 7/20 [00:00<00:01,  8.05it/s][A
+
+ 40%|��������      | 8/20 [00:00<00:01,  7.93it/s][A
+
+ 45%|����������     | 9/20 [00:01<00:01,  7.84it/s][A
+
+ 50%|����������     | 10/20 [00:01<00:01,  7.61it/s][A
+
+ 55%|������������    | 11/20 [00:01<00:01,  7.69it/s][A
+
+ 60%|������������    | 12/20 [00:01<00:01,  7.65it/s][A
+
+ 65%|��������������   | 13/20 [00:01<00:00,  7.65it/s][A
+
+ 70%|��������������   | 14/20 [00:01<00:00,  7.44it/s][A
+
+ 75%|����������������  | 15/20 [00:01<00:00,  7.48it/s][A
+
+ 80%|����������������  | 16/20 [00:02<00:00,  7.36it/s][A
+
+ 85%|������������������ | 17/20 [00:02<00:00,  7.39it/s][A
+
+ 90%|������������������ | 18/20 [00:02<00:00,  7.49it/s][A
+
+ 95%|��������������������| 19/20 [00:02<00:00,  7.52it/s][A
+
+100%|��������������������| 20/20 [00:02<00:00,  7.51it/s][A
+                                               
+
+
+                                               
+[A
+ 91%|������������������ | 50/55 [01:53<00:09,  1.97s/it]
+
+100%|��������������������| 20/20 [00:02<00:00,  7.51it/s][A
+
+                                               [A
+ 93%|��������������������| 51/55 [01:55<00:11,  2.81s/it]
+ 95%|��������������������| 52/55 [01:58<00:07,  2.63s/it]
+ 96%|��������������������| 53/55 [02:00<00:04,  2.44s/it]
+ 98%|��������������������| 54/55 [02:01<00:02,  2.28s/it]
+100%|��������������������| 55/55 [02:03<00:00,  2.04s/it]
+                                               
+
+100%|��������������������| 55/55 [02:03<00:00,  2.04s/it][INFO|trainer.py:2668] 2026-06-22 23:13:20,354 >> 
+***** Running Evaluation *****
+[INFO|trainer.py:2670] 2026-06-22 23:13:20,354 >>   Num examples = 20
+[INFO|trainer.py:2673] 2026-06-22 23:13:20,354 >>   Batch size = 1
+
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+
+ 10%|��         | 2/20 [00:00<00:01, 14.37it/s][A
+
+ 20%|����        | 4/20 [00:00<00:01,  9.15it/s][A
+
+ 30%|������       | 6/20 [00:00<00:01,  8.10it/s][A
+
+ 35%|��������      | 7/20 [00:00<00:01,  7.81it/s][A
+
+ 40%|��������      | 8/20 [00:00<00:01,  7.77it/s][A
+
+ 45%|����������     | 9/20 [00:01<00:01,  7.71it/s][A
+
+ 50%|����������     | 10/20 [00:01<00:01,  7.55it/s][A
+
+ 55%|������������    | 11/20 [00:01<00:01,  7.46it/s][A
+
+ 60%|������������    | 12/20 [00:01<00:01,  7.40it/s][A
+
+ 65%|��������������   | 13/20 [00:01<00:00,  7.40it/s][A
+
+ 70%|��������������   | 14/20 [00:01<00:00,  7.17it/s][A
+
+ 75%|����������������  | 15/20 [00:01<00:00,  7.26it/s][A
+
+ 80%|����������������  | 16/20 [00:02<00:00,  7.34it/s][A
+
+ 85%|������������������ | 17/20 [00:02<00:00,  7.23it/s][A
+
+ 90%|������������������ | 18/20 [00:02<00:00,  7.37it/s][A
+
+ 95%|��������������������| 19/20 [00:02<00:00,  7.34it/s][A
+
+100%|��������������������| 20/20 [00:02<00:00,  7.35it/s][A
+                                               
+
+
+                                               
+[A
+100%|��������������������| 55/55 [02:06<00:00,  2.04s/it]
+
+100%|��������������������| 20/20 [00:02<00:00,  7.35it/s][A
+
+                                               [A[INFO|trainer.py:3815] 2026-06-22 23:13:23,111 >> Saving model checkpoint to saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui\checkpoint-55
+[INFO|configuration_utils.py:769] 2026-06-22 23:13:23,156 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-22 23:13:23,157 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|tokenization_utils_base.py:3278] 2026-06-22 23:13:23,234 >> chat template saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui\checkpoint-55\chat_template.jinja
+[INFO|tokenization_utils_base.py:2111] 2026-06-22 23:13:23,234 >> tokenizer config file saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui\checkpoint-55\tokenizer_config.json
+[INFO|trainer.py:1823] 2026-06-22 23:13:23,439 >> 
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+
+                                               
+
+100%|��������������������| 55/55 [02:06<00:00,  2.04s/it]
+100%|��������������������| 55/55 [02:06<00:00,  2.30s/it]
+[INFO|trainer.py:3815] 2026-06-22 23:13:23,441 >> Saving model checkpoint to saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui
+[INFO|configuration_utils.py:769] 2026-06-22 23:13:23,487 >> loading configuration file models/Qwen3-4B\config.json
+[INFO|configuration_utils.py:847] 2026-06-22 23:13:23,488 >> Model config Qwen3Config {
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "dtype": "bfloat16",
+  "eos_token_id": 151645,
+  "head_dim": 128,
+  "hidden_act": "silu",
+  "hidden_size": 2560,
+  "initializer_range": 0.02,
+  "intermediate_size": 9728,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 40960,
+  "max_window_layers": 36,
+  "model_type": "qwen3",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 36,
+  "num_key_value_heads": 8,
+  "pad_token_id": null,
+  "rms_norm_eps": 1e-06,
+  "rope_parameters": {
+    "rope_theta": 1000000,
+    "rope_type": "default"
+  },
+  "sliding_window": null,
+  "tie_word_embeddings": true,
+  "transformers_version": "5.6.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 151936
+}
+
+[INFO|tokenization_utils_base.py:3278] 2026-06-22 23:13:23,550 >> chat template saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui\chat_template.jinja
+[INFO|tokenization_utils_base.py:2111] 2026-06-22 23:13:23,550 >> tokenizer config file saved in saves/Qwen3-4B-Thinking/lora/localrag_sft_e4_qlora_webui\tokenizer_config.json
+[INFO|trainer.py:2668] 2026-06-22 23:13:23,750 >> 
+***** Running Evaluation *****
+[INFO|trainer.py:2670] 2026-06-22 23:13:23,751 >>   Num examples = 20
+[INFO|trainer.py:2673] 2026-06-22 23:13:23,751 >>   Batch size = 1
+
+  0%|          | 0/20 [00:00<?, ?it/s]
+ 10%|��         | 2/20 [00:00<00:01, 14.49it/s]
+ 20%|����        | 4/20 [00:00<00:01,  8.63it/s]
+ 25%|������       | 5/20 [00:00<00:01,  8.06it/s]
+ 30%|������       | 6/20 [00:00<00:01,  7.81it/s]
+ 35%|��������      | 7/20 [00:00<00:01,  7.48it/s]
+ 40%|��������      | 8/20 [00:01<00:01,  7.42it/s]
+ 45%|����������     | 9/20 [00:01<00:01,  7.39it/s]
+ 50%|����������     | 10/20 [00:01<00:01,  7.25it/s]
+ 55%|������������    | 11/20 [00:01<00:01,  7.30it/s]
+ 60%|������������    | 12/20 [00:01<00:01,  7.33it/s]
+ 65%|��������������   | 13/20 [00:01<00:00,  7.42it/s]
+ 70%|��������������   | 14/20 [00:01<00:00,  7.42it/s]
+ 75%|����������������  | 15/20 [00:01<00:00,  7.43it/s]
+ 80%|����������������  | 16/20 [00:02<00:00,  7.53it/s]
+ 85%|������������������ | 17/20 [00:02<00:00,  7.59it/s]
+ 90%|������������������ | 18/20 [00:02<00:00,  7.49it/s]
+ 95%|��������������������| 19/20 [00:02<00:00,  7.56it/s]
+100%|��������������������| 20/20 [00:02<00:00,  7.64it/s]
+100%|��������������������| 20/20 [00:02<00:00,  7.68it/s]
+[INFO|modelcard.py:263] 2026-06-22 23:13:26,523 >> Dropping the following result as it does not have all the necessary fields:
+{'task': {'name': 'Causal Language Modeling', 'type': 'text-generation'}}

@@ -1,0 +1,40 @@
+{
+  "created_at": "2026-06-22T21:04:46",
+  "dataset_version": "v1.3-e4-draft",
+  "record_count": 8,
+  "data_type_distribution": {
+    "multi_metric_partial_context_refusal": 8
+  },
+  "review_focus_distribution": {
+    "multi_metric_partial_context_no_direction_guess": 2,
+    "multi_metric_partial_context_no_metric_improvement_guess": 1,
+    "multi_metric_partial_context_no_missing_speed_guess": 1,
+    "multi_metric_partial_context_no_missing_value_guess": 4
+  },
+  "missing_metric_distribution": {
+    "AP": 2,
+    "ATE": 1,
+    "mAP": 1,
+    "mATE": 1,
+    "mIoU": 1,
+    "内存占用": 1,
+    "推理 FPS": 1,
+    "显存占用": 1,
+    "测试里程": 1
+  },
+  "source_record_ids": [
+    "train-001",
+    "train-004",
+    "train-047",
+    "train-052",
+    "train-170",
+    "train-177",
+    "train-186",
+    "train-192"
+  ],
+  "duplicate_e4_source_sample_ids": [],
+  "generation_eval_source_record_overlap": [],
+  "output_citation_count": 8,
+  "input_source_marker_count": 8,
+  "input_locator_marker_count": 8
+}

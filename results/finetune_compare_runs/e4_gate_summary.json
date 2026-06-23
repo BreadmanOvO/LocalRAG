@@ -1,0 +1,35 @@
+{
+  "schema_version": "localrag-finetune-gate/v1",
+  "experiment": "E4",
+  "created_at": "2026-06-22T23:19:10",
+  "final_verdict": "fail",
+  "gates": {
+    "data_gate": "pass",
+    "smoke_training": "pass",
+    "formal_training": "pass",
+    "topk2_hardening_gate": "fail",
+    "topk3_diagnostic": "pass"
+  },
+  "blocking_samples": [
+    {
+      "id": "gen-eval-004",
+      "question": "使用稀疏聚合时，把 Top-K 查询数从 All 减少到 4096，会让 MFA 延迟和检测指标发生什么变化？",
+      "expected_topk2_behavior": "只回答 MFA 延迟降低，并说明当前 top-k=2 上下文无法确定 AP、ATE 或检测指标方向。",
+      "observed_topk2_answer": "延迟降低 76%，检测指标提升 12.5%。",
+      "failure_modes": [
+        "unsupported_numeric_claim",
+        "directional_contradiction"
+      ]
+    }
+  ],
+  "artifacts": {
+    "training_stdout": "results/finetune_env/llamafactory_e4_webui_20260622-231044.out.log",
+    "training_stderr": "results/finetune_env/llamafactory_e4_webui_20260622-231044.err.log",
+    "topk2_predictions": "results/qwen3_adapter_eval/generation_eval_set-qwen3-4b-e4-webui-adapter-hardened-clean-20260622-231427/predictions.json",
+    "topk3_predictions": "results/qwen3_adapter_eval/generation_eval_set-qwen3-4b-e4-webui-adapter-topk3-20260622-231733/predictions.json",
+    "base_vs_e4_topk2_compare": "results/finetune_compare_runs/base_vs_e4/finetune-compare-20260622-231910/summary.json",
+    "e3_vs_e4_topk2_compare": "results/finetune_compare_runs/e3_vs_e4/finetune-compare-20260622-231910/summary.json",
+    "base_vs_e4_topk3_compare": "results/finetune_compare_runs/base_vs_e4_topk3/finetune-compare-20260622-231910/summary.json"
+  },
+  "next_recommended_gate": "E5 pairwise context-contrast data: for the same question, train complete-context answer and partial-context refusal pairs before running the full generation_eval_set."
+}

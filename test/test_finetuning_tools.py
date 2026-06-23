@@ -10,6 +10,8 @@ from scripts import prepare_sft_e2_draft
 from scripts import prepare_sft_e2_dataset
 from scripts import prepare_sft_e3_draft
 from scripts import prepare_sft_e3_dataset
+from scripts import prepare_sft_e4_draft
+from scripts import prepare_sft_e4_dataset
 from scripts import audit_sft_dataset
 from scripts import check_finetune_env
 from scripts import run_local_qwen3_e0
@@ -375,6 +377,90 @@ class PrepareSftE3DatasetTests(unittest.TestCase):
         self.assertEqual(1, len(rows))
         self.assertEqual("train-003", rows[0]["metadata"]["source_sample_id"])
         self.assertEqual("v1.3-e3", rows[0]["metadata"]["dataset_version"])
+        self.assertEqual("normal_grounded_qa_validation", rows[0]["metadata"]["data_type"])
+
+
+class PrepareSftE4DraftTests(unittest.TestCase):
+    def test_build_multi_metric_partial_context_row_refuses_missing_metric_direction(self):
+        source = _sample("train-001")
+        source["evidence"][0]["quote"] = "using 4096 size queries reduce the latency of MFA by 76.4%."
+
+        row = prepare_sft_e4_draft.build_multi_metric_partial_context_row(
+            row_id="e4-draft-multi-metric-001",
+            source_record=source,
+            question="4096 个 Top-K 查询会让 MFA 延迟、AP 和 ATE 分别发生什么变化？",
+            supported_claim="资料只说明 4096 个查询会让 MFA 延迟降低 76.4%。",
+            missing_metrics=["AP", "ATE"],
+            review_focus="multi_metric_partial_context_no_direction_guess",
+        )
+
+        self.assertEqual("e4-draft-multi-metric-001", row["metadata"]["source_sample_id"])
+        self.assertEqual("multi_metric_partial_context_refusal", row["metadata"]["data_type"])
+        self.assertEqual(["AP", "ATE"], row["metadata"]["missing_metrics"])
+        self.assertEqual("partial_refuse", row["metadata"]["expected_behavior"])
+        self.assertIn("延迟降低 76.4%", row["output"])
+        self.assertIn("不能根据资料确定 AP 或 ATE 是提升还是下降", row["output"])
+        self.assertNotIn("1.3%", row["output"])
+        self.assertIn("paper-030 page=1", row["output"])
+
+    def test_build_e4_rows_creates_focused_multi_metric_slice(self):
+        required_ids = {spec["source_id"] for spec in prepare_sft_e4_draft.MULTI_METRIC_PARTIAL_CONTEXT_SPECS}
+        records = [_sample(sample_id) for sample_id in sorted(required_ids)]
+
+        rows = prepare_sft_e4_draft.build_e4_rows(records)
+        data_types = [row["metadata"]["data_type"] for row in rows]
+
+        self.assertEqual(8, len(rows))
+        self.assertEqual(8, data_types.count("multi_metric_partial_context_refusal"))
+        self.assertTrue(all(row["metadata"].get("missing_metrics") for row in rows))
+
+
+class PrepareSftE4DatasetTests(unittest.TestCase):
+    def test_build_e4_dataset_merges_e3_train_with_e4_hardcase_slice(self):
+        e3_row = prepare_sft_dataset.build_llamafactory_record(
+            _sample("train-001"),
+            dataset_version="v1.3-e3",
+            data_type="normal_grounded_qa",
+        )
+        hardcase_row = prepare_sft_e4_draft.build_multi_metric_partial_context_row(
+            row_id="e4-draft-multi-metric-001",
+            source_record=_sample("train-002"),
+            question="资料是否说明 CRN 的延迟和 AP 都改善？",
+            supported_claim="资料没有说明 CRN 的延迟或 AP 是否改善。",
+            missing_metrics=["latency", "AP"],
+            review_focus="multi_metric_partial_context_no_direction_guess",
+        )
+
+        merged = prepare_sft_e4_dataset.build_e4_train_rows(
+            e3_rows=[e3_row],
+            hardcase_rows=[hardcase_row],
+            dataset_version="v1.3-e4",
+        )
+
+        self.assertEqual(2, len(merged))
+        self.assertEqual("v1.3-e4", merged[0]["metadata"]["dataset_version"])
+        self.assertEqual("normal_grounded_qa", merged[0]["metadata"]["data_type"])
+        self.assertEqual(
+            "e4_hardcase_multi_metric_partial_context_refusal",
+            merged[1]["metadata"]["data_type"],
+        )
+        self.assertEqual("e4_hardcase_slice", merged[1]["metadata"]["e4_source"])
+
+    def test_build_e4_validation_rows_copies_validation_with_e4_version(self):
+        validation_row = prepare_sft_dataset.build_llamafactory_record(
+            _sample("train-003"),
+            dataset_version="v1.3-e3",
+            data_type="normal_grounded_qa_validation",
+        )
+
+        rows = prepare_sft_e4_dataset.build_e4_validation_rows(
+            validation_rows=[validation_row],
+            dataset_version="v1.3-e4",
+        )
+
+        self.assertEqual(1, len(rows))
+        self.assertEqual("train-003", rows[0]["metadata"]["source_sample_id"])
+        self.assertEqual("v1.3-e4", rows[0]["metadata"]["dataset_version"])
         self.assertEqual("normal_grounded_qa_validation", rows[0]["metadata"]["data_type"])
 
 
@@ -760,6 +846,8 @@ class LlamaFactoryDatasetInfoTests(unittest.TestCase):
             "localrag_sft_e2_validation": 20,
             "localrag_sft_e3": 211,
             "localrag_sft_e3_validation": 20,
+            "localrag_sft_e4": 219,
+            "localrag_sft_e4_validation": 20,
         }
         expected_columns = {
             "prompt": "instruction",
