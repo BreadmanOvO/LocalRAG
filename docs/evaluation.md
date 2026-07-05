@@ -378,14 +378,18 @@ v1.1 已完成收口，详见 `RAG_md/docs/reports/v1.1-closure-report.md`。
 - `results/qwen3_adapter_eval/generation_eval_set-qwen3-4b-e5-webui-adapter-hardened-clean-20260626-211453/`
 - `results/finetune_compare_runs/base_vs_e5/finetune-compare-20260626-211700/`
 - `results/finetune_compare_runs/e4_vs_e5/finetune-compare-20260626-211700/`
+- `results/finetune_compare_runs/base_vs_e5_e51/finetune-compare-20260706-001539/`
+- `results/finetune_compare_runs/e4_vs_e5_e51/finetune-compare-20260706-001645/`
 
 ### E5 判定
 - 训练链路：通过。smoke `train_loss=2.3474`、`eval_loss=1.2172`；formal `train_loss=3.5783`、`eval_loss=1.9233`。
 - topk2 生成评估：10/10 answered，`context_hit_ratio=1.0`，`evidence_source_hit_ratio=1.0`。
-- base -> E5：`mixed_or_regressed`。引用覆盖略升，但 `citation_support_risk` 从 0.6 升到 0.7，不能宣称整体优于 base。
-- E4 -> E5：`mixed`。E5 将 unsupported numeric 与 directional contradiction 从 0.1 降到 0.0，并修复 `gen-eval-004`，但 citation support 风险仍高。
+- 原 E5 compare 口径：base -> E5 为 `mixed_or_regressed`，E4 -> E5 为 `mixed`。该口径会把完整 reference/evidence 的英文关键词覆盖率直接纳入 `citation_support_risk`，容易把 topk2 信息不完整时的正确克制回答也标成风险。
+- E5.1 compare 口径：`reference_coverage_risk` 保留为诊断项，不再直接触发 `citation_support_risk`；新增 `required_answer_terms` / `forbidden_answer_terms` 样本级合同检查。
+- E5.1 base -> E5：`mixed_or_regressed`。E5 的 unsupported numeric 与 directional contradiction 均为 `0.0`，剩余 `answer_contract_risk=0.1`、`citation_support_risk=0.1`。
+- E5.1 E4 -> E5：`mixed_with_unresolved_contract_risk`。E5 将 unsupported numeric 与 directional contradiction 从 `0.1` 降到 `0.0`，但仍保留 1 个合同风险样本。
 
-当前结论：E5 证明 pairwise context-contrast 能修复 E4 的核心 topk2 臆测样本，但还不是最终收口版本。下一步应进入 E6，优先降低 citation support risk，并把 `gen-eval-004` 固化为局部回归门禁。
+当前结论：E5 证明 pairwise context-contrast 能修复 E4 的核心 topk2 臆测样本 `gen-eval-004`。E5.1 复核后，剩余主风险收敛为 `gen-eval-007`：检索上下文同时包含正确 `/apollo/perception/traffic_light` 和干扰 `/apollo/prediction`，模型仍答成 `/apollo/prediction`。下一步 E6 应优先做表格 / channel 精确抽取与 distractor context 硬化，而不是继续泛化地追 `citation_support_risk`。
 
 ## 使用建议
 - 看当前真实实验能力时，优先参考 `eval/eval_chunking.py` 与 `results/chunking_eval/`

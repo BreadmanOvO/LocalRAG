@@ -415,3 +415,123 @@ class PrepareSftE5DatasetTests(unittest.TestCase):
         self.assertEqual("partial_refuse", row["contrast_output"]["metadata"]["expected_behavior"])
         self.assertIn("不能根据资料确定 AP 或 ATE 是提升还是下降", row["contrast_output"]["output"])
         self.assertIn("paper-030 page=1", row["output"])
+
+
+class FinetuneCompareHardeningTests(unittest.TestCase):
+    def test_correct_refusal_does_not_turn_reference_coverage_into_citation_risk(self):
+        row = {
+            "id": "gen-eval-006",
+            "reference_answer": (
+                "无法从给定证据确认。证据说明 CRN 是 camera-radar fusion framework，"
+                "但没有说明量产车型部署情况或部署成本。"
+            ),
+            "answer": "资料中没有说明 CRN 已经在量产车型上部署，也没有给出部署成本。引用：- paper-030 unknown",
+            "retrieved_rows": [
+                {
+                    "source_id": "paper-030",
+                    "content": "we propose Camera Radar Net (CRN), a novel camera-radar fusion framework.",
+                }
+            ],
+            "evidence": [
+                {
+                    "quote": "we propose Camera Radar Net (CRN), a novel camera-radar fusion framework.",
+                    "source_id": "paper-030",
+                    "locator": "page=1",
+                }
+            ],
+            "metadata": {
+                "expected_behavior": "refuse",
+            },
+        }
+
+        hardening = eval_finetune_compare.analyze_answer_hardening(row)
+
+        self.assertLess(hardening["reference_coverage_ratio"], 0.7)
+        self.assertFalse(hardening["reference_coverage_risk"])
+        self.assertFalse(hardening["answer_contract_risk"])
+        self.assertFalse(hardening["citation_support_risk"])
+
+    def test_required_and_forbidden_terms_flag_wrong_channel_answer(self):
+        row = {
+            "id": "gen-eval-007",
+            "reference_answer": "对应的 channel 是 /apollo/perception/traffic_light。",
+            "answer": (
+                "Apollo 规划模块输入中的感知红绿灯信息对应的 channel 是 /apollo/prediction。"
+                "引用：\n- apollo-doc-008 locator=unknown"
+            ),
+            "retrieved_rows": [
+                {
+                    "source_id": "apollo-doc-008",
+                    "content": (
+                        "规划模块的输入 channel名称 输入channel说明 "
+                        "/apollo/perception/traffic_light输入是 感知红绿灯信息 "
+                        "输入预测障碍物信息 /apollo/prediction"
+                    ),
+                }
+            ],
+            "evidence": [
+                {
+                    "quote": (
+                        "规划模块的输入 channel名称 输入channel说明 ... "
+                        "/apollo/perception/traffic_light 输入是感知红绿灯信息。"
+                    ),
+                    "source_id": "apollo-doc-008",
+                    "locator": "page=1",
+                }
+            ],
+            "metadata": {
+                "expected_behavior": "answer",
+                "required_answer_terms": ["/apollo/perception/traffic_light"],
+                "forbidden_answer_terms": ["/apollo/prediction"],
+            },
+        }
+
+        hardening = eval_finetune_compare.analyze_answer_hardening(row)
+
+        self.assertEqual(["/apollo/perception/traffic_light"], hardening["missing_required_terms"])
+        self.assertEqual(["/apollo/prediction"], hardening["present_forbidden_terms"])
+        self.assertTrue(hardening["answer_contract_risk"])
+        self.assertTrue(hardening["citation_support_risk"])
+
+    def test_reference_coverage_risk_is_diagnostic_not_regression_verdict(self):
+        verdict = eval_finetune_compare.classify_verdict(
+            {
+                "answer_cites_evidence_ratio_delta": 0.2,
+                "unsupported_claim_risk_ratio_delta": 0.0,
+                "over_refusal_risk_ratio_delta": 0.0,
+                "refusal_ratio_delta": 0.0,
+                "correct_refusal_ratio_delta": 0.0,
+                "unsupported_numeric_claim_risk_ratio_delta": 0.0,
+                "directional_contradiction_risk_ratio_delta": 0.0,
+                "citation_support_risk_ratio_delta": 0.0,
+                "reference_coverage_ratio_delta": -0.2,
+                "answer_contract_risk_ratio_delta": 0.0,
+            },
+            {"answer_contract_risk_count": 0},
+        )
+
+        self.assertEqual("adapter_improved", verdict)
+
+    def test_eval_set_metadata_can_be_merged_into_legacy_predictions(self):
+        predictions = [
+            {
+                "id": "gen-eval-007",
+                "metadata": {"expected_behavior": "answer"},
+                "answer": "/apollo/prediction",
+            }
+        ]
+        metadata_by_id = {
+            "gen-eval-007": {
+                "expected_behavior": "answer",
+                "required_answer_terms": ["/apollo/perception/traffic_light"],
+                "forbidden_answer_terms": ["/apollo/prediction"],
+            }
+        }
+
+        merged = eval_finetune_compare._merge_eval_metadata(predictions, metadata_by_id)
+
+        self.assertEqual(
+            ["/apollo/perception/traffic_light"],
+            merged[0]["metadata"]["required_answer_terms"],
+        )
+        self.assertEqual(["/apollo/prediction"], merged[0]["metadata"]["forbidden_answer_terms"])

@@ -129,7 +129,13 @@
       "topic": "planning_control",
       "doc_type": "official_doc",
       "generation_category": "distractor_context",
-      "expected_behavior": "answer"
+      "expected_behavior": "answer",
+      "required_answer_terms": [
+        "/apollo/perception/traffic_light"
+      ],
+      "forbidden_answer_terms": [
+        "/apollo/prediction"
+      ]
     }
   },
   {

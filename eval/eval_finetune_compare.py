@@ -14,6 +14,7 @@ if __package__ in {None, ""}:
 from eval.eval_finetune_behavior import (
     compare_summaries,
     evaluate_row,
+    expected_behavior,
     load_predictions,
     summarize_rows,
 )
@@ -46,6 +47,51 @@ def _truncate(text: str, limit: int = 900) -> str:
     if len(normalized) <= limit:
         return normalized
     return normalized[: limit - 3].rstrip() + "..."
+
+
+def _load_eval_metadata(eval_set_path: Path | None) -> dict[str, dict[str, Any]]:
+    if eval_set_path is None:
+        return {}
+    payload = json.loads(eval_set_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, list):
+        raise ValueError("eval set must be a list of records")
+
+    metadata_by_id: dict[str, dict[str, Any]] = {}
+    for row in payload:
+        if not isinstance(row, dict):
+            continue
+        row_id = str(row.get("id", ""))
+        metadata = row.get("metadata", {})
+        if row_id and isinstance(metadata, dict):
+            metadata_by_id[row_id] = metadata
+    return metadata_by_id
+
+
+def _merge_eval_metadata(
+    rows: list[dict[str, Any]],
+    metadata_by_id: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    if not metadata_by_id:
+        return rows
+
+    merged_rows = []
+    for row in rows:
+        row_id = str(row.get("id", ""))
+        eval_metadata = metadata_by_id.get(row_id)
+        if not eval_metadata:
+            merged_rows.append(row)
+            continue
+
+        merged_row = dict(row)
+        row_metadata = row.get("metadata", {})
+        if not isinstance(row_metadata, dict):
+            row_metadata = {}
+        merged_row["metadata"] = {
+            **row_metadata,
+            **eval_metadata,
+        }
+        merged_rows.append(merged_row)
+    return merged_rows
 
 
 _NUMBER_RE = re.compile(r"(?<![A-Za-z0-9])\d+(?:\.\d+)?(?:%|ms)?(?![A-Za-z])")
@@ -135,8 +181,32 @@ def _answer_has_term(answer: str, term: str) -> bool:
     return term in answer.lower()
 
 
+def _metadata_terms(row: dict[str, Any], key: str) -> list[str]:
+    metadata = row.get("metadata", {})
+    if not isinstance(metadata, dict):
+        return []
+    raw_value = metadata.get(key, [])
+    if isinstance(raw_value, str):
+        raw_values = [raw_value]
+    elif isinstance(raw_value, list):
+        raw_values = raw_value
+    else:
+        raw_values = []
+
+    terms = []
+    seen = set()
+    for value in raw_values:
+        term = str(value).strip().lower()
+        if not term or term in seen:
+            continue
+        terms.append(term)
+        seen.add(term)
+    return terms
+
+
 def analyze_answer_hardening(row: dict[str, Any]) -> dict[str, Any]:
     answer = str(row.get("answer", ""))
+    behavior = evaluate_row(row)
     support_text = _support_text(row)
     support_numbers = _numbers(support_text)
     source_id_numbers = set()
@@ -158,6 +228,15 @@ def analyze_answer_hardening(row: dict[str, Any]) -> dict[str, Any]:
         else 1.0
     )
 
+    required_answer_terms = _metadata_terms(row, "required_answer_terms")
+    forbidden_answer_terms = _metadata_terms(row, "forbidden_answer_terms")
+    missing_required_terms = [
+        term for term in required_answer_terms if not _answer_has_term(answer, term)
+    ]
+    present_forbidden_terms = [
+        term for term in forbidden_answer_terms if _answer_has_term(answer, term)
+    ]
+
     answer_lower = answer.lower()
     reference_lower = str(row.get("reference_answer", "")).lower()
     evidence_lower = " ".join(str(item.get("quote", "")) for item in row.get("evidence", [])).lower()
@@ -165,9 +244,22 @@ def analyze_answer_hardening(row: dict[str, Any]) -> dict[str, Any]:
         marker in f"{reference_lower}\n{evidence_lower}" for marker in _REFERENCE_DOWN_MARKERS
     )
     unsupported_numeric_claim = bool(unsupported_answer_numbers)
-    reference_coverage_risk = bool(reference_terms) and reference_coverage_ratio < 0.7
-    cites_evidence = evaluate_row(row)["answer_cites_evidence"]
-    citation_support_risk = cites_evidence and (unsupported_numeric_claim or directional_contradiction or reference_coverage_risk)
+    correctly_refused = expected_behavior(row) == "refuse" and behavior["refusal"]
+    reference_coverage_risk = (
+        bool(reference_terms)
+        and reference_coverage_ratio < 0.7
+        and not correctly_refused
+    )
+    required_term_risk = bool(missing_required_terms)
+    forbidden_term_risk = bool(present_forbidden_terms)
+    answer_contract_risk = (
+        unsupported_numeric_claim
+        or directional_contradiction
+        or required_term_risk
+        or forbidden_term_risk
+    )
+    cites_evidence = behavior["answer_cites_evidence"]
+    citation_support_risk = cites_evidence and answer_contract_risk
 
     return {
         "id": row.get("id", ""),
@@ -175,9 +267,16 @@ def analyze_answer_hardening(row: dict[str, Any]) -> dict[str, Any]:
         "missing_reference_terms": missing_reference_terms,
         "reference_coverage_ratio": reference_coverage_ratio,
         "reference_coverage_risk": reference_coverage_risk,
+        "required_answer_terms": required_answer_terms,
+        "missing_required_terms": missing_required_terms,
+        "required_term_risk": required_term_risk,
+        "forbidden_answer_terms": forbidden_answer_terms,
+        "present_forbidden_terms": present_forbidden_terms,
+        "forbidden_term_risk": forbidden_term_risk,
         "unsupported_answer_numbers": unsupported_answer_numbers,
         "unsupported_numeric_claim_risk": unsupported_numeric_claim,
         "directional_contradiction_risk": directional_contradiction,
+        "answer_contract_risk": answer_contract_risk,
         "citation_support_risk": citation_support_risk,
     }
 
@@ -188,6 +287,9 @@ def summarize_hardening_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "reference_coverage_risk",
         "unsupported_numeric_claim_risk",
         "directional_contradiction_risk",
+        "required_term_risk",
+        "forbidden_term_risk",
+        "answer_contract_risk",
         "citation_support_risk",
     ]
     summary: dict[str, Any] = {"sample_count": total}
@@ -243,7 +345,10 @@ def build_side_by_side_rows(
     return rows
 
 
-def classify_verdict(comparison: dict[str, Any]) -> str:
+def classify_verdict(
+    comparison: dict[str, Any],
+    candidate_summary: dict[str, Any] | None = None,
+) -> str:
     citation_delta = comparison.get("answer_cites_evidence_ratio_delta", 0.0)
     unsupported_delta = comparison.get("unsupported_claim_risk_ratio_delta", 0.0)
     over_refusal_delta = comparison.get("over_refusal_risk_ratio_delta", 0.0)
@@ -252,17 +357,24 @@ def classify_verdict(comparison: dict[str, Any]) -> str:
     unsupported_numeric_delta = comparison.get("unsupported_numeric_claim_risk_ratio_delta", 0.0)
     contradiction_delta = comparison.get("directional_contradiction_risk_ratio_delta", 0.0)
     citation_support_delta = comparison.get("citation_support_risk_ratio_delta", 0.0)
-    reference_coverage_delta = comparison.get("reference_coverage_ratio_delta", 0.0)
+    answer_contract_delta = comparison.get("answer_contract_risk_ratio_delta", 0.0)
+    candidate_contract_risk_count = (
+        int(candidate_summary.get("answer_contract_risk_count", 0))
+        if candidate_summary
+        else 0
+    )
 
     if over_refusal_delta > 0 or (refusal_delta > 0.2 and correct_refusal_delta <= 0):
         return "over_refuses"
     if (
         unsupported_numeric_delta > 0
         or contradiction_delta > 0
+        or answer_contract_delta > 0
         or citation_support_delta > 0
-        or reference_coverage_delta < -0.1
     ):
         return "mixed_or_regressed"
+    if candidate_contract_risk_count > 0:
+        return "mixed_with_unresolved_contract_risk"
     if citation_delta > 0 and unsupported_delta <= 0 and over_refusal_delta <= 0:
         return "adapter_improved"
     if unsupported_delta > 0 or citation_delta < 0 or correct_refusal_delta < 0:
@@ -312,7 +424,7 @@ def build_comparison_payload(
         "candidate_summary": candidate_summary,
         "comparison": comparison,
         "answer_length_summary": _length_summary(rows),
-        "verdict": classify_verdict(comparison),
+        "verdict": classify_verdict(comparison, candidate_summary),
         "side_by_side_rows": rows,
     }
 
@@ -376,8 +488,8 @@ def render_side_by_side_report(payload: dict[str, Any]) -> str:
                 f"- 回答长度变化：`{row['baseline_answer_length']} -> {row['candidate_answer_length']}`，delta `{row['answer_length_delta']}`",
                 f"- {baseline_label} 引用证据：`{_format_bool(baseline_behavior['answer_cites_evidence'])}`；拒答：`{_format_bool(baseline_behavior['refusal'])}`；过度拒答风险：`{_format_bool(baseline_behavior['over_refusal_risk'])}`",
                 f"- {candidate_label} 引用证据：`{_format_bool(candidate_behavior['answer_cites_evidence'])}`；拒答：`{_format_bool(candidate_behavior['refusal'])}`；过度拒答风险：`{_format_bool(candidate_behavior['over_refusal_risk'])}`",
-                f"- {baseline_label} 参考覆盖率：`{baseline_hardening['reference_coverage_ratio']}`；无来源数字：`{', '.join(baseline_hardening['unsupported_answer_numbers']) or '无'}`；引用支持风险：`{_format_bool(baseline_hardening['citation_support_risk'])}`",
-                f"- {candidate_label} 参考覆盖率：`{candidate_hardening['reference_coverage_ratio']}`；无来源数字：`{', '.join(candidate_hardening['unsupported_answer_numbers']) or '无'}`；引用支持风险：`{_format_bool(candidate_hardening['citation_support_risk'])}`",
+                f"- {baseline_label} 参考覆盖率：`{baseline_hardening['reference_coverage_ratio']}`；无来源数字：`{', '.join(baseline_hardening['unsupported_answer_numbers']) or '无'}`；答案合同风险：`{_format_bool(baseline_hardening['answer_contract_risk'])}`；引用支持风险：`{_format_bool(baseline_hardening['citation_support_risk'])}`",
+                f"- {candidate_label} 参考覆盖率：`{candidate_hardening['reference_coverage_ratio']}`；无来源数字：`{', '.join(candidate_hardening['unsupported_answer_numbers']) or '无'}`；答案合同风险：`{_format_bool(candidate_hardening['answer_contract_risk'])}`；引用支持风险：`{_format_bool(candidate_hardening['citation_support_risk'])}`",
                 "",
                 f"**{baseline_label} 回答**",
                 "",
@@ -403,9 +515,13 @@ def compare_predictions(
     out_dir: Path,
     baseline_label: str = "base",
     candidate_label: str = "adapter",
+    eval_set_path: Path | None = None,
 ) -> dict[str, Any]:
+    eval_metadata = _load_eval_metadata(eval_set_path)
     baseline_predictions = load_predictions(baseline_predictions_path)
     candidate_predictions = load_predictions(candidate_predictions_path)
+    baseline_predictions = _merge_eval_metadata(baseline_predictions, eval_metadata)
+    candidate_predictions = _merge_eval_metadata(candidate_predictions, eval_metadata)
     payload = build_comparison_payload(
         baseline_predictions=baseline_predictions,
         candidate_predictions=candidate_predictions,
@@ -430,6 +546,7 @@ def compare_predictions(
             "runner_script": "eval/eval_finetune_compare.py",
             "baseline_predictions_path": str(baseline_predictions_path),
             "candidate_predictions_path": str(candidate_predictions_path),
+            "eval_set_path": str(eval_set_path) if eval_set_path else None,
             "baseline_label": baseline_label,
             "candidate_label": candidate_label,
         },
@@ -451,6 +568,7 @@ def main() -> dict[str, Any]:
     parser.add_argument("--out-dir", default=Path("results/finetune_compare"), type=Path)
     parser.add_argument("--baseline-label", default="base")
     parser.add_argument("--candidate-label", default="adapter")
+    parser.add_argument("--eval-set", default=None, type=Path)
     args = parser.parse_args()
 
     output = compare_predictions(
@@ -459,6 +577,7 @@ def main() -> dict[str, Any]:
         out_dir=args.out_dir,
         baseline_label=args.baseline_label,
         candidate_label=args.candidate_label,
+        eval_set_path=args.eval_set,
     )
     print(json.dumps(output, ensure_ascii=False, indent=2))
     return output
