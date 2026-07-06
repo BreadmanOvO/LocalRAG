@@ -15,6 +15,7 @@ from scripts import prepare_sft_e4_dataset
 from scripts import prepare_sft_e5_dataset
 from scripts import prepare_sft_e6_dataset
 from scripts import prepare_sft_e6_1_dataset
+from scripts import check_e7_regression_gate
 from scripts import audit_sft_dataset
 from scripts import check_finetune_env
 from scripts import run_local_qwen3_e0
@@ -650,3 +651,48 @@ class FinetuneCompareHardeningTests(unittest.TestCase):
             merged[0]["metadata"]["required_answer_terms"],
         )
         self.assertEqual(["/apollo/prediction"], merged[0]["metadata"]["forbidden_answer_terms"])
+
+
+class E7RegressionGateTests(unittest.TestCase):
+    def test_e7_gate_passes_structured_correct_channel_answer(self):
+        row = {
+            "id": "gen-eval-007",
+            "answer": "对应的 channel 是 /apollo/perception/traffic_light。引用：apollo-doc-008 page=1",
+            "retrieved_context": (
+                "规划模块的输入 channel名称 输入channel说明\n\n"
+                "channel_table_rows:\n"
+                "- 说明: 感知红绿灯信息 | channel: /apollo/perception/traffic_light\n"
+                "- 说明: 输入预测障碍物信息 | channel: /apollo/prediction"
+            ),
+            "metadata": {
+                "required_answer_terms": ["/apollo/perception/traffic_light"],
+                "forbidden_answer_terms": ["/apollo/prediction"],
+            },
+        }
+
+        result = check_e7_regression_gate.evaluate_e7_gate(row)
+
+        self.assertTrue(result["passed"])
+        self.assertEqual([], result["missing_required_answer_terms"])
+        self.assertEqual([], result["present_forbidden_answer_terms"])
+        self.assertEqual([], result["missing_required_context_terms"])
+
+    def test_e7_gate_fails_wrong_channel_even_with_structured_context(self):
+        row = {
+            "id": "gen-eval-007",
+            "answer": "对应的 channel 是 /apollo/prediction。",
+            "retrieved_context": (
+                "channel_table_rows:\n"
+                "- 说明: 感知红绿灯信息 | channel: /apollo/perception/traffic_light"
+            ),
+            "metadata": {
+                "required_answer_terms": ["/apollo/perception/traffic_light"],
+                "forbidden_answer_terms": ["/apollo/prediction"],
+            },
+        }
+
+        result = check_e7_regression_gate.evaluate_e7_gate(row)
+
+        self.assertFalse(result["passed"])
+        self.assertEqual(["/apollo/perception/traffic_light"], result["missing_required_answer_terms"])
+        self.assertEqual(["/apollo/prediction"], result["present_forbidden_answer_terms"])

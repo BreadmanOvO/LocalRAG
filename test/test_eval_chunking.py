@@ -10,6 +10,7 @@ from unittest import mock
 from langchain_core.documents import Document
 
 from config import settings as config
+from core import channel_context
 from core import knowledge_base
 from core import rag
 
@@ -154,6 +155,78 @@ class RagEvaluationHelperTests(unittest.TestCase):
         self.assertIn("[2] source_id=doc-2 locator=unknown", formatted)
         self.assertNotIn("资料来源：", formatted)
         self.assertNotIn("locator=bad。资料来源", formatted)
+
+    def test_apollo_channel_context_extracts_noisy_planning_rows(self):
+        text = (
+            "规划模块的输入输出 规划模块的输入 channel名称 输入channel说明 "
+            "输入车身底盘反馈信息 /apollo/canbus/chassis "
+            "输入车辆定位信息 /apollo/localization/pose "
+            "/apollo/perception/traffic_light输入是 感知红绿灯信息 "
+            "输入预测障碍物信息 /apollo/prediction "
+            "局部地图信息 /apollo/relative_map "
+            "/apollo/routing_response 输入导航routing信息 "
+            "规划模块的输出 输出channel说明 channel名称 "
+            "/apollo/planning输出自动驾驶车辆的轨迹信息"
+        )
+
+        structured = channel_context.structure_apollo_channel_context(
+            text,
+            {"source_id": "apollo-doc-008", "doc_type": "official_doc"},
+        )
+
+        self.assertIn("channel_table_rows:", structured)
+        self.assertIn("说明: 感知红绿灯信息 | channel: /apollo/perception/traffic_light", structured)
+        self.assertIn("说明: 输入预测障碍物信息 | channel: /apollo/prediction", structured)
+        self.assertIn("说明: 局部地图信息 | channel: /apollo/relative_map", structured)
+
+    def test_format_documents_adds_structured_channel_rows_for_apollo_doc(self):
+        documents = [
+            Document(
+                page_content=(
+                    "规划模块的输入 channel名称 输入channel说明 "
+                    "/apollo/perception/traffic_light输入是 感知红绿灯信息 "
+                    "输入预测障碍物信息 /apollo/prediction"
+                ),
+                metadata={
+                    "source_id": "apollo-doc-008",
+                    "doc_type": "official_doc",
+                    "locator": "page=1",
+                },
+            )
+        ]
+
+        formatted = rag._format_documents(documents)
+
+        self.assertIn("content:\n规划模块的输入", formatted)
+        self.assertIn("channel_table_rows:", formatted)
+        self.assertIn("说明: 感知红绿灯信息 | channel: /apollo/perception/traffic_light", formatted)
+
+    def test_non_apollo_channel_like_text_is_not_enriched(self):
+        text = "Paper channel attention uses features but no Apollo route table."
+
+        enriched = channel_context.enrich_apollo_channel_context(
+            text,
+            {"source_id": "paper-030", "doc_type": "paper"},
+        )
+
+        self.assertEqual(text, enriched)
+
+    def test_retrieved_context_uses_enriched_channel_context(self):
+        documents = [
+            Document(
+                page_content=(
+                    "规划模块的输入 channel名称 输入channel说明 "
+                    "/apollo/perception/traffic_light输入是 感知红绿灯信息 "
+                    "输入预测障碍物信息 /apollo/prediction"
+                ),
+                metadata={"source_id": "apollo-doc-008", "doc_type": "official_doc"},
+            )
+        ]
+
+        retrieved_context = rag._format_retrieved_context(documents)
+
+        self.assertIn("channel_table_rows:", retrieved_context)
+        self.assertIn("说明: 感知红绿灯信息 | channel: /apollo/perception/traffic_light", retrieved_context)
 
     def test_eval_session_ids_are_isolated_per_run(self):
         service = object.__new__(rag.RagService)

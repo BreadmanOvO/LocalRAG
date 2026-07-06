@@ -1,0 +1,24 @@
+{
+  "pipeline": "e7_regression_gate",
+  "sample_id": "gen-eval-007",
+  "predictions_path": "results\\qwen3_adapter_eval\\generation_eval_set-qwen3-4b-e7-context-structured-channel-clean-20260707-003633\\predictions.json",
+  "eval_set_path": "data\\evaluation\\gold\\generation_eval_set.json",
+  "result": {
+    "id": "gen-eval-007",
+    "passed": true,
+    "answer": "感知红绿灯信息对应的 channel 是 /apollo/perception/traffic_light。\n\n引用：\n- apollo-doc-008 unknown",
+    "required_answer_terms": [
+      "/apollo/perception/traffic_light"
+    ],
+    "missing_required_answer_terms": [],
+    "forbidden_answer_terms": [
+      "/apollo/prediction"
+    ],
+    "present_forbidden_answer_terms": [],
+    "required_context_terms": [
+      "channel_table_rows:",
+      "说明: 感知红绿灯信息 | channel: /apollo/perception/traffic_light"
+    ],
+    "missing_required_context_terms": []
+  }
+}

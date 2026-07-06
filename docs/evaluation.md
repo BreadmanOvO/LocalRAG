@@ -474,12 +474,78 @@ E6.1 结果：
 - `answer_contract_risk` 仍为 0.1，来自 `gen-eval-007`
 - 单纯追加 SFT hardcase 未关闭表格 channel gate
 
+## E7 检索上下文结构化（目标 gate 已关闭）
+
+### 目标
+E7 不继续训练模型，而是在检索后、生成前修复 Apollo channel 表格 chunk 的可读性。目标是把 OCR / 清洗后黏连的文本：
+
+```text
+/apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction
+```
+
+增强为稳定的行级结构：
+
+```text
+channel_table_rows:
+- 说明: 感知红绿灯信息 | channel: /apollo/perception/traffic_light
+- 说明: 输入预测障碍物信息 | channel: /apollo/prediction
+```
+
+### 实现
+新增：
+- `core/channel_context.py`
+- `scripts/check_e7_regression_gate.py`
+
+修改：
+- `core/rag.py`
+  - `_format_documents()` 在 prompt context 中追加 Apollo channel 表格结构化行
+  - `answer_with_retrieval()["retrieved_context"]` 也写入同一份增强文本，便于评测产物直接复核模型实际可读上下文
+- `test/test_eval_chunking.py`
+- `test/test_finetuning_tools.py`
+
+触发范围保持保守：
+- 仅处理含 channel 路径的 Apollo / official_doc chunk
+- 原始 chunk 保留不删，只追加 `channel_table_rows`
+- `retrieved_rows` 继续保留原始 chunk，便于检索诊断
+
+### E7 产物
+- generation eval：`results/qwen3_adapter_eval/generation_eval_set-qwen3-4b-e7-context-structured-channel-clean-20260707-003633/`
+- E7 regression gate：`results/qwen3_adapter_eval/generation_eval_set-qwen3-4b-e7-context-structured-channel-clean-20260707-003633/e7_regression_gate.json`
+- behavior eval：`results/finetune_behavior_eval/finetune-behavior-20260707-003819/`
+- E6.1 vs E7 compare：`results/finetune_compare_runs/e6_1_vs_e7/finetune-compare-20260707-003819/`
+
+### E7 结果
+- `gen-eval-007`：通过
+  - 答案包含 `/apollo/perception/traffic_light`
+  - 答案不包含 `/apollo/prediction`
+  - `retrieved_context` 包含 `channel_table_rows`
+  - `retrieved_context` 包含 `说明: 感知红绿灯信息 | channel: /apollo/perception/traffic_light`
+- 完整 10 题 generation eval：
+  - `answered_ratio=1.0`
+  - `context_hit_ratio=1.0`
+  - `evidence_source_hit_ratio=1.0`
+  - `retrieved_row_count=20`
+- behavior eval：
+  - `answer_cites_evidence_ratio=1.0`
+  - `unsupported_claim_risk_ratio=0.0`
+  - `over_refusal_risk_ratio=0.1`
+- E6.1 -> E7 compare：
+  - `answer_contract_risk_ratio`: `0.1 -> 0.0`
+  - `citation_support_risk_ratio`: `0.1 -> 0.0`
+  - `required_term_risk_ratio`: `0.1 -> 0.0`
+  - `forbidden_term_risk_ratio`: `0.1 -> 0.0`
+  - verdict 为 `mixed`，原因是通用分类标签较粗；核心合同风险已关闭
+
+### 剩余风险
+- `gen-eval-004` 仍被当前口径标为一次 over-refusal：它没有编造 AP/ATE 或方向性臆测，但回答偏保守，没有覆盖 reference 的完整指标变化。
+- Apollo 文档的 locator 仍常见 `unknown`，E7 没有处理定位粒度问题。
+- 当前结构化规则是轻量正则增强，适合 Apollo channel 表格；后续如果扩展到更多文档类型，应先补对应 regression 样本。
+
 ### 下一步建议
-E7 不应继续只堆 SFT 样本。优先方向：
-- 在检索后对 Apollo channel 表格 chunk 做结构化重写，把黏连文本转成 `说明 -> channel` 的稳定 key-value 行
-- 对同一 source chunk 内的 channel 表格增加轻量 re-rank / row alignment 逻辑
-- 在生成前加入 answer contract 校验：若问题要求红绿灯 channel 且候选答案命中 forbidden term，回看同段上下文并触发纠错
-- 补一个 `gen-eval-007` 的局部 regression gate，避免每轮都只靠完整 generation_eval_set 才发现问题
+E8 优先处理回答充分性与证据定位，而不是继续围绕 `gen-eval-007` 追加 SFT：
+- 针对 `gen-eval-004` 增强 partial-context 下的数值抽取：能答已检索到的延迟变化，同时清楚标注未检索到的 AP/ATE 指标。
+- 改善 Apollo / paper chunk 的 locator，减少 `unknown` 引用。
+- 若继续做结构化，优先把规则从 Apollo channel 扩展为可配置的 table row alignment，并配套样本级 gate。
 
 ## 使用建议
 - 看当前真实实验能力时，优先参考 `eval/eval_chunking.py` 与 `results/chunking_eval/`

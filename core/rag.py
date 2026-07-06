@@ -1,6 +1,7 @@
 # from langchain_core.prompts.base import format_document
 from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 from core.vector_stores import VectorStoreService
+from core.channel_context import enrich_apollo_channel_context
 from config import settings as config
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.documents import Document
@@ -48,11 +49,19 @@ def _format_documents(documents: list[Document]) -> str:
     for index, doc in enumerate(documents, start=1):
         source_id = doc.metadata.get("source_id", "") or "unknown"
         locator = doc.metadata.get("locator", "") or "unknown"
+        content = enrich_apollo_channel_context(doc.page_content, doc.metadata)
         formatted_blocks.append(
             f"[{index}] source_id={source_id} locator={locator}\n"
-            f"content:\n{doc.page_content}"
+            f"content:\n{content}"
         )
     return "\n\n".join(formatted_blocks)
+
+
+def _format_retrieved_context(documents: list[Document]) -> str:
+    return "\n".join(
+        enrich_apollo_channel_context(doc.page_content, doc.metadata)
+        for doc in documents
+    )
 
 
 class RagService(object):
@@ -139,7 +148,7 @@ class RagService(object):
         generation_rows = scored_rows[:len(documents)]
         return {
             "answer": self.answer_from_documents(question, documents, session_id=session_id),
-            "retrieved_context": "\n".join(doc.page_content for doc in documents),
+            "retrieved_context": _format_retrieved_context(documents),
             "retrieved_rows": generation_rows,
             "retrieval_debug_candidates": scored_rows,
         }
