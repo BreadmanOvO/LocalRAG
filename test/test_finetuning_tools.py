@@ -13,6 +13,8 @@ from scripts import prepare_sft_e3_dataset
 from scripts import prepare_sft_e4_draft
 from scripts import prepare_sft_e4_dataset
 from scripts import prepare_sft_e5_dataset
+from scripts import prepare_sft_e6_dataset
+from scripts import prepare_sft_e6_1_dataset
 from scripts import audit_sft_dataset
 from scripts import check_finetune_env
 from scripts import run_local_qwen3_e0
@@ -415,6 +417,119 @@ class PrepareSftE5DatasetTests(unittest.TestCase):
         self.assertEqual("partial_refuse", row["contrast_output"]["metadata"]["expected_behavior"])
         self.assertIn("不能根据资料确定 AP 或 ATE 是提升还是下降", row["contrast_output"]["output"])
         self.assertIn("paper-030 page=1", row["output"])
+
+
+class PrepareSftE6DatasetTests(unittest.TestCase):
+    def test_build_channel_alignment_row_marks_required_and_forbidden_terms(self):
+        row = prepare_sft_e6_dataset.build_channel_alignment_row(
+            prepare_sft_e6_dataset.CHANNEL_ALIGNMENT_SPECS[0]
+        )
+
+        self.assertEqual("e6-channel-001", row["metadata"]["source_sample_id"])
+        self.assertEqual("e6_table_channel_same_row", row["metadata"]["data_type"])
+        self.assertEqual(["/apollo/perception/traffic_light"], row["metadata"]["required_answer_terms"])
+        self.assertEqual(["/apollo/prediction"], row["metadata"]["forbidden_answer_terms"])
+        self.assertIn("/apollo/perception/traffic_light", row["output"])
+        self.assertNotIn("/apollo/prediction", row["output"])
+        self.assertIn("同一行", row["instruction"])
+        self.assertIn("apollo-doc-008 page=1", row["output"])
+
+    def test_build_e6_train_rows_preserves_e5_rows_and_appends_hardcases(self):
+        e5_row = {
+            "instruction": "old instruction",
+            "input": "问题：q\n\n参考资料：\n[1] source_id=paper-030 locator=page=1\nquote",
+            "output": "answer\n\n引用：\n- paper-030 page=1",
+            "metadata": {
+                "source_sample_id": "e5-pairwise-001-complete",
+                "data_type": "pairwise_complete_context",
+                "dataset_version": "v1.3-e5",
+            },
+        }
+        hardcase = prepare_sft_e6_dataset.build_channel_alignment_row(
+            prepare_sft_e6_dataset.CHANNEL_ALIGNMENT_SPECS[0],
+            dataset_version="v1.3-e6",
+        )
+
+        rows = prepare_sft_e6_dataset.build_e6_train_rows(
+            e5_rows=[e5_row],
+            hardcase_rows=[hardcase],
+            dataset_version="v1.3-e6",
+        )
+
+        self.assertEqual(2, len(rows))
+        self.assertEqual("v1.3-e6", rows[0]["metadata"]["dataset_version"])
+        self.assertEqual("e5_training_mix", rows[0]["metadata"]["e6_source"])
+        self.assertEqual("e6_table_channel_same_row", rows[1]["metadata"]["data_type"])
+
+    def test_summarize_counts_hardcase_and_validation_rows(self):
+        hardcases = prepare_sft_e6_dataset.build_e6_hardcase_rows(dataset_version="v1.3-e6")
+        train_rows = prepare_sft_e6_dataset.build_e6_train_rows(
+            e5_rows=[],
+            hardcase_rows=hardcases,
+            dataset_version="v1.3-e6",
+        )
+        validation_rows = prepare_sft_e6_dataset.build_e6_validation_rows(
+            e5_validation_rows=[
+                {
+                    "instruction": "old instruction",
+                    "input": "问题：q\n\n参考资料：\n[1] source_id=paper-030 locator=page=1\nquote",
+                    "output": "answer\n\n引用：\n- paper-030 page=1",
+                    "metadata": {
+                        "source_sample_id": "train-001",
+                        "data_type": "normal_grounded_qa_validation",
+                        "dataset_version": "v1.3-e5",
+                    },
+                }
+            ],
+            dataset_version="v1.3-e6",
+        )
+
+        summary = prepare_sft_e6_dataset.summarize(
+            train_rows,
+            validation_rows,
+            hardcases,
+            dataset_version="v1.3-e6",
+        )
+
+        self.assertEqual(20, summary["e6_hardcase_count"])
+        self.assertEqual(20, summary["train_count"])
+        self.assertEqual(1, summary["validation_count"])
+        self.assertEqual(16, summary["train_data_type_distribution"]["e6_table_channel_same_row"])
+        self.assertEqual(4, summary["train_data_type_distribution"]["e6_key_value_field_alignment"])
+        self.assertIn("/apollo/perception/traffic_light", summary["e6_required_term_distribution"])
+
+
+class PrepareSftE61DatasetTests(unittest.TestCase):
+    def test_noisy_planning_row_matches_retrieval_chunk_shape(self):
+        row = prepare_sft_e6_1_dataset.build_noisy_channel_alignment_row(
+            prepare_sft_e6_1_dataset.NOISY_CHANNEL_ALIGNMENT_SPECS[0]
+        )
+
+        self.assertEqual("e6-1-noisy-channel-001", row["metadata"]["source_sample_id"])
+        self.assertEqual("e6_1_noisy_table_channel_same_row", row["metadata"]["data_type"])
+        self.assertIn("/apollo/perception/traffic_light输入是 感知红绿灯信息", row["input"])
+        self.assertIn("/apollo/prediction", row["input"])
+        self.assertIn("/apollo/perception/traffic_light", row["output"])
+        self.assertNotIn("/apollo/prediction", row["output"])
+        self.assertIn("OCR 黏连文本", row["instruction"])
+        self.assertEqual(["/apollo/perception/traffic_light"], row["metadata"]["required_answer_terms"])
+        self.assertEqual(["/apollo/prediction"], row["metadata"]["forbidden_answer_terms"])
+
+    def test_e6_1_hardcases_extend_e6_hardcases_with_noisy_slice(self):
+        rows = prepare_sft_e6_1_dataset.build_e6_1_hardcase_rows(dataset_version="v1.3-e6.1")
+
+        self.assertEqual(32, len(rows))
+        self.assertEqual(
+            12,
+            sum(
+                1
+                for row in rows
+                if row["metadata"]["data_type"] == "e6_1_noisy_table_channel_same_row"
+            ),
+        )
+        self.assertTrue(
+            all(row["metadata"]["dataset_version"] == "v1.3-e6.1" for row in rows)
+        )
 
 
 class FinetuneCompareHardeningTests(unittest.TestCase):

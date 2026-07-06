@@ -1,0 +1,132 @@
+{
+  "created_at": "2026-07-06T22:28:26",
+  "train_path": "finetune\\datasets\\localrag_sft_e6.jsonl",
+  "validation_path": "finetune\\datasets\\localrag_sft_e6_validation.jsonl",
+  "eval_set_path": "data\\evaluation\\gold\\eval_set.json",
+  "generation_eval_set_path": "data\\evaluation\\gold\\generation_eval_set.json",
+  "train": {
+    "record_count": 36,
+    "issue_count": 0,
+    "issue_rows": [],
+    "duplicate_source_sample_ids": [],
+    "output_citation_count": 36,
+    "output_citation_ratio": 1.0,
+    "input_source_marker_count": 36,
+    "input_source_marker_ratio": 1.0,
+    "input_locator_marker_count": 36,
+    "input_locator_marker_ratio": 1.0,
+    "instruction_length": {
+      "min": 158,
+      "max": 174,
+      "mean": 166.9,
+      "median": 174.0
+    },
+    "input_length": {
+      "min": 143,
+      "max": 391,
+      "mean": 252,
+      "median": 266.5
+    },
+    "output_length": {
+      "min": 53,
+      "max": 110,
+      "mean": 76.4,
+      "median": 73.5
+    },
+    "doc_type_distribution": {
+      "official_doc": 20,
+      "paper": 14,
+      "standard": 2
+    },
+    "topic_distribution": {
+      "3d_detection": 2,
+      "3d_object_detection": 2,
+      "lidar": 2,
+      "map_construction": 2,
+      "perception": 1,
+      "planning_control": 11,
+      "safety": 2,
+      "self_supervised": 2,
+      "sensor_fusion": 6,
+      "system_architecture": 4,
+      "transformer": 2
+    },
+    "difficulty_distribution": {
+      "easy": 4,
+      "hard": 28,
+      "medium": 4
+    },
+    "data_type_distribution": {
+      "e6_key_value_field_alignment": 4,
+      "e6_table_channel_same_row": 16,
+      "pairwise_complete_context": 8,
+      "pairwise_partial_context_refusal": 8
+    },
+    "dataset_version_distribution": {
+      "v1.3-e6": 36
+    }
+  },
+  "validation": {
+    "record_count": 20,
+    "issue_count": 0,
+    "issue_rows": [],
+    "duplicate_source_sample_ids": [],
+    "output_citation_count": 20,
+    "output_citation_ratio": 1.0,
+    "input_source_marker_count": 20,
+    "input_source_marker_ratio": 1.0,
+    "input_locator_marker_count": 20,
+    "input_locator_marker_ratio": 1.0,
+    "instruction_length": {
+      "min": 77,
+      "max": 77,
+      "mean": 77,
+      "median": 77.0
+    },
+    "input_length": {
+      "min": 163,
+      "max": 936,
+      "mean": 441.9,
+      "median": 408.0
+    },
+    "output_length": {
+      "min": 31,
+      "max": 239,
+      "mean": 139.9,
+      "median": 137.0
+    },
+    "doc_type_distribution": {
+      "official_doc": 8,
+      "paper": 10,
+      "report": 1,
+      "standard": 1
+    },
+    "topic_distribution": {
+      "3d_detection": 2,
+      "lidar": 1,
+      "monocular_3d_detection": 1,
+      "online_mapping": 1,
+      "perception": 2,
+      "planning_control": 4,
+      "safety": 1,
+      "sensor_fusion": 1,
+      "sparse": 1,
+      "system_architecture": 4,
+      "tracking": 1,
+      "world_model": 1
+    },
+    "difficulty_distribution": {
+      "easy": 6,
+      "medium": 14
+    },
+    "data_type_distribution": {
+      "normal_grounded_qa_validation": 20
+    },
+    "dataset_version_distribution": {
+      "v1.3-e6": 20
+    }
+  },
+  "split_overlap_source_sample_ids": [],
+  "eval_set_overlap_source_sample_ids": [],
+  "generation_eval_set_overlap_source_sample_ids": []
+}

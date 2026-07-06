@@ -389,7 +389,97 @@ v1.1 已完成收口，详见 `RAG_md/docs/reports/v1.1-closure-report.md`。
 - E5.1 base -> E5：`mixed_or_regressed`。E5 的 unsupported numeric 与 directional contradiction 均为 `0.0`，剩余 `answer_contract_risk=0.1`、`citation_support_risk=0.1`。
 - E5.1 E4 -> E5：`mixed_with_unresolved_contract_risk`。E5 将 unsupported numeric 与 directional contradiction 从 `0.1` 降到 `0.0`，但仍保留 1 个合同风险样本。
 
-当前结论：E5 证明 pairwise context-contrast 能修复 E4 的核心 topk2 臆测样本 `gen-eval-004`。E5.1 复核后，剩余主风险收敛为 `gen-eval-007`：检索上下文同时包含正确 `/apollo/perception/traffic_light` 和干扰 `/apollo/prediction`，模型仍答成 `/apollo/prediction`。下一步 E6 应优先做表格 / channel 精确抽取与 distractor context 硬化，而不是继续泛化地追 `citation_support_risk`。
+当前结论：E5 证明 pairwise context-contrast 能修复 E4 的核心 topk2 臆测样本 `gen-eval-004`。E5.1 复核后，剩余主风险收敛为 `gen-eval-007`：检索上下文同时包含正确 `/apollo/perception/traffic_light` 和干扰 `/apollo/prediction`，模型仍答成 `/apollo/prediction`。E6/E6.1 已验证“继续追加表格 channel SFT 样本”不足以关闭该 gate，下一步应转向检索上下文结构化、表格行重排或 answer contract 级别后处理，而不是继续单纯加 SFT 样本。
+
+## E6 / E6.1 表格 channel 硬化（训练链路完成，目标 gate 未过）
+
+### 目标
+E6 针对 E5.1 的剩余失败样本 `gen-eval-007`：Apollo 规划模块输入表中，`/apollo/perception/traffic_light` 与 `/apollo/prediction` 相邻出现，模型被后者带偏。
+
+成功标准：
+- `gen-eval-007` 必须包含 `/apollo/perception/traffic_light`
+- `gen-eval-007` 不能输出 `/apollo/prediction`
+- `gen-eval-004` 不能回退到无来源数值或方向性臆测
+
+### E6 第一轮
+新增产物：
+- `scripts/prepare_sft_e6_dataset.py`
+- `finetune/datasets/localrag_sft_e6.jsonl`
+- `finetune/datasets/localrag_sft_e6_validation.jsonl`
+- `results/finetune_data_audit/e6-dataset-summary.json`
+- `results/finetune_data_audit/sft-e6-audit-20260706-222826/`
+- `finetune/llamafactory_configs/localrag_sft_e6_qlora_smoke.yaml`
+- `finetune/llamafactory_configs/localrag_sft_e6_qlora_webui.yaml`
+- `config/runtime_local_qwen3_4b_lora_e6_webui_citation.example.json`
+
+数据设计：
+- 保留 E5 的 16 条 pairwise context-contrast 样本
+- 追加 20 条 Apollo 表格 / channel / key-value hardcase
+- 训练集 36 条，验证集 20 条
+- 数据审计 issue_count 为 0，训练 / 验证 source_sample_id 无重叠，与 generation_eval_set 无 source_sample_id 重叠
+
+训练与评估：
+- smoke：`results/finetune_env/llamafactory_e6_smoke_20260706-222849.out.log`，`train_loss=2.1817`，`eval_loss=1.2151`
+- formal：`results/finetune_env/llamafactory_e6_webui_20260706-223051.out.log`，`train_loss=2.3365`，`eval_loss=1.294`
+- generation eval：`results/qwen3_adapter_eval/generation_eval_set-qwen3-4b-e6-webui-adapter-channel-clean-20260706-223226/`
+- compare：
+  - `results/finetune_compare_runs/base_vs_e6/finetune-compare-20260706-223419/`
+  - `results/finetune_compare_runs/e5_vs_e6/finetune-compare-20260706-223418/`
+  - `results/finetune_compare_runs/e4_vs_e6/finetune-compare-20260706-223419/`
+
+E6 结果：
+- `gen-eval-004` 未回退到无来源数字或方向性臆测
+- `gen-eval-007` 仍输出 `/apollo/prediction`
+- verdict 多为 `over_refuses`，并保留 `answer_contract_risk=0.1`
+
+### E6.1 定向修正
+E6 失败原因分析显示，E6 训练样本里的表格证据过于干净，而真实检索 chunk 是 OCR / 清洗后的黏连文本：
+
+```text
+/apollo/perception/traffic_light输入是 感知红绿灯信息 输入预测障碍物信息 /apollo/prediction
+```
+
+因此 E6.1 增加更接近真实检索 chunk 的 12 条 noisy table/channel 样本。
+
+新增产物：
+- `scripts/prepare_sft_e6_1_dataset.py`
+- `finetune/datasets/localrag_sft_e6_1.jsonl`
+- `finetune/datasets/localrag_sft_e6_1_validation.jsonl`
+- `results/finetune_data_audit/e6_1-dataset-summary.json`
+- `results/finetune_data_audit/sft-e6_1-audit-20260706-230440/`
+- `finetune/llamafactory_configs/localrag_sft_e6_1_qlora_smoke.yaml`
+- `finetune/llamafactory_configs/localrag_sft_e6_1_qlora_webui.yaml`
+- `config/runtime_local_qwen3_4b_lora_e6_1_webui_citation.example.json`
+
+数据设计：
+- 保留 E5 的 16 条 pairwise context-contrast 样本
+- 保留 E6 的 20 条表格 / channel / key-value hardcase
+- 追加 12 条 noisy retrieval chunk hardcase
+- 训练集 48 条，验证集 20 条
+- 数据审计 issue_count 为 0，训练 / 验证 source_sample_id 无重叠，与 generation_eval_set 无 source_sample_id 重叠
+
+训练与评估：
+- smoke：`results/finetune_env/llamafactory_e6_1_smoke_20260706-230503.out.log`，`train_loss=2.2467`，`eval_loss=1.226`
+- formal：`results/finetune_env/llamafactory_e6_1_webui_20260706-230640.out.log`，`train_loss=1.9282`，`eval_loss=1.1002`
+- generation eval：`results/qwen3_adapter_eval/generation_eval_set-qwen3-4b-e6-1-webui-adapter-channel-clean-20260706-230815/`
+- compare：
+  - `results/finetune_compare_runs/base_vs_e6_1/finetune-compare-20260706-231013/`
+  - `results/finetune_compare_runs/e5_vs_e6_1/finetune-compare-20260706-231014/`
+  - `results/finetune_compare_runs/e6_vs_e6_1/finetune-compare-20260706-231014/`
+  - `results/finetune_compare_runs/e4_vs_e6_1/finetune-compare-20260706-231047/`
+
+E6.1 结果：
+- `gen-eval-004` 继续没有无来源数字或方向性臆测，但被当前口径标为一次 over-refusal，因为它只回答“当前资料无法确定检测指标变化”
+- `gen-eval-007` 仍输出 `/apollo/prediction`
+- `answer_contract_risk` 仍为 0.1，来自 `gen-eval-007`
+- 单纯追加 SFT hardcase 未关闭表格 channel gate
+
+### 下一步建议
+E7 不应继续只堆 SFT 样本。优先方向：
+- 在检索后对 Apollo channel 表格 chunk 做结构化重写，把黏连文本转成 `说明 -> channel` 的稳定 key-value 行
+- 对同一 source chunk 内的 channel 表格增加轻量 re-rank / row alignment 逻辑
+- 在生成前加入 answer contract 校验：若问题要求红绿灯 channel 且候选答案命中 forbidden term，回看同段上下文并触发纠错
+- 补一个 `gen-eval-007` 的局部 regression gate，避免每轮都只靠完整 generation_eval_set 才发现问题
 
 ## 使用建议
 - 看当前真实实验能力时，优先参考 `eval/eval_chunking.py` 与 `results/chunking_eval/`
