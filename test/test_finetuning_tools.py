@@ -16,6 +16,7 @@ from scripts import prepare_sft_e5_dataset
 from scripts import prepare_sft_e6_dataset
 from scripts import prepare_sft_e6_1_dataset
 from scripts import check_e7_regression_gate
+from scripts import check_finetune_exit_gate
 from scripts import audit_sft_dataset
 from scripts import check_finetune_env
 from scripts import run_local_qwen3_e0
@@ -696,3 +697,105 @@ class E7RegressionGateTests(unittest.TestCase):
         self.assertFalse(result["passed"])
         self.assertEqual(["/apollo/perception/traffic_light"], result["missing_required_answer_terms"])
         self.assertEqual(["/apollo/prediction"], result["present_forbidden_answer_terms"])
+
+
+class FinetuneExitGateTests(unittest.TestCase):
+    def test_exit_gate_stops_training_when_only_over_refusal_remains(self):
+        predictions = [
+            {
+                "id": "gen-eval-004",
+                "reference_answer": "MFA 延迟降低，但还有 AP/ATE 指标变化。",
+                "answer": "资料只说明 4096 queries 会降低 MFA 延迟，无法确认检测指标变化。引用：paper-030 unknown",
+                "retrieved_context": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                "retrieved_rows": [
+                    {
+                        "source_id": "paper-030",
+                        "locator": "page=2",
+                        "content": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                    }
+                ],
+                "evidence": [
+                    {
+                        "quote": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                        "source_id": "paper-030",
+                        "locator": "page=2",
+                    }
+                ],
+                "metadata": {"expected_behavior": "answer"},
+            },
+            {
+                "id": "gen-eval-007",
+                "reference_answer": "对应的 channel 是 /apollo/perception/traffic_light。",
+                "answer": "感知红绿灯信息对应 /apollo/perception/traffic_light。引用：apollo-doc-008 unknown",
+                "retrieved_context": (
+                    "channel_table_rows:\n"
+                    "- 说明: 感知红绿灯信息 | channel: /apollo/perception/traffic_light"
+                ),
+                "retrieved_rows": [
+                    {
+                        "source_id": "apollo-doc-008",
+                        "locator": "page=1",
+                        "content": "/apollo/perception/traffic_light输入是 感知红绿灯信息",
+                    }
+                ],
+                "evidence": [
+                    {
+                        "quote": "/apollo/perception/traffic_light 输入是感知红绿灯信息。",
+                        "source_id": "apollo-doc-008",
+                        "locator": "page=1",
+                    }
+                ],
+                "metadata": {
+                    "expected_behavior": "answer",
+                    "required_answer_terms": ["/apollo/perception/traffic_light"],
+                    "forbidden_answer_terms": ["/apollo/prediction"],
+                },
+            },
+        ]
+
+        result = check_finetune_exit_gate.evaluate_finetune_exit_gate(predictions)
+
+        self.assertTrue(result["training_exit_pass"])
+        self.assertFalse(result["product_goal_pass"])
+        self.assertEqual("stop_training_fix_engineering", result["decision"])
+        self.assertEqual(["gen-eval-004"], result["risk_ids"]["over_refusal_risk"])
+        self.assertNotIn("answer_contract_risk", result["risk_ids"])
+
+    def test_exit_gate_blocks_exit_when_answer_contract_risk_remains(self):
+        predictions = [
+            {
+                "id": "gen-eval-007",
+                "reference_answer": "对应的 channel 是 /apollo/perception/traffic_light。",
+                "answer": "感知红绿灯信息对应 /apollo/prediction。引用：apollo-doc-008 page=1",
+                "retrieved_context": (
+                    "channel_table_rows:\n"
+                    "- 说明: 感知红绿灯信息 | channel: /apollo/perception/traffic_light\n"
+                    "- 说明: 输入预测障碍物信息 | channel: /apollo/prediction"
+                ),
+                "retrieved_rows": [
+                    {
+                        "source_id": "apollo-doc-008",
+                        "locator": "page=1",
+                        "content": "/apollo/perception/traffic_light输入是 感知红绿灯信息",
+                    }
+                ],
+                "evidence": [
+                    {
+                        "quote": "/apollo/perception/traffic_light 输入是感知红绿灯信息。",
+                        "source_id": "apollo-doc-008",
+                        "locator": "page=1",
+                    }
+                ],
+                "metadata": {
+                    "expected_behavior": "answer",
+                    "required_answer_terms": ["/apollo/perception/traffic_light"],
+                    "forbidden_answer_terms": ["/apollo/prediction"],
+                },
+            }
+        ]
+
+        result = check_finetune_exit_gate.evaluate_finetune_exit_gate(predictions)
+
+        self.assertFalse(result["training_exit_pass"])
+        self.assertEqual("review_before_next_targeted_training", result["decision"])
+        self.assertEqual(["gen-eval-007"], result["risk_ids"]["answer_contract_risk"])

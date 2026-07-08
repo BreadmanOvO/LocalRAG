@@ -1,0 +1,84 @@
+{
+  "pipeline": "finetune_exit_gate",
+  "predictions_path": "results\\qwen3_adapter_eval\\generation_eval_set-qwen3-4b-e7-context-structured-channel-clean-20260707-003633\\predictions.json",
+  "behavior_summary_path": "results\\finetune_behavior_eval\\finetune-behavior-20260707-003819\\summary.json",
+  "compare_summary_path": "results\\finetune_compare_runs\\e6_1_vs_e7\\finetune-compare-20260707-003819\\summary.json",
+  "result": {
+    "training_exit_pass": true,
+    "product_goal_pass": false,
+    "decision": "stop_training_fix_engineering",
+    "sample_count": 10,
+    "metrics": {
+      "evidence_source_hit_ratio": 1.0,
+      "over_refusal_risk_ratio": 0.1,
+      "max_over_refusal_risk_ratio": 0.0,
+      "answer_contract_risk_ratio": 0.0,
+      "citation_support_risk_ratio": 0.0,
+      "unsupported_claim_risk_ratio": 0.0,
+      "required_term_risk_ratio": 0.0,
+      "forbidden_term_risk_ratio": 0.0
+    },
+    "risk_ids": {
+      "over_refusal_risk": [
+        "gen-eval-004"
+      ]
+    },
+    "external_evidence": {
+      "behavior_summary": {
+        "sample_count": 10,
+        "answered_count": 10,
+        "answered_ratio": 1.0,
+        "refusal_count": 3,
+        "refusal_ratio": 0.3,
+        "evidence_source_hit_count": 10,
+        "evidence_source_hit_ratio": 1.0,
+        "evidence_locator_hit_count": 0,
+        "evidence_locator_hit_ratio": 0.0,
+        "answer_cites_evidence_count": 10,
+        "answer_cites_evidence_ratio": 1.0,
+        "unsupported_claim_risk_count": 0,
+        "unsupported_claim_risk_ratio": 0.0,
+        "over_refusal_risk_count": 1,
+        "over_refusal_risk_ratio": 0.1,
+        "correct_refusal_count": 2,
+        "correct_refusal_ratio": 0.2
+      },
+      "compare_candidate_summary": {
+        "sample_count": 10,
+        "answered_count": 10,
+        "answered_ratio": 1.0,
+        "refusal_count": 3,
+        "refusal_ratio": 0.3,
+        "evidence_source_hit_count": 10,
+        "evidence_source_hit_ratio": 1.0,
+        "evidence_locator_hit_count": 0,
+        "evidence_locator_hit_ratio": 0.0,
+        "answer_cites_evidence_count": 10,
+        "answer_cites_evidence_ratio": 1.0,
+        "unsupported_claim_risk_count": 0,
+        "unsupported_claim_risk_ratio": 0.0,
+        "over_refusal_risk_count": 1,
+        "over_refusal_risk_ratio": 0.1,
+        "correct_refusal_count": 2,
+        "correct_refusal_ratio": 0.2,
+        "reference_coverage_risk_count": 5,
+        "reference_coverage_risk_ratio": 0.5,
+        "unsupported_numeric_claim_risk_count": 0,
+        "unsupported_numeric_claim_risk_ratio": 0.0,
+        "directional_contradiction_risk_count": 0,
+        "directional_contradiction_risk_ratio": 0.0,
+        "required_term_risk_count": 0,
+        "required_term_risk_ratio": 0.0,
+        "forbidden_term_risk_count": 0,
+        "forbidden_term_risk_ratio": 0.0,
+        "answer_contract_risk_count": 0,
+        "answer_contract_risk_ratio": 0.0,
+        "citation_support_risk_count": 0,
+        "citation_support_risk_ratio": 0.0,
+        "reference_coverage_ratio": 0.524
+      },
+      "compare_verdict": "mixed"
+    },
+    "recommended_next_step": "停止新增 SFT 训练，优先处理回答充分性、检索上下文或引用 locator。"
+  }
+}

@@ -547,6 +547,61 @@ E8 优先处理回答充分性与证据定位，而不是继续围绕 `gen-eval-
 - 改善 Apollo / paper chunk 的 locator，减少 `unknown` 引用。
 - 若继续做结构化，优先把规则从 Apollo channel 扩展为可配置的 table row alignment，并配套样本级 gate。
 
+## E8 微调退出门禁（停止盲目追加 SFT）
+
+### 背景
+E4-E7 之后，剩余问题不应继续默认归因给“模型还没微调够”。E7 已把当前最关键的答案合同风险清零，继续追加 SFT 样本存在进入循环的风险。
+
+E8 先做一个退出门禁，而不是启动新训练。门禁把目标拆成两层：
+
+- training exit：安全性与答案合同风险是否已经达到停止训练条件
+- product goal：回答充分性、locator、检索上下文是否达到产品验收条件
+
+### 新增产物
+- `scripts/check_finetune_exit_gate.py`
+- `results/finetune_exit_gate/e7-exit-gate-20260708.json`
+
+### E7 exit gate 结果
+基于 E7 正式产物：
+- predictions：`results/qwen3_adapter_eval/generation_eval_set-qwen3-4b-e7-context-structured-channel-clean-20260707-003633/predictions.json`
+- behavior：`results/finetune_behavior_eval/finetune-behavior-20260707-003819/summary.json`
+- compare：`results/finetune_compare_runs/e6_1_vs_e7/finetune-compare-20260707-003819/summary.json`
+
+门禁结果：
+
+```text
+training_exit_pass=true
+product_goal_pass=false
+decision=stop_training_fix_engineering
+```
+
+关键指标：
+
+| 指标 | E7 |
+| --- | ---: |
+| evidence_source_hit_ratio | 1.0 |
+| unsupported_claim_risk_ratio | 0.0 |
+| answer_contract_risk_ratio | 0.0 |
+| citation_support_risk_ratio | 0.0 |
+| required_term_risk_ratio | 0.0 |
+| forbidden_term_risk_ratio | 0.0 |
+| over_refusal_risk_ratio | 0.1 |
+
+风险样本：
+
+| 风险 | 样本 | 处理方向 |
+| --- | --- | --- |
+| over_refusal_risk | `gen-eval-004` | 工程修复：partial-context answer contract / 检索上下文补全 / locator 改善 |
+
+### 判定
+当前微调循环应停止。E8 不进入新增 SFT 训练，而是进入工程侧收口：
+
+1. 修 `gen-eval-004`：在 partial context 下回答已支持的延迟变化，同时明确 AP/ATE 不足。
+2. 调整评测器：避免引用 locator 里的页码数字被误判为 unsupported numeric claim。
+3. 改善 locator：减少 `unknown`，让引用粒度更可复核。
+
+只有当 exit gate 再次出现 `answer_contract_risk`、`required_term_risk`、`forbidden_term_risk` 或 `unsupported_claim_risk`，并且归因确认是模型能力问题时，才允许下一轮定向微调。
+
 ## 使用建议
 - 看当前真实实验能力时，优先参考 `eval/eval_chunking.py` 与 `results/chunking_eval/`
 - 看 baseline / judge 合同时，优先参考 `eval/eval_ragas.py`、`eval/eval_llm_judge.py` 与对应测试
