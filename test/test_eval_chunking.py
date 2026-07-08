@@ -246,6 +246,32 @@ class RagEvaluationHelperTests(unittest.TestCase):
     def test_retrieval_debug_top_k_is_at_least_generation_top_k(self):
         self.assertGreaterEqual(config.retrieval_debug_top_k, config.similarity_top_k)
 
+    def test_answer_from_documents_uses_explicit_documents_without_retrieving_again(self):
+        service = object.__new__(rag.RagService)
+        service.chain = mock.Mock()
+        service.chain.invoke.return_value = "Explicit answer"
+        service.retrieve_documents = mock.Mock()
+        documents = [
+            Document(
+                page_content="Explicit Alpha context.",
+                metadata={"source_id": "doc-1", "locator": "page=1"},
+            )
+        ]
+
+        answer = rag.RagService.answer_from_documents(
+            service,
+            "What is Alpha?",
+            documents,
+            session_id="eval-session-sample-1",
+        )
+
+        self.assertEqual("Explicit answer", answer)
+        service.retrieve_documents.assert_not_called()
+        payload = service.chain.invoke.call_args.args[0]
+        self.assertEqual("What is Alpha?", payload["question"])
+        self.assertIn("Explicit Alpha context.", payload["context"])
+        self.assertIn("[1] source_id=doc-1 locator=page=1", payload["context"])
+
     def test_answer_with_retrieval_returns_scored_rows_and_debug_candidates(self):
         self.assertTrue(hasattr(rag.RagService, "answer_with_retrieval"))
 
@@ -312,6 +338,72 @@ class RagEvaluationHelperTests(unittest.TestCase):
             generation_documents,
             session_id="eval-session-sample-1",
         )
+
+    def test_answer_with_retrieval_adds_same_source_debug_context_only(self):
+        service = object.__new__(rag.RagService)
+        first_paper_chunk = Document(
+            page_content="using 4096 size queries reduce the latency of MFA by 76.",
+            metadata={
+                "source_id": "paper-030",
+                "doc_type": "paper",
+                "locator": "",
+                "chunk_strategy": "semantic",
+            },
+        )
+        distracting_chunk = Document(
+            page_content="the query positions to reduce optimization difficulty.",
+            metadata={
+                "source_id": "paper-080",
+                "doc_type": "paper",
+                "locator": "",
+                "chunk_strategy": "semantic",
+            },
+        )
+        same_source_supplement = Document(
+            page_content="4% (21.01ms to 4.96ms). However, the performance is degraded.",
+            metadata={
+                "source_id": "paper-030",
+                "doc_type": "paper",
+                "locator": "",
+                "chunk_strategy": "semantic",
+            },
+        )
+        other_source_debug = Document(
+            page_content="Other source text should stay out of generation context.",
+            metadata={
+                "source_id": "paper-024",
+                "doc_type": "paper",
+                "locator": "",
+                "chunk_strategy": "semantic",
+            },
+        )
+        generation_documents = [first_paper_chunk, distracting_chunk]
+        debug_scored_documents = [
+            (first_paper_chunk, 0.49),
+            (distracting_chunk, 0.42),
+            (same_source_supplement, 0.40),
+            (other_source_debug, 0.39),
+        ]
+
+        service.retrieve_documents = mock.Mock(return_value=generation_documents)
+        service.retrieve_scored_documents = mock.Mock(return_value=debug_scored_documents)
+        service.answer_from_documents = mock.Mock(return_value="MFA latency answer")
+
+        with mock.patch.object(config, "same_source_context_extension_per_source", 1):
+            result = rag.RagService.answer_with_retrieval(
+                service,
+                "What changes with 4096 queries?",
+                session_id="eval-session-sample-004",
+            )
+
+        self.assertEqual("MFA latency answer", result["answer"])
+        self.assertIn("21.01ms to 4.96ms", result["retrieved_context"])
+        self.assertNotIn("Other source text", result["retrieved_context"])
+        self.assertEqual(3, len(result["retrieved_rows"]))
+        self.assertEqual("paper-030", result["retrieved_rows"][2]["source_id"])
+        self.assertEqual(3, result["retrieved_rows"][2]["rank"])
+        passed_documents = service.answer_from_documents.call_args.args[1]
+        self.assertEqual([first_paper_chunk, distracting_chunk, same_source_supplement], passed_documents)
 
 
 class VectorStoreServiceScoredRetrievalTests(unittest.TestCase):

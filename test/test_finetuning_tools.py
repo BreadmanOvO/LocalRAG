@@ -535,6 +535,66 @@ class PrepareSftE61DatasetTests(unittest.TestCase):
 
 
 class FinetuneCompareHardeningTests(unittest.TestCase):
+    def test_partial_context_answer_is_not_counted_as_over_refusal(self):
+        row = {
+            "id": "gen-eval-004",
+            "reference_answer": "MFA 延迟降低，但还有 AP/ATE 指标变化。",
+            "answer": (
+                "资料只说明 4096 queries 会让 MFA 延迟降低 76.4%，"
+                "但无法确认 AP 或 ATE 的具体变化。引用：paper-030 page=2"
+            ),
+            "retrieved_context": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+            "retrieved_rows": [
+                {
+                    "source_id": "paper-030",
+                    "locator": "page=2",
+                    "content": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                }
+            ],
+            "evidence": [
+                {
+                    "quote": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                    "source_id": "paper-030",
+                    "locator": "page=2",
+                }
+            ],
+            "metadata": {"expected_behavior": "answer"},
+        }
+
+        behavior = eval_finetune_behavior.evaluate_row(row)
+
+        self.assertTrue(behavior["refusal"])
+        self.assertTrue(behavior["substantive_answer"])
+        self.assertFalse(behavior["over_refusal_risk"])
+
+    def test_citation_locator_numbers_are_not_unsupported_numeric_claims(self):
+        row = {
+            "id": "gen-eval-004",
+            "reference_answer": "MFA 延迟降低。",
+            "answer": "资料说明 4096 queries 会让 MFA 延迟降低 76.4%。引用：paper-030 page=2",
+            "retrieved_context": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+            "retrieved_rows": [
+                {
+                    "source_id": "paper-030",
+                    "locator": "page=2",
+                    "content": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                }
+            ],
+            "evidence": [
+                {
+                    "quote": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                    "source_id": "paper-030",
+                    "locator": "page=2",
+                }
+            ],
+            "metadata": {"expected_behavior": "answer"},
+        }
+
+        hardening = eval_finetune_compare.analyze_answer_hardening(row)
+
+        self.assertEqual([], hardening["unsupported_answer_numbers"])
+        self.assertFalse(hardening["unsupported_numeric_claim_risk"])
+
     def test_correct_refusal_does_not_turn_reference_coverage_into_citation_risk(self):
         row = {
             "id": "gen-eval-006",
@@ -700,7 +760,7 @@ class E7RegressionGateTests(unittest.TestCase):
 
 
 class FinetuneExitGateTests(unittest.TestCase):
-    def test_exit_gate_stops_training_when_only_over_refusal_remains(self):
+    def test_exit_gate_meets_product_goal_when_partial_context_answer_is_sufficient(self):
         predictions = [
             {
                 "id": "gen-eval-004",
@@ -756,10 +816,80 @@ class FinetuneExitGateTests(unittest.TestCase):
         result = check_finetune_exit_gate.evaluate_finetune_exit_gate(predictions)
 
         self.assertTrue(result["training_exit_pass"])
+        self.assertTrue(result["product_goal_pass"])
+        self.assertEqual("training_goal_met", result["decision"])
+        self.assertEqual([], result["risk_ids"]["over_refusal_risk"])
+        self.assertNotIn("answer_contract_risk", result["risk_ids"])
+
+    def test_exit_gate_does_not_let_stale_behavior_summary_override_predictions(self):
+        predictions = [
+            {
+                "id": "gen-eval-004",
+                "reference_answer": "MFA 延迟降低。",
+                "answer": "资料说明 4096 queries 会让 MFA 延迟降低 76.4%。引用：paper-030 page=2",
+                "retrieved_context": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                "retrieved_rows": [
+                    {
+                        "source_id": "paper-030",
+                        "locator": "page=2",
+                        "content": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                    }
+                ],
+                "evidence": [
+                    {
+                        "quote": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                        "source_id": "paper-030",
+                        "locator": "page=2",
+                    }
+                ],
+                "metadata": {"expected_behavior": "answer"},
+            }
+        ]
+        stale_behavior_summary = {
+            "evidence_source_hit_ratio": 1.0,
+            "over_refusal_risk_ratio": 0.1,
+        }
+
+        result = check_finetune_exit_gate.evaluate_finetune_exit_gate(
+            predictions,
+            behavior_summary=stale_behavior_summary,
+        )
+
+        self.assertTrue(result["product_goal_pass"])
+        self.assertEqual(0.0, result["metrics"]["over_refusal_risk_ratio"])
+        self.assertEqual(stale_behavior_summary, result["external_evidence"]["provided_behavior_summary"])
+
+    def test_exit_gate_stops_training_when_answer_refuses_entire_supported_question(self):
+        predictions = [
+            {
+                "id": "gen-eval-004",
+                "reference_answer": "MFA 延迟降低。",
+                "answer": "资料没有提到 MFA 延迟变化，因此无法确定。引用：paper-030 unknown",
+                "retrieved_context": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                "retrieved_rows": [
+                    {
+                        "source_id": "paper-030",
+                        "locator": "page=2",
+                        "content": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                    }
+                ],
+                "evidence": [
+                    {
+                        "quote": "using 4096 size queries reduce the latency of MFA by 76.4%.",
+                        "source_id": "paper-030",
+                        "locator": "page=2",
+                    }
+                ],
+                "metadata": {"expected_behavior": "answer"},
+            }
+        ]
+
+        result = check_finetune_exit_gate.evaluate_finetune_exit_gate(predictions)
+
+        self.assertTrue(result["training_exit_pass"])
         self.assertFalse(result["product_goal_pass"])
         self.assertEqual("stop_training_fix_engineering", result["decision"])
         self.assertEqual(["gen-eval-004"], result["risk_ids"]["over_refusal_risk"])
-        self.assertNotIn("answer_contract_risk", result["risk_ids"])
 
     def test_exit_gate_blocks_exit_when_answer_contract_risk_remains(self):
         predictions = [

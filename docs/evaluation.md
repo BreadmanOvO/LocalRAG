@@ -602,6 +602,71 @@ decision=stop_training_fix_engineering
 
 只有当 exit gate 再次出现 `answer_contract_risk`、`required_term_risk`、`forbidden_term_risk` 或 `unsupported_claim_risk`，并且归因确认是模型能力问题时，才允许下一轮定向微调。
 
+## E9 微调退出闭环
+
+### 背景
+E8 把剩余问题归因为工程收口，而不是继续追加 SFT。E9 直接处理 E8 列出的三个循环风险：
+
+1. `gen-eval-004` 的证据在 debug 候选里，但没有进入生成上下文。
+2. partial-context 答案被粗粒度 refusal 规则误判为 over-refusal。
+3. 引用 locator 中的页码数字会被误判为 unsupported numeric claim。
+
+### 新增与修改
+- `core/rag.py`
+  - `answer_from_documents()` 改为真正使用传入 documents，不再在 chain 内二次检索覆盖显式上下文。
+  - `answer_with_retrieval()` 从 `retrieval_debug_candidates` 中为已命中 `source_id` 追加有限同源 chunk。
+- `config/settings.py`
+  - 新增 `same_source_context_extension_per_source=1`。
+- `eval/eval_finetune_behavior.py`
+  - 新增 `substantive_answer` 判断；partial-context 中“回答已支持部分 + 说明不足部分”不再算整题 over-refusal。
+- `eval/eval_finetune_compare.py`
+  - unsupported numeric claim 只检查 `引用：` 之前的回答正文，避免 `page=2` locator 误伤。
+- `scripts/check_finetune_exit_gate.py`
+  - gate 决策统一基于当前 predictions 现场复算；旧 summary 只作为 external evidence 留档。
+
+### 新增产物
+- `results/finetune_exit_gate/e9-evaluator-context-gate-20260708.json`
+- `results/qwen3_adapter_eval/localrag-e9-gen-eval-004-qwen3-4b-e9-same-source-context-gen004-20260708-231828/`
+
+### E9 gate 结果
+
+```text
+training_exit_pass=true
+product_goal_pass=true
+decision=training_goal_met
+```
+
+关键指标：
+
+| 指标 | E9 |
+| --- | ---: |
+| evidence_source_hit_ratio | 1.0 |
+| unsupported_claim_risk_ratio | 0.0 |
+| answer_contract_risk_ratio | 0.0 |
+| citation_support_risk_ratio | 0.0 |
+| required_term_risk_ratio | 0.0 |
+| forbidden_term_risk_ratio | 0.0 |
+| over_refusal_risk_ratio | 0.0 |
+
+### gen-eval-004 验证
+使用本地 Qwen3-4B + E6.1 adapter，只跑 `gen-eval-004`：
+
+```text
+similarity_top_k=2
+retrieval_debug_top_k=4
+retrieved_row_count=3
+evidence_source_hit_ratio=1.0
+```
+
+E9 后，同源补充 chunk 把 `21.01ms to 4.96ms` 与 `performance is degraded` 送入生成上下文。模型输出从“只说延迟、检测指标无法确定”改为“延迟降低约 76%，检测指标会下降，但具体 AP/ATE 降幅资料未明确说明”。
+
+### 判定
+当前微调目标已经闭环，应停止 E1-E9 这条 SFT 循环。后续如果继续改进，应进入产品工程任务：
+
+1. 引用筛选：避免答案引用未实际支撑回答的干扰 source，例如 `paper-080`。
+2. locator 改善：减少 `unknown`，提高证据复核粒度。
+3. 更完整的 chunk 邻接策略：如果要恢复 AP/ATE 具体数值，应从 chunking / retrieval adjacency 入手，而不是追加训练样本。
+
 ## 使用建议
 - 看当前真实实验能力时，优先参考 `eval/eval_chunking.py` 与 `results/chunking_eval/`
 - 看 baseline / judge 合同时，优先参考 `eval/eval_ragas.py`、`eval/eval_llm_judge.py` 与对应测试

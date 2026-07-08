@@ -112,6 +112,7 @@ _STOP_TERMS = {
 }
 _ANSWER_UP_MARKERS = ("提升", "提高", "上升", "增加", "improve", "improved", "increase", "increased")
 _REFERENCE_DOWN_MARKERS = ("下降", "降低", "降到", "退化", "drops", "drop", "degraded", "worse")
+_CITATION_MARKERS = ("引用：", "引用:")
 
 
 def _normalize_number(value: str) -> str:
@@ -127,6 +128,18 @@ def _numbers(text: str) -> list[str]:
             values.append(normalized)
             seen.add(normalized)
     return values
+
+
+def _answer_claim_text(answer: str) -> str:
+    claim_text = str(answer or "")
+    marker_indexes = [
+        index
+        for marker in _CITATION_MARKERS
+        if (index := claim_text.find(marker)) >= 0
+    ]
+    if marker_indexes:
+        return claim_text[: min(marker_indexes)]
+    return claim_text
 
 
 def _number_supported(number: str, support_numbers: list[str]) -> bool:
@@ -214,7 +227,7 @@ def analyze_answer_hardening(row: dict[str, Any]) -> dict[str, Any]:
         for num in _numbers(str(item.get('source_id', ''))):
             source_id_numbers.add(num)
     unsupported_answer_numbers = [
-        number for number in _numbers(answer)
+        number for number in _numbers(_answer_claim_text(answer))
         if not _number_supported(number, support_numbers) and number not in source_id_numbers
     ]
 

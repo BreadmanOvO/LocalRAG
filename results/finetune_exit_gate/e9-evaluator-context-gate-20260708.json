@@ -1,0 +1,68 @@
+{
+  "pipeline": "finetune_exit_gate",
+  "predictions_path": "results\\qwen3_adapter_eval\\generation_eval_set-qwen3-4b-e7-context-structured-channel-clean-20260707-003633\\predictions.json",
+  "behavior_summary_path": "results\\finetune_behavior_eval\\finetune-behavior-20260707-003819\\summary.json",
+  "compare_summary_path": null,
+  "result": {
+    "training_exit_pass": true,
+    "product_goal_pass": true,
+    "decision": "training_goal_met",
+    "sample_count": 10,
+    "metrics": {
+      "evidence_source_hit_ratio": 1.0,
+      "over_refusal_risk_ratio": 0.0,
+      "max_over_refusal_risk_ratio": 0.0,
+      "answer_contract_risk_ratio": 0.0,
+      "citation_support_risk_ratio": 0.0,
+      "unsupported_claim_risk_ratio": 0.0,
+      "required_term_risk_ratio": 0.0,
+      "forbidden_term_risk_ratio": 0.0
+    },
+    "risk_ids": {
+      "over_refusal_risk": []
+    },
+    "external_evidence": {
+      "computed_behavior_summary": {
+        "sample_count": 10,
+        "answered_count": 10,
+        "answered_ratio": 1.0,
+        "refusal_count": 3,
+        "refusal_ratio": 0.3,
+        "evidence_source_hit_count": 10,
+        "evidence_source_hit_ratio": 1.0,
+        "evidence_locator_hit_count": 0,
+        "evidence_locator_hit_ratio": 0.0,
+        "answer_cites_evidence_count": 10,
+        "answer_cites_evidence_ratio": 1.0,
+        "unsupported_claim_risk_count": 0,
+        "unsupported_claim_risk_ratio": 0.0,
+        "over_refusal_risk_count": 0,
+        "over_refusal_risk_ratio": 0.0,
+        "correct_refusal_count": 2,
+        "correct_refusal_ratio": 0.2
+      },
+      "provided_behavior_summary": {
+        "sample_count": 10,
+        "answered_count": 10,
+        "answered_ratio": 1.0,
+        "refusal_count": 3,
+        "refusal_ratio": 0.3,
+        "evidence_source_hit_count": 10,
+        "evidence_source_hit_ratio": 1.0,
+        "evidence_locator_hit_count": 0,
+        "evidence_locator_hit_ratio": 0.0,
+        "answer_cites_evidence_count": 10,
+        "answer_cites_evidence_ratio": 1.0,
+        "unsupported_claim_risk_count": 0,
+        "unsupported_claim_risk_ratio": 0.0,
+        "over_refusal_risk_count": 1,
+        "over_refusal_risk_ratio": 0.1,
+        "correct_refusal_count": 2,
+        "correct_refusal_ratio": 0.2
+      },
+      "compare_candidate_summary": {},
+      "compare_verdict": null
+    },
+    "recommended_next_step": "停止当前微调循环，进入验收或工程化收口。"
+  }
+}

@@ -1,5 +1,3 @@
-# from langchain_core.prompts.base import format_document
-from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 from core.vector_stores import VectorStoreService
 from core.channel_context import enrich_apollo_channel_context
 from config import settings as config
@@ -40,6 +38,72 @@ def _normalize_scored_rows(scored_documents: list[tuple[Document, float]]) -> li
         _normalize_retrieved_row(doc, score=score, rank=index)
         for index, (doc, score) in enumerate(scored_documents, start=1)
     ]
+
+
+def _document_key(doc: Document) -> tuple[str, str, str, str]:
+    return (
+        str(doc.metadata.get("source_id", "")),
+        str(doc.metadata.get("locator", "")),
+        str(doc.metadata.get("chunk_strategy", "")),
+        doc.page_content,
+    )
+
+
+def _extend_documents_with_same_source_candidates(
+    documents: list[Document],
+    scored_documents: list[tuple[Document, float]],
+) -> list[Document]:
+    per_source_limit = int(getattr(config, "same_source_context_extension_per_source", 0) or 0)
+    if not documents or not scored_documents or per_source_limit <= 0:
+        return list(documents)
+
+    target_sources = {
+        str(doc.metadata.get("source_id", ""))
+        for doc in documents
+        if doc.metadata.get("source_id")
+    }
+    if not target_sources:
+        return list(documents)
+
+    expanded = list(documents)
+    seen_keys = {_document_key(doc) for doc in documents}
+    supplemental_counts: dict[str, int] = {}
+
+    for doc, _score in scored_documents:
+        source_id = str(doc.metadata.get("source_id", ""))
+        if source_id not in target_sources:
+            continue
+        key = _document_key(doc)
+        if key in seen_keys:
+            continue
+        if supplemental_counts.get(source_id, 0) >= per_source_limit:
+            continue
+
+        expanded.append(doc)
+        seen_keys.add(key)
+        supplemental_counts[source_id] = supplemental_counts.get(source_id, 0) + 1
+
+    return expanded
+
+
+def _rows_for_documents(
+    documents: list[Document],
+    scored_documents: list[tuple[Document, float]],
+) -> list[dict]:
+    scored_rows_by_key: dict[tuple[str, str, str, str], dict] = {}
+    for index, (doc, score) in enumerate(scored_documents, start=1):
+        scored_rows_by_key.setdefault(
+            _document_key(doc),
+            _normalize_retrieved_row(doc, score=score, rank=index),
+        )
+
+    rows = []
+    for index, doc in enumerate(documents, start=1):
+        row = scored_rows_by_key.get(_document_key(doc))
+        if row is None:
+            row = _normalize_retrieved_row(doc, rank=index)
+        rows.append(dict(row))
+    return rows
 
 
 def _format_documents(documents: list[Document]) -> str:
@@ -86,24 +150,7 @@ class RagService(object):
 
     def __get_chain(self):
         '''获取最终的执行链'''
-        retriever = self.vector_service.get_retriever()
-
-        def format_for_retriever(value: dict) -> str:
-            return value["question"]
-
-        def format_for_prompt_template(value: dict) -> dict:
-            new_dict = {}
-            new_dict["question"] = value["question"]["question"]
-            new_dict["chat_history"] = value["question"]["chat_history"]
-            new_dict["context"] = value["context"]
-            return new_dict
-
-        chain = (
-            {
-                "question": RunnablePassthrough(),
-                "context": RunnableLambda(format_for_retriever) | retriever | RunnableLambda(_format_documents)
-            } | RunnableLambda(format_for_prompt_template) | self.prompt_template | self.chat_model | StrOutputParser()
-        )
+        chain = self.prompt_template | self.chat_model | StrOutputParser()
 
         chain_with_history = RunnableWithMessageHistory(
             chain,
@@ -144,11 +191,12 @@ class RagService(object):
     def answer_with_retrieval(self, question: str, session_id: str = "eval-session") -> dict:
         documents = self.retrieve_documents(question)
         scored_documents = self.retrieve_scored_documents(question)
+        generation_documents = _extend_documents_with_same_source_candidates(documents, scored_documents)
         scored_rows = _normalize_scored_rows(scored_documents)
-        generation_rows = scored_rows[:len(documents)]
+        generation_rows = _rows_for_documents(generation_documents, scored_documents)
         return {
-            "answer": self.answer_from_documents(question, documents, session_id=session_id),
-            "retrieved_context": _format_retrieved_context(documents),
+            "answer": self.answer_from_documents(question, generation_documents, session_id=session_id),
+            "retrieved_context": _format_retrieved_context(generation_documents),
             "retrieved_rows": generation_rows,
             "retrieval_debug_candidates": scored_rows,
         }

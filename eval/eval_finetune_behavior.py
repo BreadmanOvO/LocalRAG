@@ -31,6 +31,20 @@ REFUSAL_MARKERS = (
     "not provided",
 )
 
+_CITATION_MARKER = "引用："
+_CONTRAST_SPLIT_RE = r"[。；;.!?！？\n]|但|但是|不过|然而"
+_SUBSTANTIVE_SIGNAL_RE = r"\d|%|/|降低|减少|下降|提升|提高|上升|升到|降到|对应|属于|包括|包含|输出|输入|使用|采用|解决|说明|表明"
+_GENERIC_ANSWER_PHRASES = (
+    "根据参考资料",
+    "根据资料",
+    "参考资料",
+    "资料中",
+    "资料",
+    "显示",
+    "可知",
+    "只",
+)
+
 
 def load_predictions(path: Path) -> list[dict[str, Any]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
@@ -50,6 +64,55 @@ def _normalize_locator(locator: str | None) -> str:
 def is_refusal(answer: str) -> bool:
     normalized = answer.lower()
     return any(marker.lower() in normalized for marker in REFUSAL_MARKERS)
+
+
+def _answer_body(answer: str) -> str:
+    return str(answer or "").split(_CITATION_MARKER, 1)[0]
+
+
+def _strip_generic_answer_phrases(text: str) -> str:
+    value = str(text or "")
+    for phrase in _GENERIC_ANSWER_PHRASES:
+        value = value.replace(phrase, "")
+    return value.strip(" \t\r\n，,：:。；;.!?！？-")
+
+
+def _has_substantive_signal(text: str) -> bool:
+    import re
+
+    return bool(re.search(_SUBSTANTIVE_SIGNAL_RE, text))
+
+
+def _has_substantive_clause(text: str) -> bool:
+    cleaned = _strip_generic_answer_phrases(text)
+    return len(cleaned) >= 4 and _has_substantive_signal(cleaned)
+
+
+def has_substantive_answer(answer: str) -> bool:
+    import re
+
+    body = _answer_body(answer)
+    if not body.strip():
+        return False
+
+    clauses = [
+        clause.strip()
+        for clause in re.split(_CONTRAST_SPLIT_RE, body)
+        if clause.strip()
+    ]
+    for clause in clauses:
+        if not is_refusal(clause) and _has_substantive_clause(clause):
+            return True
+
+    normalized = body.lower()
+    for marker in REFUSAL_MARKERS:
+        marker_index = normalized.find(marker.lower())
+        if marker_index <= 0:
+            continue
+        if _has_substantive_clause(body[:marker_index]):
+            return True
+
+    return False
 
 
 def has_evidence_source_hit(row: dict[str, Any]) -> bool:
@@ -93,6 +156,7 @@ def evaluate_row(row: dict[str, Any]) -> dict[str, Any]:
     answer = row.get("answer", "").strip()
     answered = bool(answer)
     refused = is_refusal(answer) if answered else False
+    substantive_answer = has_substantive_answer(answer) if answered else False
     source_hit = has_evidence_source_hit(row)
     locator_hit = has_evidence_locator_hit(row)
     cites_evidence = answer_mentions_evidence(row) if answered else False
@@ -102,11 +166,12 @@ def evaluate_row(row: dict[str, Any]) -> dict[str, Any]:
         "id": row.get("id", ""),
         "answered": answered,
         "refusal": refused,
+        "substantive_answer": substantive_answer,
         "evidence_source_hit": source_hit,
         "evidence_locator_hit": locator_hit,
         "answer_cites_evidence": cites_evidence,
         "unsupported_claim_risk": answered and not refused and not source_hit,
-        "over_refusal_risk": refused and source_hit and not expects_refusal,
+        "over_refusal_risk": refused and not substantive_answer and source_hit and not expects_refusal,
         "correct_refusal": refused and (not source_hit or expects_refusal),
     }
 

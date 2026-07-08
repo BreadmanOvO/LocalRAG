@@ -61,14 +61,14 @@ def evaluate_finetune_exit_gate(
     computed_behavior_summary = summarize_rows(behavior_rows)
     computed_hardening_summary = summarize_hardening_rows(hardening_rows)
 
-    behavior_summary = behavior_summary or computed_behavior_summary
+    external_behavior_summary = behavior_summary or {}
     compare_summary = compare_summary or {}
     candidate_summary = compare_summary.get("candidate_summary", {})
     if not isinstance(candidate_summary, dict):
         candidate_summary = {}
 
-    # Prefer metrics computed from the exact prediction file; compare summaries
-    # are included as external evidence when available.
+    # Gate decisions must use the exact prediction file being checked. Older
+    # behavior/compare summaries are retained only as external evidence.
     merged_summary = {
         **computed_behavior_summary,
         **computed_hardening_summary,
@@ -86,16 +86,8 @@ def evaluate_finetune_exit_gate(
     }
     over_refusal_ids = _risk_ids(behavior_rows, "over_refusal_risk")
 
-    source_hit_ratio = _metric(
-        behavior_summary,
-        "evidence_source_hit_ratio",
-        _metric(merged_summary, "evidence_source_hit_ratio"),
-    )
-    over_refusal_ratio = _metric(
-        behavior_summary,
-        "over_refusal_risk_ratio",
-        _metric(merged_summary, "over_refusal_risk_ratio"),
-    )
+    source_hit_ratio = _metric(merged_summary, "evidence_source_hit_ratio")
+    over_refusal_ratio = _metric(merged_summary, "over_refusal_risk_ratio")
     training_exit_pass = not active_safety_failures and source_hit_ratio >= min_evidence_source_hit_ratio
     product_goal_pass = training_exit_pass and over_refusal_ratio <= max_over_refusal_risk_ratio
 
@@ -128,7 +120,8 @@ def evaluate_finetune_exit_gate(
             "over_refusal_risk": over_refusal_ids,
         },
         "external_evidence": {
-            "behavior_summary": behavior_summary,
+            "computed_behavior_summary": computed_behavior_summary,
+            "provided_behavior_summary": external_behavior_summary,
             "compare_candidate_summary": candidate_summary,
             "compare_verdict": compare_summary.get("verdict"),
         },

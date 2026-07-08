@@ -1,0 +1,21 @@
+[
+  {
+    "id": "gen-eval-004",
+    "question": "使用稀疏聚合时，把 Top-K 查询数从 All 减少到 4096，会让 MFA 延迟和检测指标发生什么变化？",
+    "reference_answer": "MFA 延迟从 21.01ms 降到 4.96ms，降低 76.4%；AP 从 56.9% 降到 54.0%，ATE 从 0.325 升到 0.367，说明延迟显著降低但回归相关指标下降更明显。",
+    "evidence": [
+      {
+        "quote": "using 4096 size queries reduce the latency of MFA by 76.4% (21.01ms to 4.96ms) ... the performance drops on True Positive metrics (e.g., ATE, AOE, AVE) are more significant than AP.",
+        "source_id": "paper-030",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_object_detection",
+      "doc_type": "paper",
+      "generation_category": "hallucination_prone",
+      "expected_behavior": "answer"
+    }
+  }
+]

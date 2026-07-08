@@ -1,0 +1,91 @@
+[
+  {
+    "id": "gen-eval-004",
+    "question": "使用稀疏聚合时，把 Top-K 查询数从 All 减少到 4096，会让 MFA 延迟和检测指标发生什么变化？",
+    "reference_answer": "MFA 延迟从 21.01ms 降到 4.96ms，降低 76.4%；AP 从 56.9% 降到 54.0%，ATE 从 0.325 升到 0.367，说明延迟显著降低但回归相关指标下降更明显。",
+    "answer": "使用稀疏聚合时，将 Top-K 查询数从 All 减少到 4096，会显著降低 MFA 的延迟。具体来说，使用 4096 大小的查询可以将 MFA 的延迟减少 76%。此外，由于 BEV 特征图在 top-k 抽样后变得稀疏和离散，检测指标会有所下降。然而，具体的下降幅度并未在资料中明确说明。\n\n引用：\n- paper-030 unknown\n- paper-080 unknown",
+    "retrieved_context": "ing a small set of features for MFA significantly reduces\nthe computation of Multi-modal Deformable Cross Atten-\ntion (MDCA). More specifically, using 4096 size queries\nreduce the latency of MFA by 76.\nthe query positions to reduce\noptimization difficulty.\n4% (21. 01ms to 4. 96ms)\non 256 × 256 size BEV grid. However, as the BEV fea-\nture map becomes sparse and discretized after top-k sam-\npling, the performance is degraded. We find that the per-\nformance drops on True Positive metrics (e.",
+    "retrieved_rows": [
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "ing a small set of features for MFA significantly reduces\nthe computation of Multi-modal Deformable Cross Atten-\ntion (MDCA). More specifically, using 4096 size queries\nreduce the latency of MFA by 76.",
+        "score": 0.4927059906601432,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-080",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "the query positions to reduce\noptimization difficulty.",
+        "score": 0.42263913094060146,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "4% (21. 01ms to 4. 96ms)\non 256 × 256 size BEV grid. However, as the BEV fea-\nture map becomes sparse and discretized after top-k sam-\npling, the performance is degraded. We find that the per-\nformance drops on True Positive metrics (e.",
+        "score": 0.40426188273124486,
+        "rank": 3
+      }
+    ],
+    "retrieval_debug_candidates": [
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "ing a small set of features for MFA significantly reduces\nthe computation of Multi-modal Deformable Cross Atten-\ntion (MDCA). More specifically, using 4096 size queries\nreduce the latency of MFA by 76.",
+        "score": 0.4927059906601432,
+        "rank": 1
+      },
+      {
+        "source_id": "paper-080",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "the query positions to reduce\noptimization difficulty.",
+        "score": 0.42263913094060146,
+        "rank": 2
+      },
+      {
+        "source_id": "paper-030",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": "4% (21. 01ms to 4. 96ms)\non 256 × 256 size BEV grid. However, as the BEV fea-\nture map becomes sparse and discretized after top-k sam-\npling, the performance is degraded. We find that the per-\nformance drops on True Positive metrics (e.",
+        "score": 0.40426188273124486,
+        "rank": 3
+      },
+      {
+        "source_id": "paper-024",
+        "doc_type": "paper",
+        "locator": "",
+        "chunk_strategy": "semantic",
+        "content": ",\nfrom 137 milliseconds to merely 64 milliseconds).",
+        "score": 0.3938957810462934,
+        "rank": 4
+      }
+    ],
+    "evidence": [
+      {
+        "quote": "using 4096 size queries reduce the latency of MFA by 76.4% (21.01ms to 4.96ms) ... the performance drops on True Positive metrics (e.g., ATE, AOE, AVE) are more significant than AP.",
+        "source_id": "paper-030",
+        "locator": "page=2"
+      }
+    ],
+    "metadata": {
+      "difficulty": "hard",
+      "topic": "3d_object_detection",
+      "doc_type": "paper",
+      "generation_category": "hallucination_prone",
+      "expected_behavior": "answer"
+    },
+    "error": null
+  }
+]
