@@ -1,32 +1,36 @@
 from langchain_core.tools import tool
-from agent.tools.rag_search import get_last_retrieval_result
+
+from agent.memory import SessionRetrievalMemory
+from utils.session import validate_session_id
 
 
-@tool
-def show_sources() -> str:
-    """展示最近一次检索命中的知识来源。
+def build_show_sources_tool(session_id: str, retrieval_memory: SessionRetrievalMemory):
+    """Build a source display tool bound to one agent session."""
+    bound_session_id = validate_session_id(session_id)
 
-    Returns:
-        格式化的来源列表，包含 source_id、locator 和内容摘要
-    """
-    result = get_last_retrieval_result()
-    documents = result.get("documents", [])
+    @tool("show_sources")
+    def show_sources() -> str:
+        """展示当前会话最近一次检索命中的知识来源。"""
+        snapshot = retrieval_memory.recall(bound_session_id)
+        if snapshot is None or not snapshot.documents:
+            return "当前会话暂无检索记录，请先提问。"
 
-    if not documents:
-        return "暂无检索记录，请先提问。"
+        lines = [f"最近检索问题：{snapshot.query}", "以下是当前会话命中的来源："]
+        for index, document in enumerate(snapshot.documents, start=1):
+            source_id = document.get("source_id", "未知来源")
+            locator = document.get("locator", "") or "unknown"
+            content = str(document.get("content", ""))
+            summary = content[:100] + "..." if len(content) > 100 else content
 
-    lines = ["以下是最近一次检索的来源："]
-    for i, doc in enumerate(documents, start=1):
-        source_id = doc.get("source_id", "未知来源")
-        locator = doc.get("locator", "")
-        content = doc.get("content", "")
-        # 截取内容摘要（前100字符）
-        summary = content[:100] + "..." if len(content) > 100 else content
+            lines.extend(
+                [
+                    f"\n【来源 {index}】",
+                    f"source_id: {source_id}",
+                    f"locator: {locator}",
+                    f"摘要: {summary}",
+                ]
+            )
 
-        lines.append(f"\n【来源 {i}】")
-        lines.append(f"source_id: {source_id}")
-        if locator:
-            lines.append(f"locator: {locator}")
-        lines.append(f"摘要: {summary}")
+        return "\n".join(lines)
 
-    return "\n".join(lines)
+    return show_sources

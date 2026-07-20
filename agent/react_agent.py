@@ -1,9 +1,12 @@
 from langchain.agents import create_agent
+from langgraph.checkpoint.memory import InMemorySaver
+
+from agent.memory import SessionRetrievalMemory
+from agent.tools import build_rag_search_tool, build_show_sources_tool, clarify_question
 from config.runtime_keys import load_runtime_config
 from config.provider_factory import build_chat_model
 from utils.path_tools import get_abs_path
-
-from agent.tools import rag_search, show_sources, clarify_question
+from utils.session import validate_session_id
 
 
 def load_agent_system_prompt() -> str:
@@ -14,30 +17,40 @@ def load_agent_system_prompt() -> str:
 
 
 class ReactAgent:
-    def __init__(self):
-        runtime_config = load_runtime_config()
+    def __init__(self, session_id: str, *, chat_model=None, rag_service=None, checkpointer=None):
+        self.session_id = validate_session_id(session_id)
+        self.retrieval_memory = SessionRetrievalMemory()
 
-        self.chat_model = build_chat_model(runtime_config, temperature=0.7)
+        if chat_model is None:
+            runtime_config = load_runtime_config()
+            chat_model = build_chat_model(runtime_config, temperature=0.7)
+        self.chat_model = chat_model
 
-        self.tools = [rag_search, show_sources, clarify_question]
+        self.tools = [
+            build_rag_search_tool(self.session_id, self.retrieval_memory, rag_service=rag_service),
+            build_show_sources_tool(self.session_id, self.retrieval_memory),
+            clarify_question,
+        ]
 
-        # 加载系统提示词
         system_prompt = load_agent_system_prompt()
-
-        # 使用现代 create_agent API 创建 Agent
         self.agent_graph = create_agent(
             model=self.chat_model,
             tools=self.tools,
             system_prompt=system_prompt,
+            checkpointer=checkpointer or InMemorySaver(),
         )
+
+    def _graph_config(self) -> dict:
+        return {"configurable": {"thread_id": self.session_id}}
 
     def execute(self, query: str) -> str:
         """执行单次问答"""
-        result = self.agent_graph.invoke({"messages": [("user", query)]})
-        # 从结果中提取最终回复
+        result = self.agent_graph.invoke(
+            {"messages": [("user", query)]},
+            config=self._graph_config(),
+        )
         messages = result.get("messages", [])
         if messages:
-            # 获取最后一条 AI 消息
             for msg in reversed(messages):
                 if hasattr(msg, "content") and msg.type == "ai":
                     return msg.content
@@ -46,20 +59,23 @@ class ReactAgent:
     def execute_stream(self, query: str):
         """流式执行问答，逐步返回结果"""
         try:
-            for chunk in self.agent_graph.stream({"messages": [("user", query)]}):
-                # 处理不同类型的更新
-                for node_name, node_output in chunk.items():
+            for chunk in self.agent_graph.stream(
+                {"messages": [("user", query)]},
+                config=self._graph_config(),
+                stream_mode="updates",
+            ):
+                for _node_name, node_output in chunk.items():
                     if "messages" in node_output:
                         for msg in node_output["messages"]:
-                            if hasattr(msg, "content") and msg.content:
-                                # 根据消息类型添加标签
-                                if msg.type == "ai":
-                                    if hasattr(msg, "tool_calls") and msg.tool_calls:
-                                        yield f"[思考] {msg.content}\n"
-                                    else:
-                                        yield msg.content
-                                elif msg.type == "tool":
-                                    yield f"[观察] {msg.content}\n"
+                            if msg.type == "ai":
+                                tool_calls = getattr(msg, "tool_calls", []) or []
+                                if tool_calls:
+                                    for tool_call in tool_calls:
+                                        yield f"[工具] {tool_call.get('name', 'unknown')}\n"
+                                elif getattr(msg, "content", None):
+                                    yield msg.content
+                            elif msg.type == "tool":
+                                tool_name = getattr(msg, "name", None) or "unknown"
+                                yield f"[工具结果] {tool_name} 已完成\n"
         except Exception:
-            # 流式失败时回退到同步执行
-            yield self.execute(query)
+            yield "抱歉，处理过程中出现错误，请重试。"

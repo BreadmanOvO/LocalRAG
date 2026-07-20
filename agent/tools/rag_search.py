@@ -1,37 +1,35 @@
+from __future__ import annotations
+
 from langchain_core.tools import tool
+
+from agent.memory import SessionRetrievalMemory
 from core.rag import RagService
-
-# 全局缓存最近一次检索结果
-_last_retrieval_result: dict = {
-    "documents": [],
-    "query": "",
-}
+from utils.session import validate_session_id
 
 
-@tool
-def rag_search(query: str) -> str:
-    """从自动驾驶知识库检索相关内容并生成回答。
+def build_rag_search_tool(
+    session_id: str,
+    retrieval_memory: SessionRetrievalMemory,
+    rag_service: RagService | None = None,
+):
+    """Build a RAG search tool bound to one agent session."""
+    bound_session_id = validate_session_id(session_id)
+    service = rag_service
 
-    Args:
-        query: 用户的问题或检索关键词
+    @tool("rag_search")
+    def rag_search(query: str) -> str:
+        """从自动驾驶知识库检索相关内容并生成有引用的回答。"""
+        nonlocal service
+        if service is None:
+            service = RagService()
 
-    Returns:
-        基于知识库内容生成的回答
-    """
-    global _last_retrieval_result
+        result = service.answer_with_retrieval(query, session_id=bound_session_id)
+        documents = result.get("retrieved_rows", [])
+        retrieval_memory.remember(
+            bound_session_id,
+            query,
+            documents if isinstance(documents, list) else [],
+        )
+        return result.get("answer", "抱歉，未能找到相关内容。")
 
-    rag_service = RagService()
-    result = rag_service.answer_with_retrieval(query, session_id="agent-session")
-
-    # 缓存检索结果供 show_sources 使用
-    _last_retrieval_result = {
-        "documents": result.get("retrieved_rows", []),
-        "query": query,
-    }
-
-    return result.get("answer", "抱歉，未能找到相关内容。")
-
-
-def get_last_retrieval_result() -> dict:
-    """获取最近一次检索结果，供其他工具使用。"""
-    return _last_retrieval_result
+    return rag_search

@@ -9,11 +9,14 @@ st.divider()
 if "message" not in st.session_state:
     st.session_state["message"] = [{"role": "assistant", "content": "你好，我是自动驾驶领域的问答助手，有什么可以帮助你？"}]
 
-if "agent" not in st.session_state:
-    st.session_state["agent"] = ReactAgent()
-
 if "session_id" not in st.session_state:
     st.session_state["session_id"] = str(uuid.uuid4())
+
+if (
+    "agent" not in st.session_state
+    or getattr(st.session_state["agent"], "session_id", None) != st.session_state["session_id"]
+):
+    st.session_state["agent"] = ReactAgent(session_id=st.session_state["session_id"])
 
 for message in st.session_state["message"]:
     st.chat_message(message["role"]).write(message["content"])

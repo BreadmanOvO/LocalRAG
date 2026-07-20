@@ -47,7 +47,9 @@ LocalRAG/
 ├── app_qa.py                  # 问答入口（Streamlit）
 ├── app_file_uploader.py       # 文件上传入库入口
 ├── agent/
-│   └── react_agent.py         # ReAct Agent（3 工具：rag_search / show_sources / clarify_question）
+│   ├── react_agent.py         # Session-aware Agent 入口
+│   ├── memory/                # Agent 短期检索记忆
+│   └── tools/                 # rag_search / show_sources / clarify_question
 ├── core/
 │   ├── rag.py                 # RAG 服务核心
 │   ├── knowledge_base.py      # 知识库入库与 chunk 写入
@@ -149,6 +151,5 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 | v1.0 | 评估基线（Gold Set + baseline runner + judge 骨架） | 已完成 |
 | v1.1 | 数据层（文档采集、chunk、metadata、formal judge） | 已完成 |
 | v1.2 | 检索层（hybrid retrieval + reranker + semantic chunking） | 已完成 |
-| v1.3 | 数据扩充（源文档 41→100 篇）+ 评测集重建（eval 100 题 + train 203 题） | 已完成 |
-| E4 | SFT 数据链补齐（v1.3-e4 数据集 + QLoRA 训练 + topk2 硬化评测） | 已完成训练，门禁未过 |
-| E5 | pairwise context-contrast（完整上下文 / 部分上下文对照） | 已完成训练与 topk2 评估，修复 E4 核心样本，但整体仍需 E6 收口 |
+| v1.3 | 数据扩充与评测重建 + Qwen3-4B 微调 E1-E9 闭环 | 已完成 |
+| v1.4 | Agent + Memory 研究助手 | 进行中（M1 会话隔离已完成） |
