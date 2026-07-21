@@ -1,12 +1,18 @@
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
 
-from agent.memory import SessionRetrievalMemory
-from agent.tools import build_rag_search_tool, build_show_sources_tool, clarify_question
+from agent.memory import SessionRetrievalMemory, TaskMemoryPolicy, TaskMemoryStore
+from agent.tools import (
+    build_rag_search_tool,
+    build_show_sources_tool,
+    build_show_task_memory_tool,
+    build_update_task_memory_tool,
+    clarify_question,
+)
 from config.runtime_keys import load_runtime_config
 from config.provider_factory import build_chat_model
 from utils.path_tools import get_abs_path
-from utils.session import validate_session_id
+from utils.session import validate_session_id, validate_task_id
 
 
 def load_agent_system_prompt() -> str:
@@ -17,9 +23,23 @@ def load_agent_system_prompt() -> str:
 
 
 class ReactAgent:
-    def __init__(self, session_id: str, *, chat_model=None, rag_service=None, checkpointer=None):
+    def __init__(
+        self,
+        session_id: str,
+        *,
+        task_id: str | None = None,
+        task_memory_store: TaskMemoryStore | None = None,
+        task_memory_enabled: bool = True,
+        chat_model=None,
+        rag_service=None,
+        checkpointer=None,
+    ):
         self.session_id = validate_session_id(session_id)
+        self.task_id = validate_task_id(task_id or session_id)
         self.retrieval_memory = SessionRetrievalMemory()
+        self.task_memory_store = task_memory_store or TaskMemoryStore()
+        self.task_memory_policy = TaskMemoryPolicy(enabled=task_memory_enabled)
+        self.task_memory_store.ensure_task(self.task_id)
 
         if chat_model is None:
             runtime_config = load_runtime_config()
@@ -27,8 +47,25 @@ class ReactAgent:
         self.chat_model = chat_model
 
         self.tools = [
-            build_rag_search_tool(self.session_id, self.retrieval_memory, rag_service=rag_service),
+            build_rag_search_tool(
+                self.session_id,
+                self.retrieval_memory,
+                rag_service=rag_service,
+                task_id=self.task_id,
+                task_memory_store=self.task_memory_store,
+                task_memory_policy=self.task_memory_policy,
+            ),
             build_show_sources_tool(self.session_id, self.retrieval_memory),
+            build_show_task_memory_tool(
+                self.task_id,
+                self.task_memory_store,
+                self.task_memory_policy,
+            ),
+            build_update_task_memory_tool(
+                self.task_id,
+                self.task_memory_store,
+                self.task_memory_policy,
+            ),
             clarify_question,
         ]
 
@@ -42,6 +79,16 @@ class ReactAgent:
 
     def _graph_config(self) -> dict:
         return {"configurable": {"thread_id": self.session_id}}
+
+    def get_task_memory(self):
+        return self.task_memory_store.get_task(self.task_id)
+
+    def set_task_memory_enabled(self, enabled: bool) -> None:
+        self.task_memory_policy.enabled = bool(enabled)
+
+    def clear_task_memory(self) -> None:
+        self.task_memory_store.clear_task(self.task_id)
+        self.task_memory_store.ensure_task(self.task_id)
 
     def execute(self, query: str) -> str:
         """执行单次问答"""

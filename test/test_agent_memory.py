@@ -14,7 +14,7 @@ from agent.memory import SessionRetrievalMemory
 from agent.tools.rag_search import build_rag_search_tool
 from agent.tools.show_sources import build_show_sources_tool
 from core.chat_history import FileChatMessageHistory
-from utils.session import validate_session_id
+from utils.session import validate_session_id, validate_task_id
 
 
 class RecordingChatModel(BaseChatModel):
@@ -44,6 +44,11 @@ class SessionIdValidationTests(unittest.TestCase):
             with self.subTest(session_id=session_id):
                 with self.assertRaises(ValueError):
                     validate_session_id(session_id)
+
+    def test_validate_task_id_uses_same_safe_runtime_format(self):
+        self.assertEqual("task.v1-4", validate_task_id(" task.v1-4 "))
+        with self.assertRaises(ValueError):
+            validate_task_id("../task")
 
 
 class FileChatMessageHistoryTests(unittest.TestCase):
@@ -120,6 +125,8 @@ class ReactAgentSessionTests(unittest.TestCase):
         chat_model = RecordingChatModel()
         agent = react_agent.ReactAgent(
             "session-a",
+            task_id="task-a",
+            task_memory_store=mock.Mock(),
             chat_model=chat_model,
             rag_service=mock.Mock(),
         )
@@ -142,14 +149,23 @@ class ReactAgentSessionTests(unittest.TestCase):
         ):
             agent = react_agent.ReactAgent(
                 "session-a",
+                task_id="task-a",
+                task_memory_store=mock.Mock(),
                 chat_model=object(),
                 rag_service=mock.Mock(),
                 checkpointer=fake_checkpointer,
             )
 
         self.assertEqual("session-a", agent.session_id)
+        self.assertEqual("task-a", agent.task_id)
         self.assertEqual(
-            ["rag_search", "show_sources", "clarify_question"],
+            [
+                "rag_search",
+                "show_sources",
+                "show_task_memory",
+                "update_task_memory",
+                "clarify_question",
+            ],
             [tool.name for tool in agent.tools],
         )
         self.assertIs(fake_checkpointer, create_agent.call_args.kwargs["checkpointer"])

@@ -26,6 +26,7 @@ Thumbs.db
 # Local runtime data (project-specific)
 chroma_db/
 chat_history/
+agent_memory/
 md5.txt
 
 # Local Streamlit cache/config
