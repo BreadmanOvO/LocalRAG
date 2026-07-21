@@ -57,9 +57,41 @@ class TaskMemoryStoreTests(unittest.TestCase):
             store.update_task("task-b", finding="keep me")
 
             store.clear_task("task-a")
+            cleared = store.get_task("task-a")
+            retained = store.get_task("task-b")
 
-            self.assertTrue(store.get_task("task-a").is_empty)
-            self.assertEqual(("keep me",), store.get_task("task-b").findings)
+        self.assertTrue(cleared.is_empty)
+        self.assertEqual(("keep me",), retained.findings)
+
+    def test_replace_and_remove_item_support_ui_corrections(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            store = self._store(temp_dir)
+            store.update_task(
+                "task-a",
+                topic="Original topic",
+                finding="Original finding",
+                evidence_gap="Remove this gap",
+            )
+
+            store.set_topic("task-a", "Corrected topic")
+            store.replace_item(
+                "task-a",
+                "finding",
+                "Original finding",
+                "Corrected finding",
+            )
+            store.remove_item("task-a", "evidence_gap", "Remove this gap")
+            snapshot = store.get_task("task-a")
+
+        self.assertEqual("Corrected topic", snapshot.topic)
+        self.assertEqual(("Corrected finding",), snapshot.findings)
+        self.assertEqual((), snapshot.evidence_gaps)
+
+    def test_replace_item_requires_non_empty_new_value(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            store = self._store(temp_dir)
+            with self.assertRaises(ValueError):
+                store.replace_item("task-a", "finding", "old", "")
 
 
 class TaskMemoryToolTests(unittest.TestCase):

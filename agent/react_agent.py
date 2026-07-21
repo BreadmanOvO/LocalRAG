@@ -1,7 +1,10 @@
+import time
+
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
 
 from agent.memory import SessionRetrievalMemory, TaskMemoryPolicy, TaskMemoryStore
+from agent.observability import AgentEvent
 from agent.tools import (
     build_rag_search_tool,
     build_compare_sources_tool,
@@ -105,6 +108,31 @@ class ReactAgent:
         self.task_memory_store.clear_task(self.task_id)
         self.task_memory_store.ensure_task(self.task_id)
 
+    def get_retrieval_snapshot(self):
+        return self.retrieval_memory.recall(self.session_id)
+
+    def replace_task_memory_entry(
+        self,
+        category: str,
+        old_value: str,
+        new_value: str,
+    ) -> None:
+        if category == "topic":
+            self.task_memory_store.set_topic(self.task_id, new_value)
+            return
+        self.task_memory_store.replace_item(
+            self.task_id,
+            category,
+            old_value,
+            new_value,
+        )
+
+    def delete_task_memory_entry(self, category: str, value: str) -> None:
+        if category == "topic":
+            self.task_memory_store.set_topic(self.task_id, "")
+            return
+        self.task_memory_store.remove_item(self.task_id, category, value)
+
     def execute(self, query: str) -> str:
         """执行单次问答"""
         result = self.agent_graph.invoke(
@@ -119,7 +147,18 @@ class ReactAgent:
         return "抱歉，处理过程中出现错误。"
 
     def execute_stream(self, query: str):
-        """流式执行问答，逐步返回结果"""
+        """保留 M4 runner 使用的文本流协议。"""
+        for event in self.execute_events(query):
+            if event.kind == "tool_started":
+                yield f"[工具] {event.tool_name}\n"
+            elif event.kind == "tool_completed":
+                yield f"[工具结果] {event.tool_name} 已完成\n"
+            elif event.kind in {"answer_delta", "error"}:
+                yield event.content
+
+    def execute_events(self, query: str):
+        """流式执行问答，仅公开可展示的结构化运行事件。"""
+        started_at = time.perf_counter()
         try:
             for chunk in self.agent_graph.stream(
                 {"messages": [("user", query)]},
@@ -133,11 +172,40 @@ class ReactAgent:
                                 tool_calls = getattr(msg, "tool_calls", []) or []
                                 if tool_calls:
                                     for tool_call in tool_calls:
-                                        yield f"[工具] {tool_call.get('name', 'unknown')}\n"
+                                        arguments = tool_call.get("args") or {}
+                                        if not isinstance(arguments, dict):
+                                            arguments = {"value": str(arguments)}
+                                        yield AgentEvent(
+                                            kind="tool_started",
+                                            tool_name=tool_call.get("name", "unknown"),
+                                            call_id=str(tool_call.get("id") or ""),
+                                            arguments=arguments,
+                                            status="running",
+                                            elapsed_ms=int(
+                                                (time.perf_counter() - started_at) * 1000
+                                            ),
+                                        )
                                 elif getattr(msg, "content", None):
-                                    yield msg.content
+                                    yield AgentEvent(
+                                        kind="answer_delta",
+                                        content=str(msg.content),
+                                        status="streaming",
+                                        elapsed_ms=int((time.perf_counter() - started_at) * 1000),
+                                    )
                             elif msg.type == "tool":
                                 tool_name = getattr(msg, "name", None) or "unknown"
-                                yield f"[工具结果] {tool_name} 已完成\n"
+                                status = getattr(msg, "status", None) or "success"
+                                yield AgentEvent(
+                                    kind="tool_completed",
+                                    tool_name=tool_name,
+                                    call_id=str(getattr(msg, "tool_call_id", None) or ""),
+                                    status=str(status),
+                                    elapsed_ms=int((time.perf_counter() - started_at) * 1000),
+                                )
         except Exception:
-            yield "抱歉，处理过程中出现错误，请重试。"
+            yield AgentEvent(
+                kind="error",
+                content="抱歉，处理过程中出现错误，请重试。",
+                status="error",
+                elapsed_ms=int((time.perf_counter() - started_at) * 1000),
+            )

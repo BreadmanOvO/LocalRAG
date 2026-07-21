@@ -193,6 +193,64 @@ class TaskMemoryStore:
                 (now, task_id),
             )
 
+    def remove_item(self, task_id: str, category: str, value: str) -> None:
+        task_id = validate_task_id(task_id)
+        if category not in _ITEM_CATEGORIES:
+            raise ValueError(f"unsupported task memory category: {category}")
+        value = _clean_memory_value(value, category)
+        if not value:
+            return
+
+        with self._lock, self._connect() as connection:
+            cursor = connection.execute(
+                "DELETE FROM task_memory_items WHERE task_id = ? AND category = ? AND value = ?",
+                (task_id, category, value),
+            )
+            if cursor.rowcount:
+                connection.execute(
+                    "UPDATE tasks SET updated_at = ? WHERE task_id = ?",
+                    (_utc_now(), task_id),
+                )
+
+    def replace_item(
+        self,
+        task_id: str,
+        category: str,
+        old_value: str,
+        new_value: str,
+        *,
+        source: str = "ui_correction",
+    ) -> None:
+        task_id = validate_task_id(task_id)
+        if category not in _ITEM_CATEGORIES:
+            raise ValueError(f"unsupported task memory category: {category}")
+        old_value = _clean_memory_value(old_value, category)
+        new_value = _clean_memory_value(new_value, category)
+        source = _clean_memory_value(source, "source")
+        if not new_value:
+            raise ValueError("new_value must not be empty")
+
+        self.ensure_task(task_id)
+        now = _utc_now()
+        with self._lock, self._connect() as connection:
+            if old_value:
+                connection.execute(
+                    "DELETE FROM task_memory_items "
+                    "WHERE task_id = ? AND category = ? AND value = ?",
+                    (task_id, category, old_value),
+                )
+            connection.execute(
+                """
+                INSERT OR IGNORE INTO task_memory_items(task_id, category, value, source, created_at)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (task_id, category, new_value, source or "ui_correction", now),
+            )
+            connection.execute(
+                "UPDATE tasks SET updated_at = ? WHERE task_id = ?",
+                (now, task_id),
+            )
+
     def record_retrieval(self, task_id: str, query: str, source_ids: list[str]) -> None:
         self.add_item(task_id, "searched_query", query, source="rag_search")
         for source_id in source_ids:

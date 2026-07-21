@@ -1,3 +1,6 @@
+import os
+
+
 ############################################################
 version = "1.2.0"
 author = "breadman"
@@ -10,8 +13,11 @@ uploader = "breadman"
 md5_path = "./md5.txt"
 
 # Chroma 参数
-collection_name = "rag" # 数据库的表名
-persist_directory = "./chroma_db" # 数据库本地存储文件夹路径
+collection_name = os.environ.get("LOCALRAG_COLLECTION_NAME", "rag")  # 数据库的表名
+persist_directory = os.environ.get(
+    "LOCALRAG_PERSIST_DIRECTORY",
+    "./chroma_db",
+)  # 数据库本地存储文件夹路径
 
 # RecursiveCharacterTextSplitter 参数
 chunk_size = 500

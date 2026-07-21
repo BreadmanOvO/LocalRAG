@@ -1,0 +1,147 @@
+import json
+import tempfile
+import unittest
+from pathlib import Path
+from types import SimpleNamespace
+
+from agent.observability import (
+    build_source_observations,
+    combine_runtime_observability,
+    diff_task_memory,
+    load_latest_agent_eval,
+)
+
+
+class SourceObservationTests(unittest.TestCase):
+    def test_sources_include_locator_chunk_and_evidence_status(self):
+        snapshot = SimpleNamespace(
+            documents=(
+                {
+                    "source_id": "paper-001",
+                    "locator": "page=2",
+                    "chunk_order": 3,
+                    "chunk_strategy": "doc_type_aware",
+                    "rank": 1,
+                    "score": 0.91,
+                    "content": "  multi-line\n evidence  ",
+                },
+                {
+                    "source_id": "paper-002",
+                    "locator": "page=4",
+                    "chunk_order": 7,
+                    "content": "candidate",
+                },
+            )
+        )
+
+        rows = build_source_observations(snapshot, confirmed_sources=("paper-001",))
+
+        self.assertEqual("confirmed", rows[0]["evidence_status"])
+        self.assertEqual("retrieved", rows[1]["evidence_status"])
+        self.assertEqual("page=2", rows[0]["locator"])
+        self.assertEqual(3, rows[0]["chunk_order"])
+        self.assertEqual("multi-line evidence", rows[0]["summary"])
+
+
+class TaskMemoryDiffTests(unittest.TestCase):
+    def test_diff_reports_added_and_removed_memory(self):
+        before = SimpleNamespace(
+            topic="Old topic",
+            searched_queries=(),
+            retrieved_sources=(),
+            confirmed_sources=(),
+            findings=("Old finding",),
+            evidence_gaps=(),
+            open_questions=(),
+        )
+        after = SimpleNamespace(
+            topic="New topic",
+            searched_queries=("query",),
+            retrieved_sources=("paper-001",),
+            confirmed_sources=(),
+            findings=("New finding",),
+            evidence_gaps=(),
+            open_questions=(),
+        )
+
+        changes = diff_task_memory(before, after)
+
+        self.assertIn(
+            {"action": "removed", "field": "topic", "label": "主题", "value": "Old topic"},
+            changes,
+        )
+        self.assertIn(
+            {
+                "action": "added",
+                "field": "findings",
+                "label": "阶段结论",
+                "value": "New finding",
+            },
+            changes,
+        )
+
+
+class RuntimeObservabilityTests(unittest.TestCase):
+    def _write_run(self, root: Path, run_id: str, created_at: str, corpus_path: str, gate: bool):
+        run_dir = root / run_id
+        run_dir.mkdir()
+        (run_dir / "manifest.json").write_text(
+            json.dumps(
+                {
+                    "created_at": created_at,
+                    "corpus": {
+                        "persist_directory": corpus_path,
+                        "collection_name": "rag",
+                    },
+                    "runtime": {"provider": "test"},
+                }
+            ),
+            encoding="utf-8",
+        )
+        (run_dir / "summary.json").write_text(
+            json.dumps({"gate_pass": gate}),
+            encoding="utf-8",
+        )
+
+    def test_latest_eval_uses_manifest_timestamp(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self._write_run(root, "agent-eval-z", "2026-01-01T00:00:00", "old", False)
+            self._write_run(root, "agent-eval-a", "2026-02-01T00:00:00", "new", True)
+
+            latest = load_latest_agent_eval(root)
+
+        self.assertEqual("agent-eval-a", latest["run_id"])
+        self.assertTrue(latest["summary"]["gate_pass"])
+
+    def test_gate_only_applies_when_current_corpus_matches(self):
+        current = {"available": True, "coverage_ratio": 0.26, "chunk_count": 298}
+        latest = {
+            "available": True,
+            "corpus": {"persist_directory": "evaluated", "collection_name": "rag"},
+            "summary": {"gate_pass": True},
+        }
+
+        mismatch = combine_runtime_observability(
+            current_corpus=current,
+            latest_eval=latest,
+            current_persist_directory="current",
+            collection_name="rag",
+            project_root="C:/project",
+        )
+        matched = combine_runtime_observability(
+            current_corpus=current,
+            latest_eval=latest,
+            current_persist_directory="evaluated",
+            collection_name="rag",
+            project_root="C:/project",
+        )
+
+        self.assertEqual("corpus_mismatch", mismatch["gate_status"])
+        self.assertFalse(mismatch["gate_pass"])
+        self.assertEqual("passed", matched["gate_status"])
+        self.assertTrue(matched["gate_pass"])
+
+
+if __name__ == "__main__":
+    unittest.main()

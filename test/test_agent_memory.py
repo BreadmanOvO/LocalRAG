@@ -235,6 +235,64 @@ class ReactAgentSessionTests(unittest.TestCase):
             stream_mode="updates",
         )
 
+    def test_execute_events_returns_structured_public_trace(self):
+        fake_graph = mock.Mock()
+        fake_graph.stream.return_value = iter(
+            [
+                {
+                    "model": {
+                        "messages": [
+                            SimpleNamespace(
+                                type="ai",
+                                content="hidden reasoning",
+                                tool_calls=[
+                                    {
+                                        "name": "inspect_source",
+                                        "id": "call-1",
+                                        "args": {"source_id": "paper-001"},
+                                    }
+                                ],
+                            )
+                        ]
+                    }
+                },
+                {
+                    "tools": {
+                        "messages": [
+                            SimpleNamespace(
+                                type="tool",
+                                name="inspect_source",
+                                tool_call_id="call-1",
+                                status="success",
+                                content="private tool result",
+                            )
+                        ]
+                    }
+                },
+                {
+                    "model": {
+                        "messages": [SimpleNamespace(type="ai", content="answer", tool_calls=[])]
+                    }
+                },
+            ]
+        )
+        agent = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+        agent.session_id = "session-a"
+        agent.agent_graph = fake_graph
+
+        events = list(agent.execute_events("question"))
+
+        self.assertEqual(
+            ["tool_started", "tool_completed", "answer_delta"],
+            [event.kind for event in events],
+        )
+        self.assertEqual("call-1", events[0].call_id)
+        self.assertEqual({"source_id": "paper-001"}, events[0].arguments)
+        self.assertEqual("success", events[1].status)
+        self.assertEqual("answer", events[2].content)
+        self.assertNotIn("hidden reasoning", str([event.to_dict() for event in events]))
+        self.assertNotIn("private tool result", str([event.to_dict() for event in events]))
+
 
 if __name__ == "__main__":
     unittest.main()

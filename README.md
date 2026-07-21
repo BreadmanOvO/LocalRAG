@@ -31,7 +31,14 @@ cp config/runtime_models.example.json config/runtime_models.json
 ### 3. 启动问答服务
 
 ```bash
-python app_qa.py
+streamlit run app_qa.py
+```
+
+可通过环境变量选择要加载的 Chroma store；UI 会检查它是否与最近一次 Agent gate 使用的 corpus 一致：
+
+```powershell
+$env:LOCALRAG_PERSIST_DIRECTORY = "path\to\chroma_store"
+streamlit run app_qa.py
 ```
 
 ### 4. 上传文档入库
@@ -48,8 +55,9 @@ LocalRAG/
 ├── app_file_uploader.py       # 文件上传入库入口
 ├── agent/
 │   ├── react_agent.py         # Session-aware Agent 入口
-│   ├── memory/                # Agent 短期检索记忆
-│   └── tools/                 # rag_search / show_sources / clarify_question
+│   ├── observability.py       # 工具轨迹、来源、记忆与 gate 可观察性
+│   ├── memory/                # Agent 会话检索记忆与持久化任务记忆
+│   └── tools/                 # RAG、来源研究与任务记忆工具
 ├── core/
 │   ├── rag.py                 # RAG 服务核心
 │   ├── knowledge_base.py      # 知识库入库与 chunk 写入
