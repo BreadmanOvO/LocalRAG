@@ -162,6 +162,10 @@ class ReactAgentSessionTests(unittest.TestCase):
             [
                 "rag_search",
                 "show_sources",
+                "inspect_source",
+                "expand_context",
+                "compare_sources",
+                "evidence_check",
                 "show_task_memory",
                 "update_task_memory",
                 "clarify_question",

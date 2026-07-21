@@ -4,6 +4,10 @@ from langgraph.checkpoint.memory import InMemorySaver
 from agent.memory import SessionRetrievalMemory, TaskMemoryPolicy, TaskMemoryStore
 from agent.tools import (
     build_rag_search_tool,
+    build_compare_sources_tool,
+    build_evidence_check_tool,
+    build_expand_context_tool,
+    build_inspect_source_tool,
     build_show_sources_tool,
     build_show_task_memory_tool,
     build_update_task_memory_tool,
@@ -11,6 +15,7 @@ from agent.tools import (
 )
 from config.runtime_keys import load_runtime_config
 from config.provider_factory import build_chat_model
+from core.source_evidence import SourceEvidenceService
 from utils.path_tools import get_abs_path
 from utils.session import validate_session_id, validate_task_id
 
@@ -30,6 +35,7 @@ class ReactAgent:
         task_id: str | None = None,
         task_memory_store: TaskMemoryStore | None = None,
         task_memory_enabled: bool = True,
+        evidence_service: SourceEvidenceService | None = None,
         chat_model=None,
         rag_service=None,
         checkpointer=None,
@@ -39,6 +45,7 @@ class ReactAgent:
         self.retrieval_memory = SessionRetrievalMemory()
         self.task_memory_store = task_memory_store or TaskMemoryStore()
         self.task_memory_policy = TaskMemoryPolicy(enabled=task_memory_enabled)
+        self.evidence_service = evidence_service or SourceEvidenceService()
         self.task_memory_store.ensure_task(self.task_id)
 
         if chat_model is None:
@@ -56,6 +63,14 @@ class ReactAgent:
                 task_memory_policy=self.task_memory_policy,
             ),
             build_show_sources_tool(self.session_id, self.retrieval_memory),
+            build_inspect_source_tool(self.evidence_service),
+            build_expand_context_tool(self.evidence_service),
+            build_compare_sources_tool(self.evidence_service),
+            build_evidence_check_tool(
+                self.session_id,
+                self.retrieval_memory,
+                self.evidence_service,
+            ),
             build_show_task_memory_tool(
                 self.task_id,
                 self.task_memory_store,

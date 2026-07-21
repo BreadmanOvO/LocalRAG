@@ -19,6 +19,8 @@ def build_show_sources_tool(session_id: str, retrieval_memory: SessionRetrievalM
         for index, document in enumerate(snapshot.documents, start=1):
             source_id = document.get("source_id", "未知来源")
             locator = document.get("locator", "") or "unknown"
+            chunk_order = document.get("chunk_order")
+            chunk_strategy = document.get("chunk_strategy", "") or "unknown"
             content = str(document.get("content", ""))
             summary = content[:100] + "..." if len(content) > 100 else content
 
@@ -27,6 +29,8 @@ def build_show_sources_tool(session_id: str, retrieval_memory: SessionRetrievalM
                     f"\n【来源 {index}】",
                     f"source_id: {source_id}",
                     f"locator: {locator}",
+                    f"chunk_order: {chunk_order}",
+                    f"chunk_strategy: {chunk_strategy}",
                     f"摘要: {summary}",
                 ]
             )

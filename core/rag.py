@@ -23,6 +23,7 @@ def _normalize_retrieved_row(doc: Document, score: float | None = None, rank: in
         "source_id": doc.metadata.get("source_id", ""),
         "doc_type": doc.metadata.get("doc_type", ""),
         "locator": doc.metadata.get("locator", ""),
+        "chunk_order": doc.metadata.get("chunk_order"),
         "chunk_strategy": doc.metadata.get("chunk_strategy", ""),
         "content": doc.page_content,
     }
