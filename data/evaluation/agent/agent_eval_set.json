@@ -1,0 +1,134 @@
+{
+  "dataset_version": "agent-eval-v1",
+  "cases": [
+    {
+      "id": "agent-inspect-001",
+      "category": "source_inspection",
+      "turns": [
+        {
+          "prompt": "请检查来源 paper-001，告诉我标题、文档类型和第一个片段的位置。",
+          "required_tools": ["inspect_source"],
+          "forbidden_tools": ["rag_search"],
+          "expected_source_ids": ["paper-001"],
+          "expected_answer_terms_any": ["BEVFormer"],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 30
+        }
+      ]
+    },
+    {
+      "id": "agent-followup-001",
+      "category": "continuous_followup",
+      "turns": [
+        {
+          "prompt": "先检查来源 paper-001，并告诉我 chunk_order=1 是否存在。",
+          "required_tools": ["inspect_source"],
+          "forbidden_tools": ["rag_search"],
+          "expected_source_ids": ["paper-001"],
+          "expected_answer_terms_any": ["chunk_order", "片段"],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 30
+        },
+        {
+          "prompt": "继续刚才的来源，扩展 chunk_order=1 前后各一个片段。",
+          "required_tools": ["expand_context"],
+          "forbidden_tools": ["rag_search"],
+          "expected_source_ids": ["paper-001"],
+          "expected_answer_terms_any": ["chunk_order", "前后"],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 30
+        }
+      ]
+    },
+    {
+      "id": "agent-compare-001",
+      "category": "multi_source_comparison",
+      "turns": [
+        {
+          "prompt": "请对比 paper-001 和 paper-002 在 camera fusion 方面的资料，只根据这两个来源的片段回答。",
+          "required_tools": ["compare_sources"],
+          "forbidden_tools": ["rag_search"],
+          "expected_source_ids": ["paper-001", "paper-002"],
+          "expected_answer_terms_any": ["对比", "差异", "不足"],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 60
+        }
+      ]
+    },
+    {
+      "id": "agent-no-retrieval-001",
+      "category": "evidence_without_retrieval",
+      "turns": [
+        {
+          "prompt": "不要检索，直接调用 evidence_check 核查结论“BEVFormer 使用时空 Transformer 构建 BEV 特征”，并说明当前能否核查。",
+          "required_tools": ["evidence_check"],
+          "forbidden_tools": ["rag_search"],
+          "expected_source_ids": [],
+          "expected_answer_terms_any": ["请先检索", "没有可检查", "无法核查"],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 20
+        }
+      ]
+    },
+    {
+      "id": "agent-evidence-001",
+      "category": "retrieval_evidence_check",
+      "turns": [
+        {
+          "prompt": "请先检索 BEVFormer 使用了什么机制，然后调用 evidence_check 核查结论“BEVFormer 使用时空 Transformer 构建 BEV 特征”。",
+          "required_tools": ["rag_search", "evidence_check"],
+          "forbidden_tools": [],
+          "expected_source_ids": [],
+          "expected_answer_terms_any": ["证据", "candidate", "候选"],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 50
+        }
+      ]
+    },
+    {
+      "id": "agent-numeric-001",
+      "category": "numeric_verification",
+      "turns": [
+        {
+          "prompt": "请检查来源 paper-030，核对 CRN 实时设置的 FPS，以及离线设置在 nuScenes test set 上的 NDS 和 mAP。",
+          "required_tools": ["inspect_source"],
+          "forbidden_tools": ["rag_search"],
+          "expected_source_ids": ["paper-030"],
+          "expected_answer_terms_any": [],
+          "expected_answer_terms_all": ["20 FPS", "62.4%", "57.5%"],
+          "min_answer_chars": 50
+        }
+      ]
+    },
+    {
+      "id": "agent-table-001",
+      "category": "table_interference",
+      "turns": [
+        {
+          "prompt": "请检索 Apollo 规划模块的输入，至少列出四个输入 channel 及其说明。",
+          "required_tools": ["rag_search"],
+          "forbidden_tools": [],
+          "expected_source_ids": ["apollo-doc-008"],
+          "expected_answer_terms_any": [],
+          "expected_answer_terms_all": ["/apollo/canbus/chassis", "/apollo/localization/pose", "/apollo/prediction", "/apollo/relative_map"],
+          "min_answer_chars": 100
+        }
+      ]
+    },
+    {
+      "id": "agent-missing-source-001",
+      "category": "missing_source",
+      "turns": [
+        {
+          "prompt": "请检查来源 paper-999，并明确说明是否存在。",
+          "required_tools": ["inspect_source"],
+          "forbidden_tools": ["rag_search"],
+          "expected_source_ids": ["paper-999"],
+          "expected_answer_terms_any": ["未找到", "不存在"],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 10
+        }
+      ]
+    }
+  ]
+}
