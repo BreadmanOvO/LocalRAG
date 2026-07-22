@@ -6,12 +6,14 @@ from types import SimpleNamespace
 
 from agent.observability import (
     build_source_observations,
+    build_tool_trace_rows,
     combine_runtime_observability,
     diff_task_memory,
     finalize_agent_answer,
     has_pending_tool_calls,
     load_latest_agent_eval,
     matches_active_corpus_profile,
+    merge_source_observations,
 )
 
 
@@ -44,6 +46,20 @@ class SourceObservationTests(unittest.TestCase):
         self.assertEqual("page=2", rows[0]["locator"])
         self.assertEqual(3, rows[0]["chunk_order"])
         self.assertEqual("multi-line evidence", rows[0]["summary"])
+
+    def test_merge_sources_keeps_first_observation_per_chunk(self):
+        retrieved = {
+            "source_id": "paper-001",
+            "locator": "page=2",
+            "chunk_order": 3,
+            "chunk_strategy": "doc_type_aware",
+            "evidence_status": "retrieved",
+        }
+        inspected = {**retrieved, "evidence_status": "inspected"}
+
+        rows = merge_source_observations([retrieved], [inspected])
+
+        self.assertEqual([retrieved], rows)
 
 
 class TaskMemoryDiffTests(unittest.TestCase):
@@ -109,6 +125,31 @@ class RunStatusTests(unittest.TestCase):
                 ]
             )
         )
+
+    def test_trace_rows_share_tool_pairing_and_status_rules(self):
+        trace = [
+            {
+                "kind": "tool_started",
+                "tool_name": "inspect_source",
+                "call_id": "call-1",
+                "arguments": {"source_id": "paper-001"},
+                "elapsed_ms": 100,
+            },
+            {
+                "kind": "tool_completed",
+                "tool_name": "inspect_source",
+                "call_id": "call-1",
+                "status": "error",
+                "elapsed_ms": 350,
+            },
+        ]
+
+        rows = build_tool_trace_rows(trace)
+
+        self.assertEqual("检查来源", rows[0]["工具"])
+        self.assertEqual("失败", rows[0]["状态"])
+        self.assertEqual("0.25s", rows[0]["耗时"])
+        self.assertIn("paper-001", rows[0]["参数"])
 
 
 class RuntimeObservabilityTests(unittest.TestCase):

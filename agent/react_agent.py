@@ -51,6 +51,63 @@ def load_agent_system_prompt() -> str:
         return f.read()
 
 
+def _elapsed_ms(started_at: float) -> int:
+    return int((time.perf_counter() - started_at) * 1000)
+
+
+def _events_from_message(message, started_at: float) -> list[AgentEvent]:
+    if message.type == "ai":
+        tool_calls = getattr(message, "tool_calls", []) or []
+        if tool_calls:
+            events = []
+            for tool_call in tool_calls:
+                arguments = tool_call.get("args") or {}
+                if not isinstance(arguments, dict):
+                    arguments = {"value": str(arguments)}
+                events.append(
+                    AgentEvent(
+                        kind="tool_started",
+                        tool_name=tool_call.get("name", "unknown"),
+                        call_id=str(tool_call.get("id") or ""),
+                        arguments=arguments,
+                        status="running",
+                        elapsed_ms=_elapsed_ms(started_at),
+                    )
+                )
+            return events
+        content = getattr(message, "content", None)
+        if content:
+            return [
+                AgentEvent(
+                    kind="answer_delta",
+                    content=str(content),
+                    status="streaming",
+                    elapsed_ms=_elapsed_ms(started_at),
+                )
+            ]
+        return []
+
+    if message.type != "tool":
+        return []
+    artifact = getattr(message, "artifact", None)
+    raw_observations = (
+        artifact.get("source_observations") or []
+        if isinstance(artifact, dict)
+        else []
+    )
+    observations = tuple(item for item in raw_observations if isinstance(item, dict))
+    return [
+        AgentEvent(
+            kind="tool_completed",
+            tool_name=getattr(message, "name", None) or "unknown",
+            call_id=str(getattr(message, "tool_call_id", None) or ""),
+            status=str(getattr(message, "status", None) or "success"),
+            elapsed_ms=_elapsed_ms(started_at),
+            observations=observations,
+        )
+    ]
+
+
 class ReactAgent:
     def __init__(
         self,
@@ -203,48 +260,7 @@ class ReactAgent:
                 for _node_name, node_output in chunk.items():
                     if "messages" in node_output:
                         for msg in node_output["messages"]:
-                            if msg.type == "ai":
-                                tool_calls = getattr(msg, "tool_calls", []) or []
-                                if tool_calls:
-                                    for tool_call in tool_calls:
-                                        arguments = tool_call.get("args") or {}
-                                        if not isinstance(arguments, dict):
-                                            arguments = {"value": str(arguments)}
-                                        yield AgentEvent(
-                                            kind="tool_started",
-                                            tool_name=tool_call.get("name", "unknown"),
-                                            call_id=str(tool_call.get("id") or ""),
-                                            arguments=arguments,
-                                            status="running",
-                                            elapsed_ms=int(
-                                                (time.perf_counter() - started_at) * 1000
-                                            ),
-                                        )
-                                elif getattr(msg, "content", None):
-                                    yield AgentEvent(
-                                        kind="answer_delta",
-                                        content=str(msg.content),
-                                        status="streaming",
-                                        elapsed_ms=int((time.perf_counter() - started_at) * 1000),
-                                    )
-                            elif msg.type == "tool":
-                                tool_name = getattr(msg, "name", None) or "unknown"
-                                status = getattr(msg, "status", None) or "success"
-                                artifact = getattr(msg, "artifact", None)
-                                observations = ()
-                                if isinstance(artifact, dict):
-                                    raw_observations = artifact.get("source_observations") or []
-                                    observations = tuple(
-                                        item for item in raw_observations if isinstance(item, dict)
-                                    )
-                                yield AgentEvent(
-                                    kind="tool_completed",
-                                    tool_name=tool_name,
-                                    call_id=str(getattr(msg, "tool_call_id", None) or ""),
-                                    status=str(status),
-                                    elapsed_ms=int((time.perf_counter() - started_at) * 1000),
-                                    observations=observations,
-                                )
+                            yield from _events_from_message(msg, started_at)
         except Exception as exc:
             logger.exception("Agent graph execution failed")
             yield AgentEvent(
@@ -252,5 +268,5 @@ class ReactAgent:
                 content="抱歉，处理过程中出现错误，请重试。",
                 status="error",
                 error_code=_execution_error_code(exc),
-                elapsed_ms=int((time.perf_counter() - started_at) * 1000),
+                elapsed_ms=_elapsed_ms(started_at),
             )

@@ -1,4 +1,3 @@
-import json
 import uuid
 
 import streamlit as st
@@ -6,10 +5,12 @@ import streamlit as st
 from agent import ReactAgent
 from agent.observability import (
     build_source_observations,
+    build_tool_trace_rows,
     diff_task_memory,
     finalize_agent_answer,
     has_pending_tool_calls,
     load_runtime_observability,
+    merge_source_observations,
     tool_label,
 )
 from config import settings as config
@@ -198,59 +199,6 @@ def _render_runtime_sidebar(runtime_status: dict) -> None:
         )
 
 
-def _trace_rows(trace: list[dict], *, mark_pending_interrupted: bool = False) -> list[dict]:
-    rows = []
-    pending = []
-    for event in trace:
-        if event.get("kind") == "tool_started":
-            row = {
-                "工具": tool_label(str(event.get("tool_name") or "unknown")),
-                "状态": "运行中",
-                "耗时": "",
-                "参数": json.dumps(event.get("arguments") or {}, ensure_ascii=False),
-                "_tool_name": event.get("tool_name"),
-                "_call_id": event.get("call_id"),
-                "_started_ms": event.get("elapsed_ms") or 0,
-            }
-            rows.append(row)
-            pending.append(row)
-        elif event.get("kind") == "tool_completed":
-            match = next(
-                (
-                    row
-                    for row in pending
-                    if row["状态"] == "运行中"
-                    and (
-                        (
-                            event.get("call_id")
-                            and row["_call_id"] == event.get("call_id")
-                        )
-                        or (
-                            not event.get("call_id")
-                            and row["_tool_name"] == event.get("tool_name")
-                        )
-                    )
-                ),
-                None,
-            )
-            if match is None:
-                continue
-            success = event.get("status") not in {"error", "failed"}
-            match["状态"] = "完成" if success else "失败"
-            elapsed_ms = max(0, (event.get("elapsed_ms") or 0) - match["_started_ms"])
-            match["耗时"] = f"{elapsed_ms / 1000:.2f}s"
-
-    if mark_pending_interrupted:
-        for row in pending:
-            if row["状态"] == "运行中":
-                row["状态"] = "中断"
-
-    return [
-        {key: value for key, value in row.items() if not key.startswith("_")}
-        for row in rows
-    ]
-
-
 def _render_sources(sources: list[dict]) -> None:
     if not sources:
         st.caption("本轮没有新的检索来源")
@@ -271,7 +219,7 @@ def _render_sources(sources: list[dict]) -> None:
 
 
 def _render_trace(trace: list[dict], *, run_failed: bool = False) -> None:
-    rows = _trace_rows(trace, mark_pending_interrupted=run_failed)
+    rows = build_tool_trace_rows(trace, mark_pending_interrupted=run_failed)
     if not rows:
         st.caption("本轮未调用工具")
         return
@@ -443,18 +391,7 @@ if prompt:
             if used_tools & source_tools
             else []
         )
-        sources = []
-        seen_sources = set()
-        for source in [*retrieval_sources, *source_observations]:
-            key = (
-                source.get("source_id"),
-                source.get("locator"),
-                source.get("chunk_order"),
-                source.get("chunk_strategy"),
-            )
-            if key not in seen_sources:
-                seen_sources.add(key)
-                sources.append(source)
+        sources = merge_source_observations(retrieval_sources, source_observations)
         assistant_message = {
             "role": "assistant",
             "content": answer,

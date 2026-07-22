@@ -7,6 +7,7 @@ from langchain_core.tools import ToolException, tool
 from pydantic import Field
 
 from agent.memory import SessionRetrievalMemory
+from agent.observability import build_source_observation
 from core.source_evidence import SourceEvidenceService
 from utils.session import validate_session_id
 
@@ -26,31 +27,12 @@ def _tool_failure(operation: str, exc: Exception) -> ToolException:
     return ToolException(f"{operation}失败，请检查输入后重试。")
 
 
-def _source_observations(chunks: list[dict], *, evidence_status: str) -> list[dict]:
-    observations = []
-    for chunk in chunks:
-        content = " ".join(str(chunk.get("content") or "").split())
-        observations.append(
-            {
-                "source_id": str(chunk.get("source_id") or "unknown"),
-                "locator": str(chunk.get("locator") or "unknown"),
-                "chunk_order": chunk.get("chunk_order"),
-                "chunk_strategy": str(chunk.get("chunk_strategy") or "unknown"),
-                "rank": chunk.get("rank"),
-                "score": chunk.get("score"),
-                "summary": content[:240] + ("..." if len(content) > 240 else ""),
-                "evidence_status": evidence_status,
-            }
-        )
-    return observations
-
-
 def _artifact(chunks: list[dict], *, evidence_status: str) -> dict:
     return {
-        "source_observations": _source_observations(
-            chunks,
-            evidence_status=evidence_status,
-        )
+        "source_observations": [
+            build_source_observation(chunk, evidence_status=evidence_status)
+            for chunk in chunks
+        ]
     }
 
 

@@ -51,6 +51,12 @@ class AgentEvent:
         return deepcopy(asdict(self))
 
 
+@dataclass
+class _ToolCallPair:
+    started: dict[str, Any]
+    completed: dict[str, Any] | None = None
+
+
 def tool_label(tool_name: str) -> str:
     return TOOL_LABELS.get(tool_name, tool_name or "未知工具")
 
@@ -62,33 +68,101 @@ def finalize_agent_answer(answer_parts: list[str], *, has_error: bool) -> tuple[
     return EMPTY_ANSWER_MESSAGE, True
 
 
-def has_pending_tool_calls(trace: list[dict[str, Any]]) -> bool:
+def _tool_calls_match(started: dict[str, Any], completed: dict[str, Any]) -> bool:
+    completed_call_id = completed.get("call_id")
+    if completed_call_id:
+        return started.get("call_id") == completed_call_id
+    return started.get("tool_name") == completed.get("tool_name")
+
+
+def _pair_tool_calls(trace: list[dict[str, Any]]) -> list[_ToolCallPair]:
+    pairs = []
     pending = []
     for event in trace:
         kind = event.get("kind")
         if kind == "tool_started":
-            pending.append(event)
+            pair = _ToolCallPair(started=event)
+            pairs.append(pair)
+            pending.append(pair)
             continue
         if kind != "tool_completed":
             continue
-        match_index = next(
-            (
-                index
-                for index, started in enumerate(pending)
-                if (
-                    event.get("call_id")
-                    and started.get("call_id") == event.get("call_id")
-                )
-                or (
-                    not event.get("call_id")
-                    and started.get("tool_name") == event.get("tool_name")
-                )
-            ),
+        match = next(
+            (pair for pair in pending if _tool_calls_match(pair.started, event)),
             None,
         )
-        if match_index is not None:
-            pending.pop(match_index)
-    return bool(pending)
+        if match is not None:
+            match.completed = event
+            pending.remove(match)
+    return pairs
+
+
+def has_pending_tool_calls(trace: list[dict[str, Any]]) -> bool:
+    return any(pair.completed is None for pair in _pair_tool_calls(trace))
+
+
+def build_tool_trace_rows(
+    trace: list[dict[str, Any]],
+    *,
+    mark_pending_interrupted: bool = False,
+) -> list[dict[str, str]]:
+    rows = []
+    for pair in _pair_tool_calls(trace):
+        started = pair.started
+        completed = pair.completed
+        if completed is None:
+            status = "中断" if mark_pending_interrupted else "运行中"
+            elapsed = ""
+        else:
+            status = "失败" if completed.get("status") in {"error", "failed"} else "完成"
+            elapsed_ms = max(
+                0,
+                (completed.get("elapsed_ms") or 0) - (started.get("elapsed_ms") or 0),
+            )
+            elapsed = f"{elapsed_ms / 1000:.2f}s"
+        rows.append(
+            {
+                "工具": tool_label(str(started.get("tool_name") or "unknown")),
+                "状态": status,
+                "耗时": elapsed,
+                "参数": json.dumps(started.get("arguments") or {}, ensure_ascii=False),
+            }
+        )
+    return rows
+
+
+def build_source_observation(
+    document: dict[str, Any],
+    *,
+    evidence_status: str,
+) -> dict[str, Any]:
+    content = " ".join(str(document.get("content") or "").split())
+    return {
+        "source_id": str(document.get("source_id") or "unknown"),
+        "locator": str(document.get("locator") or "unknown"),
+        "chunk_order": document.get("chunk_order"),
+        "chunk_strategy": str(document.get("chunk_strategy") or "unknown"),
+        "rank": document.get("rank"),
+        "score": document.get("score"),
+        "summary": content[:240] + ("..." if len(content) > 240 else ""),
+        "evidence_status": evidence_status,
+    }
+
+
+def merge_source_observations(
+    *groups: list[dict[str, Any]] | tuple[dict[str, Any], ...],
+) -> list[dict[str, Any]]:
+    observations = []
+    seen = set()
+    for source in (source for group in groups for source in group):
+        key = tuple(
+            source.get(field)
+            for field in ("source_id", "locator", "chunk_order", "chunk_strategy")
+        )
+        if key not in seen:
+            seen.add(key)
+            observations.append(source)
+    return observations
 
 
 def build_source_observations(
@@ -101,32 +175,15 @@ def build_source_observations(
 
     confirmed = {str(source_id) for source_id in confirmed_sources}
     observations = []
-    seen = set()
     for document in getattr(retrieval_snapshot, "documents", ()) or ():
         source_id = str(document.get("source_id") or "unknown")
-        locator = str(document.get("locator") or "unknown")
-        chunk_order = document.get("chunk_order")
-        chunk_strategy = str(document.get("chunk_strategy") or "unknown")
-        key = (source_id, locator, chunk_order, chunk_strategy)
-        if key in seen:
-            continue
-        seen.add(key)
-
-        content = " ".join(str(document.get("content") or "").split())
-        summary = content[:240] + ("..." if len(content) > 240 else "")
         observations.append(
-            {
-                "source_id": source_id,
-                "locator": locator,
-                "chunk_order": chunk_order,
-                "chunk_strategy": chunk_strategy,
-                "rank": document.get("rank"),
-                "score": document.get("score"),
-                "summary": summary,
-                "evidence_status": "confirmed" if source_id in confirmed else "retrieved",
-            }
+            build_source_observation(
+                document,
+                evidence_status="confirmed" if source_id in confirmed else "retrieved",
+            )
         )
-    return observations
+    return merge_source_observations(observations)
 
 
 def diff_task_memory(before, after) -> list[dict[str, str]]:
@@ -134,56 +191,25 @@ def diff_task_memory(before, after) -> list[dict[str, str]]:
         return []
 
     changes = []
-    if before.topic != after.topic:
-        if before.topic:
-            changes.append(
+    for field_name, label in MEMORY_FIELD_LABELS.items():
+        before_value = getattr(before, field_name)
+        after_value = getattr(after, field_name)
+        before_values = (before_value,) if field_name == "topic" and before_value else tuple(before_value)
+        after_values = (after_value,) if field_name == "topic" and after_value else tuple(after_value)
+        for action, values, other_values in (
+            ("removed", before_values, after_values),
+            ("added", after_values, before_values),
+        ):
+            changes.extend(
                 {
-                    "action": "removed",
-                    "field": "topic",
-                    "label": MEMORY_FIELD_LABELS["topic"],
-                    "value": before.topic,
+                    "action": action,
+                    "field": field_name,
+                    "label": label,
+                    "value": value,
                 }
+                for value in values
+                if value not in other_values
             )
-        if after.topic:
-            changes.append(
-                {
-                    "action": "added",
-                    "field": "topic",
-                    "label": MEMORY_FIELD_LABELS["topic"],
-                    "value": after.topic,
-                }
-            )
-
-    for field_name in (
-        "searched_queries",
-        "retrieved_sources",
-        "confirmed_sources",
-        "findings",
-        "evidence_gaps",
-        "open_questions",
-    ):
-        before_values = tuple(getattr(before, field_name))
-        after_values = tuple(getattr(after, field_name))
-        for value in before_values:
-            if value not in after_values:
-                changes.append(
-                    {
-                        "action": "removed",
-                        "field": field_name,
-                        "label": MEMORY_FIELD_LABELS[field_name],
-                        "value": value,
-                    }
-                )
-        for value in after_values:
-            if value not in before_values:
-                changes.append(
-                    {
-                        "action": "added",
-                        "field": field_name,
-                        "label": MEMORY_FIELD_LABELS[field_name],
-                        "value": value,
-                    }
-                )
     return changes
 
 
@@ -302,16 +328,17 @@ def combine_runtime_observability(
         evaluated_path = evaluated_corpus.get("persist_directory")
         evaluated_revision = str(latest_eval.get("git_revision") or "")
         evaluated_dirty = latest_eval.get("git_dirty")
-        required_identity = (
-            current_corpus.get("corpus_fingerprint"),
-            current_corpus.get("registry_fingerprint"),
-            evaluated_corpus.get("corpus_fingerprint"),
-            evaluated_corpus.get("registry_fingerprint"),
-            evaluated_revision,
-            current_git_revision,
-        )
         identity_complete = (
-            all(required_identity)
+            all(
+                (
+                    current_corpus.get("corpus_fingerprint"),
+                    current_corpus.get("registry_fingerprint"),
+                    evaluated_corpus.get("corpus_fingerprint"),
+                    evaluated_corpus.get("registry_fingerprint"),
+                    evaluated_revision,
+                    current_git_revision,
+                )
+            )
             and isinstance(evaluated_dirty, bool)
             and isinstance(current_git_dirty, bool)
         )
@@ -336,47 +363,56 @@ def combine_runtime_observability(
     stability_gate_pass = (
         bool(stability_gate.get("gate_pass")) if stability_gate is not None else True
     )
-    effective_gate_pass = (
-        current_available
-        and active_profile_matches
-        and identity_complete
-        and code_clean
-        and corpus_matches_eval
-        and code_matches_eval
-        and latest_gate_pass
-        and stability_gate_pass
+    stability_reasons = ", ".join((stability_gate or {}).get("failure_reasons", []))
+    gate_conditions = (
+        (
+            current_available,
+            "corpus_unavailable",
+            current_corpus.get("error", "当前知识库状态不可用"),
+        ),
+        (
+            active_profile_matches,
+            "active_profile_mismatch",
+            "当前知识库内容与活动 corpus profile 的指纹不一致",
+        ),
+        (
+            eval_available,
+            "eval_unavailable",
+            latest_eval.get("error", "未找到 Agent 评测结果"),
+        ),
+        (
+            identity_complete,
+            "legacy_eval",
+            "最近一次完整 Agent 评测缺少数据或代码身份信息，请重新评测",
+        ),
+        (
+            code_clean,
+            "code_dirty",
+            "当前或被评测的 Agent 代码存在未提交修改",
+        ),
+        (
+            corpus_matches_eval,
+            "corpus_mismatch",
+            "当前知识库与最近一次 Agent 评测使用的知识库不一致",
+        ),
+        (
+            code_matches_eval,
+            "code_mismatch",
+            "当前 Agent 代码与最近一次评测版本不一致",
+        ),
+        (latest_gate_pass, "gate_failed", "当前知识库最近一次 Agent gate 未通过"),
+        (
+            stability_gate_pass,
+            "stability_gate_failed",
+            f"Agent 连续稳定性 Gate 未通过：{stability_reasons or 'unknown'}",
+        ),
     )
-    if not current_available:
-        gate_status = "corpus_unavailable"
-        message = current_corpus.get("error", "当前知识库状态不可用")
-    elif not active_profile_matches:
-        gate_status = "active_profile_mismatch"
-        message = "当前知识库内容与活动 corpus profile 的指纹不一致"
-    elif not eval_available:
-        gate_status = "eval_unavailable"
-        message = latest_eval.get("error", "未找到 Agent 评测结果")
-    elif not identity_complete:
-        gate_status = "legacy_eval"
-        message = "最近一次完整 Agent 评测缺少数据或代码身份信息，请重新评测"
-    elif not code_clean:
-        gate_status = "code_dirty"
-        message = "当前或被评测的 Agent 代码存在未提交修改"
-    elif not corpus_matches_eval:
-        gate_status = "corpus_mismatch"
-        message = "当前知识库与最近一次 Agent 评测使用的知识库不一致"
-    elif not code_matches_eval:
-        gate_status = "code_mismatch"
-        message = "当前 Agent 代码与最近一次评测版本不一致"
-    elif not latest_gate_pass:
-        gate_status = "gate_failed"
-        message = "当前知识库最近一次 Agent gate 未通过"
-    elif not stability_gate_pass:
-        gate_status = "stability_gate_failed"
-        reasons = ", ".join(stability_gate.get("failure_reasons", []))
-        message = f"Agent 连续稳定性 Gate 未通过：{reasons or 'unknown'}"
-    else:
-        gate_status = "passed"
-        message = "当前知识库已通过 Agent gate"
+    failed_gate = next(
+        ((status, reason) for passed, status, reason in gate_conditions if not passed),
+        None,
+    )
+    gate_status, message = failed_gate or ("passed", "当前知识库已通过 Agent gate")
+    effective_gate_pass = failed_gate is None
 
     return {
         "current_corpus": deepcopy(current_corpus),
@@ -401,22 +437,16 @@ def matches_active_corpus_profile(
     expected_source_count: int | None = None,
     expected_chunk_count: int | None = None,
 ) -> bool:
-    return (
+    return all(
         (
             not expected_corpus_fingerprint
-            or current_corpus.get("corpus_fingerprint") == expected_corpus_fingerprint
-        )
-        and (
+            or current_corpus.get("corpus_fingerprint") == expected_corpus_fingerprint,
             not expected_registry_fingerprint
-            or current_corpus.get("registry_fingerprint") == expected_registry_fingerprint
-        )
-        and (
+            or current_corpus.get("registry_fingerprint") == expected_registry_fingerprint,
             expected_source_count is None
-            or current_corpus.get("chroma_source_count") == expected_source_count
-        )
-        and (
+            or current_corpus.get("chroma_source_count") == expected_source_count,
             expected_chunk_count is None
-            or current_corpus.get("chunk_count") == expected_chunk_count
+            or current_corpus.get("chunk_count") == expected_chunk_count,
         )
     )
 
