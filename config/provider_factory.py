@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import math
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -13,6 +14,8 @@ from config.model_paths import get_bge_m3_path
 from config.runtime_keys import RuntimeProviderConfig
 
 OPENAI_COMPATIBLE_PROVIDERS = {"bailian", "modelscope", "sensenova", "local_embedding", "local_sentence_transformer"}
+DEFAULT_CHAT_TIMEOUT_SECONDS = 60
+DEFAULT_CHAT_MAX_RETRIES = 0
 
 
 def _resolve_torch_dtype(torch_module: Any, dtype_name: str):
@@ -135,7 +138,15 @@ class LocalTransformersChatModel(Runnable):
 class LocalSentenceTransformerEmbeddings:
     def __init__(self, model_name: str | None = None) -> None:
         from sentence_transformers import SentenceTransformer
-        self.model = SentenceTransformer(model_name or get_bge_m3_path())
+
+        resolved_model_name = model_name
+        if not resolved_model_name or resolved_model_name == "BAAI/bge-m3":
+            resolved_model_name = get_bge_m3_path()
+        local_files_only = Path(resolved_model_name).exists()
+        self.model = SentenceTransformer(
+            resolved_model_name,
+            local_files_only=local_files_only,
+        )
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
         embeddings = self.model.encode(texts, normalize_embeddings=True)
@@ -183,6 +194,8 @@ def build_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
         "model": runtime_config.chat_model_name,
         "api_key": runtime_config.api_key,
         "base_url": runtime_config.base_url,
+        "timeout": DEFAULT_CHAT_TIMEOUT_SECONDS,
+        "max_retries": DEFAULT_CHAT_MAX_RETRIES,
     }
     if runtime_config.provider in {"local_embedding", "modelscope", "local_sentence_transformer"} and runtime_config.chat_model_name.startswith("Qwen/Qwen3"):
         options["extra_body"] = {"enable_thinking": False}

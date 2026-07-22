@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
+import subprocess
 import sys
 import tempfile
 import time
@@ -42,7 +44,9 @@ KNOWN_TOOLS = {
 }
 
 _TOOL_TRACE_RE = re.compile(r"^\[工具\]\s+([A-Za-z0-9_.-]+)\s*$")
-_TOOL_RESULT_RE = re.compile(r"^\[工具结果\]\s+([A-Za-z0-9_.-]+)\s+已完成\s*$")
+_TOOL_RESULT_RE = re.compile(
+    r"^\[工具结果\]\s+([A-Za-z0-9_.-]+)\s+(已完成|失败)\s*$"
+)
 
 
 def _require_non_empty_string(value: Any, field_name: str) -> str:
@@ -165,6 +169,62 @@ def _load_registry_source_ids(path: Path) -> set[str]:
     return source_ids
 
 
+def _canonical_json_bytes(payload: Any) -> bytes:
+    return json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+
+
+def _sha256(payload: bytes) -> str:
+    return f"sha256:{hashlib.sha256(payload).hexdigest()}"
+
+
+def _json_file_fingerprint(path: Path) -> str:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    return _sha256(_canonical_json_bytes(payload))
+
+
+def get_git_revision(project_root: Path | None = None) -> str:
+    root = Path(project_root or Path(__file__).resolve().parents[1])
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return ""
+    return result.stdout.strip()
+
+
+def get_git_dirty(project_root: Path | None = None) -> bool | None:
+    root = Path(project_root or Path(__file__).resolve().parents[1])
+    try:
+        result = subprocess.run(
+            [
+                "git",
+                "status",
+                "--porcelain",
+                "--",
+                ".",
+                ":(exclude)results/**",
+                ":(exclude)RAG_md/**",
+            ],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    return bool(result.stdout.strip())
+
+
 def _open_collection(persist_directory: Path, collection_name: str):
     import chromadb
 
@@ -185,22 +245,43 @@ def build_corpus_manifest(
         client, collection = _open_collection(persist_directory, collection_name)
 
     source_ids = set()
+    record_digests = []
     chunk_count = int(collection.count())
     offset = 0
     while offset < chunk_count:
         result = collection.get(
-            include=["metadatas"],
+            include=["documents", "metadatas"],
             limit=CHROMA_BATCH_SIZE,
             offset=offset,
         )
+        ids = result.get("ids") or []
+        documents = result.get("documents") or []
         metadatas = result.get("metadatas") or []
-        for metadata in metadatas:
+        if not ids:
+            break
+        if len(ids) != len(documents) or len(ids) != len(metadatas):
+            raise ValueError("Chroma corpus scan returned inconsistent record fields")
+        for record_id, document, metadata in zip(ids, documents, metadatas):
             source_id = str((metadata or {}).get("source_id") or "").strip()
             if source_id:
                 source_ids.add(source_id)
-        if not metadatas:
-            break
-        offset += len(metadatas)
+            record_digests.append(
+                hashlib.sha256(
+                    _canonical_json_bytes(
+                        {
+                            "id": str(record_id),
+                            "document": document,
+                            "metadata": metadata,
+                        }
+                    )
+                ).hexdigest()
+            )
+        offset += len(ids)
+
+    if len(record_digests) != chunk_count:
+        raise ValueError(
+            f"Chroma corpus scan expected {chunk_count} records, got {len(record_digests)}"
+        )
 
     covered = registry_source_ids & source_ids
     coverage_ratio = round(len(covered) / len(registry_source_ids), 3) if registry_source_ids else 0.0
@@ -212,6 +293,8 @@ def build_corpus_manifest(
         "covered_source_count": len(covered),
         "coverage_ratio": coverage_ratio,
         "chunk_count": chunk_count,
+        "corpus_fingerprint": _sha256("\n".join(sorted(record_digests)).encode("ascii")),
+        "registry_fingerprint": _json_file_fingerprint(registry_path),
         "missing_source_ids": sorted(registry_source_ids - source_ids),
         "extra_source_ids": sorted(source_ids - registry_source_ids),
     }
@@ -219,8 +302,9 @@ def build_corpus_manifest(
     return manifest
 
 
-def parse_agent_stream(chunks: Iterable[str]) -> tuple[list[str], str, list[str]]:
+def parse_agent_stream(chunks: Iterable[str]) -> tuple[list[str], list[str], str, list[str]]:
     tool_calls = []
+    failed_tools = []
     answer_parts = []
     raw_chunks = []
     for raw_chunk in chunks:
@@ -231,10 +315,13 @@ def parse_agent_stream(chunks: Iterable[str]) -> tuple[list[str], str, list[str]
         if tool_match:
             tool_calls.append(tool_match.group(1))
             continue
-        if _TOOL_RESULT_RE.fullmatch(stripped):
+        result_match = _TOOL_RESULT_RE.fullmatch(stripped)
+        if result_match:
+            if result_match.group(2) == "失败":
+                failed_tools.append(result_match.group(1))
             continue
         answer_parts.append(chunk)
-    return tool_calls, "".join(answer_parts).strip(), raw_chunks
+    return tool_calls, failed_tools, "".join(answer_parts).strip(), raw_chunks
 
 
 def _is_ordered_subsequence(expected: list[str], actual: list[str]) -> bool:
@@ -249,14 +336,21 @@ def _is_ordered_subsequence(expected: list[str], actual: list[str]) -> bool:
     return False
 
 
-def evaluate_turn(turn: dict[str, Any], tool_calls: list[str], answer: str) -> dict[str, Any]:
+def evaluate_turn(
+    turn: dict[str, Any],
+    tool_calls: list[str],
+    answer: str,
+    failed_tools: list[str] | None = None,
+) -> dict[str, Any]:
     required_tools = turn["required_tools"]
     forbidden_tools = turn["forbidden_tools"]
     expected_source_ids = turn["expected_source_ids"]
     expected_terms = turn["expected_answer_terms_any"]
     expected_terms_all = turn["expected_answer_terms_all"]
+    failed_tools = failed_tools or []
 
     required_tools_pass = all(tool in tool_calls for tool in required_tools)
+    tool_success_pass = not any(tool in failed_tools for tool in required_tools)
     tool_order_pass = _is_ordered_subsequence(required_tools, tool_calls)
     forbidden_tools_pass = not any(tool in tool_calls for tool in forbidden_tools)
     source_ids_pass = all(source_id in answer for source_id in expected_source_ids)
@@ -266,10 +360,13 @@ def evaluate_turn(turn: dict[str, Any], tool_calls: list[str], answer: str) -> d
         and all(term.lower() in answer_lower for term in expected_terms_all)
     )
     answer_length_pass = len(answer) >= turn["min_answer_chars"]
-    tool_contract_pass = required_tools_pass and tool_order_pass and forbidden_tools_pass
+    tool_contract_pass = (
+        required_tools_pass and tool_success_pass and tool_order_pass and forbidden_tools_pass
+    )
     answer_contract_pass = source_ids_pass and answer_terms_pass and answer_length_pass
     return {
         "required_tools_pass": required_tools_pass,
+        "tool_success_pass": tool_success_pass,
         "tool_order_pass": tool_order_pass,
         "forbidden_tools_pass": forbidden_tools_pass,
         "source_ids_pass": source_ids_pass,
@@ -293,6 +390,7 @@ def summarize_agent_eval(
     min_case_pass_ratio: float = DEFAULT_MIN_CASE_PASS_RATIO,
     min_tool_contract_ratio: float = DEFAULT_MIN_TOOL_CONTRACT_RATIO,
     min_answer_contract_ratio: float = DEFAULT_MIN_ANSWER_CONTRACT_RATIO,
+    expected_case_count: int | None = None,
     skipped: bool = False,
 ) -> dict[str, Any]:
     turns = [turn for row in rows for turn in row.get("turns", [])]
@@ -305,6 +403,7 @@ def summarize_agent_eval(
     case_pass_ratio = _ratio(passed_cases, len(rows))
     tool_contract_ratio = _ratio(tool_contract_count, len(turns))
     answer_contract_ratio = _ratio(answer_contract_count, len(turns))
+    expected_case_count = len(rows) if expected_case_count is None else expected_case_count
     gate_checks = {
         "corpus_coverage": corpus_manifest["coverage_ratio"] >= min_corpus_coverage,
         "case_pass_ratio": case_pass_ratio >= min_case_pass_ratio,
@@ -312,9 +411,11 @@ def summarize_agent_eval(
         "answer_contract_ratio": answer_contract_ratio >= min_answer_contract_ratio,
         "forbidden_tool_violations": forbidden_violation_count == 0,
         "evaluation_executed": not skipped and bool(rows),
+        "evaluation_complete": not skipped and len(rows) == expected_case_count,
     }
     return {
         "case_count": len(rows),
+        "expected_case_count": expected_case_count,
         "turn_count": len(turns),
         "passed_case_count": passed_cases,
         "case_pass_ratio": case_pass_ratio,
@@ -344,7 +445,14 @@ def write_json(path: Path, payload: Any) -> None:
     )
 
 
-def _default_agent_factory(session_id: str, task_id: str, task_memory_store):
+def _default_agent_factory(
+    session_id: str,
+    task_id: str,
+    task_memory_store,
+    *,
+    rag_service=None,
+    evidence_service=None,
+):
     from agent import ReactAgent
 
     return ReactAgent(
@@ -352,6 +460,8 @@ def _default_agent_factory(session_id: str, task_id: str, task_memory_store):
         task_id=task_id,
         task_memory_store=task_memory_store,
         task_memory_enabled=False,
+        rag_service=rag_service,
+        evidence_service=evidence_service,
     )
 
 
@@ -368,6 +478,7 @@ def run_agent_eval(
     run_id: str | None = None,
     agent_factory: Callable[[str, str, Any], Any] | None = None,
     collection=None,
+    progress_callback: Callable[[int, int, str, bool], None] | None = None,
 ) -> dict[str, Any]:
     dataset = load_agent_eval_dataset(dataset_path)
     if case_ids:
@@ -382,6 +493,9 @@ def run_agent_eval(
     if max_cases is not None and max_cases <= 0:
         raise ValueError("max_cases must be greater than zero")
     cases = selected_cases[:max_cases] if max_cases is not None else selected_cases
+    expected_case_count = len(dataset["cases"])
+    selected_case_ids = [case["id"] for case in cases]
+    selection_complete = len(cases) == expected_case_count
     run_id = run_id or f"agent-eval-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
     run_dir = Path(out_dir) / run_id
     corpus_manifest = build_corpus_manifest(
@@ -397,7 +511,23 @@ def run_agent_eval(
     try:
         config.persist_directory = str(Path(persist_directory).resolve())
         if corpus_ready or allow_stale_corpus:
-            factory = agent_factory or _default_agent_factory
+            if agent_factory is None:
+                from core.rag import RagService
+                from core.source_evidence import SourceEvidenceService
+
+                shared_rag_service = RagService()
+                shared_evidence_service = SourceEvidenceService()
+
+                def factory(session_id, task_id, task_memory_store):
+                    return _default_agent_factory(
+                        session_id,
+                        task_id,
+                        task_memory_store,
+                        rag_service=shared_rag_service,
+                        evidence_service=shared_evidence_service,
+                    )
+            else:
+                factory = agent_factory
             temp_context = (
                 tempfile.TemporaryDirectory() if agent_factory is None else nullcontext(None)
             )
@@ -407,7 +537,7 @@ def run_agent_eval(
                     from agent.memory import TaskMemoryStore
 
                     task_memory_store = TaskMemoryStore(Path(temp_dir) / "task-memory.sqlite3")
-                for case in cases:
+                for case_index, case in enumerate(cases, start=1):
                     session_id = f"agent-eval-{uuid4().hex}"
                     task_id = f"agent-eval-{uuid4().hex}"
                     agent = None
@@ -421,16 +551,21 @@ def run_agent_eval(
                         started = time.perf_counter()
                         error = agent_error
                         if agent is None:
-                            tool_calls, answer, raw_chunks = [], "", []
+                            tool_calls, failed_tools, answer, raw_chunks = [], [], "", []
                         else:
                             try:
-                                tool_calls, answer, raw_chunks = parse_agent_stream(
+                                tool_calls, failed_tools, answer, raw_chunks = parse_agent_stream(
                                     agent.execute_stream(turn["prompt"])
                                 )
                             except Exception as exc:
-                                tool_calls, answer, raw_chunks = [], "", []
+                                tool_calls, failed_tools, answer, raw_chunks = [], [], "", []
                                 error = f"{type(exc).__name__}: {exc}"
-                        evaluation = evaluate_turn(turn, tool_calls, answer)
+                        evaluation = evaluate_turn(
+                            turn,
+                            tool_calls,
+                            answer,
+                            failed_tools=failed_tools,
+                        )
                         if error:
                             evaluation["turn_pass"] = False
                             evaluation["answer_contract_pass"] = False
@@ -450,6 +585,7 @@ def run_agent_eval(
                                     )
                                 },
                                 "tool_calls": tool_calls,
+                                "failed_tools": failed_tools,
                                 "answer": answer,
                                 "raw_stream": raw_chunks,
                                 "elapsed_seconds": round(time.perf_counter() - started, 3),
@@ -457,14 +593,22 @@ def run_agent_eval(
                                 "evaluation": evaluation,
                             }
                         )
-                    rows.append(
-                        {
-                            "id": case["id"],
-                            "category": case["category"],
-                            "turns": turn_rows,
-                            "case_pass": all(turn["evaluation"]["turn_pass"] for turn in turn_rows),
-                        }
-                    )
+                    case_row = {
+                        "id": case["id"],
+                        "category": case["category"],
+                        "turns": turn_rows,
+                        "case_pass": all(
+                            turn["evaluation"]["turn_pass"] for turn in turn_rows
+                        ),
+                    }
+                    rows.append(case_row)
+                    if progress_callback is not None:
+                        progress_callback(
+                            case_index,
+                            len(cases),
+                            case["id"],
+                            case_row["case_pass"],
+                        )
     finally:
         config.persist_directory = previous_persist_directory
 
@@ -472,6 +616,7 @@ def run_agent_eval(
     summary = summarize_agent_eval(
         rows,
         corpus_manifest=corpus_manifest,
+        expected_case_count=expected_case_count,
         skipped=skipped,
     )
 
@@ -495,10 +640,20 @@ def run_agent_eval(
         "registry_path": str(Path(registry_path)),
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "runner_script": "eval/eval_agent.py",
+        "git_revision": get_git_revision(),
+        "git_dirty": get_git_dirty(),
         "runtime": runtime,
         "allow_stale_corpus": allow_stale_corpus,
         "max_cases": max_cases,
         "case_ids": case_ids,
+        "evaluation_scope": {
+            "expected_case_count": expected_case_count,
+            "selected_case_count": len(cases),
+            "executed_case_count": len(rows),
+            "selected_case_ids": selected_case_ids,
+            "selection_complete": selection_complete,
+            "evaluation_complete": summary["gate_checks"]["evaluation_complete"],
+        },
         "corpus": corpus_manifest,
     }
     write_json(run_dir / "manifest.json", manifest)
@@ -531,6 +686,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> dict[str, Any]:
     args = build_parser().parse_args()
+
+    def report_progress(index: int, total: int, case_id: str, passed: bool) -> None:
+        status = "PASS" if passed else "FAIL"
+        print(f"[{index}/{total}] {status}: {case_id}", flush=True)
+
     result = run_agent_eval(
         dataset_path=args.dataset,
         registry_path=args.registry,
@@ -540,6 +700,7 @@ def main() -> dict[str, Any]:
         allow_stale_corpus=args.allow_stale_corpus,
         max_cases=args.max_cases,
         case_ids=args.case_ids,
+        progress_callback=report_progress,
     )
     print(json.dumps(result["summary"], ensure_ascii=False, indent=2))
     print(f"run_dir={result['run_dir']}")

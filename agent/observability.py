@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -31,6 +32,8 @@ MEMORY_FIELD_LABELS = {
     "open_questions": "待解决问题",
 }
 
+EMPTY_ANSWER_MESSAGE = "抱歉，未生成有效回答，请重试。"
+
 
 @dataclass(frozen=True)
 class AgentEvent:
@@ -41,6 +44,7 @@ class AgentEvent:
     content: str = ""
     status: str = ""
     elapsed_ms: int | None = None
+    observations: tuple[dict[str, Any], ...] = field(default_factory=tuple)
 
     def to_dict(self) -> dict[str, Any]:
         return deepcopy(asdict(self))
@@ -48,6 +52,42 @@ class AgentEvent:
 
 def tool_label(tool_name: str) -> str:
     return TOOL_LABELS.get(tool_name, tool_name or "未知工具")
+
+
+def finalize_agent_answer(answer_parts: list[str], *, has_error: bool) -> tuple[str, bool]:
+    answer = "".join(answer_parts).strip()
+    if answer:
+        return answer, has_error
+    return EMPTY_ANSWER_MESSAGE, True
+
+
+def has_pending_tool_calls(trace: list[dict[str, Any]]) -> bool:
+    pending = []
+    for event in trace:
+        kind = event.get("kind")
+        if kind == "tool_started":
+            pending.append(event)
+            continue
+        if kind != "tool_completed":
+            continue
+        match_index = next(
+            (
+                index
+                for index, started in enumerate(pending)
+                if (
+                    event.get("call_id")
+                    and started.get("call_id") == event.get("call_id")
+                )
+                or (
+                    not event.get("call_id")
+                    and started.get("tool_name") == event.get("tool_name")
+                )
+            ),
+            None,
+        )
+        if match_index is not None:
+            pending.pop(match_index)
+    return bool(pending)
 
 
 def build_source_observations(
@@ -153,6 +193,13 @@ def _read_json_object(path: Path) -> dict[str, Any]:
     return payload
 
 
+def _is_formal_eval(manifest: dict[str, Any]) -> bool:
+    scope = manifest.get("evaluation_scope")
+    if isinstance(scope, dict) and "selection_complete" in scope:
+        return bool(scope["selection_complete"])
+    return manifest.get("max_cases") is None and not manifest.get("case_ids")
+
+
 def load_latest_agent_eval(results_dir: str | Path) -> dict[str, Any]:
     candidates = []
     for run_dir in Path(results_dir).glob("agent-eval-*"):
@@ -165,6 +212,8 @@ def load_latest_agent_eval(results_dir: str | Path) -> dict[str, Any]:
             summary = _read_json_object(summary_path)
         except (OSError, ValueError, json.JSONDecodeError):
             continue
+        if not _is_formal_eval(manifest):
+            continue
         candidates.append(
             (
                 str(manifest.get("created_at") or ""),
@@ -175,7 +224,7 @@ def load_latest_agent_eval(results_dir: str | Path) -> dict[str, Any]:
         )
 
     if not candidates:
-        return {"available": False, "error": "未找到 Agent 评测产物"}
+        return {"available": False, "error": "未找到完整的 Agent 评测产物"}
 
     _created_at, run_id, manifest, summary = max(candidates, key=lambda item: item[:2])
     return {
@@ -183,6 +232,9 @@ def load_latest_agent_eval(results_dir: str | Path) -> dict[str, Any]:
         "run_id": run_id,
         "created_at": manifest.get("created_at", ""),
         "runtime": manifest.get("runtime", {}),
+        "git_revision": manifest.get("git_revision", ""),
+        "git_dirty": manifest.get("git_dirty"),
+        "evaluation_scope": manifest.get("evaluation_scope", {}),
         "corpus": manifest.get("corpus", {}),
         "summary": summary,
     }
@@ -195,40 +247,115 @@ def _resolve_project_path(path_value: str | Path, project_root: str | Path) -> P
     return path.resolve()
 
 
+def _git_revisions_compatible(
+    evaluated_revision: str,
+    current_revision: str,
+    project_root: Path,
+) -> bool:
+    if evaluated_revision == current_revision:
+        return True
+    try:
+        result = subprocess.run(
+            [
+                "git",
+                "diff",
+                "--quiet",
+                evaluated_revision,
+                current_revision,
+                "--",
+                ".",
+                ":(exclude)results/**",
+                ":(exclude)RAG_md/**",
+            ],
+            cwd=project_root,
+            check=False,
+            capture_output=True,
+        )
+    except OSError:
+        return False
+    return result.returncode == 0
+
+
 def combine_runtime_observability(
     *,
     current_corpus: dict[str, Any],
     latest_eval: dict[str, Any],
     current_persist_directory: str | Path,
     collection_name: str,
+    current_git_revision: str = "",
+    current_git_dirty: bool | None = None,
     project_root: str | Path | None = None,
 ) -> dict[str, Any]:
     root = Path(project_root or get_project_root()).resolve()
     current_available = bool(current_corpus.get("available", True))
     eval_available = bool(latest_eval.get("available"))
     corpus_matches_eval = False
+    code_matches_eval = False
+    identity_complete = False
+    code_clean = False
 
     if current_available and eval_available:
         evaluated_corpus = latest_eval.get("corpus", {})
         evaluated_path = evaluated_corpus.get("persist_directory")
-        if evaluated_path:
+        evaluated_revision = str(latest_eval.get("git_revision") or "")
+        evaluated_dirty = latest_eval.get("git_dirty")
+        required_identity = (
+            current_corpus.get("corpus_fingerprint"),
+            current_corpus.get("registry_fingerprint"),
+            evaluated_corpus.get("corpus_fingerprint"),
+            evaluated_corpus.get("registry_fingerprint"),
+            evaluated_revision,
+            current_git_revision,
+        )
+        identity_complete = (
+            all(required_identity)
+            and isinstance(evaluated_dirty, bool)
+            and isinstance(current_git_dirty, bool)
+        )
+        code_clean = evaluated_dirty is False and current_git_dirty is False
+        if evaluated_path and identity_complete and code_clean:
             corpus_matches_eval = (
                 _resolve_project_path(current_persist_directory, root)
                 == _resolve_project_path(evaluated_path, root)
                 and str(evaluated_corpus.get("collection_name") or "") == collection_name
+                and current_corpus["corpus_fingerprint"]
+                == evaluated_corpus["corpus_fingerprint"]
+                and current_corpus["registry_fingerprint"]
+                == evaluated_corpus["registry_fingerprint"]
+            )
+            code_matches_eval = _git_revisions_compatible(
+                evaluated_revision,
+                current_git_revision,
+                root,
             )
 
     latest_gate_pass = bool(latest_eval.get("summary", {}).get("gate_pass"))
-    effective_gate_pass = current_available and corpus_matches_eval and latest_gate_pass
+    effective_gate_pass = (
+        current_available
+        and identity_complete
+        and code_clean
+        and corpus_matches_eval
+        and code_matches_eval
+        and latest_gate_pass
+    )
     if not current_available:
         gate_status = "corpus_unavailable"
         message = current_corpus.get("error", "当前知识库状态不可用")
     elif not eval_available:
         gate_status = "eval_unavailable"
         message = latest_eval.get("error", "未找到 Agent 评测结果")
+    elif not identity_complete:
+        gate_status = "legacy_eval"
+        message = "最近一次完整 Agent 评测缺少数据或代码身份信息，请重新评测"
+    elif not code_clean:
+        gate_status = "code_dirty"
+        message = "当前或被评测的 Agent 代码存在未提交修改"
     elif not corpus_matches_eval:
         gate_status = "corpus_mismatch"
         message = "当前知识库与最近一次 Agent 评测使用的知识库不一致"
+    elif not code_matches_eval:
+        gate_status = "code_mismatch"
+        message = "当前 Agent 代码与最近一次评测版本不一致"
     elif not latest_gate_pass:
         gate_status = "gate_failed"
         message = "当前知识库最近一次 Agent gate 未通过"
@@ -240,6 +367,9 @@ def combine_runtime_observability(
         "current_corpus": deepcopy(current_corpus),
         "latest_eval": deepcopy(latest_eval),
         "corpus_matches_eval": corpus_matches_eval,
+        "code_matches_eval": code_matches_eval,
+        "identity_complete": identity_complete,
+        "code_clean": code_clean,
         "gate_pass": effective_gate_pass,
         "gate_status": gate_status,
         "message": message,
@@ -255,7 +385,7 @@ def load_runtime_observability(
 ) -> dict[str, Any]:
     absolute_persist_directory = _resolve_project_path(persist_directory, get_project_root())
     try:
-        from eval.eval_agent import build_corpus_manifest
+        from eval.eval_agent import build_corpus_manifest, get_git_dirty, get_git_revision
 
         current_corpus = build_corpus_manifest(
             registry_path=Path(get_abs_path(str(registry_path))),
@@ -263,6 +393,8 @@ def load_runtime_observability(
             collection_name=collection_name,
         )
         current_corpus["available"] = True
+        current_git_revision = get_git_revision()
+        current_git_dirty = get_git_dirty()
     except Exception as exc:
         current_corpus = {
             "available": False,
@@ -270,6 +402,8 @@ def load_runtime_observability(
             "collection_name": collection_name,
             "error": f"{type(exc).__name__}: {exc}",
         }
+        current_git_revision = ""
+        current_git_dirty = None
 
     latest_eval = load_latest_agent_eval(get_abs_path(str(results_dir)))
     return combine_runtime_observability(
@@ -277,4 +411,6 @@ def load_runtime_observability(
         latest_eval=latest_eval,
         current_persist_directory=absolute_persist_directory,
         collection_name=collection_name,
+        current_git_revision=current_git_revision,
+        current_git_dirty=current_git_dirty,
     )

@@ -1,5 +1,7 @@
 import tempfile
+import threading
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
@@ -13,7 +15,7 @@ from agent import react_agent
 from agent.memory import SessionRetrievalMemory
 from agent.tools.rag_search import build_rag_search_tool
 from agent.tools.show_sources import build_show_sources_tool
-from core.chat_history import FileChatMessageHistory
+from core.chat_history import ChatHistoryCorruptionError, FileChatMessageHistory
 from utils.session import validate_session_id, validate_task_id
 
 
@@ -76,6 +78,54 @@ class FileChatMessageHistoryTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 FileChatMessageHistory("../escape", temp_dir)
 
+    def test_file_history_serializes_concurrent_same_session_writes(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            histories = [
+                FileChatMessageHistory("session-a", temp_dir),
+                FileChatMessageHistory("session-a", temp_dir),
+            ]
+            start = threading.Barrier(2)
+
+            def add_batch(history, prefix):
+                start.wait()
+                for index in range(20):
+                    history.add_messages([HumanMessage(content=f"{prefix}-{index}")])
+
+            with ThreadPoolExecutor(max_workers=2) as executor:
+                futures = [
+                    executor.submit(add_batch, histories[0], "first"),
+                    executor.submit(add_batch, histories[1], "second"),
+                ]
+                for future in futures:
+                    future.result()
+
+            contents = [message.content for message in histories[0].messages]
+
+        self.assertEqual(40, len(contents))
+        self.assertEqual(40, len(set(contents)))
+
+    def test_atomic_write_preserves_previous_history_when_replace_fails(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            history = FileChatMessageHistory("session-a", temp_dir)
+            history.add_messages([HumanMessage(content="preserved")])
+
+            with mock.patch.object(Path, "replace", side_effect=OSError("replace failed")):
+                with self.assertRaisesRegex(OSError, "replace failed"):
+                    history.add_messages([AIMessage(content="not committed")])
+
+            self.assertEqual(["preserved"], [message.content for message in history.messages])
+            self.assertEqual([], list(Path(temp_dir).glob("*.tmp")))
+
+    def test_corrupt_history_is_reported_without_overwrite(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            history = FileChatMessageHistory("session-a", temp_dir)
+            history.file_path.write_text("{broken", encoding="utf-8")
+
+            with self.assertRaises(ChatHistoryCorruptionError):
+                history.add_messages([HumanMessage(content="new")])
+
+            self.assertEqual("{broken", history.file_path.read_text(encoding="utf-8"))
+
 
 class SessionRetrievalMemoryTests(unittest.TestCase):
     def test_retrieval_memory_isolated_and_defensively_copied(self):
@@ -121,6 +171,12 @@ class SessionRetrievalMemoryTests(unittest.TestCase):
 
 
 class ReactAgentSessionTests(unittest.TestCase):
+    def test_system_prompt_prioritizes_explicit_source_tools(self):
+        prompt = react_agent.load_agent_system_prompt()
+
+        self.assertIn("多个明确的 source_id", prompt)
+        self.assertIn("不得用 rag_search", prompt)
+
     def test_langgraph_checkpointer_restores_previous_turn(self):
         chat_model = RecordingChatModel()
         agent = react_agent.ReactAgent(
@@ -186,7 +242,10 @@ class ReactAgentSessionTests(unittest.TestCase):
         self.assertEqual("final answer", agent.execute("question"))
         fake_graph.invoke.assert_called_once_with(
             {"messages": [("user", "question")]},
-            config={"configurable": {"thread_id": "session-a"}},
+            config={
+                "configurable": {"thread_id": "session-a"},
+                "recursion_limit": 12,
+            },
         )
 
     def test_execute_stream_exposes_tool_trace_without_internal_reasoning(self):
@@ -231,7 +290,10 @@ class ReactAgentSessionTests(unittest.TestCase):
         self.assertNotIn("tool result", output)
         fake_graph.stream.assert_called_once_with(
             {"messages": [("user", "question")]},
-            config={"configurable": {"thread_id": "session-a"}},
+            config={
+                "configurable": {"thread_id": "session-a"},
+                "recursion_limit": 12,
+            },
             stream_mode="updates",
         )
 
@@ -265,6 +327,15 @@ class ReactAgentSessionTests(unittest.TestCase):
                                 tool_call_id="call-1",
                                 status="success",
                                 content="private tool result",
+                                artifact={
+                                    "source_observations": [
+                                        {
+                                            "source_id": "paper-001",
+                                            "locator": "page=1",
+                                            "chunk_order": 0,
+                                        }
+                                    ]
+                                },
                             )
                         ]
                     }
@@ -289,9 +360,37 @@ class ReactAgentSessionTests(unittest.TestCase):
         self.assertEqual("call-1", events[0].call_id)
         self.assertEqual({"source_id": "paper-001"}, events[0].arguments)
         self.assertEqual("success", events[1].status)
+        self.assertEqual("paper-001", events[1].observations[0]["source_id"])
         self.assertEqual("answer", events[2].content)
         self.assertNotIn("hidden reasoning", str([event.to_dict() for event in events]))
         self.assertNotIn("private tool result", str([event.to_dict() for event in events]))
+
+    def test_execute_stream_marks_failed_tool_result(self):
+        fake_graph = mock.Mock()
+        fake_graph.stream.return_value = iter(
+            [
+                {
+                    "tools": {
+                        "messages": [
+                            SimpleNamespace(
+                                type="tool",
+                                name="inspect_source",
+                                tool_call_id="call-1",
+                                status="error",
+                                content="safe failure",
+                            )
+                        ]
+                    }
+                }
+            ]
+        )
+        agent = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+        agent.session_id = "session-a"
+        agent.agent_graph = fake_graph
+
+        output = "".join(agent.execute_stream("question"))
+
+        self.assertEqual("[工具结果] inspect_source 失败\n", output)
 
 
 if __name__ == "__main__":

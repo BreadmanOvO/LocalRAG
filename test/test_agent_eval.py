@@ -8,8 +8,10 @@ from eval import eval_agent
 
 
 class FakeCollection:
-    def __init__(self, source_ids):
+    def __init__(self, source_ids, documents=None):
         self.metadatas = [{"source_id": source_id} for source_id in source_ids]
+        self.ids = [f"chunk-{index}" for index in range(len(source_ids))]
+        self.documents = documents or [f"document-{index}" for index in range(len(source_ids))]
         self.calls = []
 
     def count(self):
@@ -18,6 +20,8 @@ class FakeCollection:
     def get(self, *, include, limit, offset):
         self.calls.append({"include": include, "limit": limit, "offset": offset})
         return {
+            "ids": self.ids[offset : offset + limit],
+            "documents": self.documents[offset : offset + limit],
             "metadatas": self.metadatas[offset : offset + limit],
         }
 
@@ -100,11 +104,25 @@ class AgentEvalScoringTests(unittest.TestCase):
             "回答",
         ]
 
-        tools, answer, raw = eval_agent.parse_agent_stream(chunks)
+        tools, failed_tools, answer, raw = eval_agent.parse_agent_stream(chunks)
 
         self.assertEqual(["rag_search", "evidence_check"], tools)
+        self.assertEqual([], failed_tools)
         self.assertEqual("最终回答", answer)
         self.assertEqual(chunks, raw)
+
+    def test_parse_agent_stream_captures_failed_tool_result(self):
+        chunks = [
+            "[工具] inspect_source\n",
+            "[工具结果] inspect_source 失败\n",
+            "fallback answer",
+        ]
+
+        tools, failed_tools, answer, _raw = eval_agent.parse_agent_stream(chunks)
+
+        self.assertEqual(["inspect_source"], tools)
+        self.assertEqual(["inspect_source"], failed_tools)
+        self.assertEqual("fallback answer", answer)
 
     def test_evaluate_turn_checks_order_forbidden_tools_and_answer_contract(self):
         turn = build_turn(
@@ -132,6 +150,20 @@ class AgentEvalScoringTests(unittest.TestCase):
         self.assertFalse(failed["tool_order_pass"])
         self.assertFalse(failed["forbidden_tools_pass"])
         self.assertFalse(failed["answer_contract_pass"])
+
+    def test_required_tool_failure_fails_tool_contract(self):
+        turn = build_turn("prompt", ["inspect_source"])
+
+        result = eval_agent.evaluate_turn(
+            turn,
+            ["inspect_source"],
+            "fallback answer",
+            failed_tools=["inspect_source"],
+        )
+
+        self.assertFalse(result["tool_success_pass"])
+        self.assertFalse(result["tool_contract_pass"])
+        self.assertFalse(result["turn_pass"])
 
     def test_summary_gate_requires_corpus_and_behavior_thresholds(self):
         rows = [
@@ -184,7 +216,30 @@ class AgentEvalRunnerTests(unittest.TestCase):
         self.assertEqual(0.667, manifest["coverage_ratio"])
         self.assertEqual(["source-3"], manifest["missing_source_ids"])
         self.assertEqual(["extra-source"], manifest["extra_source_ids"])
+        self.assertTrue(manifest["corpus_fingerprint"].startswith("sha256:"))
+        self.assertTrue(manifest["registry_fingerprint"].startswith("sha256:"))
         self.assertEqual([0, 2], [call["offset"] for call in collection.calls])
+
+    def test_corpus_fingerprint_changes_when_document_content_changes(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            registry_path = root / "registry.json"
+            write_registry(registry_path, ["source-1"])
+
+            original = eval_agent.build_corpus_manifest(
+                registry_path=registry_path,
+                persist_directory=root / "chroma",
+                collection_name="rag",
+                collection=FakeCollection(["source-1"], ["original"]),
+            )
+            changed = eval_agent.build_corpus_manifest(
+                registry_path=registry_path,
+                persist_directory=root / "chroma",
+                collection_name="rag",
+                collection=FakeCollection(["source-1"], ["changed"]),
+            )
+
+        self.assertNotEqual(original["corpus_fingerprint"], changed["corpus_fingerprint"])
 
     def test_run_agent_eval_reuses_agent_across_turns_and_writes_artifacts(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -335,6 +390,80 @@ class AgentEvalRunnerTests(unittest.TestCase):
                     agent_factory=mock.Mock(),
                     collection=FakeCollection(["paper-001"]),
                 )
+
+    def test_partial_case_selection_is_diagnostic_and_fails_gate(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            registry_path = root / "registry.json"
+            dataset_path = root / "dataset.json"
+            write_registry(registry_path, ["paper-001"])
+            write_dataset(
+                dataset_path,
+                [
+                    {
+                        "id": "case-1",
+                        "category": "inspect",
+                        "turns": [build_turn("inspect-1", [])],
+                    },
+                    {
+                        "id": "case-2",
+                        "category": "inspect",
+                        "turns": [build_turn("inspect-2", [])],
+                    },
+                ],
+            )
+            fake_agent = FakeAgent({"inspect-1": ["answer"], "inspect-2": ["answer"]})
+
+            result = eval_agent.run_agent_eval(
+                dataset_path=dataset_path,
+                registry_path=registry_path,
+                persist_directory=root / "chroma",
+                out_dir=root / "results",
+                max_cases=1,
+                agent_factory=mock.Mock(return_value=fake_agent),
+                collection=FakeCollection(["paper-001"]),
+            )
+
+        self.assertFalse(result["summary"]["gate_pass"])
+        self.assertFalse(result["summary"]["gate_checks"]["evaluation_complete"])
+        self.assertFalse(result["manifest"]["evaluation_scope"]["selection_complete"])
+        self.assertEqual(2, result["summary"]["expected_case_count"])
+
+    def test_single_case_id_selection_is_diagnostic_and_fails_gate(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            registry_path = root / "registry.json"
+            dataset_path = root / "dataset.json"
+            write_registry(registry_path, ["paper-001"])
+            write_dataset(
+                dataset_path,
+                [
+                    {
+                        "id": "case-1",
+                        "category": "inspect",
+                        "turns": [build_turn("inspect-1", [])],
+                    },
+                    {
+                        "id": "case-2",
+                        "category": "inspect",
+                        "turns": [build_turn("inspect-2", [])],
+                    },
+                ],
+            )
+
+            result = eval_agent.run_agent_eval(
+                dataset_path=dataset_path,
+                registry_path=registry_path,
+                persist_directory=root / "chroma",
+                out_dir=root / "results",
+                case_ids=["case-2"],
+                agent_factory=mock.Mock(return_value=FakeAgent({"inspect-2": ["answer"]})),
+                collection=FakeCollection(["paper-001"]),
+            )
+
+        self.assertFalse(result["summary"]["gate_pass"])
+        self.assertFalse(result["summary"]["gate_checks"]["evaluation_complete"])
+        self.assertEqual(["case-2"], result["manifest"]["evaluation_scope"]["selected_case_ids"])
 
     def test_run_agent_eval_rejects_unknown_case_id(self):
         with tempfile.TemporaryDirectory() as temp_dir:

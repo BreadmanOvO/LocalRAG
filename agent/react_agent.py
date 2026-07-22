@@ -23,6 +23,9 @@ from utils.path_tools import get_abs_path
 from utils.session import validate_session_id, validate_task_id
 
 
+DEFAULT_AGENT_RECURSION_LIMIT = 12
+
+
 def load_agent_system_prompt() -> str:
     """加载 Agent 系统提示词"""
     prompt_path = get_abs_path("prompts/agent_system.txt")
@@ -42,12 +45,16 @@ class ReactAgent:
         chat_model=None,
         rag_service=None,
         checkpointer=None,
+        recursion_limit: int = DEFAULT_AGENT_RECURSION_LIMIT,
     ):
         self.session_id = validate_session_id(session_id)
         self.task_id = validate_task_id(task_id or session_id)
         self.retrieval_memory = SessionRetrievalMemory()
         self.task_memory_store = task_memory_store or TaskMemoryStore()
         self.task_memory_policy = TaskMemoryPolicy(enabled=task_memory_enabled)
+        self.recursion_limit = int(recursion_limit)
+        if self.recursion_limit <= 0:
+            raise ValueError("recursion_limit must be greater than zero")
         self.evidence_service = evidence_service or SourceEvidenceService()
         self.task_memory_store.ensure_task(self.task_id)
 
@@ -96,7 +103,14 @@ class ReactAgent:
         )
 
     def _graph_config(self) -> dict:
-        return {"configurable": {"thread_id": self.session_id}}
+        return {
+            "configurable": {"thread_id": self.session_id},
+            "recursion_limit": getattr(
+                self,
+                "recursion_limit",
+                DEFAULT_AGENT_RECURSION_LIMIT,
+            ),
+        }
 
     def get_task_memory(self):
         return self.task_memory_store.get_task(self.task_id)
@@ -152,7 +166,8 @@ class ReactAgent:
             if event.kind == "tool_started":
                 yield f"[工具] {event.tool_name}\n"
             elif event.kind == "tool_completed":
-                yield f"[工具结果] {event.tool_name} 已完成\n"
+                result_text = "失败" if event.status in {"error", "failed"} else "已完成"
+                yield f"[工具结果] {event.tool_name} {result_text}\n"
             elif event.kind in {"answer_delta", "error"}:
                 yield event.content
 
@@ -195,12 +210,20 @@ class ReactAgent:
                             elif msg.type == "tool":
                                 tool_name = getattr(msg, "name", None) or "unknown"
                                 status = getattr(msg, "status", None) or "success"
+                                artifact = getattr(msg, "artifact", None)
+                                observations = ()
+                                if isinstance(artifact, dict):
+                                    raw_observations = artifact.get("source_observations") or []
+                                    observations = tuple(
+                                        item for item in raw_observations if isinstance(item, dict)
+                                    )
                                 yield AgentEvent(
                                     kind="tool_completed",
                                     tool_name=tool_name,
                                     call_id=str(getattr(msg, "tool_call_id", None) or ""),
                                     status=str(status),
                                     elapsed_ms=int((time.perf_counter() - started_at) * 1000),
+                                    observations=observations,
                                 )
         except Exception:
             yield AgentEvent(

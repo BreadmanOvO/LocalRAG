@@ -7,6 +7,8 @@ from agent import ReactAgent
 from agent.observability import (
     build_source_observations,
     diff_task_memory,
+    finalize_agent_answer,
+    has_pending_tool_calls,
     load_runtime_observability,
     tool_label,
 )
@@ -176,7 +178,7 @@ def _render_runtime_sidebar(runtime_status: dict) -> None:
             st.write(latest_eval.get("error", "暂无评测结果"))
 
 
-def _trace_rows(trace: list[dict]) -> list[dict]:
+def _trace_rows(trace: list[dict], *, mark_pending_interrupted: bool = False) -> list[dict]:
     rows = []
     pending = []
     for event in trace:
@@ -218,6 +220,11 @@ def _trace_rows(trace: list[dict]) -> list[dict]:
             elapsed_ms = max(0, (event.get("elapsed_ms") or 0) - match["_started_ms"])
             match["耗时"] = f"{elapsed_ms / 1000:.2f}s"
 
+    if mark_pending_interrupted:
+        for row in pending:
+            if row["状态"] == "运行中":
+                row["状态"] = "中断"
+
     return [
         {key: value for key, value in row.items() if not key.startswith("_")}
         for row in rows
@@ -243,8 +250,8 @@ def _render_sources(sources: list[dict]) -> None:
                 st.write(source["summary"])
 
 
-def _render_trace(trace: list[dict]) -> None:
-    rows = _trace_rows(trace)
+def _render_trace(trace: list[dict], *, run_failed: bool = False) -> None:
+    rows = _trace_rows(trace, mark_pending_interrupted=run_failed)
     if not rows:
         st.caption("本轮未调用工具")
         return
@@ -273,7 +280,7 @@ def _render_assistant_details(message: dict) -> None:
         with source_tab:
             _render_sources(sources)
         with trace_tab:
-            _render_trace(trace)
+            _render_trace(trace, run_failed=bool(message.get("error")))
         with memory_tab:
             _render_memory_changes(memory_changes)
 
@@ -356,6 +363,7 @@ if prompt:
     answer_parts = []
     has_error = False
     used_tools = set()
+    source_observations = []
     max_elapsed_ms = 0
     with st.chat_message("assistant"):
         run_status = st.status("Agent 执行中", expanded=True)
@@ -369,6 +377,9 @@ if prompt:
             elif event.kind == "tool_completed":
                 trace.append(event.to_dict())
                 state_text = "完成" if event.status not in {"error", "failed"} else "失败"
+                if event.status in {"error", "failed"}:
+                    has_error = True
+                source_observations.extend(event.observations)
                 run_status.write(f"{tool_label(event.tool_name)} · {state_text}")
             elif event.kind == "answer_delta":
                 answer_parts.append(event.content)
@@ -378,9 +389,12 @@ if prompt:
                 answer_parts.append(event.content)
                 answer_placeholder.error(event.content)
 
-        answer = "".join(answer_parts).strip() or "抱歉，未生成有效回答，请重试。"
-        if not answer_parts:
-            answer_placeholder.write(answer)
+        generated_answer = "".join(answer_parts).strip()
+        answer, has_error = finalize_agent_answer(answer_parts, has_error=has_error)
+        if not generated_answer:
+            answer_placeholder.error(answer)
+        if has_pending_tool_calls(trace):
+            has_error = True
         run_status.update(
             label=f"执行{'失败' if has_error else '完成'} · {max_elapsed_ms / 1000:.1f}s",
             state="error" if has_error else "complete",
@@ -388,8 +402,8 @@ if prompt:
         )
 
         after_memory = agent.get_task_memory()
-        source_tools = {"rag_search", "show_sources", "evidence_check"}
-        sources = (
+        source_tools = {"rag_search", "show_sources"}
+        retrieval_sources = (
             build_source_observations(
                 agent.get_retrieval_snapshot(),
                 confirmed_sources=after_memory.confirmed_sources,
@@ -397,6 +411,18 @@ if prompt:
             if used_tools & source_tools
             else []
         )
+        sources = []
+        seen_sources = set()
+        for source in [*retrieval_sources, *source_observations]:
+            key = (
+                source.get("source_id"),
+                source.get("locator"),
+                source.get("chunk_order"),
+                source.get("chunk_strategy"),
+            )
+            if key not in seen_sources:
+                seen_sources.add(key)
+                sources.append(source)
         assistant_message = {
             "role": "assistant",
             "content": answer,

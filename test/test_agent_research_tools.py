@@ -227,6 +227,60 @@ class ResearchToolTests(unittest.TestCase):
 
         self.assertIn("来源对比失败", result)
 
+    def test_research_tools_return_source_observation_artifacts(self):
+        calls = [
+            (
+                build_inspect_source_tool(self.service),
+                "inspect_source",
+                {"source_id": "paper-001", "max_chunks": 1},
+            ),
+            (
+                build_expand_context_tool(self.service),
+                "expand_context",
+                {"source_id": "paper-001", "chunk_order": 1},
+            ),
+            (
+                build_compare_sources_tool(self.service),
+                "compare_sources",
+                {
+                    "source_ids": ["paper-001", "paper-002"],
+                    "focus": "camera radar",
+                    "max_chunks_per_source": 1,
+                },
+            ),
+        ]
+
+        for index, (research_tool, name, args) in enumerate(calls):
+            with self.subTest(tool=name):
+                message = research_tool.invoke(
+                    {"type": "tool_call", "id": f"call-{index}", "name": name, "args": args}
+                )
+                observations = message.artifact["source_observations"]
+                self.assertEqual("success", message.status)
+                self.assertTrue(observations)
+                self.assertIn("source_id", observations[0])
+                self.assertIn("locator", observations[0])
+                self.assertIn("chunk_order", observations[0])
+                self.assertIn("chunk_strategy", observations[0])
+                self.assertIn("summary", observations[0])
+                self.assertIn("evidence_status", observations[0])
+
+    def test_tool_exception_becomes_safe_failed_tool_message(self):
+        compare_tool = build_compare_sources_tool(self.service)
+
+        message = compare_tool.invoke(
+            {
+                "type": "tool_call",
+                "id": "call-failed",
+                "name": "compare_sources",
+                "args": {"source_ids": ["paper-001"]},
+            }
+        )
+
+        self.assertEqual("error", message.status)
+        self.assertIn("来源对比失败", message.content)
+        self.assertNotIn("between 2 and 5", message.content)
+
 
 if __name__ == "__main__":
     unittest.main()
