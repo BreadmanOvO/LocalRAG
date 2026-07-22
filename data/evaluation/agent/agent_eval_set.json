@@ -1,5 +1,5 @@
 {
-  "dataset_version": "agent-eval-v1",
+  "dataset_version": "agent-eval-v1.1",
   "cases": [
     {
       "id": "agent-inspect-001",
@@ -30,7 +30,7 @@
           "min_answer_chars": 30
         },
         {
-          "prompt": "继续刚才的来源，扩展 chunk_order=1 前后各一个片段。",
+          "prompt": "继续刚才的来源，扩展 chunk_order=1 前后各一个片段，并在回答中保留 source_id=paper-001。",
           "required_tools": ["expand_context"],
           "forbidden_tools": ["rag_search"],
           "expected_source_ids": ["paper-001"],
@@ -105,7 +105,7 @@
       "category": "table_interference",
       "turns": [
         {
-          "prompt": "请检索 Apollo 规划模块的输入，至少列出四个输入 channel 及其说明。",
+          "prompt": "请检索 Apollo 规划模块的输入，列出并说明 /apollo/canbus/chassis、/apollo/localization/pose、/apollo/prediction 和 /apollo/relative_map 这四个 channel。",
           "required_tools": ["rag_search"],
           "forbidden_tools": [],
           "expected_source_ids": ["apollo-doc-008"],

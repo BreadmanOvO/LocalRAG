@@ -111,6 +111,23 @@ class RunStatusTests(unittest.TestCase):
 
 
 class RuntimeObservabilityTests(unittest.TestCase):
+    def test_gate_rejects_active_profile_fingerprint_mismatch(self):
+        result = combine_runtime_observability(
+            current_corpus={
+                "available": True,
+                "active_profile_matches": False,
+                "corpus_fingerprint": "sha256:corpus",
+                "registry_fingerprint": "sha256:registry",
+            },
+            latest_eval={"available": False},
+            current_persist_directory="evaluated",
+            collection_name="rag",
+            project_root="C:/project",
+        )
+
+        self.assertEqual("active_profile_mismatch", result["gate_status"])
+        self.assertFalse(result["gate_pass"])
+
     def _write_run(
         self,
         root: Path,

@@ -10,6 +10,7 @@ from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.outputs import ChatGeneration, ChatResult
 from pydantic import Field
+from langgraph.errors import GraphRecursionError
 
 from agent import react_agent
 from agent.memory import SessionRetrievalMemory
@@ -391,6 +392,18 @@ class ReactAgentSessionTests(unittest.TestCase):
         output = "".join(agent.execute_stream("question"))
 
         self.assertEqual("[工具结果] inspect_source 失败\n", output)
+
+    def test_execute_stream_marks_graph_recursion_without_exposing_exception(self):
+        fake_graph = mock.Mock()
+        fake_graph.stream.side_effect = GraphRecursionError("private graph details")
+        agent = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+        agent.session_id = "session-a"
+        agent.agent_graph = fake_graph
+
+        output = "".join(agent.execute_stream("question"))
+
+        self.assertEqual("[运行错误] graph_recursion_limit\n", output)
+        self.assertNotIn("private graph details", output)
 
 
 if __name__ == "__main__":

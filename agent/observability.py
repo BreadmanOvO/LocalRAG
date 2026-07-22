@@ -43,6 +43,7 @@ class AgentEvent:
     arguments: dict[str, Any] = field(default_factory=dict)
     content: str = ""
     status: str = ""
+    error_code: str = ""
     elapsed_ms: int | None = None
     observations: tuple[dict[str, Any], ...] = field(default_factory=tuple)
 
@@ -288,6 +289,7 @@ def combine_runtime_observability(
 ) -> dict[str, Any]:
     root = Path(project_root or get_project_root()).resolve()
     current_available = bool(current_corpus.get("available", True))
+    active_profile_matches = bool(current_corpus.get("active_profile_matches", True))
     eval_available = bool(latest_eval.get("available"))
     corpus_matches_eval = False
     code_matches_eval = False
@@ -332,6 +334,7 @@ def combine_runtime_observability(
     latest_gate_pass = bool(latest_eval.get("summary", {}).get("gate_pass"))
     effective_gate_pass = (
         current_available
+        and active_profile_matches
         and identity_complete
         and code_clean
         and corpus_matches_eval
@@ -341,6 +344,9 @@ def combine_runtime_observability(
     if not current_available:
         gate_status = "corpus_unavailable"
         message = current_corpus.get("error", "当前知识库状态不可用")
+    elif not active_profile_matches:
+        gate_status = "active_profile_mismatch"
+        message = "当前知识库内容与活动 corpus profile 的指纹不一致"
     elif not eval_available:
         gate_status = "eval_unavailable"
         message = latest_eval.get("error", "未找到 Agent 评测结果")
@@ -365,6 +371,7 @@ def combine_runtime_observability(
 
     return {
         "current_corpus": deepcopy(current_corpus),
+        "active_profile_matches": active_profile_matches,
         "latest_eval": deepcopy(latest_eval),
         "corpus_matches_eval": corpus_matches_eval,
         "code_matches_eval": code_matches_eval,
@@ -382,6 +389,8 @@ def load_runtime_observability(
     collection_name: str,
     registry_path: str | Path = "data/evaluation/shared/source_registry.json",
     results_dir: str | Path = "results/agent_eval",
+    expected_corpus_fingerprint: str = "",
+    expected_registry_fingerprint: str = "",
 ) -> dict[str, Any]:
     absolute_persist_directory = _resolve_project_path(persist_directory, get_project_root())
     try:
@@ -393,6 +402,17 @@ def load_runtime_observability(
             collection_name=collection_name,
         )
         current_corpus["available"] = True
+        current_corpus["active_profile_matches"] = (
+            (
+                not expected_corpus_fingerprint
+                or current_corpus.get("corpus_fingerprint") == expected_corpus_fingerprint
+            )
+            and (
+                not expected_registry_fingerprint
+                or current_corpus.get("registry_fingerprint")
+                == expected_registry_fingerprint
+            )
+        )
         current_git_revision = get_git_revision()
         current_git_dirty = get_git_dirty()
     except Exception as exc:

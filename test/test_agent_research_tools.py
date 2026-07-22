@@ -1,4 +1,7 @@
 import unittest
+from unittest import mock
+
+from pydantic import ValidationError
 
 from agent.memory import SessionRetrievalMemory
 from agent.tools.research import (
@@ -197,6 +200,16 @@ class ResearchToolTests(unittest.TestCase):
         self.assertIn("paper-002", compared)
         self.assertIn("term_coverage", compared)
 
+    def test_research_tool_schemas_expose_service_bounds(self):
+        inspect_tool = build_inspect_source_tool(self.service)
+        expand_tool = build_expand_context_tool(self.service)
+        compare_tool = build_compare_sources_tool(self.service)
+
+        self.assertEqual(5, inspect_tool.args["max_chunks"]["maximum"])
+        self.assertEqual(3, expand_tool.args["after"]["maximum"])
+        self.assertEqual(2, compare_tool.args["source_ids"]["minItems"])
+        self.assertEqual(5, compare_tool.args["source_ids"]["maxItems"])
+
     def test_evidence_check_is_bound_to_one_retrieval_session(self):
         memory = SessionRetrievalMemory()
         memory.remember(
@@ -223,9 +236,8 @@ class ResearchToolTests(unittest.TestCase):
     def test_compare_tool_rejects_a_single_source(self):
         compare_tool = build_compare_sources_tool(self.service)
 
-        result = compare_tool.invoke({"source_ids": ["paper-001"]})
-
-        self.assertIn("来源对比失败", result)
+        with self.assertRaises(ValidationError):
+            compare_tool.invoke({"source_ids": ["paper-001"]})
 
     def test_research_tools_return_source_observation_artifacts(self):
         calls = [
@@ -268,18 +280,23 @@ class ResearchToolTests(unittest.TestCase):
     def test_tool_exception_becomes_safe_failed_tool_message(self):
         compare_tool = build_compare_sources_tool(self.service)
 
-        message = compare_tool.invoke(
-            {
-                "type": "tool_call",
-                "id": "call-failed",
-                "name": "compare_sources",
-                "args": {"source_ids": ["paper-001"]},
-            }
-        )
+        with mock.patch.object(
+            self.service,
+            "compare_sources",
+            side_effect=RuntimeError("private service details"),
+        ):
+            message = compare_tool.invoke(
+                {
+                    "type": "tool_call",
+                    "id": "call-failed",
+                    "name": "compare_sources",
+                    "args": {"source_ids": ["paper-001", "paper-002"]},
+                }
+            )
 
         self.assertEqual("error", message.status)
         self.assertIn("来源对比失败", message.content)
-        self.assertNotIn("between 2 and 5", message.content)
+        self.assertNotIn("private service details", message.content)
 
 
 if __name__ == "__main__":

@@ -130,10 +130,14 @@ def _format_retrieved_context(documents: list[Document]) -> str:
 
 
 class RagService(object):
-    def __init__(self) -> None:
+    def __init__(self, *, chat_model=None, embedding_model=None) -> None:
         runtime_config = load_runtime_config()
         self.vector_service = VectorStoreService(
-            embedding=build_embedding_model(runtime_config),
+            embedding=(
+                embedding_model
+                if embedding_model is not None
+                else build_embedding_model(runtime_config)
+            ),
         )
 
         system_prompt = getattr(runtime_config, "rag_system_prompt", None) or DEFAULT_RAG_SYSTEM_PROMPT
@@ -145,7 +149,9 @@ class RagService(object):
             ]
         )
         
-        self.chat_model = build_chat_model(runtime_config)
+        self.chat_model = (
+            chat_model if chat_model is not None else build_chat_model(runtime_config)
+        )
 
         self.chain = self.__get_chain()
 

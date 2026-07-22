@@ -58,10 +58,17 @@ def _query_task_id() -> str | None:
 
 
 @st.cache_data(ttl=60, show_spinner=False)
-def _runtime_observability(persist_directory: str, collection_name: str) -> dict:
+def _runtime_observability(
+    persist_directory: str,
+    collection_name: str,
+    expected_corpus_fingerprint: str,
+    expected_registry_fingerprint: str,
+) -> dict:
     return load_runtime_observability(
         persist_directory=persist_directory,
         collection_name=collection_name,
+        expected_corpus_fingerprint=expected_corpus_fingerprint,
+        expected_registry_fingerprint=expected_registry_fingerprint,
     )
 
 
@@ -301,7 +308,12 @@ if "session_id" not in st.session_state:
 if "task_memory_enabled" not in st.session_state:
     st.session_state["task_memory_enabled"] = True
 
-runtime_status = _runtime_observability(config.persist_directory, config.collection_name)
+runtime_status = _runtime_observability(
+    config.persist_directory,
+    config.collection_name,
+    config.expected_corpus_fingerprint,
+    config.expected_registry_fingerprint,
+)
 
 st.title("LocalRAG 研究助手")
 st.caption(f"任务 {st.session_state['task_id']}")

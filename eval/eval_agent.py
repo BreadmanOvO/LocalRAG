@@ -30,6 +30,8 @@ DEFAULT_MIN_CASE_PASS_RATIO = 0.8
 DEFAULT_MIN_TOOL_CONTRACT_RATIO = 0.9
 DEFAULT_MIN_ANSWER_CONTRACT_RATIO = 0.8
 CHROMA_BATCH_SIZE = 500
+EVAL_AGENT_TEMPERATURE = 0.0
+EVAL_CASE_INFRASTRUCTURE_RETRIES = 1
 
 KNOWN_TOOLS = {
     "rag_search",
@@ -47,6 +49,8 @@ _TOOL_TRACE_RE = re.compile(r"^\[工具\]\s+([A-Za-z0-9_.-]+)\s*$")
 _TOOL_RESULT_RE = re.compile(
     r"^\[工具结果\]\s+([A-Za-z0-9_.-]+)\s+(已完成|失败)\s*$"
 )
+_AGENT_ERROR_RE = re.compile(r"^\[运行错误\]\s+([a-z_]+)\s*$")
+RETRYABLE_CASE_ERRORS = {"model_request_failed"}
 
 
 def _require_non_empty_string(value: Any, field_name: str) -> str:
@@ -302,9 +306,12 @@ def build_corpus_manifest(
     return manifest
 
 
-def parse_agent_stream(chunks: Iterable[str]) -> tuple[list[str], list[str], str, list[str]]:
+def parse_agent_stream(
+    chunks: Iterable[str],
+) -> tuple[list[str], list[str], str, str, list[str]]:
     tool_calls = []
     failed_tools = []
+    execution_error = ""
     answer_parts = []
     raw_chunks = []
     for raw_chunk in chunks:
@@ -320,8 +327,12 @@ def parse_agent_stream(chunks: Iterable[str]) -> tuple[list[str], list[str], str
             if result_match.group(2) == "失败":
                 failed_tools.append(result_match.group(1))
             continue
+        error_match = _AGENT_ERROR_RE.fullmatch(stripped)
+        if error_match:
+            execution_error = error_match.group(1)
+            continue
         answer_parts.append(chunk)
-    return tool_calls, failed_tools, "".join(answer_parts).strip(), raw_chunks
+    return tool_calls, failed_tools, execution_error, "".join(answer_parts).strip(), raw_chunks
 
 
 def _is_ordered_subsequence(expected: list[str], actual: list[str]) -> bool:
@@ -391,6 +402,7 @@ def summarize_agent_eval(
     min_tool_contract_ratio: float = DEFAULT_MIN_TOOL_CONTRACT_RATIO,
     min_answer_contract_ratio: float = DEFAULT_MIN_ANSWER_CONTRACT_RATIO,
     expected_case_count: int | None = None,
+    expected_turn_count: int | None = None,
     skipped: bool = False,
 ) -> dict[str, Any]:
     turns = [turn for row in rows for turn in row.get("turns", [])]
@@ -404,6 +416,7 @@ def summarize_agent_eval(
     tool_contract_ratio = _ratio(tool_contract_count, len(turns))
     answer_contract_ratio = _ratio(answer_contract_count, len(turns))
     expected_case_count = len(rows) if expected_case_count is None else expected_case_count
+    expected_turn_count = len(turns) if expected_turn_count is None else expected_turn_count
     gate_checks = {
         "corpus_coverage": corpus_manifest["coverage_ratio"] >= min_corpus_coverage,
         "case_pass_ratio": case_pass_ratio >= min_case_pass_ratio,
@@ -411,12 +424,17 @@ def summarize_agent_eval(
         "answer_contract_ratio": answer_contract_ratio >= min_answer_contract_ratio,
         "forbidden_tool_violations": forbidden_violation_count == 0,
         "evaluation_executed": not skipped and bool(rows),
-        "evaluation_complete": not skipped and len(rows) == expected_case_count,
+        "evaluation_complete": (
+            not skipped
+            and len(rows) == expected_case_count
+            and len(turns) == expected_turn_count
+        ),
     }
     return {
         "case_count": len(rows),
         "expected_case_count": expected_case_count,
         "turn_count": len(turns),
+        "expected_turn_count": expected_turn_count,
         "passed_case_count": passed_cases,
         "case_pass_ratio": case_pass_ratio,
         "tool_contract_pass_count": tool_contract_count,
@@ -452,9 +470,14 @@ def _default_agent_factory(
     *,
     rag_service=None,
     evidence_service=None,
+    chat_model=None,
+    recursion_limit: int | None = None,
 ):
     from agent import ReactAgent
 
+    options = {}
+    if recursion_limit is not None:
+        options["recursion_limit"] = recursion_limit
     return ReactAgent(
         session_id=session_id,
         task_id=task_id,
@@ -462,6 +485,8 @@ def _default_agent_factory(
         task_memory_enabled=False,
         rag_service=rag_service,
         evidence_service=evidence_service,
+        chat_model=chat_model,
+        **options,
     )
 
 
@@ -479,6 +504,7 @@ def run_agent_eval(
     agent_factory: Callable[[str, str, Any], Any] | None = None,
     collection=None,
     progress_callback: Callable[[int, int, str, bool], None] | None = None,
+    case_infrastructure_retries: int | None = None,
 ) -> dict[str, Any]:
     dataset = load_agent_eval_dataset(dataset_path)
     if case_ids:
@@ -492,8 +518,12 @@ def run_agent_eval(
         selected_cases = dataset["cases"]
     if max_cases is not None and max_cases <= 0:
         raise ValueError("max_cases must be greater than zero")
+    if case_infrastructure_retries is not None and case_infrastructure_retries < 0:
+        raise ValueError("case_infrastructure_retries must not be negative")
     cases = selected_cases[:max_cases] if max_cases is not None else selected_cases
     expected_case_count = len(dataset["cases"])
+    expected_turn_count = sum(len(case["turns"]) for case in dataset["cases"])
+    selected_turn_count = sum(len(case["turns"]) for case in cases)
     selected_case_ids = [case["id"] for case in cases]
     selection_complete = len(cases) == expected_case_count
     run_id = run_id or f"agent-eval-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
@@ -507,15 +537,57 @@ def run_agent_eval(
     corpus_ready = corpus_manifest["coverage_ratio"] >= DEFAULT_MIN_CORPUS_COVERAGE
     rows = []
 
+    runtime = {"provider": "injected", "chat_model_name": "injected"}
+    execution = {
+        "mode": "injected",
+        "agent_temperature": None,
+        "request_timeout_seconds": None,
+        "max_retries": None,
+        "recursion_limit": None,
+        "case_infrastructure_retries": case_infrastructure_retries or 0,
+    }
+    runtime_config = None
+    if agent_factory is None:
+        from agent.react_agent import DEFAULT_AGENT_RECURSION_LIMIT
+        from config.provider_factory import (
+            DEFAULT_CHAT_MAX_RETRIES,
+            DEFAULT_CHAT_TIMEOUT_SECONDS,
+        )
+        from config.runtime_keys import load_runtime_config
+
+        runtime_config = load_runtime_config()
+        runtime = {
+            "provider": runtime_config.provider,
+            "chat_model_name": runtime_config.chat_model_name,
+            "embedding_model_name": runtime_config.embedding_model_name,
+        }
+        execution = {
+            "mode": "formal",
+            "agent_temperature": EVAL_AGENT_TEMPERATURE,
+            "request_timeout_seconds": DEFAULT_CHAT_TIMEOUT_SECONDS,
+            "max_retries": DEFAULT_CHAT_MAX_RETRIES,
+            "recursion_limit": DEFAULT_AGENT_RECURSION_LIMIT,
+            "case_infrastructure_retries": (
+                EVAL_CASE_INFRASTRUCTURE_RETRIES
+                if case_infrastructure_retries is None
+                else case_infrastructure_retries
+            ),
+        }
+
     previous_persist_directory = config.persist_directory
     try:
         config.persist_directory = str(Path(persist_directory).resolve())
         if corpus_ready or allow_stale_corpus:
             if agent_factory is None:
+                from config.provider_factory import build_chat_model
                 from core.rag import RagService
                 from core.source_evidence import SourceEvidenceService
 
-                shared_rag_service = RagService()
+                shared_chat_model = build_chat_model(
+                    runtime_config,
+                    temperature=EVAL_AGENT_TEMPERATURE,
+                )
+                shared_rag_service = RagService(chat_model=shared_chat_model)
                 shared_evidence_service = SourceEvidenceService()
 
                 def factory(session_id, task_id, task_memory_store):
@@ -525,6 +597,8 @@ def run_agent_eval(
                         task_memory_store,
                         rag_service=shared_rag_service,
                         evidence_service=shared_evidence_service,
+                        chat_model=shared_chat_model,
+                        recursion_limit=execution["recursion_limit"],
                     )
             else:
                 factory = agent_factory
@@ -538,61 +612,79 @@ def run_agent_eval(
 
                     task_memory_store = TaskMemoryStore(Path(temp_dir) / "task-memory.sqlite3")
                 for case_index, case in enumerate(cases, start=1):
-                    session_id = f"agent-eval-{uuid4().hex}"
-                    task_id = f"agent-eval-{uuid4().hex}"
-                    agent = None
-                    agent_error = ""
-                    try:
-                        agent = factory(session_id, task_id, task_memory_store)
-                    except Exception as exc:
-                        agent_error = f"{type(exc).__name__}: {exc}"
-                    turn_rows = []
-                    for turn_index, turn in enumerate(case["turns"], start=1):
-                        started = time.perf_counter()
-                        error = agent_error
-                        if agent is None:
-                            tool_calls, failed_tools, answer, raw_chunks = [], [], "", []
-                        else:
-                            try:
-                                tool_calls, failed_tools, answer, raw_chunks = parse_agent_stream(
-                                    agent.execute_stream(turn["prompt"])
-                                )
-                            except Exception as exc:
+                    attempt_count = 0
+                    max_attempts = 1 + execution["case_infrastructure_retries"]
+                    while True:
+                        attempt_count += 1
+                        session_id = f"agent-eval-{uuid4().hex}"
+                        task_id = f"agent-eval-{uuid4().hex}"
+                        agent = None
+                        agent_error = ""
+                        try:
+                            agent = factory(session_id, task_id, task_memory_store)
+                        except Exception as exc:
+                            agent_error = f"{type(exc).__name__}: {exc}"
+                        turn_rows = []
+                        for turn_index, turn in enumerate(case["turns"], start=1):
+                            started = time.perf_counter()
+                            error = agent_error
+                            if agent is None:
                                 tool_calls, failed_tools, answer, raw_chunks = [], [], "", []
-                                error = f"{type(exc).__name__}: {exc}"
-                        evaluation = evaluate_turn(
-                            turn,
-                            tool_calls,
-                            answer,
-                            failed_tools=failed_tools,
+                            else:
+                                try:
+                                    (
+                                        tool_calls,
+                                        failed_tools,
+                                        execution_error,
+                                        answer,
+                                        raw_chunks,
+                                    ) = parse_agent_stream(agent.execute_stream(turn["prompt"]))
+                                    if execution_error:
+                                        error = execution_error
+                                except Exception as exc:
+                                    tool_calls, failed_tools, answer, raw_chunks = [], [], "", []
+                                    error = f"{type(exc).__name__}: {exc}"
+                            evaluation = evaluate_turn(
+                                turn,
+                                tool_calls,
+                                answer,
+                                failed_tools=failed_tools,
+                            )
+                            if error:
+                                evaluation["turn_pass"] = False
+                                evaluation["answer_contract_pass"] = False
+                            turn_rows.append(
+                                {
+                                    "turn_index": turn_index,
+                                    "prompt": turn["prompt"],
+                                    "expected": {
+                                        key: turn[key]
+                                        for key in (
+                                            "required_tools",
+                                            "forbidden_tools",
+                                            "expected_source_ids",
+                                            "expected_answer_terms_any",
+                                            "expected_answer_terms_all",
+                                            "min_answer_chars",
+                                        )
+                                    },
+                                    "tool_calls": tool_calls,
+                                    "failed_tools": failed_tools,
+                                    "answer": answer,
+                                    "raw_stream": raw_chunks,
+                                    "elapsed_seconds": round(
+                                        time.perf_counter() - started,
+                                        3,
+                                    ),
+                                    "error": error,
+                                    "evaluation": evaluation,
+                                }
+                            )
+                        infrastructure_failed = any(
+                            turn["error"] in RETRYABLE_CASE_ERRORS for turn in turn_rows
                         )
-                        if error:
-                            evaluation["turn_pass"] = False
-                            evaluation["answer_contract_pass"] = False
-                        turn_rows.append(
-                            {
-                                "turn_index": turn_index,
-                                "prompt": turn["prompt"],
-                                "expected": {
-                                    key: turn[key]
-                                    for key in (
-                                        "required_tools",
-                                        "forbidden_tools",
-                                        "expected_source_ids",
-                                        "expected_answer_terms_any",
-                                        "expected_answer_terms_all",
-                                        "min_answer_chars",
-                                    )
-                                },
-                                "tool_calls": tool_calls,
-                                "failed_tools": failed_tools,
-                                "answer": answer,
-                                "raw_stream": raw_chunks,
-                                "elapsed_seconds": round(time.perf_counter() - started, 3),
-                                "error": error,
-                                "evaluation": evaluation,
-                            }
-                        )
+                        if not infrastructure_failed or attempt_count >= max_attempts:
+                            break
                     case_row = {
                         "id": case["id"],
                         "category": case["category"],
@@ -600,6 +692,8 @@ def run_agent_eval(
                         "case_pass": all(
                             turn["evaluation"]["turn_pass"] for turn in turn_rows
                         ),
+                        "attempt_count": attempt_count,
+                        "infrastructure_retry_count": attempt_count - 1,
                     }
                     rows.append(case_row)
                     if progress_callback is not None:
@@ -617,19 +711,9 @@ def run_agent_eval(
         rows,
         corpus_manifest=corpus_manifest,
         expected_case_count=expected_case_count,
+        expected_turn_count=expected_turn_count,
         skipped=skipped,
     )
-
-    runtime = {"provider": "injected", "chat_model_name": "injected"}
-    if agent_factory is None:
-        from config.runtime_keys import load_runtime_config
-
-        runtime_config = load_runtime_config()
-        runtime = {
-            "provider": runtime_config.provider,
-            "chat_model_name": runtime_config.chat_model_name,
-            "embedding_model_name": runtime_config.embedding_model_name,
-        }
 
     manifest = {
         "contract_version": CONTRACT_VERSION,
@@ -643,13 +727,17 @@ def run_agent_eval(
         "git_revision": get_git_revision(),
         "git_dirty": get_git_dirty(),
         "runtime": runtime,
+        "execution": execution,
         "allow_stale_corpus": allow_stale_corpus,
         "max_cases": max_cases,
         "case_ids": case_ids,
         "evaluation_scope": {
             "expected_case_count": expected_case_count,
+            "expected_turn_count": expected_turn_count,
             "selected_case_count": len(cases),
+            "selected_turn_count": selected_turn_count,
             "executed_case_count": len(rows),
+            "executed_turn_count": sum(len(row["turns"]) for row in rows),
             "selected_case_ids": selected_case_ids,
             "selection_complete": selection_complete,
             "evaluation_complete": summary["gate_checks"]["evaluation_complete"],

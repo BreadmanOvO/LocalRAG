@@ -68,7 +68,7 @@ class AgentEvalSchemaTests(unittest.TestCase):
     def test_repo_agent_eval_dataset_is_valid(self):
         dataset = eval_agent.load_agent_eval_dataset(eval_agent.DEFAULT_DATASET_PATH)
 
-        self.assertEqual("agent-eval-v1", dataset["dataset_version"])
+        self.assertEqual("agent-eval-v1.1", dataset["dataset_version"])
         self.assertEqual(8, len(dataset["cases"]))
         self.assertTrue(any(len(case["turns"]) > 1 for case in dataset["cases"]))
 
@@ -104,10 +104,11 @@ class AgentEvalScoringTests(unittest.TestCase):
             "回答",
         ]
 
-        tools, failed_tools, answer, raw = eval_agent.parse_agent_stream(chunks)
+        tools, failed_tools, execution_error, answer, raw = eval_agent.parse_agent_stream(chunks)
 
         self.assertEqual(["rag_search", "evidence_check"], tools)
         self.assertEqual([], failed_tools)
+        self.assertEqual("", execution_error)
         self.assertEqual("最终回答", answer)
         self.assertEqual(chunks, raw)
 
@@ -118,11 +119,22 @@ class AgentEvalScoringTests(unittest.TestCase):
             "fallback answer",
         ]
 
-        tools, failed_tools, answer, _raw = eval_agent.parse_agent_stream(chunks)
+        tools, failed_tools, execution_error, answer, _raw = eval_agent.parse_agent_stream(chunks)
 
         self.assertEqual(["inspect_source"], tools)
         self.assertEqual(["inspect_source"], failed_tools)
+        self.assertEqual("", execution_error)
         self.assertEqual("fallback answer", answer)
+
+    def test_parse_agent_stream_captures_agent_execution_error(self):
+        tools, failed_tools, execution_error, answer, _raw = eval_agent.parse_agent_stream(
+            ["[工具] evidence_check\n", "[运行错误] model_request_failed\n"]
+        )
+
+        self.assertEqual(["evidence_check"], tools)
+        self.assertEqual([], failed_tools)
+        self.assertEqual("model_request_failed", execution_error)
+        self.assertEqual("", answer)
 
     def test_evaluate_turn_checks_order_forbidden_tools_and_answer_contract(self):
         turn = build_turn(
@@ -194,8 +206,124 @@ class AgentEvalScoringTests(unittest.TestCase):
         self.assertFalse(failed["gate_pass"])
         self.assertFalse(failed["gate_checks"]["corpus_coverage"])
 
+    def test_summary_gate_requires_all_expected_turns(self):
+        rows = [
+            {
+                "case_pass": True,
+                "turns": [
+                    {
+                        "evaluation": {
+                            "tool_contract_pass": True,
+                            "answer_contract_pass": True,
+                            "forbidden_tools_pass": True,
+                        }
+                    }
+                ],
+            }
+        ]
+
+        summary = eval_agent.summarize_agent_eval(
+            rows,
+            corpus_manifest={"coverage_ratio": 1.0},
+            expected_case_count=1,
+            expected_turn_count=2,
+        )
+
+        self.assertFalse(summary["gate_checks"]["evaluation_complete"])
+        self.assertFalse(summary["gate_pass"])
+
 
 class AgentEvalRunnerTests(unittest.TestCase):
+    def test_infrastructure_error_retries_case_with_fresh_agent(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            registry_path = root / "registry.json"
+            dataset_path = root / "dataset.json"
+            write_registry(registry_path, ["paper-001"])
+            write_dataset(
+                dataset_path,
+                [
+                    {
+                        "id": "case-1",
+                        "category": "inspect",
+                        "turns": [build_turn("inspect", ["inspect_source"])],
+                    }
+                ],
+            )
+            failed_agent = FakeAgent(
+                {
+                    "inspect": [
+                        "[工具] inspect_source\n",
+                        "[运行错误] model_request_failed\n",
+                    ]
+                }
+            )
+            passed_agent = FakeAgent(
+                {
+                    "inspect": [
+                        "[工具] inspect_source\n",
+                        "answer",
+                    ]
+                }
+            )
+            agent_factory = mock.Mock(side_effect=[failed_agent, passed_agent])
+
+            result = eval_agent.run_agent_eval(
+                dataset_path=dataset_path,
+                registry_path=registry_path,
+                persist_directory=root / "chroma",
+                out_dir=root / "results",
+                agent_factory=agent_factory,
+                collection=FakeCollection(["paper-001"]),
+                case_infrastructure_retries=1,
+            )
+
+        self.assertTrue(result["summary"]["gate_pass"])
+        self.assertEqual(2, result["predictions"][0]["attempt_count"])
+        self.assertEqual(1, result["predictions"][0]["infrastructure_retry_count"])
+        self.assertEqual(2, agent_factory.call_count)
+
+    def test_graph_recursion_error_is_not_retried(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            registry_path = root / "registry.json"
+            dataset_path = root / "dataset.json"
+            write_registry(registry_path, ["paper-001"])
+            write_dataset(
+                dataset_path,
+                [
+                    {
+                        "id": "case-1",
+                        "category": "inspect",
+                        "turns": [build_turn("inspect", ["inspect_source"])],
+                    }
+                ],
+            )
+            agent_factory = mock.Mock(
+                return_value=FakeAgent(
+                    {
+                        "inspect": [
+                            "[工具] inspect_source\n",
+                            "[运行错误] graph_recursion_limit\n",
+                        ]
+                    }
+                )
+            )
+
+            result = eval_agent.run_agent_eval(
+                dataset_path=dataset_path,
+                registry_path=registry_path,
+                persist_directory=root / "chroma",
+                out_dir=root / "results",
+                agent_factory=agent_factory,
+                collection=FakeCollection(["paper-001"]),
+                case_infrastructure_retries=1,
+            )
+
+        self.assertFalse(result["summary"]["gate_pass"])
+        self.assertEqual(1, result["predictions"][0]["attempt_count"])
+        self.assertEqual(1, agent_factory.call_count)
+
     def test_build_corpus_manifest_reads_metadata_in_batches(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -292,6 +420,7 @@ class AgentEvalRunnerTests(unittest.TestCase):
             self.assertTrue((result["run_dir"] / "manifest.json").exists())
             self.assertTrue((result["run_dir"] / "predictions.json").exists())
             self.assertTrue((result["run_dir"] / "summary.json").exists())
+            self.assertEqual("injected", result["manifest"]["execution"]["mode"])
 
         agent_factory.assert_called_once()
         self.assertEqual([first_prompt, second_prompt], fake_agent.prompts)

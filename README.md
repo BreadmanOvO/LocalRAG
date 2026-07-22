@@ -1,6 +1,6 @@
 # 自动驾驶感知算法 LocalRAG
 
-面向自动驾驶感知算法场景的垂直领域 RAG 系统，支持多种检索策略、分块策略与评测流水线。
+面向自动驾驶感知算法场景的研究型 Agent，支持会话与任务记忆、来源研究工具、可观察运行轨迹以及独立 Agent Gate。
 
 ## 快速开始
 
@@ -34,12 +34,14 @@ cp config/runtime_models.example.json config/runtime_models.json
 streamlit run app_qa.py
 ```
 
-可通过环境变量选择要加载的 Chroma store；UI 会检查它是否与最近一次 Agent gate 使用的 corpus 一致：
+默认读取 `config/active_corpus.json`，加载 v1.4.1 已通过 Gate 的 100-source / 7339-chunk Chroma store。大型 Chroma 二进制不进入 Git；新环境需要先生成该 store，或通过环境变量选择其他本地 store：
 
 ```powershell
 $env:LOCALRAG_PERSIST_DIRECTORY = "path\to\chroma_store"
 streamlit run app_qa.py
 ```
+
+UI 会同时检查 active corpus profile 指纹、最近一次完整 Agent Gate 的 corpus 指纹和代码版本。任一身份不一致时不会显示 Gate 通过。
 
 ### 4. 上传文档入库
 
@@ -112,6 +114,9 @@ python eval/eval_reranker.py \
 # Formal Judge 流水线汇总
 python eval/eval_judge_formal_run.py \
   --dataset data/evaluation/gold/eval_set.json
+
+# Agent 正式 Gate（默认使用 active corpus）
+python eval/eval_agent.py
 ```
 
 ### 微调数据与行为评测
@@ -151,6 +156,7 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 - [仓库使用说明](RAG_md/docs/repo_guide.md) — 详细模块说明与使用方式
 - [E4 数据草案复核](RAG_md/docs/reports/e4-draft-review.md) — E4 multi-metric partial-context 草案与复核标准
 - [E5 pairwise contrast 数据报告](RAG_md/docs/reports/e5-pairwise-contrast-review.md) — E5 完整上下文 / 部分上下文对照样本与设计原则
+- [v1.4 Agent 可靠性复核](RAG_md/docs/reports/v1.4-agent-reliability-review.md) — M1-M5 Gate、失败状态与运行身份收口
 
 ## 版本
 
@@ -160,4 +166,4 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 | v1.1 | 数据层（文档采集、chunk、metadata、formal judge） | 已完成 |
 | v1.2 | 检索层（hybrid retrieval + reranker + semantic chunking） | 已完成 |
 | v1.3 | 数据扩充与评测重建 + Qwen3-4B 微调 E1-E9 闭环 | 已完成 |
-| v1.4 | Agent + Memory 研究助手 | 进行中（M1 会话隔离已完成） |
+| v1.4.1 | Agent + Memory 研究助手 | 已完成（M1-M5 与发布可靠性收口） |

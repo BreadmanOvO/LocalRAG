@@ -1,0 +1,8 @@
+{
+  "contract_version": "active-corpus-v1",
+  "release_version": "v1.4.1",
+  "persist_directory": "results/chunking_eval/stores/eval_set-20260522-071034/doc_type_aware",
+  "collection_name": "rag",
+  "corpus_fingerprint": "sha256:a044d7e77820b03a0e4f19960688632b75d57c1bc70d62c04dfb43247036d7b2",
+  "registry_fingerprint": "sha256:ffb9d9dd86130924aabfd961faffb8d2cce911a770e49616e0dc2fa4acac7177"
+}

@@ -1,8 +1,10 @@
 import os
 
+from config.corpus_profile import load_active_corpus_profile
+
 
 ############################################################
-version = "1.2.0"
+version = "1.4.1"
 author = "breadman"
 email = "gluweinzhu@hotmail.com"
 description = "A local RAG system"
@@ -13,11 +15,22 @@ uploader = "breadman"
 md5_path = "./md5.txt"
 
 # Chroma 参数
-collection_name = os.environ.get("LOCALRAG_COLLECTION_NAME", "rag")  # 数据库的表名
+active_corpus_profile = load_active_corpus_profile()
+collection_name = os.environ.get(
+    "LOCALRAG_COLLECTION_NAME",
+    active_corpus_profile.collection_name,
+)  # 数据库的表名
 persist_directory = os.environ.get(
     "LOCALRAG_PERSIST_DIRECTORY",
-    "./chroma_db",
+    str(active_corpus_profile.persist_directory),
 )  # 数据库本地存储文件夹路径
+using_active_corpus_profile = "LOCALRAG_PERSIST_DIRECTORY" not in os.environ
+expected_corpus_fingerprint = (
+    active_corpus_profile.corpus_fingerprint if using_active_corpus_profile else ""
+)
+expected_registry_fingerprint = (
+    active_corpus_profile.registry_fingerprint if using_active_corpus_profile else ""
+)
 
 # RecursiveCharacterTextSplitter 参数
 chunk_size = 500

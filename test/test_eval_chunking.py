@@ -71,6 +71,28 @@ class RegistryBackedIngestionTests(unittest.TestCase):
 
 
 class RagEvaluationHelperTests(unittest.TestCase):
+    def test_rag_service_accepts_prebuilt_runtime_models(self):
+        runtime_config = SimpleNamespace(rag_system_prompt=None)
+        chat_model = object()
+        embedding_model = object()
+
+        with (
+            mock.patch.object(rag, "load_runtime_config", return_value=runtime_config),
+            mock.patch.object(rag, "build_embedding_model") as build_embedding,
+            mock.patch.object(rag, "build_chat_model") as build_chat,
+            mock.patch.object(rag, "VectorStoreService", return_value=mock.Mock()) as vector_store,
+            mock.patch.object(rag.RagService, "_RagService__get_chain", return_value=mock.Mock()),
+        ):
+            service = rag.RagService(
+                chat_model=chat_model,
+                embedding_model=embedding_model,
+            )
+
+        vector_store.assert_called_once_with(embedding=embedding_model)
+        build_embedding.assert_not_called()
+        build_chat.assert_not_called()
+        self.assertIs(chat_model, service.chat_model)
+
     def test_rag_service_uses_unified_runtime_factory(self):
         runtime_config = SimpleNamespace(
             provider="bailian",

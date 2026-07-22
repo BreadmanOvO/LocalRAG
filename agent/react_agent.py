@@ -1,7 +1,9 @@
+import logging
 import time
 
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.errors import GraphRecursionError
 
 from agent.memory import SessionRetrievalMemory, TaskMemoryPolicy, TaskMemoryStore
 from agent.observability import AgentEvent
@@ -24,6 +26,22 @@ from utils.session import validate_session_id, validate_task_id
 
 
 DEFAULT_AGENT_RECURSION_LIMIT = 12
+logger = logging.getLogger(__name__)
+
+
+def _execution_error_code(exc: Exception) -> str:
+    if isinstance(exc, GraphRecursionError):
+        return "graph_recursion_limit"
+    if isinstance(exc, (TimeoutError, ConnectionError)):
+        return "model_request_failed"
+    error_type = type(exc)
+    if error_type.__module__.split(".", 1)[0] in {"httpcore", "httpx", "openai"} and (
+        "timeout" in error_type.__name__.lower()
+        or "connection" in error_type.__name__.lower()
+        or error_type.__name__ in {"APIError", "InternalServerError", "RateLimitError"}
+    ):
+        return "model_request_failed"
+    return "agent_execution_failed"
 
 
 def load_agent_system_prompt() -> str:
@@ -168,8 +186,10 @@ class ReactAgent:
             elif event.kind == "tool_completed":
                 result_text = "失败" if event.status in {"error", "failed"} else "已完成"
                 yield f"[工具结果] {event.tool_name} {result_text}\n"
-            elif event.kind in {"answer_delta", "error"}:
+            elif event.kind == "answer_delta":
                 yield event.content
+            elif event.kind == "error":
+                yield f"[运行错误] {event.error_code or 'agent_execution_failed'}\n"
 
     def execute_events(self, query: str):
         """流式执行问答，仅公开可展示的结构化运行事件。"""
@@ -225,10 +245,12 @@ class ReactAgent:
                                     elapsed_ms=int((time.perf_counter() - started_at) * 1000),
                                     observations=observations,
                                 )
-        except Exception:
+        except Exception as exc:
+            logger.exception("Agent graph execution failed")
             yield AgentEvent(
                 kind="error",
                 content="抱歉，处理过程中出现错误，请重试。",
                 status="error",
+                error_code=_execution_error_code(exc),
                 elapsed_ms=int((time.perf_counter() - started_at) * 1000),
             )

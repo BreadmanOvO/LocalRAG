@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import logging
+from typing import Annotated
 
 from langchain_core.tools import ToolException, tool
+from pydantic import Field
 
 from agent.memory import SessionRetrievalMemory
 from core.source_evidence import SourceEvidenceService
@@ -10,6 +12,13 @@ from utils.session import validate_session_id
 
 
 logger = logging.getLogger(__name__)
+
+InspectChunkLimit = Annotated[int, Field(ge=1, le=5)]
+ChunkOrder = Annotated[int, Field(ge=0, le=1_000_000)]
+ContextWindow = Annotated[int, Field(ge=0, le=3)]
+ComparedSourceIds = Annotated[list[str], Field(min_length=2, max_length=5)]
+CompareChunkLimit = Annotated[int, Field(ge=1, le=3)]
+EvidenceCandidateLimit = Annotated[int, Field(ge=1, le=5)]
 
 
 def _tool_failure(operation: str, exc: Exception) -> ToolException:
@@ -71,7 +80,10 @@ def _chunk_lines(chunk: dict, index: int) -> list[str]:
 
 def build_inspect_source_tool(evidence_service: SourceEvidenceService):
     @tool("inspect_source", response_format="content_and_artifact")
-    def inspect_source(source_id: str, max_chunks: int = 3) -> tuple[str, dict]:
+    def inspect_source(
+        source_id: str,
+        max_chunks: InspectChunkLimit = 3,
+    ) -> tuple[str, dict]:
         """按 source_id 查看来源元数据、chunk 数量和首批可用片段。"""
         try:
             result = evidence_service.inspect_source(source_id, max_chunks=max_chunks)
@@ -94,9 +106,9 @@ def build_expand_context_tool(evidence_service: SourceEvidenceService):
     @tool("expand_context", response_format="content_and_artifact")
     def expand_context(
         source_id: str,
-        chunk_order: int,
-        before: int = 1,
-        after: int = 1,
+        chunk_order: ChunkOrder,
+        before: ContextWindow = 1,
+        after: ContextWindow = 1,
         chunk_strategy: str = "",
     ) -> tuple[str, dict]:
         """围绕指定 source chunk 扩展相邻上下文；chunk_order 来自检索来源。"""
@@ -132,9 +144,9 @@ def build_expand_context_tool(evidence_service: SourceEvidenceService):
 def build_compare_sources_tool(evidence_service: SourceEvidenceService):
     @tool("compare_sources", response_format="content_and_artifact")
     def compare_sources(
-        source_ids: list[str],
+        source_ids: ComparedSourceIds,
         focus: str = "",
-        max_chunks_per_source: int = 2,
+        max_chunks_per_source: CompareChunkLimit = 2,
     ) -> tuple[str, dict]:
         """按统一 focus 提取 2-5 个来源的元数据和高相关片段，供对比分析。"""
         try:
@@ -177,7 +189,7 @@ def build_evidence_check_tool(
     def evidence_check(
         claim: str,
         source_ids: list[str] | None = None,
-        max_candidates: int = 3,
+        max_candidates: EvidenceCandidateLimit = 3,
     ) -> tuple[str, dict]:
         """在当前会话最近一次检索片段中检查某项结论是否存在候选证据。"""
         snapshot = retrieval_memory.recall(bound_session_id)
