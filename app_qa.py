@@ -63,12 +63,16 @@ def _runtime_observability(
     collection_name: str,
     expected_corpus_fingerprint: str,
     expected_registry_fingerprint: str,
+    expected_source_count: int | None,
+    expected_chunk_count: int | None,
 ) -> dict:
     return load_runtime_observability(
         persist_directory=persist_directory,
         collection_name=collection_name,
         expected_corpus_fingerprint=expected_corpus_fingerprint,
         expected_registry_fingerprint=expected_registry_fingerprint,
+        expected_source_count=expected_source_count,
+        expected_chunk_count=expected_chunk_count,
     )
 
 
@@ -162,6 +166,7 @@ def _render_runtime_header(runtime_status: dict) -> None:
 def _render_runtime_sidebar(runtime_status: dict) -> None:
     corpus = runtime_status["current_corpus"]
     latest_eval = runtime_status["latest_eval"]
+    stability_gate = runtime_status.get("stability_gate") or {}
     with st.sidebar.expander("运行状态"):
         if corpus.get("available"):
             st.caption("当前知识库")
@@ -183,6 +188,14 @@ def _render_runtime_sidebar(runtime_status: dict) -> None:
             st.write(f"案例通过率 {summary.get('case_pass_ratio', 0):.1%}")
         else:
             st.write(latest_eval.get("error", "暂无评测结果"))
+
+        st.caption("连续稳定性 Gate")
+        selected_runs = stability_gate.get("selected_run_ids", [])
+        st.write("通过" if stability_gate.get("gate_pass") else "未通过")
+        st.write(
+            f"正式运行 {len(selected_runs)} / "
+            f"{stability_gate.get('required_run_count', 3)}"
+        )
 
 
 def _trace_rows(trace: list[dict], *, mark_pending_interrupted: bool = False) -> list[dict]:
@@ -279,10 +292,13 @@ def _render_assistant_details(message: dict) -> None:
     trace = message.get("trace", [])
     sources = message.get("sources", [])
     memory_changes = message.get("memory_changes", [])
-    if not trace and not sources and not memory_changes:
+    error_code = str(message.get("error_code") or "")
+    if not trace and not sources and not memory_changes and not error_code:
         return
 
     with st.expander("运行详情"):
+        if error_code:
+            st.error(f"运行错误：{error_code}")
         source_tab, trace_tab, memory_tab = st.tabs(["来源", "工具轨迹", "记忆变更"])
         with source_tab:
             _render_sources(sources)
@@ -313,6 +329,8 @@ runtime_status = _runtime_observability(
     config.collection_name,
     config.expected_corpus_fingerprint,
     config.expected_registry_fingerprint,
+    config.expected_source_count,
+    config.expected_chunk_count,
 )
 
 st.title("LocalRAG 研究助手")
@@ -374,6 +392,7 @@ if prompt:
     trace = []
     answer_parts = []
     has_error = False
+    error_code = ""
     used_tools = set()
     source_observations = []
     max_elapsed_ms = 0
@@ -398,6 +417,7 @@ if prompt:
                 answer_placeholder.markdown("".join(answer_parts))
             elif event.kind == "error":
                 has_error = True
+                error_code = event.error_code or "agent_execution_failed"
                 answer_parts.append(event.content)
                 answer_placeholder.error(event.content)
 
@@ -443,6 +463,7 @@ if prompt:
             "memory_changes": diff_task_memory(before_memory, after_memory),
             "elapsed_ms": max_elapsed_ms,
             "error": has_error,
+            "error_code": error_code,
         }
         st.session_state["message"].append(assistant_message)
         _render_assistant_details(assistant_message)

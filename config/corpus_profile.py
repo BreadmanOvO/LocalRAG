@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 
-ACTIVE_CORPUS_CONTRACT_VERSION = "active-corpus-v1"
+ACTIVE_CORPUS_CONTRACT_VERSION = "active-corpus-v2"
 DEFAULT_ACTIVE_CORPUS_PATH = Path(__file__).resolve().with_name("active_corpus.json")
 
 
@@ -16,6 +16,8 @@ class ActiveCorpusProfile:
     release_version: str
     persist_directory: Path
     collection_name: str
+    source_count: int
+    chunk_count: int
     corpus_fingerprint: str
     registry_fingerprint: str
 
@@ -36,6 +38,13 @@ def _fingerprint(payload: dict[str, Any], field_name: str) -> str:
         int(digest, 16)
     except ValueError as exc:
         raise RuntimeError(f"Invalid active corpus fingerprint: {field_name}") from exc
+    return value
+
+
+def _positive_int(payload: dict[str, Any], field_name: str) -> int:
+    value = payload.get(field_name)
+    if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+        raise RuntimeError(f"Invalid active corpus field: {field_name}")
     return value
 
 
@@ -71,6 +80,8 @@ def load_active_corpus_profile(
         release_version=_required_string(payload, "release_version"),
         persist_directory=persist_directory,
         collection_name=_required_string(payload, "collection_name"),
+        source_count=_positive_int(payload, "source_count"),
+        chunk_count=_positive_int(payload, "chunk_count"),
         corpus_fingerprint=_fingerprint(payload, "corpus_fingerprint"),
         registry_fingerprint=_fingerprint(payload, "registry_fingerprint"),
     )

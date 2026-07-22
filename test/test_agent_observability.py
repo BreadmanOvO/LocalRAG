@@ -11,6 +11,7 @@ from agent.observability import (
     finalize_agent_answer,
     has_pending_tool_calls,
     load_latest_agent_eval,
+    matches_active_corpus_profile,
 )
 
 
@@ -111,6 +112,33 @@ class RunStatusTests(unittest.TestCase):
 
 
 class RuntimeObservabilityTests(unittest.TestCase):
+    def test_active_profile_checks_counts_and_fingerprints(self):
+        current = {
+            "corpus_fingerprint": "sha256:corpus",
+            "registry_fingerprint": "sha256:registry",
+            "chroma_source_count": 100,
+            "chunk_count": 7339,
+        }
+
+        self.assertTrue(
+            matches_active_corpus_profile(
+                current,
+                expected_corpus_fingerprint="sha256:corpus",
+                expected_registry_fingerprint="sha256:registry",
+                expected_source_count=100,
+                expected_chunk_count=7339,
+            )
+        )
+        self.assertFalse(
+            matches_active_corpus_profile(
+                current,
+                expected_corpus_fingerprint="sha256:corpus",
+                expected_registry_fingerprint="sha256:registry",
+                expected_source_count=100,
+                expected_chunk_count=7338,
+            )
+        )
+
     def test_gate_rejects_active_profile_fingerprint_mismatch(self):
         result = combine_runtime_observability(
             current_corpus={
@@ -314,6 +342,43 @@ class RuntimeObservabilityTests(unittest.TestCase):
 
         self.assertEqual("code_dirty", result["gate_status"])
         self.assertFalse(result["gate_pass"])
+
+    def test_gate_requires_consecutive_stability_result(self):
+        result = combine_runtime_observability(
+            current_corpus={
+                "available": True,
+                "corpus_fingerprint": "sha256:corpus",
+                "registry_fingerprint": "sha256:registry",
+            },
+            latest_eval={
+                "available": True,
+                "corpus": {
+                    "persist_directory": "evaluated",
+                    "collection_name": "rag",
+                    "corpus_fingerprint": "sha256:corpus",
+                    "registry_fingerprint": "sha256:registry",
+                },
+                "git_revision": "revision-1",
+                "git_dirty": False,
+                "summary": {"gate_pass": True},
+            },
+            current_persist_directory="evaluated",
+            collection_name="rag",
+            current_git_revision="revision-1",
+            current_git_dirty=False,
+            project_root="C:/project",
+            stability_gate={
+                "gate_pass": False,
+                "failure_reasons": ["identity_consistent"],
+            },
+        )
+
+        self.assertEqual("stability_gate_failed", result["gate_status"])
+        self.assertFalse(result["gate_pass"])
+        self.assertEqual(
+            ["identity_consistent"],
+            result["stability_gate"]["failure_reasons"],
+        )
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import hashlib
 import json
 import re
@@ -393,6 +394,47 @@ def _ratio(count: int, total: int) -> float:
     return round(count / total, 3) if total else 0.0
 
 
+def _attempts_for_case(row: dict[str, Any]) -> list[dict[str, Any]]:
+    attempts = row.get("attempts")
+    if isinstance(attempts, list) and attempts:
+        return [attempt for attempt in attempts if isinstance(attempt, dict)] or [row]
+    return [row]
+
+
+def _execution_diagnostics(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    error_counts: Counter[str] = Counter()
+    retryable_error_count = 0
+    retry_case_count = 0
+    total_attempt_count = 0
+    for row in rows:
+        attempts = _attempts_for_case(row)
+        total_attempt_count += len(attempts)
+        if len(attempts) > 1:
+            retry_case_count += 1
+        for attempt in attempts:
+            for turn in attempt.get("turns", []):
+                error = str(turn.get("error") or "")
+                if not error:
+                    continue
+                error_counts[error] += 1
+                if error in RETRYABLE_CASE_ERRORS:
+                    retryable_error_count += 1
+    return {
+        "execution_error_count": sum(error_counts.values()),
+        "execution_error_counts": dict(sorted(error_counts.items())),
+        "retryable_error_count": retryable_error_count,
+        "infrastructure_retry_count": sum(
+            max(0, int(row.get("attempt_count", 1)) - 1) for row in rows
+        ),
+        "infrastructure_retry_case_count": retry_case_count,
+        "total_attempt_count": total_attempt_count,
+        "max_attempt_count": max(
+            (int(row.get("attempt_count", 1)) for row in rows),
+            default=0,
+        ),
+    }
+
+
 def summarize_agent_eval(
     rows: list[dict[str, Any]],
     *,
@@ -415,6 +457,7 @@ def summarize_agent_eval(
     case_pass_ratio = _ratio(passed_cases, len(rows))
     tool_contract_ratio = _ratio(tool_contract_count, len(turns))
     answer_contract_ratio = _ratio(answer_contract_count, len(turns))
+    diagnostics = _execution_diagnostics(rows)
     expected_case_count = len(rows) if expected_case_count is None else expected_case_count
     expected_turn_count = len(turns) if expected_turn_count is None else expected_turn_count
     gate_checks = {
@@ -443,6 +486,7 @@ def summarize_agent_eval(
         "answer_contract_pass_ratio": answer_contract_ratio,
         "forbidden_tool_violation_count": forbidden_violation_count,
         "corpus_coverage_ratio": corpus_manifest["coverage_ratio"],
+        **diagnostics,
         "skipped": skipped,
         "gate_thresholds": {
             "min_corpus_coverage": min_corpus_coverage,
@@ -614,6 +658,7 @@ def run_agent_eval(
                 for case_index, case in enumerate(cases, start=1):
                     attempt_count = 0
                     max_attempts = 1 + execution["case_infrastructure_retries"]
+                    attempt_history = []
                     while True:
                         attempt_count += 1
                         session_id = f"agent-eval-{uuid4().hex}"
@@ -683,12 +728,29 @@ def run_agent_eval(
                         infrastructure_failed = any(
                             turn["error"] in RETRYABLE_CASE_ERRORS for turn in turn_rows
                         )
+                        attempt_history.append(
+                            {
+                                "attempt": attempt_count,
+                                "turns": turn_rows,
+                                "case_pass": all(
+                                    turn["evaluation"]["turn_pass"] for turn in turn_rows
+                                ),
+                                "retryable_errors": sorted(
+                                    {
+                                        turn["error"]
+                                        for turn in turn_rows
+                                        if turn["error"] in RETRYABLE_CASE_ERRORS
+                                    }
+                                ),
+                            }
+                        )
                         if not infrastructure_failed or attempt_count >= max_attempts:
                             break
                     case_row = {
                         "id": case["id"],
                         "category": case["category"],
                         "turns": turn_rows,
+                        "attempts": attempt_history,
                         "case_pass": all(
                             turn["evaluation"]["turn_pass"] for turn in turn_rows
                         ),

@@ -12,6 +12,8 @@ class ActiveCorpusProfileTests(unittest.TestCase):
 
         self.assertEqual("v1.4.1", profile.release_version)
         self.assertEqual("rag", profile.collection_name)
+        self.assertEqual(100, profile.source_count)
+        self.assertEqual(7339, profile.chunk_count)
         self.assertEqual("doc_type_aware", profile.persist_directory.name)
         self.assertTrue(profile.corpus_fingerprint.startswith("sha256:"))
 
@@ -22,10 +24,12 @@ class ActiveCorpusProfileTests(unittest.TestCase):
             profile_path.write_text(
                 json.dumps(
                     {
-                        "contract_version": "active-corpus-v1",
+                        "contract_version": "active-corpus-v2",
                         "release_version": "test",
                         "persist_directory": "stores/formal",
                         "collection_name": "rag",
+                        "source_count": 1,
+                        "chunk_count": 1,
                         "corpus_fingerprint": f"sha256:{'a' * 64}",
                         "registry_fingerprint": f"sha256:{'b' * 64}",
                     }
@@ -43,10 +47,12 @@ class ActiveCorpusProfileTests(unittest.TestCase):
             profile_path.write_text(
                 json.dumps(
                     {
-                        "contract_version": "active-corpus-v1",
+                        "contract_version": "active-corpus-v2",
                         "release_version": "test",
                         "persist_directory": "store",
                         "collection_name": "rag",
+                        "source_count": 1,
+                        "chunk_count": 1,
                         "corpus_fingerprint": "sha256:not-a-digest",
                         "registry_fingerprint": f"sha256:{'b' * 64}",
                     }

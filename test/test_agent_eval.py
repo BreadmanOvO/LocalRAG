@@ -232,6 +232,39 @@ class AgentEvalScoringTests(unittest.TestCase):
         self.assertFalse(summary["gate_checks"]["evaluation_complete"])
         self.assertFalse(summary["gate_pass"])
 
+    def test_summary_reports_attempt_level_execution_diagnostics(self):
+        rows = [
+            {
+                "case_pass": True,
+                "attempt_count": 2,
+                "turns": [
+                    {
+                        "error": "",
+                        "evaluation": {
+                            "tool_contract_pass": True,
+                            "answer_contract_pass": True,
+                            "forbidden_tools_pass": True,
+                        },
+                    }
+                ],
+                "attempts": [
+                    {"turns": [{"error": "model_request_failed"}]},
+                    {"turns": [{"error": ""}]},
+                ],
+            }
+        ]
+
+        summary = eval_agent.summarize_agent_eval(
+            rows,
+            corpus_manifest={"coverage_ratio": 1.0},
+        )
+
+        self.assertEqual(1, summary["execution_error_count"])
+        self.assertEqual(1, summary["retryable_error_count"])
+        self.assertEqual(1, summary["infrastructure_retry_count"])
+        self.assertEqual(1, summary["infrastructure_retry_case_count"])
+        self.assertEqual(2, summary["total_attempt_count"])
+
 
 class AgentEvalRunnerTests(unittest.TestCase):
     def test_infrastructure_error_retries_case_with_fresh_agent(self):
@@ -281,6 +314,12 @@ class AgentEvalRunnerTests(unittest.TestCase):
         self.assertTrue(result["summary"]["gate_pass"])
         self.assertEqual(2, result["predictions"][0]["attempt_count"])
         self.assertEqual(1, result["predictions"][0]["infrastructure_retry_count"])
+        self.assertEqual(2, len(result["predictions"][0]["attempts"]))
+        self.assertEqual(
+            ["model_request_failed"],
+            result["predictions"][0]["attempts"][0]["retryable_errors"],
+        )
+        self.assertEqual(1, result["summary"]["infrastructure_retry_count"])
         self.assertEqual(2, agent_factory.call_count)
 
     def test_graph_recursion_error_is_not_retried(self):

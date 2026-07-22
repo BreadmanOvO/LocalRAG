@@ -286,6 +286,7 @@ def combine_runtime_observability(
     current_git_revision: str = "",
     current_git_dirty: bool | None = None,
     project_root: str | Path | None = None,
+    stability_gate: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     root = Path(project_root or get_project_root()).resolve()
     current_available = bool(current_corpus.get("available", True))
@@ -332,6 +333,9 @@ def combine_runtime_observability(
             )
 
     latest_gate_pass = bool(latest_eval.get("summary", {}).get("gate_pass"))
+    stability_gate_pass = (
+        bool(stability_gate.get("gate_pass")) if stability_gate is not None else True
+    )
     effective_gate_pass = (
         current_available
         and active_profile_matches
@@ -340,6 +344,7 @@ def combine_runtime_observability(
         and corpus_matches_eval
         and code_matches_eval
         and latest_gate_pass
+        and stability_gate_pass
     )
     if not current_available:
         gate_status = "corpus_unavailable"
@@ -365,6 +370,10 @@ def combine_runtime_observability(
     elif not latest_gate_pass:
         gate_status = "gate_failed"
         message = "当前知识库最近一次 Agent gate 未通过"
+    elif not stability_gate_pass:
+        gate_status = "stability_gate_failed"
+        reasons = ", ".join(stability_gate.get("failure_reasons", []))
+        message = f"Agent 连续稳定性 Gate 未通过：{reasons or 'unknown'}"
     else:
         gate_status = "passed"
         message = "当前知识库已通过 Agent gate"
@@ -373,6 +382,7 @@ def combine_runtime_observability(
         "current_corpus": deepcopy(current_corpus),
         "active_profile_matches": active_profile_matches,
         "latest_eval": deepcopy(latest_eval),
+        "stability_gate": deepcopy(stability_gate),
         "corpus_matches_eval": corpus_matches_eval,
         "code_matches_eval": code_matches_eval,
         "identity_complete": identity_complete,
@@ -383,6 +393,34 @@ def combine_runtime_observability(
     }
 
 
+def matches_active_corpus_profile(
+    current_corpus: dict[str, Any],
+    *,
+    expected_corpus_fingerprint: str = "",
+    expected_registry_fingerprint: str = "",
+    expected_source_count: int | None = None,
+    expected_chunk_count: int | None = None,
+) -> bool:
+    return (
+        (
+            not expected_corpus_fingerprint
+            or current_corpus.get("corpus_fingerprint") == expected_corpus_fingerprint
+        )
+        and (
+            not expected_registry_fingerprint
+            or current_corpus.get("registry_fingerprint") == expected_registry_fingerprint
+        )
+        and (
+            expected_source_count is None
+            or current_corpus.get("chroma_source_count") == expected_source_count
+        )
+        and (
+            expected_chunk_count is None
+            or current_corpus.get("chunk_count") == expected_chunk_count
+        )
+    )
+
+
 def load_runtime_observability(
     *,
     persist_directory: str | Path,
@@ -391,6 +429,8 @@ def load_runtime_observability(
     results_dir: str | Path = "results/agent_eval",
     expected_corpus_fingerprint: str = "",
     expected_registry_fingerprint: str = "",
+    expected_source_count: int | None = None,
+    expected_chunk_count: int | None = None,
 ) -> dict[str, Any]:
     absolute_persist_directory = _resolve_project_path(persist_directory, get_project_root())
     try:
@@ -402,16 +442,12 @@ def load_runtime_observability(
             collection_name=collection_name,
         )
         current_corpus["available"] = True
-        current_corpus["active_profile_matches"] = (
-            (
-                not expected_corpus_fingerprint
-                or current_corpus.get("corpus_fingerprint") == expected_corpus_fingerprint
-            )
-            and (
-                not expected_registry_fingerprint
-                or current_corpus.get("registry_fingerprint")
-                == expected_registry_fingerprint
-            )
+        current_corpus["active_profile_matches"] = matches_active_corpus_profile(
+            current_corpus,
+            expected_corpus_fingerprint=expected_corpus_fingerprint,
+            expected_registry_fingerprint=expected_registry_fingerprint,
+            expected_source_count=expected_source_count,
+            expected_chunk_count=expected_chunk_count,
         )
         current_git_revision = get_git_revision()
         current_git_dirty = get_git_dirty()
@@ -425,7 +461,17 @@ def load_runtime_observability(
         current_git_revision = ""
         current_git_dirty = None
 
-    latest_eval = load_latest_agent_eval(get_abs_path(str(results_dir)))
+    absolute_results_dir = get_abs_path(str(results_dir))
+    latest_eval = load_latest_agent_eval(absolute_results_dir)
+    try:
+        from eval.release_gate import evaluate_agent_stability_gate
+
+        stability_gate = evaluate_agent_stability_gate(absolute_results_dir)
+    except Exception as exc:
+        stability_gate = {
+            "gate_pass": False,
+            "failure_reasons": [f"{type(exc).__name__}: {exc}"],
+        }
     return combine_runtime_observability(
         current_corpus=current_corpus,
         latest_eval=latest_eval,
@@ -433,4 +479,5 @@ def load_runtime_observability(
         collection_name=collection_name,
         current_git_revision=current_git_revision,
         current_git_dirty=current_git_dirty,
+        stability_gate=stability_gate,
     )

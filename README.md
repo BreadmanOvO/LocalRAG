@@ -34,14 +34,14 @@ cp config/runtime_models.example.json config/runtime_models.json
 streamlit run app_qa.py
 ```
 
-默认读取 `config/active_corpus.json`，加载 v1.4.1 已通过 Gate 的 100-source / 7339-chunk Chroma store。大型 Chroma 二进制不进入 Git；新环境需要先生成该 store，或通过环境变量选择其他本地 store：
+默认读取 `config/active_corpus.json`，加载 v1.4.1 已通过 Gate 的 100-source / 7339-chunk Chroma store。active corpus v2 profile 同时固定来源数、片段数和 corpus/registry 指纹。大型 Chroma 二进制不进入 Git；新环境需要先生成该 store，或通过环境变量选择其他本地 store：
 
 ```powershell
 $env:LOCALRAG_PERSIST_DIRECTORY = "path\to\chroma_store"
 streamlit run app_qa.py
 ```
 
-UI 会同时检查 active corpus profile 指纹、最近一次完整 Agent Gate 的 corpus 指纹和代码版本。任一身份不一致时不会显示 Gate 通过。
+UI 会同时检查 active corpus profile、最近一次完整 Agent Gate 的 corpus/代码身份，以及最近三轮正式评测的连续稳定性 Gate。任一身份不一致、artifact 损坏或出现递归上限错误时不会显示 Gate 通过。
 
 ### 4. 上传文档入库
 
@@ -71,6 +71,7 @@ LocalRAG/
 │   ├── runtime_keys.py        # 配置加载器
 │   └── settings.py            # 全局设置
 ├── eval/                      # 评测脚本
+│   └── release_gate.py        # 最近三轮正式 Agent Gate 稳定性检查
 ├── data/
 │   ├── evaluation/            # 清洗后的评测/训练数据集
 │   └── sources/               # 知识源文档（100 篇：10 Apollo + 81 论文/报告 + 9 标准）
@@ -117,6 +118,9 @@ python eval/eval_judge_formal_run.py \
 
 # Agent 正式 Gate（默认使用 active corpus）
 python eval/eval_agent.py
+
+# 最近三轮正式 Agent Gate 的发布稳定性检查
+python eval/release_gate.py
 ```
 
 ### 微调数据与行为评测

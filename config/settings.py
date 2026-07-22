@@ -31,6 +31,8 @@ expected_corpus_fingerprint = (
 expected_registry_fingerprint = (
     active_corpus_profile.registry_fingerprint if using_active_corpus_profile else ""
 )
+expected_source_count = active_corpus_profile.source_count if using_active_corpus_profile else None
+expected_chunk_count = active_corpus_profile.chunk_count if using_active_corpus_profile else None
 
 # RecursiveCharacterTextSplitter 参数
 chunk_size = 500
