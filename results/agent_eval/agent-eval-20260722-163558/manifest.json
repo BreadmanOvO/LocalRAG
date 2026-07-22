@@ -1,0 +1,61 @@
+{
+  "contract_version": "agent-eval-v1",
+  "pipeline": "agent_eval",
+  "run_id": "agent-eval-20260722-163558",
+  "dataset_path": "data\\evaluation\\agent\\agent_eval_set.json",
+  "dataset_version": "agent-eval-v1.1",
+  "registry_path": "data\\evaluation\\shared\\source_registry.json",
+  "created_at": "2026-07-22T16:41:01",
+  "runner_script": "eval/eval_agent.py",
+  "git_revision": "b25939e9ffd2f5f720a11823e9430d5dea898bcc",
+  "git_dirty": false,
+  "runtime": {
+    "provider": "sensenova",
+    "chat_model_name": "sensenova-6.7-flash-lite",
+    "embedding_model_name": "BAAI/bge-m3"
+  },
+  "execution": {
+    "mode": "formal",
+    "agent_temperature": 0.0,
+    "request_timeout_seconds": 60,
+    "max_retries": 0,
+    "recursion_limit": 12,
+    "case_infrastructure_retries": 1
+  },
+  "allow_stale_corpus": false,
+  "max_cases": null,
+  "case_ids": null,
+  "evaluation_scope": {
+    "expected_case_count": 8,
+    "expected_turn_count": 9,
+    "selected_case_count": 8,
+    "selected_turn_count": 9,
+    "executed_case_count": 8,
+    "executed_turn_count": 9,
+    "selected_case_ids": [
+      "agent-inspect-001",
+      "agent-followup-001",
+      "agent-compare-001",
+      "agent-no-retrieval-001",
+      "agent-evidence-001",
+      "agent-numeric-001",
+      "agent-table-001",
+      "agent-missing-source-001"
+    ],
+    "selection_complete": true,
+    "evaluation_complete": true
+  },
+  "corpus": {
+    "persist_directory": "D:\\Code\\Learn\\LLM\\LocalRAG\\results\\chunking_eval\\stores\\eval_set-20260522-071034\\doc_type_aware",
+    "collection_name": "rag",
+    "registry_source_count": 100,
+    "chroma_source_count": 100,
+    "covered_source_count": 100,
+    "coverage_ratio": 1.0,
+    "chunk_count": 7339,
+    "corpus_fingerprint": "sha256:a044d7e77820b03a0e4f19960688632b75d57c1bc70d62c04dfb43247036d7b2",
+    "registry_fingerprint": "sha256:ffb9d9dd86130924aabfd961faffb8d2cce911a770e49616e0dc2fa4acac7177",
+    "missing_source_ids": [],
+    "extra_source_ids": []
+  }
+}
