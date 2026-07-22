@@ -1,0 +1,978 @@
+[
+  {
+    "id": "agent-inspect-001",
+    "category": "source_inspection",
+    "turns": [
+      {
+        "turn_index": 1,
+        "prompt": "请检查来源 paper-001，告诉我标题、文档类型和第一个片段的位置。",
+        "expected": {
+          "required_tools": [
+            "inspect_source"
+          ],
+          "forbidden_tools": [
+            "rag_search"
+          ],
+          "expected_source_ids": [
+            "paper-001"
+          ],
+          "expected_answer_terms_any": [
+            "BEVFormer"
+          ],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 30
+        },
+        "tool_calls": [
+          "inspect_source"
+        ],
+        "failed_tools": [],
+        "answer": "根据对来源 paper-001 的检查，以下是您要求的信息：\n\n**标题**：BEVFormer\n\n**文档类型**：paper（学术论文）\n\n**第一个片段的位置**：\n- chunk_order: 0\n- locator: § 4) contain more clues about the past BEV features and beneﬁts location prediction (51.3% NDS vs. > Page 19 > Page 20 strategy=doc_type_aware\n\n该来源共有 97 个片段，来自一篇 20 页的 arxiv PDF 论文。",
+        "raw_stream": [
+          "[工具] inspect_source\n",
+          "[工具结果] inspect_source 已完成\n",
+          "\n\n根据对来源 paper-001 的检查，以下是您要求的信息：\n\n**标题**：BEVFormer\n\n**文档类型**：paper（学术论文）\n\n**第一个片段的位置**：\n- chunk_order: 0\n- locator: § 4) contain more clues about the past BEV features and beneﬁts location prediction (51.3% NDS vs. > Page 19 > Page 20 strategy=doc_type_aware\n\n该来源共有 97 个片段，来自一篇 20 页的 arxiv PDF 论文。"
+        ],
+        "elapsed_seconds": 4.983,
+        "error": "",
+        "evaluation": {
+          "required_tools_pass": true,
+          "tool_success_pass": true,
+          "tool_order_pass": true,
+          "forbidden_tools_pass": true,
+          "source_ids_pass": true,
+          "answer_terms_pass": true,
+          "answer_length_pass": true,
+          "tool_contract_pass": true,
+          "answer_contract_pass": true,
+          "turn_pass": true
+        }
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "turns": [
+          {
+            "turn_index": 1,
+            "prompt": "请检查来源 paper-001，告诉我标题、文档类型和第一个片段的位置。",
+            "expected": {
+              "required_tools": [
+                "inspect_source"
+              ],
+              "forbidden_tools": [
+                "rag_search"
+              ],
+              "expected_source_ids": [
+                "paper-001"
+              ],
+              "expected_answer_terms_any": [
+                "BEVFormer"
+              ],
+              "expected_answer_terms_all": [],
+              "min_answer_chars": 30
+            },
+            "tool_calls": [
+              "inspect_source"
+            ],
+            "failed_tools": [],
+            "answer": "根据对来源 paper-001 的检查，以下是您要求的信息：\n\n**标题**：BEVFormer\n\n**文档类型**：paper（学术论文）\n\n**第一个片段的位置**：\n- chunk_order: 0\n- locator: § 4) contain more clues about the past BEV features and beneﬁts location prediction (51.3% NDS vs. > Page 19 > Page 20 strategy=doc_type_aware\n\n该来源共有 97 个片段，来自一篇 20 页的 arxiv PDF 论文。",
+            "raw_stream": [
+              "[工具] inspect_source\n",
+              "[工具结果] inspect_source 已完成\n",
+              "\n\n根据对来源 paper-001 的检查，以下是您要求的信息：\n\n**标题**：BEVFormer\n\n**文档类型**：paper（学术论文）\n\n**第一个片段的位置**：\n- chunk_order: 0\n- locator: § 4) contain more clues about the past BEV features and beneﬁts location prediction (51.3% NDS vs. > Page 19 > Page 20 strategy=doc_type_aware\n\n该来源共有 97 个片段，来自一篇 20 页的 arxiv PDF 论文。"
+            ],
+            "elapsed_seconds": 4.983,
+            "error": "",
+            "evaluation": {
+              "required_tools_pass": true,
+              "tool_success_pass": true,
+              "tool_order_pass": true,
+              "forbidden_tools_pass": true,
+              "source_ids_pass": true,
+              "answer_terms_pass": true,
+              "answer_length_pass": true,
+              "tool_contract_pass": true,
+              "answer_contract_pass": true,
+              "turn_pass": true
+            }
+          }
+        ],
+        "case_pass": true,
+        "retryable_errors": []
+      }
+    ],
+    "case_pass": true,
+    "attempt_count": 1,
+    "infrastructure_retry_count": 0
+  },
+  {
+    "id": "agent-followup-001",
+    "category": "continuous_followup",
+    "turns": [
+      {
+        "turn_index": 1,
+        "prompt": "先检查来源 paper-001，并告诉我 chunk_order=1 是否存在。",
+        "expected": {
+          "required_tools": [
+            "inspect_source"
+          ],
+          "forbidden_tools": [
+            "rag_search"
+          ],
+          "expected_source_ids": [
+            "paper-001"
+          ],
+          "expected_answer_terms_any": [
+            "chunk_order",
+            "片段"
+          ],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 30
+        },
+        "tool_calls": [
+          "inspect_source"
+        ],
+        "failed_tools": [],
+        "answer": "根据检查结果，来源 **paper-001** 确实存在 **chunk_order=1**。\n\n### 来源信息\n- **source_id**: paper-001\n- **标题**: BEVFormer\n- **文档类型**: 学术论文\n- **总 chunk 数**: 97\n\n### chunk_order=1 的内容\n该片段位于论文第19-20页，包含以下关键内容：\n\n> \"and Temporal structure to generate bird's-eye-view (BEV) features from multi-camera inputs. BEV-Former leverages queries to lookup spatial/temporal space and aggregate spatiotemporal information correspondingly, hence benefiting stronger representations for perception tasks.\"\n\n这是论文摘要的延续部分，描述了 BEVFormer 如何利用时空结构从多相机输入生成鸟瞰图特征，并通过查询机制聚合时空信息以增强感知任务的表示能力。\n\n**结论**: chunk_order=1 存在且内容完整。",
+        "raw_stream": [
+          "[工具] inspect_source\n",
+          "[工具结果] inspect_source 已完成\n",
+          "\n\n根据检查结果，来源 **paper-001** 确实存在 **chunk_order=1**。\n\n### 来源信息\n- **source_id**: paper-001\n- **标题**: BEVFormer\n- **文档类型**: 学术论文\n- **总 chunk 数**: 97\n\n### chunk_order=1 的内容\n该片段位于论文第19-20页，包含以下关键内容：\n\n> \"and Temporal structure to generate bird's-eye-view (BEV) features from multi-camera inputs. BEV-Former leverages queries to lookup spatial/temporal space and aggregate spatiotemporal information correspondingly, hence benefiting stronger representations for perception tasks.\"\n\n这是论文摘要的延续部分，描述了 BEVFormer 如何利用时空结构从多相机输入生成鸟瞰图特征，并通过查询机制聚合时空信息以增强感知任务的表示能力。\n\n**结论**: chunk_order=1 存在且内容完整。"
+        ],
+        "elapsed_seconds": 10.774,
+        "error": "",
+        "evaluation": {
+          "required_tools_pass": true,
+          "tool_success_pass": true,
+          "tool_order_pass": true,
+          "forbidden_tools_pass": true,
+          "source_ids_pass": true,
+          "answer_terms_pass": true,
+          "answer_length_pass": true,
+          "tool_contract_pass": true,
+          "answer_contract_pass": true,
+          "turn_pass": true
+        }
+      },
+      {
+        "turn_index": 2,
+        "prompt": "继续刚才的来源，扩展 chunk_order=1 前后各一个片段，并在回答中保留 source_id=paper-001。",
+        "expected": {
+          "required_tools": [
+            "expand_context"
+          ],
+          "forbidden_tools": [
+            "rag_search"
+          ],
+          "expected_source_ids": [
+            "paper-001"
+          ],
+          "expected_answer_terms_any": [
+            "chunk_order",
+            "前后"
+          ],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 30
+        },
+        "tool_calls": [
+          "expand_context"
+        ],
+        "failed_tools": [],
+        "answer": "### 扩展上下文结果 (source_id=paper-001)\n\n#### chunk_order=0 (前一个片段)\n**内容**: 论文标题、作者信息和 Figure 1 描述\n- **标题**: BEVFormer: Learning Bird's-Eye-View Representation from Multi-Camera Images via Spatiotemporal Transformers\n- **作者**: Zhiqi Li, Wenhai Wang, Hongyang Li, Enze Xie, Chonghao Sima, Tong Lu, Yu Qiao, Jifeng Dai\n- **机构**: 南京大学、上海人工智能实验室、香港大学\n- **Figure 1**: 展示了 BEVFormer 的范式，应用 Transformer 和时空结构从多相机输入生成鸟瞰图特征\n\n#### chunk_order=1 (目标片段)\n**内容**: 摘要核心部分\n> \"and Temporal structure to generate bird's-eye-view (BEV) features from multi-camera inputs. BEV-Former leverages queries to lookup spatial/temporal space and aggregate spatiotemporal information correspondingly, hence benefiting stronger representations for perception tasks.\"\n\n**关键信息**: BEVFormer 利用查询机制在时空空间中查找和聚合信息，从而增强感知任务的表示能力。\n\n#### chunk_order=2 (后一个片段)\n**内容**: 摘要后续部分，描述具体方法\n> \"ral information by interacting with spatial and temporal space through predefined grid-shaped BEV queries. To aggregate spatial information, we design spatial cross-attention that each BEV query extracts the spatial features from the regions of interest across camera views. For temporal information, we propose temporal self-attention to recurrently fuse the history BEV information. Our approach achieves the new state-of-the-art 56.9% in terms of NDS metric on the nuScenes test set, which is 9.0 points higher than previous best arts and on par with the performance of LiDAR-based baselines.\"\n\n**关键信息**: \n- 空间信息聚合：设计空间交叉注意力，每个 BEV 查询从感兴趣区域提取空间特征\n- 时间信息聚合：提出时间自注意力，递归融合历史 BEV 信息\n- 性能：在 nuScenes 测试集上达到 56.9% NDS，比之前最佳方法高 9.0 分，与 LiDAR 基线相当\n\n### 上下文连贯性\n这三个片段共同构成了 BEVFormer 论文的摘要部分，从问题定义（多相机 3D 感知）到方法概述（时空 Transformer），再到具体技术细节（空间交叉注意力、时间自注意力）和性能结果，形成了完整的逻辑链条。",
+        "raw_stream": [
+          "[工具] expand_context\n",
+          "[工具结果] expand_context 已完成\n",
+          "\n\n### 扩展上下文结果 (source_id=paper-001)\n\n#### chunk_order=0 (前一个片段)\n**内容**: 论文标题、作者信息和 Figure 1 描述\n- **标题**: BEVFormer: Learning Bird's-Eye-View Representation from Multi-Camera Images via Spatiotemporal Transformers\n- **作者**: Zhiqi Li, Wenhai Wang, Hongyang Li, Enze Xie, Chonghao Sima, Tong Lu, Yu Qiao, Jifeng Dai\n- **机构**: 南京大学、上海人工智能实验室、香港大学\n- **Figure 1**: 展示了 BEVFormer 的范式，应用 Transformer 和时空结构从多相机输入生成鸟瞰图特征\n\n#### chunk_order=1 (目标片段)\n**内容**: 摘要核心部分\n> \"and Temporal structure to generate bird's-eye-view (BEV) features from multi-camera inputs. BEV-Former leverages queries to lookup spatial/temporal space and aggregate spatiotemporal information correspondingly, hence benefiting stronger representations for perception tasks.\"\n\n**关键信息**: BEVFormer 利用查询机制在时空空间中查找和聚合信息，从而增强感知任务的表示能力。\n\n#### chunk_order=2 (后一个片段)\n**内容**: 摘要后续部分，描述具体方法\n> \"ral information by interacting with spatial and temporal space through predefined grid-shaped BEV queries. To aggregate spatial information, we design spatial cross-attention that each BEV query extracts the spatial features from the regions of interest across camera views. For temporal information, we propose temporal self-attention to recurrently fuse the history BEV information. Our approach achieves the new state-of-the-art 56.9% in terms of NDS metric on the nuScenes test set, which is 9.0 points higher than previous best arts and on par with the performance of LiDAR-based baselines.\"\n\n**关键信息**: \n- 空间信息聚合：设计空间交叉注意力，每个 BEV 查询从感兴趣区域提取空间特征\n- 时间信息聚合：提出时间自注意力，递归融合历史 BEV 信息\n- 性能：在 nuScenes 测试集上达到 56.9% NDS，比之前最佳方法高 9.0 分，与 LiDAR 基线相当\n\n### 上下文连贯性\n这三个片段共同构成了 BEVFormer 论文的摘要部分，从问题定义（多相机 3D 感知）到方法概述（时空 Transformer），再到具体技术细节（空间交叉注意力、时间自注意力）和性能结果，形成了完整的逻辑链条。"
+        ],
+        "elapsed_seconds": 11.076,
+        "error": "",
+        "evaluation": {
+          "required_tools_pass": true,
+          "tool_success_pass": true,
+          "tool_order_pass": true,
+          "forbidden_tools_pass": true,
+          "source_ids_pass": true,
+          "answer_terms_pass": true,
+          "answer_length_pass": true,
+          "tool_contract_pass": true,
+          "answer_contract_pass": true,
+          "turn_pass": true
+        }
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "turns": [
+          {
+            "turn_index": 1,
+            "prompt": "先检查来源 paper-001，并告诉我 chunk_order=1 是否存在。",
+            "expected": {
+              "required_tools": [
+                "inspect_source"
+              ],
+              "forbidden_tools": [
+                "rag_search"
+              ],
+              "expected_source_ids": [
+                "paper-001"
+              ],
+              "expected_answer_terms_any": [
+                "chunk_order",
+                "片段"
+              ],
+              "expected_answer_terms_all": [],
+              "min_answer_chars": 30
+            },
+            "tool_calls": [
+              "inspect_source"
+            ],
+            "failed_tools": [],
+            "answer": "根据检查结果，来源 **paper-001** 确实存在 **chunk_order=1**。\n\n### 来源信息\n- **source_id**: paper-001\n- **标题**: BEVFormer\n- **文档类型**: 学术论文\n- **总 chunk 数**: 97\n\n### chunk_order=1 的内容\n该片段位于论文第19-20页，包含以下关键内容：\n\n> \"and Temporal structure to generate bird's-eye-view (BEV) features from multi-camera inputs. BEV-Former leverages queries to lookup spatial/temporal space and aggregate spatiotemporal information correspondingly, hence benefiting stronger representations for perception tasks.\"\n\n这是论文摘要的延续部分，描述了 BEVFormer 如何利用时空结构从多相机输入生成鸟瞰图特征，并通过查询机制聚合时空信息以增强感知任务的表示能力。\n\n**结论**: chunk_order=1 存在且内容完整。",
+            "raw_stream": [
+              "[工具] inspect_source\n",
+              "[工具结果] inspect_source 已完成\n",
+              "\n\n根据检查结果，来源 **paper-001** 确实存在 **chunk_order=1**。\n\n### 来源信息\n- **source_id**: paper-001\n- **标题**: BEVFormer\n- **文档类型**: 学术论文\n- **总 chunk 数**: 97\n\n### chunk_order=1 的内容\n该片段位于论文第19-20页，包含以下关键内容：\n\n> \"and Temporal structure to generate bird's-eye-view (BEV) features from multi-camera inputs. BEV-Former leverages queries to lookup spatial/temporal space and aggregate spatiotemporal information correspondingly, hence benefiting stronger representations for perception tasks.\"\n\n这是论文摘要的延续部分，描述了 BEVFormer 如何利用时空结构从多相机输入生成鸟瞰图特征，并通过查询机制聚合时空信息以增强感知任务的表示能力。\n\n**结论**: chunk_order=1 存在且内容完整。"
+            ],
+            "elapsed_seconds": 10.774,
+            "error": "",
+            "evaluation": {
+              "required_tools_pass": true,
+              "tool_success_pass": true,
+              "tool_order_pass": true,
+              "forbidden_tools_pass": true,
+              "source_ids_pass": true,
+              "answer_terms_pass": true,
+              "answer_length_pass": true,
+              "tool_contract_pass": true,
+              "answer_contract_pass": true,
+              "turn_pass": true
+            }
+          },
+          {
+            "turn_index": 2,
+            "prompt": "继续刚才的来源，扩展 chunk_order=1 前后各一个片段，并在回答中保留 source_id=paper-001。",
+            "expected": {
+              "required_tools": [
+                "expand_context"
+              ],
+              "forbidden_tools": [
+                "rag_search"
+              ],
+              "expected_source_ids": [
+                "paper-001"
+              ],
+              "expected_answer_terms_any": [
+                "chunk_order",
+                "前后"
+              ],
+              "expected_answer_terms_all": [],
+              "min_answer_chars": 30
+            },
+            "tool_calls": [
+              "expand_context"
+            ],
+            "failed_tools": [],
+            "answer": "### 扩展上下文结果 (source_id=paper-001)\n\n#### chunk_order=0 (前一个片段)\n**内容**: 论文标题、作者信息和 Figure 1 描述\n- **标题**: BEVFormer: Learning Bird's-Eye-View Representation from Multi-Camera Images via Spatiotemporal Transformers\n- **作者**: Zhiqi Li, Wenhai Wang, Hongyang Li, Enze Xie, Chonghao Sima, Tong Lu, Yu Qiao, Jifeng Dai\n- **机构**: 南京大学、上海人工智能实验室、香港大学\n- **Figure 1**: 展示了 BEVFormer 的范式，应用 Transformer 和时空结构从多相机输入生成鸟瞰图特征\n\n#### chunk_order=1 (目标片段)\n**内容**: 摘要核心部分\n> \"and Temporal structure to generate bird's-eye-view (BEV) features from multi-camera inputs. BEV-Former leverages queries to lookup spatial/temporal space and aggregate spatiotemporal information correspondingly, hence benefiting stronger representations for perception tasks.\"\n\n**关键信息**: BEVFormer 利用查询机制在时空空间中查找和聚合信息，从而增强感知任务的表示能力。\n\n#### chunk_order=2 (后一个片段)\n**内容**: 摘要后续部分，描述具体方法\n> \"ral information by interacting with spatial and temporal space through predefined grid-shaped BEV queries. To aggregate spatial information, we design spatial cross-attention that each BEV query extracts the spatial features from the regions of interest across camera views. For temporal information, we propose temporal self-attention to recurrently fuse the history BEV information. Our approach achieves the new state-of-the-art 56.9% in terms of NDS metric on the nuScenes test set, which is 9.0 points higher than previous best arts and on par with the performance of LiDAR-based baselines.\"\n\n**关键信息**: \n- 空间信息聚合：设计空间交叉注意力，每个 BEV 查询从感兴趣区域提取空间特征\n- 时间信息聚合：提出时间自注意力，递归融合历史 BEV 信息\n- 性能：在 nuScenes 测试集上达到 56.9% NDS，比之前最佳方法高 9.0 分，与 LiDAR 基线相当\n\n### 上下文连贯性\n这三个片段共同构成了 BEVFormer 论文的摘要部分，从问题定义（多相机 3D 感知）到方法概述（时空 Transformer），再到具体技术细节（空间交叉注意力、时间自注意力）和性能结果，形成了完整的逻辑链条。",
+            "raw_stream": [
+              "[工具] expand_context\n",
+              "[工具结果] expand_context 已完成\n",
+              "\n\n### 扩展上下文结果 (source_id=paper-001)\n\n#### chunk_order=0 (前一个片段)\n**内容**: 论文标题、作者信息和 Figure 1 描述\n- **标题**: BEVFormer: Learning Bird's-Eye-View Representation from Multi-Camera Images via Spatiotemporal Transformers\n- **作者**: Zhiqi Li, Wenhai Wang, Hongyang Li, Enze Xie, Chonghao Sima, Tong Lu, Yu Qiao, Jifeng Dai\n- **机构**: 南京大学、上海人工智能实验室、香港大学\n- **Figure 1**: 展示了 BEVFormer 的范式，应用 Transformer 和时空结构从多相机输入生成鸟瞰图特征\n\n#### chunk_order=1 (目标片段)\n**内容**: 摘要核心部分\n> \"and Temporal structure to generate bird's-eye-view (BEV) features from multi-camera inputs. BEV-Former leverages queries to lookup spatial/temporal space and aggregate spatiotemporal information correspondingly, hence benefiting stronger representations for perception tasks.\"\n\n**关键信息**: BEVFormer 利用查询机制在时空空间中查找和聚合信息，从而增强感知任务的表示能力。\n\n#### chunk_order=2 (后一个片段)\n**内容**: 摘要后续部分，描述具体方法\n> \"ral information by interacting with spatial and temporal space through predefined grid-shaped BEV queries. To aggregate spatial information, we design spatial cross-attention that each BEV query extracts the spatial features from the regions of interest across camera views. For temporal information, we propose temporal self-attention to recurrently fuse the history BEV information. Our approach achieves the new state-of-the-art 56.9% in terms of NDS metric on the nuScenes test set, which is 9.0 points higher than previous best arts and on par with the performance of LiDAR-based baselines.\"\n\n**关键信息**: \n- 空间信息聚合：设计空间交叉注意力，每个 BEV 查询从感兴趣区域提取空间特征\n- 时间信息聚合：提出时间自注意力，递归融合历史 BEV 信息\n- 性能：在 nuScenes 测试集上达到 56.9% NDS，比之前最佳方法高 9.0 分，与 LiDAR 基线相当\n\n### 上下文连贯性\n这三个片段共同构成了 BEVFormer 论文的摘要部分，从问题定义（多相机 3D 感知）到方法概述（时空 Transformer），再到具体技术细节（空间交叉注意力、时间自注意力）和性能结果，形成了完整的逻辑链条。"
+            ],
+            "elapsed_seconds": 11.076,
+            "error": "",
+            "evaluation": {
+              "required_tools_pass": true,
+              "tool_success_pass": true,
+              "tool_order_pass": true,
+              "forbidden_tools_pass": true,
+              "source_ids_pass": true,
+              "answer_terms_pass": true,
+              "answer_length_pass": true,
+              "tool_contract_pass": true,
+              "answer_contract_pass": true,
+              "turn_pass": true
+            }
+          }
+        ],
+        "case_pass": true,
+        "retryable_errors": []
+      }
+    ],
+    "case_pass": true,
+    "attempt_count": 1,
+    "infrastructure_retry_count": 0
+  },
+  {
+    "id": "agent-compare-001",
+    "category": "multi_source_comparison",
+    "turns": [
+      {
+        "turn_index": 1,
+        "prompt": "请对比 paper-001 和 paper-002 在 camera fusion 方面的资料，只根据这两个来源的片段回答。",
+        "expected": {
+          "required_tools": [
+            "compare_sources"
+          ],
+          "forbidden_tools": [
+            "rag_search"
+          ],
+          "expected_source_ids": [
+            "paper-001",
+            "paper-002"
+          ],
+          "expected_answer_terms_any": [
+            "对比",
+            "差异",
+            "不足"
+          ],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 60
+        },
+        "tool_calls": [
+          "compare_sources"
+        ],
+        "failed_tools": [],
+        "answer": "基于 paper-001 (BEVFormer) 和 paper-002 (BEVFusion) 的片段，以下是两者在 camera fusion 方面的对比：\n\n## 核心方法差异\n\n**BEVFormer (paper-001)**：\n- 采用**空间交叉注意力**机制，每个BEV查询从多相机视图中提取感兴趣区域的空间特征\n- 基于**可变形注意力**设计，计算效率高，每个BEV查询只与相关区域交互\n- 将BEV平面上的查询提升到柱状查询，然后采样多相机特征\n- 同时融合**空间信息**（多相机视图）和**时间信息**（历史BEV特征）\n\n**BEVFusion (paper-002)**：\n- 提出**统一鸟瞰图表示**进行多任务多传感器融合\n- 强调相机和LiDAR数据模态差异：相机是透视视图，LiDAR是3D视图\n- 指出传统**相机到LiDAR投影**会丢失相机特征的语义密度\n- 认为**LiDAR到相机投影**会引入严重几何失真\n\n## 技术侧重点\n\n| 方面 | BEVFormer | BEVFusion |\n|------|-----------|-----------|\n| 融合策略 | 注意力机制驱动的特征聚合 | 统一表示空间的多模态融合 |\n| 计算效率 | 基于可变形注意力，降低计算成本 | 未明确提及 |\n| 时间维度 | 显式融合历史BEV信息 | 未提及 |\n| 性能指标 | nuScenes NDS 56.9%（+9.0点） | 未提供具体数值 |\n\n## 关键洞察\n\n- **BEVFormer** 更关注**多相机特征的高效聚合**，通过注意力机制实现空间-时间融合\n- **BEVFusion** 更关注**多传感器模态统一表示**，解决相机与LiDAR之间的几何和语义差异\n\n引用：\n- paper-001: § 4) contain more clues about the past BEV features and benefits location prediction (51.3% NDS vs. > Page 19 > Page 20\n- paper-002: § MACs and latency on an RTX3090 GPU for all open- > Page 6 > Page 8",
+        "raw_stream": [
+          "[工具] compare_sources\n",
+          "[工具结果] compare_sources 已完成\n",
+          "\n\n基于 paper-001 (BEVFormer) 和 paper-002 (BEVFusion) 的片段，以下是两者在 camera fusion 方面的对比：\n\n## 核心方法差异\n\n**BEVFormer (paper-001)**：\n- 采用**空间交叉注意力**机制，每个BEV查询从多相机视图中提取感兴趣区域的空间特征\n- 基于**可变形注意力**设计，计算效率高，每个BEV查询只与相关区域交互\n- 将BEV平面上的查询提升到柱状查询，然后采样多相机特征\n- 同时融合**空间信息**（多相机视图）和**时间信息**（历史BEV特征）\n\n**BEVFusion (paper-002)**：\n- 提出**统一鸟瞰图表示**进行多任务多传感器融合\n- 强调相机和LiDAR数据模态差异：相机是透视视图，LiDAR是3D视图\n- 指出传统**相机到LiDAR投影**会丢失相机特征的语义密度\n- 认为**LiDAR到相机投影**会引入严重几何失真\n\n## 技术侧重点\n\n| 方面 | BEVFormer | BEVFusion |\n|------|-----------|-----------|\n| 融合策略 | 注意力机制驱动的特征聚合 | 统一表示空间的多模态融合 |\n| 计算效率 | 基于可变形注意力，降低计算成本 | 未明确提及 |\n| 时间维度 | 显式融合历史BEV信息 | 未提及 |\n| 性能指标 | nuScenes NDS 56.9%（+9.0点） | 未提供具体数值 |\n\n## 关键洞察\n\n- **BEVFormer** 更关注**多相机特征的高效聚合**，通过注意力机制实现空间-时间融合\n- **BEVFusion** 更关注**多传感器模态统一表示**，解决相机与LiDAR之间的几何和语义差异\n\n引用：\n- paper-001: § 4) contain more clues about the past BEV features and benefits location prediction (51.3% NDS vs. > Page 19 > Page 20\n- paper-002: § MACs and latency on an RTX3090 GPU for all open- > Page 6 > Page 8"
+        ],
+        "elapsed_seconds": 15.86,
+        "error": "",
+        "evaluation": {
+          "required_tools_pass": true,
+          "tool_success_pass": true,
+          "tool_order_pass": true,
+          "forbidden_tools_pass": true,
+          "source_ids_pass": true,
+          "answer_terms_pass": true,
+          "answer_length_pass": true,
+          "tool_contract_pass": true,
+          "answer_contract_pass": true,
+          "turn_pass": true
+        }
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "turns": [
+          {
+            "turn_index": 1,
+            "prompt": "请对比 paper-001 和 paper-002 在 camera fusion 方面的资料，只根据这两个来源的片段回答。",
+            "expected": {
+              "required_tools": [
+                "compare_sources"
+              ],
+              "forbidden_tools": [
+                "rag_search"
+              ],
+              "expected_source_ids": [
+                "paper-001",
+                "paper-002"
+              ],
+              "expected_answer_terms_any": [
+                "对比",
+                "差异",
+                "不足"
+              ],
+              "expected_answer_terms_all": [],
+              "min_answer_chars": 60
+            },
+            "tool_calls": [
+              "compare_sources"
+            ],
+            "failed_tools": [],
+            "answer": "基于 paper-001 (BEVFormer) 和 paper-002 (BEVFusion) 的片段，以下是两者在 camera fusion 方面的对比：\n\n## 核心方法差异\n\n**BEVFormer (paper-001)**：\n- 采用**空间交叉注意力**机制，每个BEV查询从多相机视图中提取感兴趣区域的空间特征\n- 基于**可变形注意力**设计，计算效率高，每个BEV查询只与相关区域交互\n- 将BEV平面上的查询提升到柱状查询，然后采样多相机特征\n- 同时融合**空间信息**（多相机视图）和**时间信息**（历史BEV特征）\n\n**BEVFusion (paper-002)**：\n- 提出**统一鸟瞰图表示**进行多任务多传感器融合\n- 强调相机和LiDAR数据模态差异：相机是透视视图，LiDAR是3D视图\n- 指出传统**相机到LiDAR投影**会丢失相机特征的语义密度\n- 认为**LiDAR到相机投影**会引入严重几何失真\n\n## 技术侧重点\n\n| 方面 | BEVFormer | BEVFusion |\n|------|-----------|-----------|\n| 融合策略 | 注意力机制驱动的特征聚合 | 统一表示空间的多模态融合 |\n| 计算效率 | 基于可变形注意力，降低计算成本 | 未明确提及 |\n| 时间维度 | 显式融合历史BEV信息 | 未提及 |\n| 性能指标 | nuScenes NDS 56.9%（+9.0点） | 未提供具体数值 |\n\n## 关键洞察\n\n- **BEVFormer** 更关注**多相机特征的高效聚合**，通过注意力机制实现空间-时间融合\n- **BEVFusion** 更关注**多传感器模态统一表示**，解决相机与LiDAR之间的几何和语义差异\n\n引用：\n- paper-001: § 4) contain more clues about the past BEV features and benefits location prediction (51.3% NDS vs. > Page 19 > Page 20\n- paper-002: § MACs and latency on an RTX3090 GPU for all open- > Page 6 > Page 8",
+            "raw_stream": [
+              "[工具] compare_sources\n",
+              "[工具结果] compare_sources 已完成\n",
+              "\n\n基于 paper-001 (BEVFormer) 和 paper-002 (BEVFusion) 的片段，以下是两者在 camera fusion 方面的对比：\n\n## 核心方法差异\n\n**BEVFormer (paper-001)**：\n- 采用**空间交叉注意力**机制，每个BEV查询从多相机视图中提取感兴趣区域的空间特征\n- 基于**可变形注意力**设计，计算效率高，每个BEV查询只与相关区域交互\n- 将BEV平面上的查询提升到柱状查询，然后采样多相机特征\n- 同时融合**空间信息**（多相机视图）和**时间信息**（历史BEV特征）\n\n**BEVFusion (paper-002)**：\n- 提出**统一鸟瞰图表示**进行多任务多传感器融合\n- 强调相机和LiDAR数据模态差异：相机是透视视图，LiDAR是3D视图\n- 指出传统**相机到LiDAR投影**会丢失相机特征的语义密度\n- 认为**LiDAR到相机投影**会引入严重几何失真\n\n## 技术侧重点\n\n| 方面 | BEVFormer | BEVFusion |\n|------|-----------|-----------|\n| 融合策略 | 注意力机制驱动的特征聚合 | 统一表示空间的多模态融合 |\n| 计算效率 | 基于可变形注意力，降低计算成本 | 未明确提及 |\n| 时间维度 | 显式融合历史BEV信息 | 未提及 |\n| 性能指标 | nuScenes NDS 56.9%（+9.0点） | 未提供具体数值 |\n\n## 关键洞察\n\n- **BEVFormer** 更关注**多相机特征的高效聚合**，通过注意力机制实现空间-时间融合\n- **BEVFusion** 更关注**多传感器模态统一表示**，解决相机与LiDAR之间的几何和语义差异\n\n引用：\n- paper-001: § 4) contain more clues about the past BEV features and benefits location prediction (51.3% NDS vs. > Page 19 > Page 20\n- paper-002: § MACs and latency on an RTX3090 GPU for all open- > Page 6 > Page 8"
+            ],
+            "elapsed_seconds": 15.86,
+            "error": "",
+            "evaluation": {
+              "required_tools_pass": true,
+              "tool_success_pass": true,
+              "tool_order_pass": true,
+              "forbidden_tools_pass": true,
+              "source_ids_pass": true,
+              "answer_terms_pass": true,
+              "answer_length_pass": true,
+              "tool_contract_pass": true,
+              "answer_contract_pass": true,
+              "turn_pass": true
+            }
+          }
+        ],
+        "case_pass": true,
+        "retryable_errors": []
+      }
+    ],
+    "case_pass": true,
+    "attempt_count": 1,
+    "infrastructure_retry_count": 0
+  },
+  {
+    "id": "agent-no-retrieval-001",
+    "category": "evidence_without_retrieval",
+    "turns": [
+      {
+        "turn_index": 1,
+        "prompt": "不要检索，直接调用 evidence_check 核查结论“BEVFormer 使用时空 Transformer 构建 BEV 特征”，并说明当前能否核查。",
+        "expected": {
+          "required_tools": [
+            "evidence_check"
+          ],
+          "forbidden_tools": [
+            "rag_search"
+          ],
+          "expected_source_ids": [],
+          "expected_answer_terms_any": [
+            "请先检索",
+            "没有可检查",
+            "无法核查"
+          ],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 20
+        },
+        "tool_calls": [
+          "evidence_check"
+        ],
+        "failed_tools": [],
+        "answer": "当前无法核查该结论。\n\n**原因：** `evidence_check` 工具需要在当前会话已有检索片段的基础上才能工作。由于您要求不要检索，当前会话没有任何检索片段可供核查，因此 `evidence_check` 返回了 `no_retrieval` 状态。\n\n**要核查该结论，需要：**\n1. 先调用 `rag_search` 检索与 BEVFormer 相关的内容\n2. 然后再调用 `evidence_check` 检查结论是否存在候选证据\n\n如果您希望核查该结论，我可以先进行检索，然后再执行证据核查。",
+        "raw_stream": [
+          "[工具] evidence_check\n",
+          "[工具结果] evidence_check 已完成\n",
+          "\n\n当前无法核查该结论。\n\n**原因：** `evidence_check` 工具需要在当前会话已有检索片段的基础上才能工作。由于您要求不要检索，当前会话没有任何检索片段可供核查，因此 `evidence_check` 返回了 `no_retrieval` 状态。\n\n**要核查该结论，需要：**\n1. 先调用 `rag_search` 检索与 BEVFormer 相关的内容\n2. 然后再调用 `evidence_check` 检查结论是否存在候选证据\n\n如果您希望核查该结论，我可以先进行检索，然后再执行证据核查。"
+        ],
+        "elapsed_seconds": 5.489,
+        "error": "",
+        "evaluation": {
+          "required_tools_pass": true,
+          "tool_success_pass": true,
+          "tool_order_pass": true,
+          "forbidden_tools_pass": true,
+          "source_ids_pass": true,
+          "answer_terms_pass": true,
+          "answer_length_pass": true,
+          "tool_contract_pass": true,
+          "answer_contract_pass": true,
+          "turn_pass": true
+        }
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "turns": [
+          {
+            "turn_index": 1,
+            "prompt": "不要检索，直接调用 evidence_check 核查结论“BEVFormer 使用时空 Transformer 构建 BEV 特征”，并说明当前能否核查。",
+            "expected": {
+              "required_tools": [
+                "evidence_check"
+              ],
+              "forbidden_tools": [
+                "rag_search"
+              ],
+              "expected_source_ids": [],
+              "expected_answer_terms_any": [
+                "请先检索",
+                "没有可检查",
+                "无法核查"
+              ],
+              "expected_answer_terms_all": [],
+              "min_answer_chars": 20
+            },
+            "tool_calls": [
+              "evidence_check"
+            ],
+            "failed_tools": [],
+            "answer": "当前无法核查该结论。\n\n**原因：** `evidence_check` 工具需要在当前会话已有检索片段的基础上才能工作。由于您要求不要检索，当前会话没有任何检索片段可供核查，因此 `evidence_check` 返回了 `no_retrieval` 状态。\n\n**要核查该结论，需要：**\n1. 先调用 `rag_search` 检索与 BEVFormer 相关的内容\n2. 然后再调用 `evidence_check` 检查结论是否存在候选证据\n\n如果您希望核查该结论，我可以先进行检索，然后再执行证据核查。",
+            "raw_stream": [
+              "[工具] evidence_check\n",
+              "[工具结果] evidence_check 已完成\n",
+              "\n\n当前无法核查该结论。\n\n**原因：** `evidence_check` 工具需要在当前会话已有检索片段的基础上才能工作。由于您要求不要检索，当前会话没有任何检索片段可供核查，因此 `evidence_check` 返回了 `no_retrieval` 状态。\n\n**要核查该结论，需要：**\n1. 先调用 `rag_search` 检索与 BEVFormer 相关的内容\n2. 然后再调用 `evidence_check` 检查结论是否存在候选证据\n\n如果您希望核查该结论，我可以先进行检索，然后再执行证据核查。"
+            ],
+            "elapsed_seconds": 5.489,
+            "error": "",
+            "evaluation": {
+              "required_tools_pass": true,
+              "tool_success_pass": true,
+              "tool_order_pass": true,
+              "forbidden_tools_pass": true,
+              "source_ids_pass": true,
+              "answer_terms_pass": true,
+              "answer_length_pass": true,
+              "tool_contract_pass": true,
+              "answer_contract_pass": true,
+              "turn_pass": true
+            }
+          }
+        ],
+        "case_pass": true,
+        "retryable_errors": []
+      }
+    ],
+    "case_pass": true,
+    "attempt_count": 1,
+    "infrastructure_retry_count": 0
+  },
+  {
+    "id": "agent-evidence-001",
+    "category": "retrieval_evidence_check",
+    "turns": [
+      {
+        "turn_index": 1,
+        "prompt": "请先检索 BEVFormer 使用了什么机制，然后调用 evidence_check 核查结论“BEVFormer 使用时空 Transformer 构建 BEV 特征”。",
+        "expected": {
+          "required_tools": [
+            "rag_search",
+            "evidence_check"
+          ],
+          "forbidden_tools": [],
+          "expected_source_ids": [],
+          "expected_answer_terms_any": [
+            "证据",
+            "candidate",
+            "候选"
+          ],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 50
+        },
+        "tool_calls": [
+          "rag_search",
+          "evidence_check"
+        ],
+        "failed_tools": [],
+        "answer": "根据检索结果和证据核查，我可以回答您的问题：\n\n## BEVFormer 使用的机制\n\nBEVFormer 使用了以下核心机制：\n\n1. **时空 Transformer 编码器**：BEVFormer 是一个时空 Transformer 编码器，用于将多相机和/或时间戳输入投影到鸟瞰图（BEV）表示中。\n\n2. **三个定制设计**：其编码器层包含三个关键设计：\n   - **BEV 查询**：网格状的可学习参数\n   - **空间交叉注意力**：用于聚合多视角图像特征\n   - **时间自注意力**：用于聚合历史 BEV 特征\n\n3. **查询机制**：BEVFormer 利用查询来查找空间和/或时间空间，并相应地聚合空时信息。\n\n## 证据核查结果\n\n**结论**：\"BEVFormer 使用时空 Transformer 构建 BEV 特征\"\n\n**核查状态**：✅ **有候选证据支持**\n\n**关键证据**：\n- 来自 paper-001 的原文：\"We propose BEVFormer, a spatiotemporal transformer encoder that projects multi-camera and/or timestamp input to BEV representations.\"\n- 来自 paper-001 的原文：\"BEVFormer has 6 encoder layers, each of which follows the conventional structure of transformers [42], except for three tailored designs, namely BEV queries, spatial cross-attention, and temporal self-attention.\"\n\n这些证据直接支持了该结论，表明 BEVFormer 确实使用时空 Transformer 架构来构建 BEV 特征。\n\n**引用**：\n- source_id: paper-001, locator: § 4) contain more clues about the past BEV features and beneﬁts location prediction (51.3% NDS vs. > Page 19 > Page 20\n- source_id: paper-001, chunk_order: 10, 20",
+        "raw_stream": [
+          "[工具] rag_search\n",
+          "[工具结果] rag_search 已完成\n",
+          "[工具] evidence_check\n",
+          "[工具结果] evidence_check 已完成\n",
+          "\n\n根据检索结果和证据核查，我可以回答您的问题：\n\n## BEVFormer 使用的机制\n\nBEVFormer 使用了以下核心机制：\n\n1. **时空 Transformer 编码器**：BEVFormer 是一个时空 Transformer 编码器，用于将多相机和/或时间戳输入投影到鸟瞰图（BEV）表示中。\n\n2. **三个定制设计**：其编码器层包含三个关键设计：\n   - **BEV 查询**：网格状的可学习参数\n   - **空间交叉注意力**：用于聚合多视角图像特征\n   - **时间自注意力**：用于聚合历史 BEV 特征\n\n3. **查询机制**：BEVFormer 利用查询来查找空间和/或时间空间，并相应地聚合空时信息。\n\n## 证据核查结果\n\n**结论**：\"BEVFormer 使用时空 Transformer 构建 BEV 特征\"\n\n**核查状态**：✅ **有候选证据支持**\n\n**关键证据**：\n- 来自 paper-001 的原文：\"We propose BEVFormer, a spatiotemporal transformer encoder that projects multi-camera and/or timestamp input to BEV representations.\"\n- 来自 paper-001 的原文：\"BEVFormer has 6 encoder layers, each of which follows the conventional structure of transformers [42], except for three tailored designs, namely BEV queries, spatial cross-attention, and temporal self-attention.\"\n\n这些证据直接支持了该结论，表明 BEVFormer 确实使用时空 Transformer 架构来构建 BEV 特征。\n\n**引用**：\n- source_id: paper-001, locator: § 4) contain more clues about the past BEV features and beneﬁts location prediction (51.3% NDS vs. > Page 19 > Page 20\n- source_id: paper-001, chunk_order: 10, 20"
+        ],
+        "elapsed_seconds": 26.462,
+        "error": "",
+        "evaluation": {
+          "required_tools_pass": true,
+          "tool_success_pass": true,
+          "tool_order_pass": true,
+          "forbidden_tools_pass": true,
+          "source_ids_pass": true,
+          "answer_terms_pass": true,
+          "answer_length_pass": true,
+          "tool_contract_pass": true,
+          "answer_contract_pass": true,
+          "turn_pass": true
+        }
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "turns": [
+          {
+            "turn_index": 1,
+            "prompt": "请先检索 BEVFormer 使用了什么机制，然后调用 evidence_check 核查结论“BEVFormer 使用时空 Transformer 构建 BEV 特征”。",
+            "expected": {
+              "required_tools": [
+                "rag_search",
+                "evidence_check"
+              ],
+              "forbidden_tools": [],
+              "expected_source_ids": [],
+              "expected_answer_terms_any": [
+                "证据",
+                "candidate",
+                "候选"
+              ],
+              "expected_answer_terms_all": [],
+              "min_answer_chars": 50
+            },
+            "tool_calls": [
+              "rag_search",
+              "evidence_check"
+            ],
+            "failed_tools": [],
+            "answer": "根据检索结果和证据核查，我可以回答您的问题：\n\n## BEVFormer 使用的机制\n\nBEVFormer 使用了以下核心机制：\n\n1. **时空 Transformer 编码器**：BEVFormer 是一个时空 Transformer 编码器，用于将多相机和/或时间戳输入投影到鸟瞰图（BEV）表示中。\n\n2. **三个定制设计**：其编码器层包含三个关键设计：\n   - **BEV 查询**：网格状的可学习参数\n   - **空间交叉注意力**：用于聚合多视角图像特征\n   - **时间自注意力**：用于聚合历史 BEV 特征\n\n3. **查询机制**：BEVFormer 利用查询来查找空间和/或时间空间，并相应地聚合空时信息。\n\n## 证据核查结果\n\n**结论**：\"BEVFormer 使用时空 Transformer 构建 BEV 特征\"\n\n**核查状态**：✅ **有候选证据支持**\n\n**关键证据**：\n- 来自 paper-001 的原文：\"We propose BEVFormer, a spatiotemporal transformer encoder that projects multi-camera and/or timestamp input to BEV representations.\"\n- 来自 paper-001 的原文：\"BEVFormer has 6 encoder layers, each of which follows the conventional structure of transformers [42], except for three tailored designs, namely BEV queries, spatial cross-attention, and temporal self-attention.\"\n\n这些证据直接支持了该结论，表明 BEVFormer 确实使用时空 Transformer 架构来构建 BEV 特征。\n\n**引用**：\n- source_id: paper-001, locator: § 4) contain more clues about the past BEV features and beneﬁts location prediction (51.3% NDS vs. > Page 19 > Page 20\n- source_id: paper-001, chunk_order: 10, 20",
+            "raw_stream": [
+              "[工具] rag_search\n",
+              "[工具结果] rag_search 已完成\n",
+              "[工具] evidence_check\n",
+              "[工具结果] evidence_check 已完成\n",
+              "\n\n根据检索结果和证据核查，我可以回答您的问题：\n\n## BEVFormer 使用的机制\n\nBEVFormer 使用了以下核心机制：\n\n1. **时空 Transformer 编码器**：BEVFormer 是一个时空 Transformer 编码器，用于将多相机和/或时间戳输入投影到鸟瞰图（BEV）表示中。\n\n2. **三个定制设计**：其编码器层包含三个关键设计：\n   - **BEV 查询**：网格状的可学习参数\n   - **空间交叉注意力**：用于聚合多视角图像特征\n   - **时间自注意力**：用于聚合历史 BEV 特征\n\n3. **查询机制**：BEVFormer 利用查询来查找空间和/或时间空间，并相应地聚合空时信息。\n\n## 证据核查结果\n\n**结论**：\"BEVFormer 使用时空 Transformer 构建 BEV 特征\"\n\n**核查状态**：✅ **有候选证据支持**\n\n**关键证据**：\n- 来自 paper-001 的原文：\"We propose BEVFormer, a spatiotemporal transformer encoder that projects multi-camera and/or timestamp input to BEV representations.\"\n- 来自 paper-001 的原文：\"BEVFormer has 6 encoder layers, each of which follows the conventional structure of transformers [42], except for three tailored designs, namely BEV queries, spatial cross-attention, and temporal self-attention.\"\n\n这些证据直接支持了该结论，表明 BEVFormer 确实使用时空 Transformer 架构来构建 BEV 特征。\n\n**引用**：\n- source_id: paper-001, locator: § 4) contain more clues about the past BEV features and beneﬁts location prediction (51.3% NDS vs. > Page 19 > Page 20\n- source_id: paper-001, chunk_order: 10, 20"
+            ],
+            "elapsed_seconds": 26.462,
+            "error": "",
+            "evaluation": {
+              "required_tools_pass": true,
+              "tool_success_pass": true,
+              "tool_order_pass": true,
+              "forbidden_tools_pass": true,
+              "source_ids_pass": true,
+              "answer_terms_pass": true,
+              "answer_length_pass": true,
+              "tool_contract_pass": true,
+              "answer_contract_pass": true,
+              "turn_pass": true
+            }
+          }
+        ],
+        "case_pass": true,
+        "retryable_errors": []
+      }
+    ],
+    "case_pass": true,
+    "attempt_count": 1,
+    "infrastructure_retry_count": 0
+  },
+  {
+    "id": "agent-numeric-001",
+    "category": "numeric_verification",
+    "turns": [
+      {
+        "turn_index": 1,
+        "prompt": "请检查来源 paper-030，核对 CRN 实时设置的 FPS，以及离线设置在 nuScenes test set 上的 NDS 和 mAP。",
+        "expected": {
+          "required_tools": [
+            "inspect_source"
+          ],
+          "forbidden_tools": [
+            "rag_search"
+          ],
+          "expected_source_ids": [
+            "paper-030"
+          ],
+          "expected_answer_terms_any": [],
+          "expected_answer_terms_all": [
+            "20 FPS",
+            "62.4%",
+            "57.5%"
+          ],
+          "min_answer_chars": 50
+        },
+        "tool_calls": [
+          "inspect_source"
+        ],
+        "failed_tools": [],
+        "answer": "根据来源 paper-030 的核对结果：\n\n### CRN 实时设置 FPS\n- **20 FPS**（chunk_order=2, locator=§ Top-K > Page 18）\n\n### 离线设置在 nuScenes test set 上的性能\n- **NDS: 62.4%**\n- **mAP: 57.5%**（chunk_order=2, locator=§ Top-K > Page 18）\n\n### 补充信息\n- 实时设置下，CRN 在 nuScenes 上达到与 LiDAR 检测器相当的性能，在 100m 远距离设置上甚至超越 LiDAR 检测器\n- 离线设置下，CRN 在所有相机和相机-雷达 3D 目标检测器中排名第一\n\n**引用：**\n- source_id: paper-030\n- locator: § Top-K > Page 18\n- chunk_order: 2",
+        "raw_stream": [
+          "[工具] inspect_source\n",
+          "[工具结果] inspect_source 已完成\n",
+          "\n\n根据来源 paper-030 的核对结果：\n\n### CRN 实时设置 FPS\n- **20 FPS**（chunk_order=2, locator=§ Top-K > Page 18）\n\n### 离线设置在 nuScenes test set 上的性能\n- **NDS: 62.4%**\n- **mAP: 57.5%**（chunk_order=2, locator=§ Top-K > Page 18）\n\n### 补充信息\n- 实时设置下，CRN 在 nuScenes 上达到与 LiDAR 检测器相当的性能，在 100m 远距离设置上甚至超越 LiDAR 检测器\n- 离线设置下，CRN 在所有相机和相机-雷达 3D 目标检测器中排名第一\n\n**引用：**\n- source_id: paper-030\n- locator: § Top-K > Page 18\n- chunk_order: 2"
+        ],
+        "elapsed_seconds": 6.49,
+        "error": "",
+        "evaluation": {
+          "required_tools_pass": true,
+          "tool_success_pass": true,
+          "tool_order_pass": true,
+          "forbidden_tools_pass": true,
+          "source_ids_pass": true,
+          "answer_terms_pass": true,
+          "answer_length_pass": true,
+          "tool_contract_pass": true,
+          "answer_contract_pass": true,
+          "turn_pass": true
+        }
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "turns": [
+          {
+            "turn_index": 1,
+            "prompt": "请检查来源 paper-030，核对 CRN 实时设置的 FPS，以及离线设置在 nuScenes test set 上的 NDS 和 mAP。",
+            "expected": {
+              "required_tools": [
+                "inspect_source"
+              ],
+              "forbidden_tools": [
+                "rag_search"
+              ],
+              "expected_source_ids": [
+                "paper-030"
+              ],
+              "expected_answer_terms_any": [],
+              "expected_answer_terms_all": [
+                "20 FPS",
+                "62.4%",
+                "57.5%"
+              ],
+              "min_answer_chars": 50
+            },
+            "tool_calls": [
+              "inspect_source"
+            ],
+            "failed_tools": [],
+            "answer": "根据来源 paper-030 的核对结果：\n\n### CRN 实时设置 FPS\n- **20 FPS**（chunk_order=2, locator=§ Top-K > Page 18）\n\n### 离线设置在 nuScenes test set 上的性能\n- **NDS: 62.4%**\n- **mAP: 57.5%**（chunk_order=2, locator=§ Top-K > Page 18）\n\n### 补充信息\n- 实时设置下，CRN 在 nuScenes 上达到与 LiDAR 检测器相当的性能，在 100m 远距离设置上甚至超越 LiDAR 检测器\n- 离线设置下，CRN 在所有相机和相机-雷达 3D 目标检测器中排名第一\n\n**引用：**\n- source_id: paper-030\n- locator: § Top-K > Page 18\n- chunk_order: 2",
+            "raw_stream": [
+              "[工具] inspect_source\n",
+              "[工具结果] inspect_source 已完成\n",
+              "\n\n根据来源 paper-030 的核对结果：\n\n### CRN 实时设置 FPS\n- **20 FPS**（chunk_order=2, locator=§ Top-K > Page 18）\n\n### 离线设置在 nuScenes test set 上的性能\n- **NDS: 62.4%**\n- **mAP: 57.5%**（chunk_order=2, locator=§ Top-K > Page 18）\n\n### 补充信息\n- 实时设置下，CRN 在 nuScenes 上达到与 LiDAR 检测器相当的性能，在 100m 远距离设置上甚至超越 LiDAR 检测器\n- 离线设置下，CRN 在所有相机和相机-雷达 3D 目标检测器中排名第一\n\n**引用：**\n- source_id: paper-030\n- locator: § Top-K > Page 18\n- chunk_order: 2"
+            ],
+            "elapsed_seconds": 6.49,
+            "error": "",
+            "evaluation": {
+              "required_tools_pass": true,
+              "tool_success_pass": true,
+              "tool_order_pass": true,
+              "forbidden_tools_pass": true,
+              "source_ids_pass": true,
+              "answer_terms_pass": true,
+              "answer_length_pass": true,
+              "tool_contract_pass": true,
+              "answer_contract_pass": true,
+              "turn_pass": true
+            }
+          }
+        ],
+        "case_pass": true,
+        "retryable_errors": []
+      }
+    ],
+    "case_pass": true,
+    "attempt_count": 1,
+    "infrastructure_retry_count": 0
+  },
+  {
+    "id": "agent-table-001",
+    "category": "table_interference",
+    "turns": [
+      {
+        "turn_index": 1,
+        "prompt": "请检索 Apollo 规划模块的输入，列出并说明 /apollo/canbus/chassis、/apollo/localization/pose、/apollo/prediction 和 /apollo/relative_map 这四个 channel。",
+        "expected": {
+          "required_tools": [
+            "rag_search"
+          ],
+          "forbidden_tools": [],
+          "expected_source_ids": [
+            "apollo-doc-008"
+          ],
+          "expected_answer_terms_any": [],
+          "expected_answer_terms_all": [
+            "/apollo/canbus/chassis",
+            "/apollo/localization/pose",
+            "/apollo/prediction",
+            "/apollo/relative_map"
+          ],
+          "min_answer_chars": 100
+        },
+        "tool_calls": [
+          "rag_search",
+          "show_sources",
+          "inspect_source",
+          "expand_context"
+        ],
+        "failed_tools": [],
+        "answer": "根据 Apollo 官方文档，规划模块的输入 channel 如下：\n\n## Apollo 规划模块输入 Channel 说明\n\n| Channel 名称 | 说明 |\n|-------------|------|\n| `/apollo/canbus/chassis` | 输入车身底盘反馈信息，包含车辆当前的运动状态、速度、转向角等底盘数据 |\n| `/apollo/localization/pose` | 输入车辆定位信息，提供车辆在地图中的精确位置和姿态 |\n| `/apollo/prediction` | 输入预测障碍物信息，包含周围动态障碍物的运动轨迹预测 |\n| `/apollo/relative_map` | 局部地图信息，提供车辆周围的道路几何和静态环境信息 |\n\n### 补充说明\n\n规划模块基于这些输入信息，结合导航路径信息（`/apollo/routing_response`）和感知红绿灯信息（`/apollo/perception/traffic_light`），通过状态机、规划分发器、规划器以及决策器与优化器，完成自动驾驶车辆的轨迹规划，最终输出轨迹信息到 `/apollo/planning` channel。\n\n**引用：**\n- source_id: apollo-doc-008, locator: § Apollo Planning Overview > Evidence-ready excerpts, chunk_order: 9",
+        "raw_stream": [
+          "[工具] rag_search\n",
+          "[工具结果] rag_search 已完成\n",
+          "[工具] show_sources\n",
+          "[工具结果] show_sources 已完成\n",
+          "[工具] inspect_source\n",
+          "[工具结果] inspect_source 已完成\n",
+          "[工具] expand_context\n",
+          "[工具结果] expand_context 已完成\n",
+          "\n\n根据 Apollo 官方文档，规划模块的输入 channel 如下：\n\n## Apollo 规划模块输入 Channel 说明\n\n| Channel 名称 | 说明 |\n|-------------|------|\n| `/apollo/canbus/chassis` | 输入车身底盘反馈信息，包含车辆当前的运动状态、速度、转向角等底盘数据 |\n| `/apollo/localization/pose` | 输入车辆定位信息，提供车辆在地图中的精确位置和姿态 |\n| `/apollo/prediction` | 输入预测障碍物信息，包含周围动态障碍物的运动轨迹预测 |\n| `/apollo/relative_map` | 局部地图信息，提供车辆周围的道路几何和静态环境信息 |\n\n### 补充说明\n\n规划模块基于这些输入信息，结合导航路径信息（`/apollo/routing_response`）和感知红绿灯信息（`/apollo/perception/traffic_light`），通过状态机、规划分发器、规划器以及决策器与优化器，完成自动驾驶车辆的轨迹规划，最终输出轨迹信息到 `/apollo/planning` channel。\n\n**引用：**\n- source_id: apollo-doc-008, locator: § Apollo Planning Overview > Evidence-ready excerpts, chunk_order: 9"
+        ],
+        "elapsed_seconds": 25.388,
+        "error": "",
+        "evaluation": {
+          "required_tools_pass": true,
+          "tool_success_pass": true,
+          "tool_order_pass": true,
+          "forbidden_tools_pass": true,
+          "source_ids_pass": true,
+          "answer_terms_pass": true,
+          "answer_length_pass": true,
+          "tool_contract_pass": true,
+          "answer_contract_pass": true,
+          "turn_pass": true
+        }
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "turns": [
+          {
+            "turn_index": 1,
+            "prompt": "请检索 Apollo 规划模块的输入，列出并说明 /apollo/canbus/chassis、/apollo/localization/pose、/apollo/prediction 和 /apollo/relative_map 这四个 channel。",
+            "expected": {
+              "required_tools": [
+                "rag_search"
+              ],
+              "forbidden_tools": [],
+              "expected_source_ids": [
+                "apollo-doc-008"
+              ],
+              "expected_answer_terms_any": [],
+              "expected_answer_terms_all": [
+                "/apollo/canbus/chassis",
+                "/apollo/localization/pose",
+                "/apollo/prediction",
+                "/apollo/relative_map"
+              ],
+              "min_answer_chars": 100
+            },
+            "tool_calls": [
+              "rag_search",
+              "show_sources",
+              "inspect_source",
+              "expand_context"
+            ],
+            "failed_tools": [],
+            "answer": "根据 Apollo 官方文档，规划模块的输入 channel 如下：\n\n## Apollo 规划模块输入 Channel 说明\n\n| Channel 名称 | 说明 |\n|-------------|------|\n| `/apollo/canbus/chassis` | 输入车身底盘反馈信息，包含车辆当前的运动状态、速度、转向角等底盘数据 |\n| `/apollo/localization/pose` | 输入车辆定位信息，提供车辆在地图中的精确位置和姿态 |\n| `/apollo/prediction` | 输入预测障碍物信息，包含周围动态障碍物的运动轨迹预测 |\n| `/apollo/relative_map` | 局部地图信息，提供车辆周围的道路几何和静态环境信息 |\n\n### 补充说明\n\n规划模块基于这些输入信息，结合导航路径信息（`/apollo/routing_response`）和感知红绿灯信息（`/apollo/perception/traffic_light`），通过状态机、规划分发器、规划器以及决策器与优化器，完成自动驾驶车辆的轨迹规划，最终输出轨迹信息到 `/apollo/planning` channel。\n\n**引用：**\n- source_id: apollo-doc-008, locator: § Apollo Planning Overview > Evidence-ready excerpts, chunk_order: 9",
+            "raw_stream": [
+              "[工具] rag_search\n",
+              "[工具结果] rag_search 已完成\n",
+              "[工具] show_sources\n",
+              "[工具结果] show_sources 已完成\n",
+              "[工具] inspect_source\n",
+              "[工具结果] inspect_source 已完成\n",
+              "[工具] expand_context\n",
+              "[工具结果] expand_context 已完成\n",
+              "\n\n根据 Apollo 官方文档，规划模块的输入 channel 如下：\n\n## Apollo 规划模块输入 Channel 说明\n\n| Channel 名称 | 说明 |\n|-------------|------|\n| `/apollo/canbus/chassis` | 输入车身底盘反馈信息，包含车辆当前的运动状态、速度、转向角等底盘数据 |\n| `/apollo/localization/pose` | 输入车辆定位信息，提供车辆在地图中的精确位置和姿态 |\n| `/apollo/prediction` | 输入预测障碍物信息，包含周围动态障碍物的运动轨迹预测 |\n| `/apollo/relative_map` | 局部地图信息，提供车辆周围的道路几何和静态环境信息 |\n\n### 补充说明\n\n规划模块基于这些输入信息，结合导航路径信息（`/apollo/routing_response`）和感知红绿灯信息（`/apollo/perception/traffic_light`），通过状态机、规划分发器、规划器以及决策器与优化器，完成自动驾驶车辆的轨迹规划，最终输出轨迹信息到 `/apollo/planning` channel。\n\n**引用：**\n- source_id: apollo-doc-008, locator: § Apollo Planning Overview > Evidence-ready excerpts, chunk_order: 9"
+            ],
+            "elapsed_seconds": 25.388,
+            "error": "",
+            "evaluation": {
+              "required_tools_pass": true,
+              "tool_success_pass": true,
+              "tool_order_pass": true,
+              "forbidden_tools_pass": true,
+              "source_ids_pass": true,
+              "answer_terms_pass": true,
+              "answer_length_pass": true,
+              "tool_contract_pass": true,
+              "answer_contract_pass": true,
+              "turn_pass": true
+            }
+          }
+        ],
+        "case_pass": true,
+        "retryable_errors": []
+      }
+    ],
+    "case_pass": true,
+    "attempt_count": 1,
+    "infrastructure_retry_count": 0
+  },
+  {
+    "id": "agent-missing-source-001",
+    "category": "missing_source",
+    "turns": [
+      {
+        "turn_index": 1,
+        "prompt": "请检查来源 paper-999，并明确说明是否存在。",
+        "expected": {
+          "required_tools": [
+            "inspect_source"
+          ],
+          "forbidden_tools": [
+            "rag_search"
+          ],
+          "expected_source_ids": [
+            "paper-999"
+          ],
+          "expected_answer_terms_any": [
+            "未找到",
+            "不存在"
+          ],
+          "expected_answer_terms_all": [],
+          "min_answer_chars": 10
+        },
+        "tool_calls": [
+          "inspect_source"
+        ],
+        "failed_tools": [],
+        "answer": "来源 **paper-999** 不存在。\n\n系统返回结果为\"未找到来源：paper-999\"，说明该 source_id 在知识库中没有对应的记录。",
+        "raw_stream": [
+          "[工具] inspect_source\n",
+          "[工具结果] inspect_source 已完成\n",
+          "\n\n来源 **paper-999** 不存在。\n\n系统返回结果为\"未找到来源：paper-999\"，说明该 source_id 在知识库中没有对应的记录。"
+        ],
+        "elapsed_seconds": 4.424,
+        "error": "",
+        "evaluation": {
+          "required_tools_pass": true,
+          "tool_success_pass": true,
+          "tool_order_pass": true,
+          "forbidden_tools_pass": true,
+          "source_ids_pass": true,
+          "answer_terms_pass": true,
+          "answer_length_pass": true,
+          "tool_contract_pass": true,
+          "answer_contract_pass": true,
+          "turn_pass": true
+        }
+      }
+    ],
+    "attempts": [
+      {
+        "attempt": 1,
+        "turns": [
+          {
+            "turn_index": 1,
+            "prompt": "请检查来源 paper-999，并明确说明是否存在。",
+            "expected": {
+              "required_tools": [
+                "inspect_source"
+              ],
+              "forbidden_tools": [
+                "rag_search"
+              ],
+              "expected_source_ids": [
+                "paper-999"
+              ],
+              "expected_answer_terms_any": [
+                "未找到",
+                "不存在"
+              ],
+              "expected_answer_terms_all": [],
+              "min_answer_chars": 10
+            },
+            "tool_calls": [
+              "inspect_source"
+            ],
+            "failed_tools": [],
+            "answer": "来源 **paper-999** 不存在。\n\n系统返回结果为\"未找到来源：paper-999\"，说明该 source_id 在知识库中没有对应的记录。",
+            "raw_stream": [
+              "[工具] inspect_source\n",
+              "[工具结果] inspect_source 已完成\n",
+              "\n\n来源 **paper-999** 不存在。\n\n系统返回结果为\"未找到来源：paper-999\"，说明该 source_id 在知识库中没有对应的记录。"
+            ],
+            "elapsed_seconds": 4.424,
+            "error": "",
+            "evaluation": {
+              "required_tools_pass": true,
+              "tool_success_pass": true,
+              "tool_order_pass": true,
+              "forbidden_tools_pass": true,
+              "source_ids_pass": true,
+              "answer_terms_pass": true,
+              "answer_length_pass": true,
+              "tool_contract_pass": true,
+              "answer_contract_pass": true,
+              "turn_pass": true
+            }
+          }
+        ],
+        "case_pass": true,
+        "retryable_errors": []
+      }
+    ],
+    "case_pass": true,
+    "attempt_count": 1,
+    "infrastructure_retry_count": 0
+  }
+]
