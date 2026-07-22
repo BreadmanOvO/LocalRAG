@@ -1,0 +1,61 @@
+{
+  "contract_version": "agent-stability-gate-v1",
+  "required_run_count": 3,
+  "available_formal_run_count": 14,
+  "selected_run_ids": [
+    "agent-eval-20260722-221737",
+    "agent-eval-20260722-222041",
+    "agent-eval-20260722-222319"
+  ],
+  "runs": [
+    {
+      "run_id": "agent-eval-20260722-221737",
+      "created_at": "2026-07-22T22:20:11",
+      "git_revision": "2e3e45018ba700c484ac92dd25418c6eb575b36a",
+      "git_dirty": false,
+      "artifact_valid": true,
+      "gate_pass": true,
+      "evaluation_complete": true,
+      "case_pass_ratio": 1.0,
+      "infrastructure_retry_count": 0,
+      "error_counts": {}
+    },
+    {
+      "run_id": "agent-eval-20260722-222041",
+      "created_at": "2026-07-22T22:22:58",
+      "git_revision": "2e3e45018ba700c484ac92dd25418c6eb575b36a",
+      "git_dirty": false,
+      "artifact_valid": true,
+      "gate_pass": true,
+      "evaluation_complete": true,
+      "case_pass_ratio": 1.0,
+      "infrastructure_retry_count": 0,
+      "error_counts": {}
+    },
+    {
+      "run_id": "agent-eval-20260722-222319",
+      "created_at": "2026-07-22T22:25:47",
+      "git_revision": "2e3e45018ba700c484ac92dd25418c6eb575b36a",
+      "git_dirty": false,
+      "artifact_valid": true,
+      "gate_pass": true,
+      "evaluation_complete": true,
+      "case_pass_ratio": 1.0,
+      "infrastructure_retry_count": 0,
+      "error_counts": {}
+    }
+  ],
+  "checks": {
+    "required_run_count": true,
+    "all_artifacts_valid": true,
+    "all_gates_pass": true,
+    "all_evaluations_complete": true,
+    "all_revisions_clean": true,
+    "all_runs_formal": true,
+    "identity_complete": true,
+    "identity_consistent": true,
+    "no_graph_recursion": true
+  },
+  "failure_reasons": [],
+  "gate_pass": true
+}
