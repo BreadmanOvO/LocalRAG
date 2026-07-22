@@ -1,6 +1,6 @@
 {
   "contract_version": "active-corpus-v2",
-  "release_version": "v1.4.1",
+  "release_version": "v1.4.2",
   "persist_directory": "results/chunking_eval/stores/eval_set-20260522-071034/doc_type_aware",
   "collection_name": "rag",
   "source_count": 100,

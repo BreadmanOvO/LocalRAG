@@ -34,7 +34,7 @@ cp config/runtime_models.example.json config/runtime_models.json
 streamlit run app_qa.py
 ```
 
-默认读取 `config/active_corpus.json`，加载 v1.4.1 已通过 Gate 的 100-source / 7339-chunk Chroma store。active corpus v2 profile 同时固定来源数、片段数和 corpus/registry 指纹。大型 Chroma 二进制不进入 Git；新环境需要先生成该 store，或通过环境变量选择其他本地 store：
+默认读取 `config/active_corpus.json`，加载 v1.4.2 已通过 Gate 的 100-source / 7339-chunk Chroma store。active corpus v2 profile 同时固定来源数、片段数和 corpus/registry 指纹。大型 Chroma 二进制不进入 Git；新环境需要先生成该 store，或通过环境变量选择其他本地 store：
 
 ```powershell
 $env:LOCALRAG_PERSIST_DIRECTORY = "path\to\chroma_store"
@@ -170,4 +170,4 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 | v1.1 | 数据层（文档采集、chunk、metadata、formal judge） | 已完成 |
 | v1.2 | 检索层（hybrid retrieval + reranker + semantic chunking） | 已完成 |
 | v1.3 | 数据扩充与评测重建 + Qwen3-4B 微调 E1-E9 闭环 | 已完成 |
-| v1.4.1 | Agent + Memory 研究助手 | 已完成（M1-M5 与发布可靠性收口） |
+| v1.4.2 | Agent + Memory 研究助手 | 已完成（M1-M5、稳定性补强与代码精简收口） |

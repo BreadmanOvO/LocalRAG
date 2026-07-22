@@ -7,10 +7,10 @@ from config.corpus_profile import load_active_corpus_profile
 
 
 class ActiveCorpusProfileTests(unittest.TestCase):
-    def test_repo_profile_selects_v141_formal_corpus(self):
+    def test_repo_profile_selects_v142_formal_corpus(self):
         profile = load_active_corpus_profile()
 
-        self.assertEqual("v1.4.1", profile.release_version)
+        self.assertEqual("v1.4.2", profile.release_version)
         self.assertEqual("rag", profile.collection_name)
         self.assertEqual(100, profile.source_count)
         self.assertEqual(7339, profile.chunk_count)
