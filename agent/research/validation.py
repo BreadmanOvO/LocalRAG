@@ -102,6 +102,12 @@ def validate_revision(value: int) -> int:
     return value
 
 
+def validate_counter(value: int, field_name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ValueError(f"{field_name} must be a non-negative integer")
+    return value
+
+
 def normalize_execution_identity(
     identity: ResearchExecutionIdentity,
 ) -> ResearchExecutionIdentity:

@@ -412,14 +412,20 @@ class ReactAgentSessionTests(unittest.TestCase):
         events = list(agent.execute_events("question"))
 
         self.assertEqual(
-            ["tool_started", "tool_completed", "answer_delta"],
+            [
+                "model_completed",
+                "tool_started",
+                "tool_completed",
+                "model_completed",
+                "answer_delta",
+            ],
             [event.kind for event in events],
         )
-        self.assertEqual("call-1", events[0].call_id)
-        self.assertEqual({"source_id": "paper-001"}, events[0].arguments)
-        self.assertEqual("success", events[1].status)
-        self.assertEqual("paper-001", events[1].observations[0]["source_id"])
-        self.assertEqual("answer", events[2].content)
+        self.assertEqual("call-1", events[1].call_id)
+        self.assertEqual({"source_id": "paper-001"}, events[1].arguments)
+        self.assertEqual("success", events[2].status)
+        self.assertEqual("paper-001", events[2].observations[0]["source_id"])
+        self.assertEqual("answer", events[4].content)
         self.assertNotIn("hidden reasoning", str([event.to_dict() for event in events]))
         self.assertNotIn("private tool result", str([event.to_dict() for event in events]))
 

@@ -42,6 +42,7 @@ from agent.research.validation import (
     normalize_finding_draft,
     normalize_step_draft,
     step_commit_fingerprint,
+    validate_counter,
     validate_revision,
     validate_status,
 )
@@ -245,6 +246,20 @@ class ResearchRunStore:
             ),
         )
 
+    def get_latest_plan_for_task(self, task_id: str) -> ResearchPlanSnapshot | None:
+        task_id = validate_task_id(task_id)
+        with self._lock, self._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT run_id FROM research_runs
+                WHERE task_id = ?
+                ORDER BY updated_at DESC, created_at DESC, run_id DESC
+                LIMIT 1
+                """,
+                (task_id,),
+            ).fetchone()
+        return self.get_plan(row["run_id"]) if row is not None else None
+
     def get_next_pending_step(self, run_id: str) -> ResearchStep | None:
         run_id = clean_identifier(run_id, "run_id")
         with self._lock, self._connect() as connection:
@@ -440,6 +455,14 @@ class ResearchRunStore:
         expected_revision = validate_revision(expected_revision)
         result_summary = clean_text(transition.result_summary, "result_summary")
         error_code = clean_text(transition.error_code, "error_code", max_length=256)
+        tool_call_count = validate_counter(
+            transition.tool_call_count,
+            "tool_call_count",
+        )
+        model_call_count = validate_counter(
+            transition.model_call_count,
+            "model_call_count",
+        )
         if status == "completed":
             raise ResearchStateError("use commit_step to complete a research step")
         now = _utc_now()
@@ -486,6 +509,15 @@ class ResearchRunStore:
                     step_id,
                 ),
             )
+            connection.execute(
+                """
+                UPDATE research_runs
+                SET tool_call_count = tool_call_count + ?,
+                    model_call_count = model_call_count + ?
+                WHERE run_id = ?
+                """,
+                (tool_call_count, model_call_count, run_id),
+            )
             if status == "running":
                 connection.execute(
                     """
@@ -527,6 +559,8 @@ class ResearchRunStore:
             else None
         )
         payload_fingerprint = step_commit_fingerprint(commit)
+        tool_call_count = validate_counter(commit.tool_call_count, "tool_call_count")
+        model_call_count = validate_counter(commit.model_call_count, "model_call_count")
         normalized_evidence = tuple(
             normalize_evidence_draft(draft) for draft in commit.evidence_refs
         )
@@ -639,10 +673,12 @@ class ResearchRunStore:
                 connection.execute(
                     """
                     UPDATE research_runs
-                    SET current_step_id = NULL, no_progress_count = 0, stop_reason = ''
+                    SET current_step_id = NULL, no_progress_count = 0, stop_reason = '',
+                        tool_call_count = tool_call_count + ?,
+                        model_call_count = model_call_count + ?
                     WHERE run_id = ?
                     """,
-                    (run_id,),
+                    (tool_call_count, model_call_count, run_id),
                 )
                 connection.execute(
                     """

@@ -416,6 +416,8 @@ def combine_runtime_observability(
 
     return {
         "current_corpus": deepcopy(current_corpus),
+        "current_git_revision": current_git_revision,
+        "current_git_dirty": current_git_dirty,
         "active_profile_matches": active_profile_matches,
         "latest_eval": deepcopy(latest_eval),
         "stability_gate": deepcopy(stability_gate),

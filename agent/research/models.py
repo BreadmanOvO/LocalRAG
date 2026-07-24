@@ -52,6 +52,8 @@ class ResearchStepTransition:
     status: StepStatus
     result_summary: str = ""
     error_code: str = ""
+    tool_call_count: int = 0
+    model_call_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -60,6 +62,8 @@ class ResearchStepCommit:
     evidence_refs: tuple[EvidenceRefDraft, ...] = ()
     findings: tuple[ResearchFindingDraft, ...] = ()
     commit_id: str | None = None
+    tool_call_count: int = 0
+    model_call_count: int = 0
 
 
 @dataclass(frozen=True)

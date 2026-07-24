@@ -16,6 +16,19 @@ from agent.research.models import (
     ResearchStepDraft,
     ResearchStepTransition,
 )
+from agent.research.presentation import (
+    RUN_STATUS_LABELS,
+    build_evidence_rows,
+    build_finding_rows,
+    build_step_rows,
+    is_active_plan,
+    research_progress,
+    run_status_label,
+)
+from agent.research.runtime import (
+    ResearchAgentRuntime,
+    execution_identity_from_observability,
+)
 from agent.research.store import (
     ResearchNotFoundError,
     ResearchRevisionConflictError,
@@ -27,6 +40,7 @@ __all__ = [
     "EvidenceRef",
     "EvidenceRefDraft",
     "RESEARCH_PAUSED",
+    "RUN_STATUS_LABELS",
     "ResearchControlError",
     "ResearchExecutionIdentity",
     "ResearchFinding",
@@ -37,9 +51,17 @@ __all__ = [
     "ResearchRun",
     "ResearchRunService",
     "ResearchRunStore",
+    "ResearchAgentRuntime",
     "ResearchStateError",
     "ResearchStep",
     "ResearchStepCommit",
     "ResearchStepDraft",
     "ResearchStepTransition",
+    "build_evidence_rows",
+    "build_finding_rows",
+    "build_step_rows",
+    "execution_identity_from_observability",
+    "is_active_plan",
+    "research_progress",
+    "run_status_label",
 ]

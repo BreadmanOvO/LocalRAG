@@ -11,6 +11,7 @@ from agent.research.models import (
     ResearchStep,
     ResearchStepCommit,
     ResearchStepDraft,
+    ResearchStepTransition,
 )
 from agent.research.store import ResearchRunStore
 from agent.research.validation import normalize_execution_identity
@@ -52,6 +53,14 @@ class ResearchRunService:
                 run_id=run_id,
                 identity=identity,
             )
+        )
+
+    def get_plan(self, run_id: str) -> ResearchPlanSnapshot:
+        return self._storage_call(lambda: self.store.get_plan(run_id))
+
+    def get_latest_plan(self, task_id: str) -> ResearchPlanSnapshot | None:
+        return self._storage_call(
+            lambda: self.store.get_latest_plan_for_task(task_id)
         )
 
     def pause_run(self, run_id: str, *, expected_revision: int) -> ResearchRun:
@@ -141,11 +150,26 @@ class ResearchRunService:
             )
         )
 
-    def ensure_step_active(self, run_id: str, step_id: str) -> ResearchRun:
+    def ensure_step_active(
+        self,
+        run_id: str,
+        step_id: str,
+        *,
+        expected_revision: int | None = None,
+    ) -> ResearchRun:
         run = self._storage_call(lambda: self.store.get_run(run_id))
-        if run.status == "running" and run.current_step_id == step_id:
+        revision_matches = expected_revision is None or run.revision == expected_revision
+        if (
+            run.status == "running"
+            and run.current_step_id == step_id
+            and revision_matches
+        ):
             return run
-        error_code = run.stop_reason or "research_execution_stopped"
+        error_code = run.stop_reason or (
+            "research_revision_changed"
+            if not revision_matches
+            else "research_execution_stopped"
+        )
         raise ResearchControlError(
             error_code,
             f"research step {step_id} is no longer active",
@@ -171,6 +195,32 @@ class ResearchRunService:
                 run_id,
                 step_id,
                 commit,
+                expected_revision=expected_revision,
+            )
+        )
+
+    def transition_step(
+        self,
+        run_id: str,
+        step_id: str,
+        transition: ResearchStepTransition,
+        *,
+        expected_revision: int,
+    ) -> ResearchPlanSnapshot:
+        return self._storage_call(
+            lambda: self.store.transition_step(
+                run_id,
+                step_id,
+                transition,
+                expected_revision=expected_revision,
+            )
+        )
+
+    def complete_run(self, run_id: str, *, expected_revision: int) -> ResearchRun:
+        return self._storage_call(
+            lambda: self.store.transition_run(
+                run_id,
+                "completed",
                 expected_revision=expected_revision,
             )
         )

@@ -73,9 +73,14 @@ def _elapsed_ms(started_at: float) -> int:
 
 def _events_from_message(message, started_at: float) -> list[AgentEvent]:
     if message.type == "ai":
+        model_event = AgentEvent(
+            kind="model_completed",
+            status="completed",
+            elapsed_ms=_elapsed_ms(started_at),
+        )
         tool_calls = getattr(message, "tool_calls", []) or []
         if tool_calls:
-            events = []
+            events = [model_event]
             for tool_call in tool_calls:
                 arguments = tool_call.get("args") or {}
                 if not isinstance(arguments, dict):
@@ -94,6 +99,7 @@ def _events_from_message(message, started_at: float) -> list[AgentEvent]:
         content = getattr(message, "content", None)
         if content:
             return [
+                model_event,
                 AgentEvent(
                     kind="answer_delta",
                     content=str(content),
@@ -101,7 +107,7 @@ def _events_from_message(message, started_at: float) -> list[AgentEvent]:
                     elapsed_ms=_elapsed_ms(started_at),
                 )
             ]
-        return []
+        return [model_event]
 
     if message.type != "tool":
         return []

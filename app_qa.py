@@ -13,6 +13,21 @@ from agent.observability import (
     merge_source_observations,
     tool_label,
 )
+from agent.research import (
+    ResearchAgentRuntime,
+    ResearchControlError,
+    ResearchRevisionConflictError,
+    ResearchRunService,
+    ResearchRunStore,
+    ResearchStateError,
+    build_evidence_rows,
+    build_finding_rows,
+    build_step_rows,
+    execution_identity_from_observability,
+    is_active_plan,
+    research_progress,
+    run_status_label,
+)
 from config import settings as config
 from utils.session import validate_task_id
 
@@ -46,6 +61,7 @@ def _reset_runtime_for_task(task_id: str) -> None:
     st.session_state["session_id"] = _new_runtime_id()
     st.session_state["message"] = [{"role": "assistant", "content": WELCOME_MESSAGE}]
     st.session_state.pop("agent", None)
+    st.session_state.pop("research_runtime", None)
 
 
 def _query_task_id() -> str | None:
@@ -256,86 +272,121 @@ def _render_assistant_details(message: dict) -> None:
             _render_memory_changes(memory_changes)
 
 
-requested_task_id = _query_task_id()
-if "task_id" not in st.session_state:
-    _reset_runtime_for_task(requested_task_id or _new_runtime_id())
-elif requested_task_id and requested_task_id != st.session_state["task_id"]:
-    _reset_runtime_for_task(requested_task_id)
+@st.cache_resource(show_spinner=False)
+def _research_service() -> ResearchRunService:
+    return ResearchRunService(ResearchRunStore())
 
-if st.query_params.get("task") != st.session_state["task_id"]:
-    st.query_params["task"] = st.session_state["task_id"]
 
-if "message" not in st.session_state:
-    st.session_state["message"] = [{"role": "assistant", "content": WELCOME_MESSAGE}]
-if "session_id" not in st.session_state:
-    st.session_state["session_id"] = _new_runtime_id()
-if "task_memory_enabled" not in st.session_state:
-    st.session_state["task_memory_enabled"] = True
+def _load_research_runtime(agent: ReactAgent, runtime_status: dict):
+    try:
+        identity = execution_identity_from_observability(runtime_status)
+        if identity.code_dirty:
+            raise ResearchControlError(
+                "research_identity_unstable",
+                "recoverable research runs require a clean code identity",
+            )
+    except ResearchControlError as exc:
+        st.session_state.pop("research_runtime", None)
+        return None, exc.error_code
 
-runtime_status = _runtime_observability(
-    config.persist_directory,
-    config.collection_name,
-    config.expected_corpus_fingerprint,
-    config.expected_registry_fingerprint,
-    config.expected_source_count,
-    config.expected_chunk_count,
-)
+    runtime = st.session_state.get("research_runtime")
+    if (
+        not isinstance(runtime, ResearchAgentRuntime)
+        or runtime.agent is not agent
+        or runtime.identity != identity
+    ):
+        runtime = ResearchAgentRuntime(agent, _research_service(), identity)
+        st.session_state["research_runtime"] = runtime
+    return runtime, ""
 
-st.title("LocalRAG 研究助手")
-st.caption(f"任务 {st.session_state['task_id']}")
-_render_runtime_header(runtime_status)
-st.divider()
 
-memory_enabled = st.sidebar.checkbox("启用任务记忆", key="task_memory_enabled")
-if (
-    "agent" not in st.session_state
-    or getattr(st.session_state["agent"], "session_id", None) != st.session_state["session_id"]
-    or getattr(st.session_state["agent"], "task_id", None) != st.session_state["task_id"]
-):
-    st.session_state["agent"] = ReactAgent(
-        session_id=st.session_state["session_id"],
-        task_id=st.session_state["task_id"],
-        task_memory_enabled=memory_enabled,
+def _render_research_plan(plan, runtime, identity_error: str) -> str:
+    st.subheader("研究执行")
+    if plan is None:
+        if identity_error:
+            st.error(f"研究执行不可用：{identity_error}")
+        else:
+            st.caption("暂无研究运行")
+        return ""
+
+    run = plan.run
+    completed_steps = sum(
+        step.status in {"completed", "skipped"} for step in plan.steps
     )
+    budget = getattr(runtime.agent, "execution_budget", None) if runtime else None
+    tool_limit = getattr(budget, "tool_call_limit", "-")
+    model_limit = getattr(budget, "model_call_limit", "-")
+    status_column, step_column, tool_column, model_column = st.columns(4)
+    status_column.metric("运行状态", run_status_label(plan))
+    step_column.metric("步骤", f"{completed_steps} / {len(plan.steps)}")
+    tool_column.metric("工具调用（累计/单次）", f"{run.tool_call_count} / {tool_limit}")
+    model_column.metric("模型调用（累计/单次）", f"{run.model_call_count} / {model_limit}")
+    st.progress(research_progress(plan))
+    st.caption(f"目标：{run.goal}")
+    st.dataframe(build_step_rows(plan), use_container_width=True, hide_index=True)
 
-agent = st.session_state["agent"]
-agent.set_task_memory_enabled(memory_enabled)
+    if run.stop_reason:
+        st.warning(f"停止原因：{run.stop_reason}")
+    st.caption(f"run {run.run_id} · revision {run.revision}")
 
-st.sidebar.subheader("研究任务")
-st.sidebar.caption(st.session_state["task_id"])
-new_task_column, clear_memory_column = st.sidebar.columns(2)
-if new_task_column.button("新任务", use_container_width=True):
-    new_task_id = _new_runtime_id()
-    _reset_runtime_for_task(new_task_id)
-    st.query_params["task"] = new_task_id
-    st.rerun()
-if clear_memory_column.button("清除记忆", use_container_width=True):
-    agent.clear_task_memory()
-    _clear_memory_editor_state()
-    st.rerun()
+    finding_tab, evidence_tab = st.tabs(["研究结论", "证据"])
+    with finding_tab:
+        finding_rows = build_finding_rows(plan)
+        if finding_rows:
+            st.dataframe(finding_rows, use_container_width=True, hide_index=True)
+        else:
+            st.caption("暂无研究结论")
+    with evidence_tab:
+        evidence_rows = build_evidence_rows(plan)
+        if evidence_rows:
+            st.dataframe(evidence_rows, use_container_width=True, hide_index=True)
+        else:
+            st.caption("暂无证据")
 
-task_memory = agent.get_task_memory()
-with st.sidebar.expander("任务记忆", expanded=not task_memory.is_empty):
-    if task_memory.is_empty:
-        st.caption("当前任务暂无持久化记忆")
-    else:
-        st.json(_memory_payload(task_memory))
+    active = is_active_plan(plan)
+    execute_column, pause_column, cancel_column = st.columns(3)
+    execute_label = "开始执行" if run.status == "planned" else "继续执行"
+    execute = execute_column.button(
+        execute_label,
+        type="primary",
+        use_container_width=True,
+        disabled=not active or runtime is None,
+        key=f"research_execute_{run.run_id}_{run.revision}",
+    )
+    pause = pause_column.button(
+        "暂停",
+        use_container_width=True,
+        disabled=run.status not in {"planned", "running"},
+        key=f"research_pause_{run.run_id}_{run.revision}",
+    )
+    cancel = cancel_column.button(
+        "取消",
+        use_container_width=True,
+        disabled=not active,
+        key=f"research_cancel_{run.run_id}_{run.revision}",
+    )
+    if identity_error:
+        st.error(f"研究执行不可用：{identity_error}")
+    if execute:
+        return "execute"
+    if pause:
+        return "pause"
+    if cancel:
+        return "cancel"
+    return ""
 
-_render_memory_editor(agent, task_memory, enabled=memory_enabled)
-_render_runtime_sidebar(runtime_status)
 
-for message in st.session_state["message"]:
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
-        if message["role"] == "assistant":
-            _render_assistant_details(message)
+def _ensure_user_message(goal: str) -> None:
+    if any(
+        message.get("role") == "user" and message.get("content") == goal
+        for message in st.session_state["message"]
+    ):
+        return
+    st.session_state["message"].append({"role": "user", "content": goal})
 
-prompt = st.chat_input("输入研究问题")
-if prompt:
-    with st.chat_message("user"):
-        st.write(prompt)
-    st.session_state["message"].append({"role": "user", "content": prompt})
 
+def _execute_research_run(runtime: ResearchAgentRuntime, run_id: str) -> None:
+    agent = runtime.agent
     before_memory = agent.get_task_memory()
     trace = []
     answer_parts = []
@@ -347,7 +398,7 @@ if prompt:
     with st.chat_message("assistant"):
         run_status = st.status("Agent 执行中", expanded=True)
         answer_placeholder = st.empty()
-        for event in agent.execute_events(prompt):
+        for event in runtime.execute_events(run_id):
             max_elapsed_ms = max(max_elapsed_ms, event.elapsed_ms or 0)
             if event.kind == "tool_started":
                 trace.append(event.to_dict())
@@ -401,7 +452,150 @@ if prompt:
             "elapsed_ms": max_elapsed_ms,
             "error": has_error,
             "error_code": error_code,
+            "research_run_id": run_id,
         }
         st.session_state["message"].append(assistant_message)
         _render_assistant_details(assistant_message)
+
+
+requested_task_id = _query_task_id()
+if "task_id" not in st.session_state:
+    _reset_runtime_for_task(requested_task_id or _new_runtime_id())
+elif requested_task_id and requested_task_id != st.session_state["task_id"]:
+    _reset_runtime_for_task(requested_task_id)
+
+if st.query_params.get("task") != st.session_state["task_id"]:
+    st.query_params["task"] = st.session_state["task_id"]
+
+if "message" not in st.session_state:
+    st.session_state["message"] = [{"role": "assistant", "content": WELCOME_MESSAGE}]
+if "session_id" not in st.session_state:
+    st.session_state["session_id"] = _new_runtime_id()
+if "task_memory_enabled" not in st.session_state:
+    st.session_state["task_memory_enabled"] = True
+
+runtime_status = _runtime_observability(
+    config.persist_directory,
+    config.collection_name,
+    config.expected_corpus_fingerprint,
+    config.expected_registry_fingerprint,
+    config.expected_source_count,
+    config.expected_chunk_count,
+)
+
+st.title("LocalRAG 研究助手")
+st.caption(f"任务 {st.session_state['task_id']}")
+_render_runtime_header(runtime_status)
+st.divider()
+
+memory_enabled = st.sidebar.checkbox("启用任务记忆", key="task_memory_enabled")
+if (
+    "agent" not in st.session_state
+    or getattr(st.session_state["agent"], "session_id", None) != st.session_state["session_id"]
+    or getattr(st.session_state["agent"], "task_id", None) != st.session_state["task_id"]
+):
+    st.session_state["agent"] = ReactAgent(
+        session_id=st.session_state["session_id"],
+        task_id=st.session_state["task_id"],
+        task_memory_enabled=memory_enabled,
+    )
+
+agent = st.session_state["agent"]
+agent.set_task_memory_enabled(memory_enabled)
+research_service = _research_service()
+research_runtime, research_identity_error = _load_research_runtime(
+    agent,
+    runtime_status,
+)
+try:
+    research_plan = research_service.get_latest_plan(st.session_state["task_id"])
+except ResearchControlError as exc:
+    research_plan = None
+    research_identity_error = exc.error_code
+research_active = is_active_plan(research_plan)
+
+st.sidebar.subheader("研究任务")
+st.sidebar.caption(st.session_state["task_id"])
+new_task_column, clear_memory_column = st.sidebar.columns(2)
+if new_task_column.button("新任务", use_container_width=True):
+    new_task_id = _new_runtime_id()
+    _reset_runtime_for_task(new_task_id)
+    st.query_params["task"] = new_task_id
+    st.rerun()
+if clear_memory_column.button(
+    "清除记忆",
+    use_container_width=True,
+    disabled=research_active,
+):
+    agent.clear_task_memory()
+    _clear_memory_editor_state()
+    st.rerun()
+
+task_memory = agent.get_task_memory()
+with st.sidebar.expander("任务记忆", expanded=not task_memory.is_empty):
+    if task_memory.is_empty:
+        st.caption("当前任务暂无持久化记忆")
+    else:
+        st.json(_memory_payload(task_memory))
+
+_render_memory_editor(agent, task_memory, enabled=memory_enabled)
+_render_runtime_sidebar(runtime_status)
+
+research_action = _render_research_plan(
+    research_plan,
+    research_runtime,
+    research_identity_error,
+)
+if research_action and research_plan is not None:
+    try:
+        if research_action == "execute":
+            _ensure_user_message(research_plan.run.goal)
+            _execute_research_run(research_runtime, research_plan.run.run_id)
+        elif research_action == "pause":
+            research_service.pause_run(
+                research_plan.run.run_id,
+                expected_revision=research_plan.run.revision,
+            )
+        elif research_action == "cancel":
+            research_service.cancel_run(
+                research_plan.run.run_id,
+                expected_revision=research_plan.run.revision,
+            )
+    except (ResearchControlError, ResearchRevisionConflictError, ResearchStateError) as exc:
+        error_code = getattr(exc, "error_code", "research_control_failed")
+        st.error(f"研究控制失败：{error_code}")
+    else:
+        st.rerun()
+
+st.divider()
+
+for message in st.session_state["message"]:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
+        if message["role"] == "assistant":
+            _render_assistant_details(message)
+
+prompt = st.chat_input(
+    "输入研究问题",
+    disabled=research_active or research_runtime is None,
+)
+if prompt:
+    with st.chat_message("user"):
+        st.write(prompt)
+    st.session_state["message"].append({"role": "user", "content": prompt})
+
+    try:
+        research_plan = research_runtime.create_run(prompt)
+    except (ResearchControlError, ResearchRevisionConflictError, ResearchStateError) as exc:
+        error_code = getattr(exc, "error_code", "research_control_failed")
+        st.session_state["message"].append(
+            {
+                "role": "assistant",
+                "content": "研究任务创建失败，请检查运行状态后重试。",
+                "error": True,
+                "error_code": error_code,
+            }
+        )
+    else:
+        _execute_research_run(research_runtime, research_plan.run.run_id)
     st.rerun()
