@@ -57,6 +57,60 @@ class LoopingToolChatModel(BaseChatModel):
         )
 
 
+class MultiTurnGuardChatModel(BaseChatModel):
+    calls: list[int] = Field(default_factory=list)
+
+    @property
+    def _llm_type(self) -> str:
+        return "multi-turn-guard-chat-model"
+
+    def bind_tools(self, tools, **kwargs):
+        return self
+
+    def _generate(self, messages, stop=None, run_manager=None, **kwargs) -> ChatResult:
+        self.calls.append(len(self.calls) + 1)
+        last_human_index = max(
+            index for index, message in enumerate(messages) if message.type == "human"
+        )
+        current_messages = messages[last_human_index:]
+        prompt = current_messages[0].content
+        tool_result_count = sum(message.type == "tool" for message in current_messages)
+
+        if prompt == "first turn" and tool_result_count == 0:
+            tool_calls = [
+                {
+                    "name": "show_sources",
+                    "args": {},
+                    "id": "first-call",
+                    "type": "tool_call",
+                }
+            ]
+            content = ""
+        elif prompt == "second turn" and tool_result_count < 2:
+            tool_name = "inspect_source" if tool_result_count == 0 else "show_sources"
+            arguments = {"source_id": "missing-source"} if tool_result_count == 0 else {}
+            tool_calls = [
+                {
+                    "name": tool_name,
+                    "args": arguments,
+                    "id": f"second-call-{tool_result_count + 1}",
+                    "type": "tool_call",
+                }
+            ]
+            content = ""
+        else:
+            tool_calls = []
+            content = f"completed {prompt}"
+
+        return ChatResult(
+            generations=[
+                ChatGeneration(
+                    message=AIMessage(content=content, tool_calls=tool_calls)
+                )
+            ]
+        )
+
+
 class AgentExecutionBudgetTests(unittest.TestCase):
     def test_default_budget_builds_strict_run_limit_middleware(self):
         middleware = DEFAULT_AGENT_EXECUTION_BUDGET.build_middleware()
@@ -353,6 +407,35 @@ class ExecutionGuardMiddlewareTests(unittest.TestCase):
         self.assertEqual(2, len(reordered["run_progress_fingerprints"]))
         self.assertEqual(1, reordered["run_no_progress_count"])
 
+    def test_historical_tool_messages_only_initialize_the_run_baseline(self):
+        guard = ExecutionGuardMiddleware(
+            duplicate_tool_call_detection=False,
+            no_progress_limit=2,
+        )
+        historical_tool_message = ToolMessage(
+            content="old result",
+            tool_call_id="historical-call",
+        )
+        current_ai_message = AIMessage(
+            content="",
+            tool_calls=[
+                {
+                    "name": "show_sources",
+                    "args": {},
+                    "id": "current-call",
+                    "type": "tool_call",
+                }
+            ],
+        )
+
+        baseline = guard.after_model(
+            {"messages": [historical_tool_message, current_ai_message]},
+            mock.Mock(),
+        )
+
+        self.assertEqual(("historical-call",), baseline["run_processed_tool_call_ids"])
+        self.assertEqual(0, baseline["run_no_progress_count"])
+
 
 class AgentExecutionIntegrationTests(unittest.TestCase):
     @staticmethod
@@ -484,6 +567,27 @@ class AgentExecutionIntegrationTests(unittest.TestCase):
         self.assertEqual(3, output.count("[工具] inspect_source"))
         self.assertEqual(2, output.count("[工具结果] inspect_source 已完成"))
         self.assertIn("[运行错误] no_progress_limit", output)
+
+    def test_new_run_ignores_tool_messages_from_the_same_thread_history(self):
+        chat_model = MultiTurnGuardChatModel()
+        evidence_service = mock.Mock()
+        evidence_service.inspect_source.return_value = {
+            "found": False,
+            "source_id": "missing-source",
+        }
+        agent, _ = self._build_agent(
+            AgentExecutionBudget(tool_call_limit=3, model_call_limit=4),
+            chat_model=chat_model,
+            evidence_service=evidence_service,
+        )
+
+        first_output = "".join(agent.execute_stream("first turn"))
+        second_output = "".join(agent.execute_stream("second turn"))
+
+        self.assertIn("completed first turn", first_output)
+        self.assertIn("completed second turn", second_output)
+        self.assertEqual(2, second_output.count("[工具结果]"))
+        self.assertNotIn("[运行错误]", second_output)
 
 
 if __name__ == "__main__":

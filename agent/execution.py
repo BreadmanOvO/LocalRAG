@@ -142,14 +142,22 @@ class ExecutionGuardMiddleware(AgentMiddleware):
 
         processed_ids = set(state.get("run_processed_tool_call_ids", ()))
         progress_fingerprints = set(state.get("run_progress_fingerprints", ()))
-        new_tool_messages = [
+        tool_messages = [
             message
             for message in messages
             if isinstance(message, ToolMessage)
-            and str(message.tool_call_id) not in processed_ids
         ]
         current_token = self._current_progress_token()
         previous_token = state.get("run_progress_token")
+        if previous_token is None:
+            processed_ids.update(str(message.tool_call_id) for message in tool_messages)
+            new_tool_messages = []
+        else:
+            new_tool_messages = [
+                message
+                for message in tool_messages
+                if str(message.tool_call_id) not in processed_ids
+            ]
         made_progress = previous_token is not None and current_token != previous_token
 
         for message in new_tool_messages:
