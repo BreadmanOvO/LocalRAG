@@ -141,6 +141,16 @@ class ResearchRunService:
             )
         )
 
+    def ensure_step_active(self, run_id: str, step_id: str) -> ResearchRun:
+        run = self._storage_call(lambda: self.store.get_run(run_id))
+        if run.status == "running" and run.current_step_id == step_id:
+            return run
+        error_code = run.stop_reason or "research_execution_stopped"
+        raise ResearchControlError(
+            error_code,
+            f"research step {step_id} is no longer active",
+        )
+
     def commit_step(
         self,
         run_id: str,

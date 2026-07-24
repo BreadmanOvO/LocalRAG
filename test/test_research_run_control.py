@@ -361,6 +361,24 @@ class ResearchRunControlTests(unittest.TestCase):
         self.assertEqual("research_not_runnable", raised.exception.error_code)
         self.assertEqual(0, restored.steps[0].attempt_count)
 
+    def test_cancelled_run_stops_an_already_claimed_step(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = self._path(temp_dir)
+            service, plan = self._create_plan(path)
+            started_run, step = service.claim_next_step(
+                "run-a",
+                expected_revision=plan.run.revision,
+            )
+            service.cancel_run(
+                "run-a",
+                expected_revision=started_run.revision,
+            )
+
+            with self.assertRaises(ResearchControlError) as raised:
+                service.ensure_step_active("run-a", step.step_id)
+
+        self.assertEqual("research_cancelled", raised.exception.error_code)
+
     def test_storage_failure_has_stable_code_and_rolls_back_checkpoint(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             path = self._path(temp_dir)
