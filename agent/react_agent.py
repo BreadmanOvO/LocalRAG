@@ -7,7 +7,12 @@ from langchain.agents.middleware.tool_call_limit import ToolCallLimitExceededErr
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.errors import GraphRecursionError
 
-from agent.execution import AgentExecutionBudget, DEFAULT_AGENT_EXECUTION_BUDGET
+from agent.execution import (
+    AgentExecutionBudget,
+    DEFAULT_AGENT_EXECUTION_BUDGET,
+    DuplicateToolCallError,
+    NoProgressLimitExceededError,
+)
 from agent.memory import SessionRetrievalMemory, TaskMemoryPolicy, TaskMemoryStore
 from agent.observability import AgentEvent
 from agent.tools import (
@@ -33,6 +38,10 @@ logger = logging.getLogger(__name__)
 
 
 def _execution_error_code(exc: Exception) -> str:
+    if isinstance(exc, DuplicateToolCallError):
+        return "duplicate_tool_call"
+    if isinstance(exc, NoProgressLimitExceededError):
+        return "no_progress_limit"
     if isinstance(exc, ToolCallLimitExceededError):
         return "tool_call_limit_exceeded"
     if isinstance(exc, ModelCallLimitExceededError):
@@ -139,6 +148,8 @@ class ReactAgent:
         self.execution_budget = AgentExecutionBudget(
             tool_call_limit=budget.tool_call_limit,
             model_call_limit=budget.model_call_limit,
+            duplicate_tool_call_detection=budget.duplicate_tool_call_detection,
+            no_progress_limit=budget.no_progress_limit,
             recursion_limit=(
                 budget.recursion_limit if recursion_limit is None else int(recursion_limit)
             ),
@@ -189,7 +200,9 @@ class ReactAgent:
             tools=self.tools,
             system_prompt=system_prompt,
             checkpointer=checkpointer or InMemorySaver(),
-            middleware=self.execution_budget.build_middleware(),
+            middleware=self.execution_budget.build_middleware(
+                progress_token=self._execution_progress_token,
+            ),
         )
 
     def _graph_config(self) -> dict:
@@ -214,6 +227,44 @@ class ReactAgent:
 
     def get_retrieval_snapshot(self):
         return self.retrieval_memory.recall(self.session_id)
+
+    def _execution_progress_token(self) -> dict:
+        task_memory = self.get_task_memory()
+
+        def values(field_name: str) -> tuple[str, ...]:
+            value = getattr(task_memory, field_name, ())
+            if not isinstance(value, (list, tuple, set)):
+                return ()
+            return tuple(sorted(str(item) for item in value))
+
+        topic = getattr(task_memory, "topic", "")
+        memory_state = {
+            "topic": topic if isinstance(topic, str) else "",
+            "searched_queries": values("searched_queries"),
+            "retrieved_sources": values("retrieved_sources"),
+            "confirmed_sources": values("confirmed_sources"),
+            "findings": values("findings"),
+            "evidence_gaps": values("evidence_gaps"),
+            "open_questions": values("open_questions"),
+        }
+
+        retrieval = self.get_retrieval_snapshot()
+        document_fields = ("source_id", "locator", "chunk_order", "chunk_strategy")
+        documents = [
+            {field: document.get(field) for field in document_fields}
+            for document in (getattr(retrieval, "documents", ()) or ())
+            if isinstance(document, dict)
+        ]
+        documents.sort(
+            key=lambda document: tuple(
+                str(document.get(field) or "") for field in document_fields
+            )
+        )
+        retrieval_state = {
+            "query": str(getattr(retrieval, "query", "") or ""),
+            "documents": documents,
+        }
+        return {"task_memory": memory_state, "retrieval": retrieval_state}
 
     def replace_task_memory_entry(
         self,
@@ -280,6 +331,8 @@ class ReactAgent:
         except Exception as exc:
             error_code = _execution_error_code(exc)
             if error_code in {
+                "duplicate_tool_call",
+                "no_progress_limit",
                 "tool_call_limit_exceeded",
                 "model_call_limit_exceeded",
             }:

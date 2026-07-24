@@ -231,8 +231,62 @@ class ReactAgentSessionTests(unittest.TestCase):
         )
         self.assertIs(fake_checkpointer, create_agent.call_args.kwargs["checkpointer"])
         middleware = create_agent.call_args.kwargs["middleware"]
-        self.assertEqual(3, middleware[0].run_limit)
-        self.assertEqual(4, middleware[1].run_limit)
+        self.assertEqual(
+            [
+                "ExecutionGuardMiddleware",
+                "ToolCallLimitMiddleware",
+                "ModelCallLimitMiddleware",
+            ],
+            [type(item).__name__ for item in middleware],
+        )
+        self.assertEqual(3, middleware[1].run_limit)
+        self.assertEqual(4, middleware[2].run_limit)
+
+    def test_execution_progress_token_ignores_memory_and_retrieval_order(self):
+        agent = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+        first_memory = SimpleNamespace(
+            topic="topic",
+            searched_queries=("query-b", "query-a"),
+            retrieved_sources=("paper-002", "paper-001"),
+            confirmed_sources=(),
+            findings=("finding-b", "finding-a"),
+            evidence_gaps=(),
+            open_questions=(),
+        )
+        second_memory = SimpleNamespace(
+            **{
+                **vars(first_memory),
+                "searched_queries": tuple(reversed(first_memory.searched_queries)),
+                "retrieved_sources": tuple(reversed(first_memory.retrieved_sources)),
+                "findings": tuple(reversed(first_memory.findings)),
+            }
+        )
+        first_documents = (
+            {
+                "source_id": "paper-002",
+                "locator": "page-2",
+                "chunk_order": 2,
+                "chunk_strategy": "baseline",
+            },
+            {
+                "source_id": "paper-001",
+                "locator": "page-1",
+                "chunk_order": 1,
+                "chunk_strategy": "baseline",
+            },
+        )
+        agent.get_task_memory = mock.Mock(side_effect=[first_memory, second_memory])
+        agent.get_retrieval_snapshot = mock.Mock(
+            side_effect=[
+                SimpleNamespace(query="query", documents=first_documents),
+                SimpleNamespace(query="query", documents=tuple(reversed(first_documents))),
+            ]
+        )
+
+        first_token = agent._execution_progress_token()
+        second_token = agent._execution_progress_token()
+
+        self.assertEqual(first_token, second_token)
 
     def test_execute_uses_session_as_langgraph_thread_id(self):
         fake_graph = mock.Mock()
@@ -248,7 +302,7 @@ class ReactAgentSessionTests(unittest.TestCase):
             {"messages": [("user", "question")]},
             config={
                 "configurable": {"thread_id": "session-a"},
-                "recursion_limit": 24,
+                "recursion_limit": 28,
             },
         )
 
@@ -296,7 +350,7 @@ class ReactAgentSessionTests(unittest.TestCase):
             {"messages": [("user", "question")]},
             config={
                 "configurable": {"thread_id": "session-a"},
-                "recursion_limit": 24,
+                "recursion_limit": 28,
             },
             stream_mode="updates",
         )

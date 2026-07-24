@@ -593,6 +593,8 @@ def run_agent_eval(
         "middleware": None,
         "tool_call_run_limit": None,
         "model_call_run_limit": None,
+        "duplicate_tool_call_detection": None,
+        "no_progress_limit": None,
         "limit_exit_behavior": None,
         "recursion_limit": None,
         "case_infrastructure_retries": case_infrastructure_retries or 0,

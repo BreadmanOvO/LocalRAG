@@ -464,6 +464,9 @@ class AgentEvalRunnerTests(unittest.TestCase):
             self.assertIsNone(
                 result["manifest"]["execution"]["tool_call_run_limit"]
             )
+            self.assertIsNone(
+                result["manifest"]["execution"]["duplicate_tool_call_detection"]
+            )
 
         agent_factory.assert_called_once()
         self.assertEqual([first_prompt, second_prompt], fake_agent.prompts)
