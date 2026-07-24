@@ -2,9 +2,12 @@ import logging
 import time
 
 from langchain.agents import create_agent
+from langchain.agents.middleware.model_call_limit import ModelCallLimitExceededError
+from langchain.agents.middleware.tool_call_limit import ToolCallLimitExceededError
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.errors import GraphRecursionError
 
+from agent.execution import AgentExecutionBudget, DEFAULT_AGENT_EXECUTION_BUDGET
 from agent.memory import SessionRetrievalMemory, TaskMemoryPolicy, TaskMemoryStore
 from agent.observability import AgentEvent
 from agent.tools import (
@@ -25,11 +28,15 @@ from utils.path_tools import get_abs_path
 from utils.session import validate_session_id, validate_task_id
 
 
-DEFAULT_AGENT_RECURSION_LIMIT = 12
+DEFAULT_AGENT_RECURSION_LIMIT = DEFAULT_AGENT_EXECUTION_BUDGET.recursion_limit
 logger = logging.getLogger(__name__)
 
 
 def _execution_error_code(exc: Exception) -> str:
+    if isinstance(exc, ToolCallLimitExceededError):
+        return "tool_call_limit_exceeded"
+    if isinstance(exc, ModelCallLimitExceededError):
+        return "model_call_limit_exceeded"
     if isinstance(exc, GraphRecursionError):
         return "graph_recursion_limit"
     if isinstance(exc, (TimeoutError, ConnectionError)):
@@ -120,16 +127,23 @@ class ReactAgent:
         chat_model=None,
         rag_service=None,
         checkpointer=None,
-        recursion_limit: int = DEFAULT_AGENT_RECURSION_LIMIT,
+        execution_budget: AgentExecutionBudget | None = None,
+        recursion_limit: int | None = None,
     ):
         self.session_id = validate_session_id(session_id)
         self.task_id = validate_task_id(task_id or session_id)
         self.retrieval_memory = SessionRetrievalMemory()
         self.task_memory_store = task_memory_store or TaskMemoryStore()
         self.task_memory_policy = TaskMemoryPolicy(enabled=task_memory_enabled)
-        self.recursion_limit = int(recursion_limit)
-        if self.recursion_limit <= 0:
-            raise ValueError("recursion_limit must be greater than zero")
+        budget = execution_budget or DEFAULT_AGENT_EXECUTION_BUDGET
+        self.execution_budget = AgentExecutionBudget(
+            tool_call_limit=budget.tool_call_limit,
+            model_call_limit=budget.model_call_limit,
+            recursion_limit=(
+                budget.recursion_limit if recursion_limit is None else int(recursion_limit)
+            ),
+        )
+        self.recursion_limit = self.execution_budget.recursion_limit
         self.evidence_service = evidence_service or SourceEvidenceService()
         self.task_memory_store.ensure_task(self.task_id)
 
@@ -175,6 +189,7 @@ class ReactAgent:
             tools=self.tools,
             system_prompt=system_prompt,
             checkpointer=checkpointer or InMemorySaver(),
+            middleware=self.execution_budget.build_middleware(),
         )
 
     def _graph_config(self) -> dict:
@@ -258,15 +273,23 @@ class ReactAgent:
                 stream_mode="updates",
             ):
                 for _node_name, node_output in chunk.items():
-                    if "messages" in node_output:
-                        for msg in node_output["messages"]:
-                            yield from _events_from_message(msg, started_at)
+                    if not isinstance(node_output, dict):
+                        continue
+                    for msg in node_output.get("messages") or []:
+                        yield from _events_from_message(msg, started_at)
         except Exception as exc:
-            logger.exception("Agent graph execution failed")
+            error_code = _execution_error_code(exc)
+            if error_code in {
+                "tool_call_limit_exceeded",
+                "model_call_limit_exceeded",
+            }:
+                logger.info("Agent execution stopped: %s", error_code)
+            else:
+                logger.exception("Agent graph execution failed")
             yield AgentEvent(
                 kind="error",
                 content="抱歉，处理过程中出现错误，请重试。",
                 status="error",
-                error_code=_execution_error_code(exc),
+                error_code=error_code,
                 elapsed_ms=_elapsed_ms(started_at),
             )

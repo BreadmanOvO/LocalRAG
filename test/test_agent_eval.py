@@ -460,6 +460,10 @@ class AgentEvalRunnerTests(unittest.TestCase):
             self.assertTrue((result["run_dir"] / "predictions.json").exists())
             self.assertTrue((result["run_dir"] / "summary.json").exists())
             self.assertEqual("injected", result["manifest"]["execution"]["mode"])
+            self.assertIsNone(result["manifest"]["execution"]["middleware"])
+            self.assertIsNone(
+                result["manifest"]["execution"]["tool_call_run_limit"]
+            )
 
         agent_factory.assert_called_once()
         self.assertEqual([first_prompt, second_prompt], fake_agent.prompts)

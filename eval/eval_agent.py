@@ -515,12 +515,15 @@ def _default_agent_factory(
     rag_service=None,
     evidence_service=None,
     chat_model=None,
+    execution_budget=None,
     recursion_limit: int | None = None,
 ):
     from agent import ReactAgent
 
     options = {}
-    if recursion_limit is not None:
+    if execution_budget is not None:
+        options["execution_budget"] = execution_budget
+    elif recursion_limit is not None:
         options["recursion_limit"] = recursion_limit
     return ReactAgent(
         session_id=session_id,
@@ -587,18 +590,24 @@ def run_agent_eval(
         "agent_temperature": None,
         "request_timeout_seconds": None,
         "max_retries": None,
+        "middleware": None,
+        "tool_call_run_limit": None,
+        "model_call_run_limit": None,
+        "limit_exit_behavior": None,
         "recursion_limit": None,
         "case_infrastructure_retries": case_infrastructure_retries or 0,
     }
+    execution_budget = None
     runtime_config = None
     if agent_factory is None:
-        from agent.react_agent import DEFAULT_AGENT_RECURSION_LIMIT
+        from agent.execution import DEFAULT_AGENT_EXECUTION_BUDGET
         from config.provider_factory import (
             DEFAULT_CHAT_MAX_RETRIES,
             DEFAULT_CHAT_TIMEOUT_SECONDS,
         )
         from config.runtime_keys import load_runtime_config
 
+        execution_budget = DEFAULT_AGENT_EXECUTION_BUDGET
         runtime_config = load_runtime_config()
         runtime = {
             "provider": runtime_config.provider,
@@ -610,7 +619,7 @@ def run_agent_eval(
             "agent_temperature": EVAL_AGENT_TEMPERATURE,
             "request_timeout_seconds": DEFAULT_CHAT_TIMEOUT_SECONDS,
             "max_retries": DEFAULT_CHAT_MAX_RETRIES,
-            "recursion_limit": DEFAULT_AGENT_RECURSION_LIMIT,
+            **execution_budget.to_manifest(),
             "case_infrastructure_retries": (
                 EVAL_CASE_INFRASTRUCTURE_RETRIES
                 if case_infrastructure_retries is None
@@ -642,7 +651,7 @@ def run_agent_eval(
                         rag_service=shared_rag_service,
                         evidence_service=shared_evidence_service,
                         chat_model=shared_chat_model,
-                        recursion_limit=execution["recursion_limit"],
+                        execution_budget=execution_budget,
                     )
             else:
                 factory = agent_factory

@@ -230,6 +230,9 @@ class ReactAgentSessionTests(unittest.TestCase):
             [tool.name for tool in agent.tools],
         )
         self.assertIs(fake_checkpointer, create_agent.call_args.kwargs["checkpointer"])
+        middleware = create_agent.call_args.kwargs["middleware"]
+        self.assertEqual(3, middleware[0].run_limit)
+        self.assertEqual(4, middleware[1].run_limit)
 
     def test_execute_uses_session_as_langgraph_thread_id(self):
         fake_graph = mock.Mock()
@@ -245,7 +248,7 @@ class ReactAgentSessionTests(unittest.TestCase):
             {"messages": [("user", "question")]},
             config={
                 "configurable": {"thread_id": "session-a"},
-                "recursion_limit": 12,
+                "recursion_limit": 24,
             },
         )
 
@@ -293,7 +296,7 @@ class ReactAgentSessionTests(unittest.TestCase):
             {"messages": [("user", "question")]},
             config={
                 "configurable": {"thread_id": "session-a"},
-                "recursion_limit": 12,
+                "recursion_limit": 24,
             },
             stream_mode="updates",
         )
