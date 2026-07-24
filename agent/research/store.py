@@ -10,6 +10,7 @@ from threading import RLock
 from agent.memory import TaskMemoryStore
 from agent.research.models import (
     FindingStatus,
+    ResearchExecutionIdentity,
     ResearchFinding,
     ResearchPlanSnapshot,
     ResearchRun,
@@ -37,8 +38,10 @@ from agent.research.validation import (
     clean_text,
     new_id,
     normalize_evidence_draft,
+    normalize_execution_identity,
     normalize_finding_draft,
     normalize_step_draft,
+    step_commit_fingerprint,
     validate_revision,
     validate_status,
 )
@@ -104,6 +107,7 @@ class ResearchRunStore:
         steps: Sequence[ResearchStepDraft],
         *,
         run_id: str | None = None,
+        identity: ResearchExecutionIdentity | None = None,
     ) -> ResearchPlanSnapshot:
         task_id = validate_task_id(task_id)
         goal = clean_text(goal, "goal")
@@ -113,6 +117,9 @@ class ResearchRunStore:
         if not normalized_steps:
             raise ValueError("steps must not be empty")
         run_id = clean_identifier(run_id or new_id("run"), "run_id")
+        normalized_identity = (
+            normalize_execution_identity(identity) if identity is not None else None
+        )
         now = _utc_now()
 
         self._task_store.ensure_task(task_id)
@@ -127,6 +134,24 @@ class ResearchRunStore:
                 """,
                 (run_id, task_id, goal, now, now),
             )
+            if normalized_identity is not None:
+                connection.execute(
+                    """
+                    INSERT INTO research_run_identities(
+                        run_id, corpus_fingerprint, registry_fingerprint,
+                        code_revision, code_dirty, created_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        run_id,
+                        normalized_identity.corpus_fingerprint,
+                        normalized_identity.registry_fingerprint,
+                        normalized_identity.code_revision,
+                        int(normalized_identity.code_dirty),
+                        now,
+                    ),
+                )
             for position, (draft, arguments_json) in enumerate(normalized_steps, start=1):
                 connection.execute(
                     """
@@ -153,6 +178,23 @@ class ResearchRunStore:
         run_id = clean_identifier(run_id, "run_id")
         with self._lock, self._connect() as connection:
             return run_from_row(self._require_run(connection, run_id))
+
+    def get_identity(self, run_id: str) -> ResearchExecutionIdentity | None:
+        run_id = clean_identifier(run_id, "run_id")
+        with self._lock, self._connect() as connection:
+            self._require_run(connection, run_id)
+            row = connection.execute(
+                "SELECT * FROM research_run_identities WHERE run_id = ?",
+                (run_id,),
+            ).fetchone()
+        if row is None:
+            return None
+        return ResearchExecutionIdentity(
+            corpus_fingerprint=row["corpus_fingerprint"],
+            registry_fingerprint=row["registry_fingerprint"],
+            code_revision=row["code_revision"],
+            code_dirty=bool(row["code_dirty"]),
+        )
 
     def get_plan(self, run_id: str) -> ResearchPlanSnapshot:
         run_id = clean_identifier(run_id, "run_id")
@@ -336,6 +378,52 @@ class ResearchRunStore:
             )
             return run_from_row(self._require_run(connection, run_id))
 
+    def prepare_resume(
+        self,
+        run_id: str,
+        *,
+        expected_revision: int,
+    ) -> ResearchPlanSnapshot:
+        run_id = clean_identifier(run_id, "run_id")
+        expected_revision = validate_revision(expected_revision)
+        now = _utc_now()
+
+        with self._lock, self._connect() as connection:
+            run_row = self._require_run(connection, run_id)
+            self._require_expected_revision(run_row, expected_revision)
+            status = run_row["status"]
+            if status not in {"planned", "running", "blocked"}:
+                raise ResearchStateError(f"cannot resume a run while it is {status}")
+
+            interrupted_step = connection.execute(
+                """
+                SELECT step_id FROM research_steps
+                WHERE run_id = ? AND status = 'running'
+                LIMIT 1
+                """,
+                (run_id,),
+            ).fetchone()
+            needs_recovery = status == "blocked" or interrupted_step is not None
+            if needs_recovery:
+                self._claim_revision(connection, run_id, expected_revision, now)
+                connection.execute(
+                    """
+                    UPDATE research_steps
+                    SET status = 'pending', error_code = '', updated_at = ?
+                    WHERE run_id = ? AND status IN ('running', 'blocked')
+                    """,
+                    (now, run_id),
+                )
+                connection.execute(
+                    """
+                    UPDATE research_runs
+                    SET status = 'running', current_step_id = NULL, stop_reason = ''
+                    WHERE run_id = ?
+                    """,
+                    (run_id,),
+                )
+        return self.get_plan(run_id)
+
     def transition_step(
         self,
         run_id: str,
@@ -433,6 +521,12 @@ class ResearchRunStore:
         step_id = clean_identifier(step_id, "step_id")
         expected_revision = validate_revision(expected_revision)
         result_summary = clean_text(commit.result_summary, "result_summary")
+        commit_id = (
+            clean_identifier(commit.commit_id, "commit_id")
+            if commit.commit_id is not None
+            else None
+        )
+        payload_fingerprint = step_commit_fingerprint(commit)
         normalized_evidence = tuple(
             normalize_evidence_draft(draft) for draft in commit.evidence_refs
         )
@@ -449,89 +543,124 @@ class ResearchRunStore:
 
         with self._lock, self._connect() as connection:
             run_row = self._require_run(connection, run_id)
-            self._require_expected_revision(run_row, expected_revision)
             step_row = self._require_step(connection, run_id, step_id)
-            if run_row["status"] != "running" or step_row["status"] != "running":
-                raise ResearchStateError("only a running step can be committed")
+            already_committed = self._is_step_commit_replay(
+                connection,
+                run_id,
+                step_id,
+                step_row["status"],
+                (commit_id, payload_fingerprint),
+            )
 
-            self._claim_revision(connection, run_id, expected_revision, now)
-            for evidence_id, draft in normalized_evidence:
-                connection.execute(
-                    """
-                    INSERT INTO research_evidence_refs(
-                        evidence_id, run_id, step_id, source_id, locator,
-                        chunk_order, chunk_strategy, created_at
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        evidence_id,
-                        run_id,
-                        step_id,
-                        draft.source_id,
-                        draft.locator,
-                        draft.chunk_order,
-                        draft.chunk_strategy,
-                        now,
-                    ),
-                )
-
-            for finding_id, draft in normalized_findings:
-                self._require_evidence_ids(
+            if not already_committed:
+                self._require_expected_revision(run_row, expected_revision)
+                if run_row["status"] != "running" or step_row["status"] != "running":
+                    raise ResearchStateError("only a running step can be committed")
+                persisted_commit_id = commit_id or new_id("commit")
+                self._require_unused_commit_id(
                     connection,
                     run_id,
-                    draft.evidence_ids,
-                    required=draft.status == "verified",
+                    persisted_commit_id,
                 )
-                primary_evidence_id = (
-                    draft.evidence_ids[0] if draft.status == "verified" else None
+
+                self._claim_revision(connection, run_id, expected_revision, now)
+                for evidence_id, draft in normalized_evidence:
+                    connection.execute(
+                        """
+                        INSERT INTO research_evidence_refs(
+                            evidence_id, run_id, step_id, source_id, locator,
+                            chunk_order, chunk_strategy, created_at
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            evidence_id,
+                            run_id,
+                            step_id,
+                            draft.source_id,
+                            draft.locator,
+                            draft.chunk_order,
+                            draft.chunk_strategy,
+                            now,
+                        ),
+                    )
+
+                for finding_id, draft in normalized_findings:
+                    self._require_evidence_ids(
+                        connection,
+                        run_id,
+                        draft.evidence_ids,
+                        required=draft.status == "verified",
+                    )
+                    primary_evidence_id = (
+                        draft.evidence_ids[0] if draft.status == "verified" else None
+                    )
+                    connection.execute(
+                        """
+                        INSERT INTO research_findings(
+                            finding_id, run_id, text, status, primary_evidence_id,
+                            created_by_step_id, created_at, updated_at
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            finding_id,
+                            run_id,
+                            draft.text,
+                            draft.status,
+                            primary_evidence_id,
+                            step_id,
+                            now,
+                            now,
+                        ),
+                    )
+                    connection.executemany(
+                        """
+                        INSERT INTO research_finding_evidence(
+                            run_id, finding_id, evidence_id
+                        )
+                        VALUES (?, ?, ?)
+                        """,
+                        (
+                            (run_id, finding_id, evidence_id)
+                            for evidence_id in draft.evidence_ids
+                        ),
+                    )
+
+                connection.execute(
+                    """
+                    UPDATE research_steps
+                    SET status = 'completed', result_summary = ?,
+                        error_code = '', updated_at = ?
+                    WHERE step_id = ?
+                    """,
+                    (result_summary, now, step_id),
                 )
                 connection.execute(
                     """
-                    INSERT INTO research_findings(
-                        finding_id, run_id, text, status, primary_evidence_id,
-                        created_by_step_id, created_at, updated_at
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    UPDATE research_runs
+                    SET current_step_id = NULL, no_progress_count = 0, stop_reason = ''
+                    WHERE run_id = ?
                     """,
-                    (
-                        finding_id,
-                        run_id,
-                        draft.text,
-                        draft.status,
-                        primary_evidence_id,
-                        step_id,
-                        now,
-                        now,
-                    ),
+                    (run_id,),
                 )
-                connection.executemany(
+                connection.execute(
                     """
-                    INSERT INTO research_finding_evidence(run_id, finding_id, evidence_id)
-                    VALUES (?, ?, ?)
+                    INSERT INTO research_step_commits(
+                        run_id, step_id, commit_id, payload_fingerprint,
+                        committed_revision, created_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
                     """,
                     (
-                        (run_id, finding_id, evidence_id)
-                        for evidence_id in draft.evidence_ids
+                        run_id,
+                        step_id,
+                        persisted_commit_id,
+                        payload_fingerprint,
+                        expected_revision + 1,
+                        now,
                     ),
                 )
-
-            connection.execute(
-                """
-                UPDATE research_steps
-                SET status = 'completed', result_summary = ?, error_code = '', updated_at = ?
-                WHERE step_id = ?
-                """,
-                (result_summary, now, step_id),
-            )
-            connection.execute(
-                """
-                UPDATE research_runs
-                SET current_step_id = NULL, no_progress_count = 0, stop_reason = ''
-                WHERE run_id = ?
-                """,
-                (run_id,),
-            )
         return self.get_plan(run_id)
 
     def transition_finding(
@@ -686,6 +815,8 @@ class ResearchRunStore:
         if not evidence_ids:
             return
         unique_ids = set(evidence_ids)
+        if len(unique_ids) != len(evidence_ids):
+            raise ValueError("finding evidence_ids must be unique")
         placeholders = ",".join("?" for _ in unique_ids)
         rows = connection.execute(
             f"""
@@ -698,3 +829,51 @@ class ResearchRunStore:
         missing = unique_ids - found
         if missing:
             raise ValueError(f"unknown evidence_ids for run {run_id}: {sorted(missing)}")
+
+    @staticmethod
+    def _is_step_commit_replay(
+        connection: sqlite3.Connection,
+        run_id: str,
+        step_id: str,
+        step_status: str,
+        commit_identity: tuple[str | None, str],
+    ) -> bool:
+        commit_id, payload_fingerprint = commit_identity
+        existing = connection.execute(
+            """
+            SELECT * FROM research_step_commits
+            WHERE run_id = ? AND step_id = ?
+            """,
+            (run_id, step_id),
+        ).fetchone()
+        if existing is None:
+            return step_status == "completed"
+        if commit_id is None:
+            return True
+        if existing["commit_id"] != commit_id:
+            raise ResearchStateError(
+                f"research step {step_id} was committed with a different commit_id"
+            )
+        if existing["payload_fingerprint"] != payload_fingerprint:
+            raise ResearchStateError(
+                f"commit_id {commit_id} was reused with a different payload"
+            )
+        return True
+
+    @staticmethod
+    def _require_unused_commit_id(
+        connection: sqlite3.Connection,
+        run_id: str,
+        commit_id: str,
+    ) -> None:
+        reused = connection.execute(
+            """
+            SELECT step_id FROM research_step_commits
+            WHERE run_id = ? AND commit_id = ?
+            """,
+            (run_id, commit_id),
+        ).fetchone()
+        if reused is not None:
+            raise ResearchStateError(
+                f"commit_id {commit_id} already belongs to step {reused['step_id']}"
+            )

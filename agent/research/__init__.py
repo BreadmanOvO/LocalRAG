@@ -1,6 +1,12 @@
+from agent.research.control import (
+    RESEARCH_PAUSED,
+    ResearchControlError,
+    ResearchRunService,
+)
 from agent.research.models import (
     EvidenceRef,
     EvidenceRefDraft,
+    ResearchExecutionIdentity,
     ResearchFinding,
     ResearchFindingDraft,
     ResearchPlanSnapshot,
@@ -20,12 +26,16 @@ from agent.research.store import (
 __all__ = [
     "EvidenceRef",
     "EvidenceRefDraft",
+    "RESEARCH_PAUSED",
+    "ResearchControlError",
+    "ResearchExecutionIdentity",
     "ResearchFinding",
     "ResearchFindingDraft",
     "ResearchNotFoundError",
     "ResearchPlanSnapshot",
     "ResearchRevisionConflictError",
     "ResearchRun",
+    "ResearchRunService",
     "ResearchRunStore",
     "ResearchStateError",
     "ResearchStep",

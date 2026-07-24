@@ -59,6 +59,15 @@ class ResearchStepCommit:
     result_summary: str
     evidence_refs: tuple[EvidenceRefDraft, ...] = ()
     findings: tuple[ResearchFindingDraft, ...] = ()
+    commit_id: str | None = None
+
+
+@dataclass(frozen=True)
+class ResearchExecutionIdentity:
+    corpus_fingerprint: str
+    registry_fingerprint: str
+    code_revision: str
+    code_dirty: bool = False
 
 
 @dataclass(frozen=True)

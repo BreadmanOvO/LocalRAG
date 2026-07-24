@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import re
+from dataclasses import asdict
 from typing import Any
 from uuid import uuid4
 
 from agent.research.models import (
     EvidenceRefDraft,
+    ResearchExecutionIdentity,
     ResearchFindingDraft,
+    ResearchStepCommit,
     ResearchStepDraft,
 )
 
@@ -21,9 +25,9 @@ STEP_STATUSES = frozenset(
 FINDING_STATUSES = frozenset({"candidate", "verified", "rejected"})
 
 RUN_TRANSITIONS = {
-    "planned": frozenset({"running", "cancelled", "failed"}),
+    "planned": frozenset({"running", "blocked", "cancelled", "failed"}),
     "running": frozenset({"completed", "blocked", "cancelled", "failed"}),
-    "blocked": frozenset({"running", "cancelled", "failed"}),
+    "blocked": frozenset({"cancelled", "failed"}),
     "completed": frozenset(),
     "cancelled": frozenset(),
     "failed": frozenset(),
@@ -93,9 +97,58 @@ def validate_status(value: str, allowed: frozenset[str], field_name: str):
 
 
 def validate_revision(value: int) -> int:
-    if not isinstance(value, int) or value < 0:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise ValueError("expected_revision must be a non-negative integer")
     return value
+
+
+def normalize_execution_identity(
+    identity: ResearchExecutionIdentity,
+) -> ResearchExecutionIdentity:
+    if not isinstance(identity, ResearchExecutionIdentity):
+        raise TypeError("identity must be a ResearchExecutionIdentity")
+    corpus_fingerprint = clean_text(
+        identity.corpus_fingerprint,
+        "corpus_fingerprint",
+        max_length=256,
+    )
+    registry_fingerprint = clean_text(
+        identity.registry_fingerprint,
+        "registry_fingerprint",
+        max_length=256,
+    )
+    code_revision = clean_text(
+        identity.code_revision,
+        "code_revision",
+        max_length=256,
+    )
+    if not corpus_fingerprint or not registry_fingerprint or not code_revision:
+        raise ValueError("research execution identity must be complete")
+    if not isinstance(identity.code_dirty, bool):
+        raise TypeError("code_dirty must be a boolean")
+    return ResearchExecutionIdentity(
+        corpus_fingerprint=corpus_fingerprint,
+        registry_fingerprint=registry_fingerprint,
+        code_revision=code_revision,
+        code_dirty=identity.code_dirty,
+    )
+
+
+def step_commit_fingerprint(commit: ResearchStepCommit) -> str:
+    if not isinstance(commit, ResearchStepCommit):
+        raise TypeError("commit must be a ResearchStepCommit")
+    payload = asdict(commit)
+    payload.pop("commit_id", None)
+    try:
+        encoded = json.dumps(
+            payload,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    except (TypeError, ValueError) as exc:
+        raise ValueError("step commit must be JSON serializable") from exc
+    return f"sha256:{hashlib.sha256(encoded).hexdigest()}"
 
 
 def normalize_step_draft(
@@ -128,7 +181,9 @@ def normalize_evidence_draft(
     if not source_id:
         raise ValueError("source_id must not be empty")
     if draft.chunk_order is not None and (
-        not isinstance(draft.chunk_order, int) or draft.chunk_order < 0
+        isinstance(draft.chunk_order, bool)
+        or not isinstance(draft.chunk_order, int)
+        or draft.chunk_order < 0
     ):
         raise ValueError("chunk_order must be a non-negative integer or None")
     return evidence_id, EvidenceRefDraft(
@@ -155,6 +210,8 @@ def normalize_finding_draft(
     evidence_ids = tuple(
         clean_identifier(item, "evidence_id") for item in draft.evidence_ids
     )
+    if len(set(evidence_ids)) != len(evidence_ids):
+        raise ValueError("finding evidence_ids must be unique")
     if status == "verified" and not evidence_ids:
         raise ValueError("verified findings require at least one evidence_id")
     return finding_id, ResearchFindingDraft(

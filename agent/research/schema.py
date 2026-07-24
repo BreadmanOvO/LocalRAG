@@ -3,8 +3,10 @@ from __future__ import annotations
 import sqlite3
 
 
-MIGRATION_VERSION = 1
-MIGRATION_NAME = "v1.5-a2-research-state"
+MIGRATIONS = (
+    (1, "v1.5-a2-research-state"),
+    (2, "v1.5-a3-research-recovery"),
+)
 
 RESEARCH_SCHEMA = """
 CREATE TABLE IF NOT EXISTS agent_schema_migrations (
@@ -108,15 +110,38 @@ CREATE TABLE IF NOT EXISTS research_finding_evidence (
     FOREIGN KEY(run_id, evidence_id)
         REFERENCES research_evidence_refs(run_id, evidence_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS research_run_identities (
+    run_id TEXT PRIMARY KEY,
+    corpus_fingerprint TEXT NOT NULL,
+    registry_fingerprint TEXT NOT NULL,
+    code_revision TEXT NOT NULL,
+    code_dirty INTEGER NOT NULL CHECK (code_dirty IN (0, 1)),
+    created_at TEXT NOT NULL,
+    FOREIGN KEY(run_id) REFERENCES research_runs(run_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS research_step_commits (
+    run_id TEXT NOT NULL,
+    step_id TEXT NOT NULL,
+    commit_id TEXT NOT NULL,
+    payload_fingerprint TEXT NOT NULL,
+    committed_revision INTEGER NOT NULL CHECK (committed_revision > 0),
+    created_at TEXT NOT NULL,
+    PRIMARY KEY(run_id, step_id),
+    UNIQUE(run_id, commit_id),
+    FOREIGN KEY(run_id, step_id)
+        REFERENCES research_steps(run_id, step_id) ON DELETE CASCADE
+);
 """
 
 
 def apply_research_migration(connection: sqlite3.Connection, applied_at: str) -> None:
     connection.executescript(RESEARCH_SCHEMA)
-    connection.execute(
+    connection.executemany(
         """
         INSERT OR IGNORE INTO agent_schema_migrations(version, name, applied_at)
         VALUES (?, ?, ?)
         """,
-        (MIGRATION_VERSION, MIGRATION_NAME, applied_at),
+        ((version, name, applied_at) for version, name in MIGRATIONS),
     )
