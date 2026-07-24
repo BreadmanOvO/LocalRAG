@@ -59,6 +59,7 @@ LocalRAG/
 │   ├── react_agent.py         # Session-aware Agent 入口
 │   ├── observability.py       # 工具轨迹、来源、记忆与 gate 可观察性
 │   ├── memory/                # Agent 会话检索记忆与持久化任务记忆
+│   ├── research/              # 研究 run、恢复控制、证据绑定与 UI 适配
 │   └── tools/                 # RAG、来源研究与任务记忆工具
 ├── core/
 │   ├── rag.py                 # RAG 服务核心
@@ -161,6 +162,7 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 - [E4 数据草案复核](RAG_md/docs/reports/e4-draft-review.md) — E4 multi-metric partial-context 草案与复核标准
 - [E5 pairwise contrast 数据报告](RAG_md/docs/reports/e5-pairwise-contrast-review.md) — E5 完整上下文 / 部分上下文对照样本与设计原则
 - [v1.4 Agent 可靠性复核](RAG_md/docs/reports/v1.4-agent-reliability-review.md) — M1-M5 Gate、失败状态与运行身份收口
+- [v1.5 研究任务 UI A4 报告](RAG_md/docs/reports/v1.5-research-task-ui-a4.md) — 可恢复执行入口、状态控制、证据关系和浏览器验证
 
 ## 版本
 
@@ -171,3 +173,4 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 | v1.2 | 检索层（hybrid retrieval + reranker + semantic chunking） | 已完成 |
 | v1.3 | 数据扩充与评测重建 + Qwen3-4B 微调 E1-E9 闭环 | 已完成 |
 | v1.4.2 | Agent + Memory 研究助手 | 已完成（M1-M5、稳定性补强与代码精简收口） |
+| v1.5 | 可控研究 Agent | 开发中（A1-A4 已完成，下一阶段 A5 评测发布） |
