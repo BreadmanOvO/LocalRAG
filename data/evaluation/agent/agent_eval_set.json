@@ -1,5 +1,5 @@
 {
-  "dataset_version": "agent-eval-v1.1",
+  "dataset_version": "agent-eval-v1.2",
   "cases": [
     {
       "id": "agent-inspect-001",
@@ -129,6 +129,48 @@
           "min_answer_chars": 10
         }
       ]
+    },
+    {
+      "id": "agent-budget-control-001",
+      "category": "budget_termination",
+      "case_type": "control_probe",
+      "probe": "tool_budget_termination"
+    },
+    {
+      "id": "agent-duplicate-control-001",
+      "category": "duplicate_call_control",
+      "case_type": "control_probe",
+      "probe": "duplicate_call_block"
+    },
+    {
+      "id": "agent-no-progress-control-001",
+      "category": "no_progress_termination",
+      "case_type": "control_probe",
+      "probe": "no_progress_termination"
+    },
+    {
+      "id": "agent-evidence-insufficient-001",
+      "category": "insufficient_evidence",
+      "case_type": "control_probe",
+      "probe": "insufficient_evidence_rejection"
+    },
+    {
+      "id": "agent-evidence-binding-001",
+      "category": "verified_evidence_binding",
+      "case_type": "control_probe",
+      "probe": "verified_evidence_binding"
+    },
+    {
+      "id": "agent-resume-control-001",
+      "category": "pause_resume",
+      "case_type": "control_probe",
+      "probe": "pause_resume_checkpoint"
+    },
+    {
+      "id": "agent-cancel-control-001",
+      "category": "cancel_control",
+      "case_type": "control_probe",
+      "probe": "cancel_run_control"
     }
   ]
 }

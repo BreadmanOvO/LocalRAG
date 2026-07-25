@@ -11,7 +11,9 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
-STABILITY_GATE_CONTRACT_VERSION = "agent-stability-gate-v1"
+STABILITY_GATE_CONTRACT_VERSION = "agent-stability-gate-v2"
+AGENT_EVAL_CONTRACT_VERSION = "agent-eval-v2"
+MIN_A5_CASE_COUNT = 15
 DEFAULT_REQUIRED_RUNS = 3
 DEFAULT_RESULTS_DIR = Path("results/agent_eval")
 
@@ -27,6 +29,18 @@ def _nonnegative_int(value: Any) -> int:
         return max(0, int(value))
     except (TypeError, ValueError):
         return 0
+
+
+def _is_nonnegative_int(value: Any) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and value >= 0
+
+
+def _is_ratio(value: Any) -> bool:
+    return (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and 0.0 <= float(value) <= 1.0
+    )
 
 
 def _is_formal_run(manifest: dict[str, Any]) -> bool:
@@ -79,6 +93,7 @@ def _identity(manifest: dict[str, Any], summary: dict[str, Any]) -> str:
         "execution": manifest.get("execution"),
         "allow_stale_corpus": manifest.get("allow_stale_corpus"),
         "gate_thresholds": summary.get("gate_thresholds"),
+        "expected_probe_types": summary.get("expected_probe_types"),
         "corpus": {
             key: corpus.get(key)
             for key in (
@@ -98,6 +113,8 @@ def _identity(manifest: dict[str, Any], summary: dict[str, Any]) -> str:
 def _identity_is_complete(manifest: dict[str, Any], summary: dict[str, Any]) -> bool:
     corpus = manifest.get("corpus")
     scope = manifest.get("evaluation_scope")
+    scope_probes = scope.get("expected_probe_types") if isinstance(scope, dict) else None
+    summary_probes = summary.get("expected_probe_types")
     return (
         bool(manifest.get("contract_version"))
         and bool(manifest.get("git_revision"))
@@ -110,18 +127,95 @@ def _identity_is_complete(manifest: dict[str, Any], summary: dict[str, Any]) -> 
         and isinstance(scope, dict)
         and isinstance(scope.get("expected_case_count"), int)
         and isinstance(scope.get("expected_turn_count"), int)
+        and scope.get("expected_case_count", 0) >= MIN_A5_CASE_COUNT
+        and scope.get("probe_selection_complete") is True
+        and isinstance(scope_probes, list)
+        and bool(scope_probes)
         and isinstance(corpus, dict)
         and bool(corpus.get("corpus_fingerprint"))
         and bool(corpus.get("registry_fingerprint"))
         and isinstance(summary.get("gate_thresholds"), dict)
         and bool(summary["gate_thresholds"])
+        and isinstance(summary_probes, list)
+        and bool(summary_probes)
+        and scope_probes == summary_probes
     )
 
 
 def _has_graph_recursion(run: dict[str, Any]) -> bool:
-    return any(
+    return _nonnegative_int(run["summary"].get("graph_recursion_error_count")) > 0 or any(
         "graph_recursion" in error.lower() or "graphrecursionerror" in error.lower()
         for error in run["error_counts"]
+    )
+
+
+def _a5_case_contracts_pass(summary: dict[str, Any]) -> bool:
+    case_count = _nonnegative_int(summary.get("case_count"))
+    return (
+        case_count >= MIN_A5_CASE_COUNT
+        and _nonnegative_int(summary.get("expected_case_count")) == case_count
+        and _nonnegative_int(summary.get("passed_case_count")) == case_count
+        and _nonnegative_int(summary.get("case_tool_contract_pass_count")) == case_count
+        and _nonnegative_int(summary.get("case_answer_contract_pass_count")) == case_count
+    )
+
+
+def _a5_contract_is_complete(manifest: dict[str, Any], summary: dict[str, Any]) -> bool:
+    required_counts = (
+        "case_count",
+        "expected_case_count",
+        "passed_case_count",
+        "case_tool_contract_pass_count",
+        "case_answer_contract_pass_count",
+        "graph_recursion_error_count",
+        "duplicate_tool_violation_count",
+        "unclassified_termination_count",
+        "verified_finding_count",
+        "bound_verified_finding_count",
+        "checkpoint_resume_case_count",
+        "checkpoint_resume_pass_count",
+        "forbidden_tool_violation_count",
+    )
+    required_ratios = (
+        "verified_finding_evidence_binding_ratio",
+        "checkpoint_resume_pass_ratio",
+    )
+    gate_checks = summary.get("gate_checks")
+    required_gate_checks = (
+        "evaluation_complete",
+        "control_probe_coverage",
+        "graph_recursion_errors",
+        "classified_termination",
+        "duplicate_tool_violations",
+        "verified_finding_evidence_binding",
+        "checkpoint_resume",
+        "forbidden_tool_violations",
+    )
+    return (
+        manifest.get("contract_version") == AGENT_EVAL_CONTRACT_VERSION
+        and all(_is_nonnegative_int(summary.get(field)) for field in required_counts)
+        and all(_is_ratio(summary.get(field)) for field in required_ratios)
+        and isinstance(gate_checks, dict)
+        and all(isinstance(gate_checks.get(field), bool) for field in required_gate_checks)
+    )
+
+
+def _a5_evidence_binding_pass(summary: dict[str, Any]) -> bool:
+    verified = _nonnegative_int(summary.get("verified_finding_count"))
+    bound = _nonnegative_int(summary.get("bound_verified_finding_count"))
+    return (
+        verified > 0
+        and bound == verified
+        and summary.get("verified_finding_evidence_binding_ratio") == 1.0
+    )
+
+
+def _a5_resume_pass(summary: dict[str, Any]) -> bool:
+    case_count = _nonnegative_int(summary.get("checkpoint_resume_case_count"))
+    return (
+        case_count > 0
+        and _nonnegative_int(summary.get("checkpoint_resume_pass_count")) == case_count
+        and summary.get("checkpoint_resume_pass_ratio") == 1.0
     )
 
 
@@ -214,8 +308,51 @@ def evaluate_agent_stability_gate(
             for run in selected_runs
         ),
         "identity_consistent": enough_runs and len(identities) == 1,
+        "all_a5_contracts": enough_runs
+        and all(
+            _a5_contract_is_complete(run["manifest"], run["summary"])
+            for run in selected_runs
+        ),
+        "all_a5_case_contracts": enough_runs
+        and all(_a5_case_contracts_pass(run["summary"]) for run in selected_runs),
         "no_graph_recursion": enough_runs
         and all(not _has_graph_recursion(run) for run in selected_runs),
+        "no_duplicate_tool_violations": enough_runs
+        and all(
+            run["summary"].get("duplicate_tool_violation_count") == 0
+            and _is_nonnegative_int(
+                run["summary"].get("duplicate_tool_violation_count")
+            )
+            for run in selected_runs
+        ),
+        "no_unclassified_termination": enough_runs
+        and all(
+            run["summary"].get("unclassified_termination_count") == 0
+            and _is_nonnegative_int(
+                run["summary"].get("unclassified_termination_count")
+            )
+            for run in selected_runs
+        ),
+        "verified_finding_evidence_binding": enough_runs
+        and all(_a5_evidence_binding_pass(run["summary"]) for run in selected_runs),
+        "checkpoint_resume": enough_runs
+        and all(_a5_resume_pass(run["summary"]) for run in selected_runs),
+        "no_forbidden_tool_violations": enough_runs
+        and all(
+            run["summary"].get("forbidden_tool_violation_count") == 0
+            and _is_nonnegative_int(
+                run["summary"].get("forbidden_tool_violation_count")
+            )
+            for run in selected_runs
+        ),
+        "control_probe_coverage": enough_runs
+        and all(
+            isinstance(run["summary"].get("gate_checks"), dict)
+            and run["summary"]["gate_checks"].get("control_probe_coverage") is True
+            and isinstance(run["manifest"].get("evaluation_scope"), dict)
+            and run["manifest"]["evaluation_scope"].get("probe_selection_complete") is True
+            for run in selected_runs
+        ),
     }
     run_rows = []
     for run in selected_runs:
@@ -230,6 +367,19 @@ def evaluate_agent_stability_gate(
                 "gate_pass": summary.get("gate_pass") is True,
                 "evaluation_complete": _run_is_complete(run["manifest"], summary),
                 "case_pass_ratio": summary.get("case_pass_ratio", 0),
+                "case_count": summary.get("case_count", 0),
+                "duplicate_tool_violation_count": summary.get(
+                    "duplicate_tool_violation_count", 0
+                ),
+                "unclassified_termination_count": summary.get(
+                    "unclassified_termination_count", 0
+                ),
+                "verified_finding_evidence_binding_ratio": summary.get(
+                    "verified_finding_evidence_binding_ratio", 0
+                ),
+                "checkpoint_resume_pass_ratio": summary.get(
+                    "checkpoint_resume_pass_ratio", 0
+                ),
                 "infrastructure_retry_count": run["infrastructure_retry_count"],
                 "error_counts": run["error_counts"],
             }

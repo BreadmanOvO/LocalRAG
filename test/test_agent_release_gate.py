@@ -20,15 +20,17 @@ class AgentStabilityGateTests(unittest.TestCase):
         selection_complete: bool = True,
         error: str = "",
         retry_count: int = 0,
+        contract_version: str = "agent-eval-v2",
+        summary_overrides: dict | None = None,
     ) -> None:
         run_dir = root / run_id
         run_dir.mkdir()
         manifest = {
-            "contract_version": "agent-eval-v1",
+            "contract_version": contract_version,
             "run_id": run_id,
             "created_at": created_at,
             "dataset_path": "data/evaluation/agent/agent_eval_set.json",
-            "dataset_version": "agent-eval-v1.1",
+            "dataset_version": "agent-eval-v1.2",
             "registry_path": "data/evaluation/shared/source_registry.json",
             "git_revision": revision,
             "git_dirty": dirty,
@@ -45,8 +47,18 @@ class AgentStabilityGateTests(unittest.TestCase):
             "evaluation_scope": {
                 "selection_complete": selection_complete,
                 "evaluation_complete": complete,
-                "expected_case_count": 1,
-                "expected_turn_count": 1,
+                "expected_case_count": 15,
+                "expected_turn_count": 9,
+                "expected_probe_types": [
+                    "cancel_run_control",
+                    "duplicate_call_block",
+                    "insufficient_evidence_rejection",
+                    "no_progress_termination",
+                    "pause_resume_checkpoint",
+                    "tool_budget_termination",
+                    "verified_evidence_binding",
+                ],
+                "probe_selection_complete": True,
             },
             "corpus": {
                 "persist_directory": "store",
@@ -60,16 +72,50 @@ class AgentStabilityGateTests(unittest.TestCase):
         }
         summary = {
             "gate_pass": gate_pass,
+            "case_count": 15,
+            "expected_case_count": 15,
+            "passed_case_count": 15 if gate_pass else 0,
             "case_pass_ratio": 1.0 if gate_pass else 0.0,
+            "case_tool_contract_pass_count": 15 if gate_pass else 0,
+            "case_answer_contract_pass_count": 15 if gate_pass else 0,
+            "graph_recursion_error_count": 0,
+            "duplicate_tool_violation_count": 0,
+            "unclassified_termination_count": 0,
+            "verified_finding_count": 1,
+            "bound_verified_finding_count": 1,
+            "verified_finding_evidence_binding_ratio": 1.0,
+            "checkpoint_resume_case_count": 1,
+            "checkpoint_resume_pass_count": 1,
+            "checkpoint_resume_pass_ratio": 1.0,
+            "forbidden_tool_violation_count": 0,
+            "expected_probe_types": [
+                "cancel_run_control",
+                "duplicate_call_block",
+                "insufficient_evidence_rejection",
+                "no_progress_termination",
+                "pause_resume_checkpoint",
+                "tool_budget_termination",
+                "verified_evidence_binding",
+            ],
             "infrastructure_retry_count": retry_count,
             "gate_thresholds": {
                 "min_corpus_coverage": 1.0,
-                "min_case_pass_ratio": 0.8,
-                "min_tool_contract_ratio": 0.9,
-                "min_answer_contract_ratio": 0.8,
+                "min_case_pass_ratio": 1.0,
+                "min_tool_contract_ratio": 1.0,
+                "min_answer_contract_ratio": 1.0,
             },
-            "gate_checks": {"evaluation_complete": complete},
+            "gate_checks": {
+                "evaluation_complete": complete,
+                "control_probe_coverage": True,
+                "graph_recursion_errors": True,
+                "classified_termination": True,
+                "duplicate_tool_violations": True,
+                "verified_finding_evidence_binding": True,
+                "checkpoint_resume": True,
+                "forbidden_tool_violations": True,
+            },
         }
+        summary.update(summary_overrides or {})
         turn = {"error": error}
         predictions = [
             {
@@ -159,6 +205,58 @@ class AgentStabilityGateTests(unittest.TestCase):
 
         self.assertFalse(result["gate_pass"])
         self.assertFalse(result["checks"]["no_graph_recursion"])
+
+    def test_a5_metric_violation_fails_even_when_summary_gate_passes(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self._write_run(root, "agent-eval-1", "2026-01-01T00:00:00")
+            self._write_run(root, "agent-eval-2", "2026-01-01T01:00:00")
+            self._write_run(
+                root,
+                "agent-eval-3",
+                "2026-01-01T02:00:00",
+                summary_overrides={"duplicate_tool_violation_count": 1},
+            )
+
+            result = evaluate_agent_stability_gate(root)
+
+        self.assertFalse(result["gate_pass"])
+        self.assertFalse(result["checks"]["no_duplicate_tool_violations"])
+
+    def test_old_eval_contract_cannot_satisfy_a5_gate(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self._write_run(root, "agent-eval-1", "2026-01-01T00:00:00")
+            self._write_run(root, "agent-eval-2", "2026-01-01T01:00:00")
+            self._write_run(
+                root,
+                "agent-eval-3",
+                "2026-01-01T02:00:00",
+                contract_version="agent-eval-v1",
+            )
+
+            result = evaluate_agent_stability_gate(root)
+
+        self.assertFalse(result["gate_pass"])
+        self.assertFalse(result["checks"]["all_a5_contracts"])
+
+    def test_missing_a5_metric_fails_closed(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self._write_run(root, "agent-eval-1", "2026-01-01T00:00:00")
+            self._write_run(root, "agent-eval-2", "2026-01-01T01:00:00")
+            self._write_run(
+                root,
+                "agent-eval-3",
+                "2026-01-01T02:00:00",
+                summary_overrides={"duplicate_tool_violation_count": None},
+            )
+
+            result = evaluate_agent_stability_gate(root)
+
+        self.assertFalse(result["gate_pass"])
+        self.assertFalse(result["checks"]["all_a5_contracts"])
+        self.assertFalse(result["checks"]["no_duplicate_tool_violations"])
 
     def test_insufficient_run_count_fails(self):
         with tempfile.TemporaryDirectory() as temp_dir:

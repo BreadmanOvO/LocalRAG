@@ -68,9 +68,17 @@ class AgentEvalSchemaTests(unittest.TestCase):
     def test_repo_agent_eval_dataset_is_valid(self):
         dataset = eval_agent.load_agent_eval_dataset(eval_agent.DEFAULT_DATASET_PATH)
 
-        self.assertEqual("agent-eval-v1.1", dataset["dataset_version"])
-        self.assertEqual(8, len(dataset["cases"]))
+        self.assertEqual("agent-eval-v1.2", dataset["dataset_version"])
+        self.assertEqual(15, len(dataset["cases"]))
         self.assertTrue(any(len(case["turns"]) > 1 for case in dataset["cases"]))
+        self.assertEqual(
+            eval_agent.REQUIRED_CONTROL_PROBES,
+            {
+                case["probe"]
+                for case in dataset["cases"]
+                if case["case_type"] == "control_probe"
+            },
+        )
 
     def test_dataset_rejects_unknown_and_conflicting_tools(self):
         payload = {
@@ -91,6 +99,22 @@ class AgentEvalSchemaTests(unittest.TestCase):
         }
 
         with self.assertRaisesRegex(ValueError, "unknown tools"):
+            eval_agent.validate_agent_eval_dataset(payload)
+
+    def test_dataset_rejects_unknown_control_probe(self):
+        payload = {
+            "dataset_version": "test",
+            "cases": [
+                {
+                    "id": "case-1",
+                    "category": "control",
+                    "case_type": "control_probe",
+                    "probe": "unknown_probe",
+                }
+            ],
+        }
+
+        with self.assertRaisesRegex(ValueError, "unknown control probe"):
             eval_agent.validate_agent_eval_dataset(payload)
 
 
@@ -265,8 +289,137 @@ class AgentEvalScoringTests(unittest.TestCase):
         self.assertEqual(1, summary["infrastructure_retry_case_count"])
         self.assertEqual(2, summary["total_attempt_count"])
 
+    def test_summary_requires_a5_control_metrics_when_probes_are_expected(self):
+        probe_rows = []
+        for probe in eval_agent.REQUIRED_CONTROL_PROBES:
+            probe_rows.append(
+                {
+                    "id": probe,
+                    "case_type": "control_probe",
+                    "probe": probe,
+                    "case_pass": True,
+                    "turns": [],
+                    "evaluation": {
+                        "tool_contract_pass": True,
+                        "answer_contract_pass": True,
+                    },
+                    "termination": {
+                        "applicable": probe
+                        in {
+                            "tool_budget_termination",
+                            "duplicate_call_block",
+                            "no_progress_termination",
+                        },
+                        "observed_code": (
+                            "tool_call_limit_exceeded"
+                            if probe == "tool_budget_termination"
+                            else "duplicate_tool_call"
+                            if probe == "duplicate_call_block"
+                            else "no_progress_limit"
+                            if probe == "no_progress_termination"
+                            else ""
+                        ),
+                        "classified": True,
+                        "contract_pass": True,
+                    },
+                    "duplicate": {
+                        "applicable": probe == "duplicate_call_block",
+                        "violation": False,
+                        "contract_pass": True,
+                    },
+                    "evidence_binding": {
+                        "applicable": probe
+                        in {"insufficient_evidence_rejection", "verified_evidence_binding"},
+                        "verified_finding_count": (
+                            1 if probe == "verified_evidence_binding" else 0
+                        ),
+                        "bound_verified_finding_count": (
+                            1 if probe == "verified_evidence_binding" else 0
+                        ),
+                        "contract_pass": True,
+                    },
+                    "resume": {
+                        "applicable": probe == "pause_resume_checkpoint",
+                        "checkpoint_resume_pass": probe == "pause_resume_checkpoint",
+                        "contract_pass": True,
+                    },
+                }
+            )
+
+        summary = eval_agent.summarize_agent_eval(
+            probe_rows,
+            corpus_manifest={"coverage_ratio": 1.0},
+            expected_case_count=len(probe_rows),
+            expected_turn_count=0,
+            expected_probe_types=eval_agent.REQUIRED_CONTROL_PROBES,
+        )
+
+        self.assertTrue(summary["gate_pass"])
+        self.assertEqual(0, summary["unclassified_termination_count"])
+        self.assertEqual(0, summary["duplicate_tool_violation_count"])
+        self.assertEqual(1.0, summary["verified_finding_evidence_binding_ratio"])
+        self.assertEqual(1.0, summary["checkpoint_resume_pass_ratio"])
+        self.assertTrue(summary["gate_checks"]["control_probe_coverage"])
+
+    def test_summary_fails_closed_on_duplicate_or_unclassified_termination(self):
+        row = {
+            "id": "duplicate_call_block",
+            "case_type": "control_probe",
+            "probe": "duplicate_call_block",
+            "case_pass": True,
+            "turns": [],
+            "evaluation": {
+                "tool_contract_pass": True,
+                "answer_contract_pass": True,
+            },
+            "termination": {
+                "applicable": True,
+                "observed_code": "mystery_stop",
+                "classified": False,
+                "contract_pass": False,
+            },
+            "duplicate": {
+                "applicable": True,
+                "violation": True,
+                "contract_pass": False,
+            },
+        }
+
+        summary = eval_agent.summarize_agent_eval(
+            [row],
+            corpus_manifest={"coverage_ratio": 1.0},
+            expected_probe_types={"duplicate_call_block"},
+        )
+
+        self.assertFalse(summary["gate_pass"])
+        self.assertFalse(summary["gate_checks"]["classified_termination"])
+        self.assertFalse(summary["gate_checks"]["duplicate_tool_violations"])
+
 
 class AgentEvalRunnerTests(unittest.TestCase):
+    def test_control_probe_selection_runs_without_creating_an_agent(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            registry_path = root / "registry.json"
+            write_registry(registry_path, ["paper-001"])
+            agent_factory = mock.Mock()
+
+            result = eval_agent.run_agent_eval(
+                dataset_path=eval_agent.DEFAULT_DATASET_PATH,
+                registry_path=registry_path,
+                persist_directory=root / "chroma",
+                out_dir=root / "results",
+                case_ids=["agent-resume-control-001"],
+                agent_factory=agent_factory,
+                collection=FakeCollection(["paper-001"]),
+            )
+
+        agent_factory.assert_not_called()
+        self.assertTrue(result["predictions"][0]["case_pass"])
+        self.assertEqual(1.0, result["summary"]["checkpoint_resume_pass_ratio"])
+        self.assertFalse(result["summary"]["gate_checks"]["evaluation_complete"])
+        self.assertFalse(result["summary"]["gate_checks"]["control_probe_coverage"])
+
     def test_infrastructure_error_retries_case_with_fresh_agent(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

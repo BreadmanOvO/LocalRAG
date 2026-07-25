@@ -9,7 +9,6 @@ import subprocess
 import sys
 import tempfile
 import time
-from contextlib import nullcontext
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Iterable
@@ -19,17 +18,18 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from config import settings as config
+from eval.agent_control_probes import CONTROL_PROBE_NAMES, run_control_probe
 from utils.path_tools import get_abs_path
 
 
-CONTRACT_VERSION = "agent-eval-v1"
+CONTRACT_VERSION = "agent-eval-v2"
 DEFAULT_DATASET_PATH = Path("data/evaluation/agent/agent_eval_set.json")
 DEFAULT_REGISTRY_PATH = Path("data/evaluation/shared/source_registry.json")
 DEFAULT_OUT_DIR = Path("results/agent_eval")
 DEFAULT_MIN_CORPUS_COVERAGE = 1.0
-DEFAULT_MIN_CASE_PASS_RATIO = 0.8
-DEFAULT_MIN_TOOL_CONTRACT_RATIO = 0.9
-DEFAULT_MIN_ANSWER_CONTRACT_RATIO = 0.8
+DEFAULT_MIN_CASE_PASS_RATIO = 1.0
+DEFAULT_MIN_TOOL_CONTRACT_RATIO = 1.0
+DEFAULT_MIN_ANSWER_CONTRACT_RATIO = 1.0
 CHROMA_BATCH_SIZE = 500
 EVAL_AGENT_TEMPERATURE = 0.0
 EVAL_CASE_INFRASTRUCTURE_RETRIES = 1
@@ -52,6 +52,18 @@ _TOOL_RESULT_RE = re.compile(
 )
 _AGENT_ERROR_RE = re.compile(r"^\[运行错误\]\s+([a-z_]+)\s*$")
 RETRYABLE_CASE_ERRORS = {"model_request_failed"}
+REQUIRED_CONTROL_PROBES = CONTROL_PROBE_NAMES
+KNOWN_TERMINATION_CODES = frozenset(
+    {
+        "tool_call_limit_exceeded",
+        "model_call_limit_exceeded",
+        "duplicate_tool_call",
+        "no_progress_limit",
+        "graph_recursion_limit",
+        "model_request_failed",
+        "agent_execution_failed",
+    }
+)
 
 
 def _require_non_empty_string(value: Any, field_name: str) -> str:
@@ -93,6 +105,32 @@ def validate_agent_eval_dataset(payload: Any) -> dict[str, Any]:
             case.get("category"),
             f"cases[{case_index}].category",
         )
+        case_type = case.get("case_type", "conversation")
+        if case_type not in {"conversation", "control_probe"}:
+            raise ValueError(
+                f"cases[{case_index}].case_type must be conversation or control_probe"
+            )
+        if case_type == "control_probe":
+            probe = _require_non_empty_string(
+                case.get("probe"),
+                f"cases[{case_index}].probe",
+            )
+            if probe not in CONTROL_PROBE_NAMES:
+                raise ValueError(f"cases[{case_index}] contains unknown control probe: {probe}")
+            probe_turns = case.get("turns")
+            if probe_turns is not None and probe_turns != []:
+                raise ValueError(f"cases[{case_index}].turns must be empty for a control probe")
+            normalized_cases.append(
+                {
+                    "id": case_id,
+                    "category": category,
+                    "case_type": case_type,
+                    "probe": probe,
+                    "turns": [],
+                }
+            )
+            continue
+
         turns = case.get("turns")
         if not isinstance(turns, list) or not turns:
             raise ValueError(f"cases[{case_index}].turns must be a non-empty list")
@@ -149,6 +187,8 @@ def validate_agent_eval_dataset(payload: Any) -> dict[str, Any]:
             {
                 "id": case_id,
                 "category": category,
+                "case_type": case_type,
+                "probe": "",
                 "turns": normalized_turns,
             }
         )
@@ -407,6 +447,9 @@ def _execution_diagnostics(rows: list[dict[str, Any]]) -> dict[str, Any]:
     retry_case_count = 0
     total_attempt_count = 0
     for row in rows:
+        row_error = str(row.get("error") or "")
+        if row_error:
+            error_counts[row_error] += 1
         attempts = _attempts_for_case(row)
         total_attempt_count += len(attempts)
         if len(attempts) > 1:
@@ -435,6 +478,50 @@ def _execution_diagnostics(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _case_contract_pass(row: dict[str, Any], contract: str) -> bool:
+    if row.get("case_type") == "control_probe":
+        evaluation = row.get("evaluation")
+        return isinstance(evaluation, dict) and evaluation.get(contract) is True
+    turns = row.get("turns")
+    return isinstance(turns, list) and bool(turns) and all(
+        isinstance(turn, dict)
+        and isinstance(turn.get("evaluation"), dict)
+        and turn["evaluation"].get(contract) is True
+        for turn in turns
+    )
+
+
+def _metric_rows(
+    rows: list[dict[str, Any]],
+    metric: str,
+) -> list[dict[str, Any]]:
+    return [
+        value
+        for row in rows
+        if isinstance((value := row.get(metric)), dict)
+        and value.get("applicable") is True
+    ]
+
+
+def _termination_codes(rows: list[dict[str, Any]]) -> list[str]:
+    codes = []
+    for row in rows:
+        termination = row.get("termination")
+        if isinstance(termination, dict) and termination.get("applicable") is True:
+            code = str(termination.get("observed_code") or "")
+            if code:
+                codes.append(code)
+        row_error = str(row.get("error") or "")
+        if row_error:
+            codes.append(row_error)
+        for attempt in _attempts_for_case(row):
+            for turn in attempt.get("turns", []):
+                error = str(turn.get("error") or "")
+                if error:
+                    codes.append(error)
+    return codes
+
+
 def summarize_agent_eval(
     rows: list[dict[str, Any]],
     *,
@@ -445,19 +532,79 @@ def summarize_agent_eval(
     min_answer_contract_ratio: float = DEFAULT_MIN_ANSWER_CONTRACT_RATIO,
     expected_case_count: int | None = None,
     expected_turn_count: int | None = None,
+    expected_probe_types: set[str] | frozenset[str] | None = None,
     skipped: bool = False,
 ) -> dict[str, Any]:
     turns = [turn for row in rows for turn in row.get("turns", [])]
     passed_cases = sum(1 for row in rows if row.get("case_pass"))
-    tool_contract_count = sum(1 for turn in turns if turn["evaluation"]["tool_contract_pass"])
-    answer_contract_count = sum(1 for turn in turns if turn["evaluation"]["answer_contract_pass"])
+    case_tool_contract_count = sum(
+        1 for row in rows if _case_contract_pass(row, "tool_contract_pass")
+    )
+    case_answer_contract_count = sum(
+        1 for row in rows if _case_contract_pass(row, "answer_contract_pass")
+    )
+    turn_tool_contract_count = sum(
+        1 for turn in turns if turn["evaluation"]["tool_contract_pass"]
+    )
+    turn_answer_contract_count = sum(
+        1 for turn in turns if turn["evaluation"]["answer_contract_pass"]
+    )
     forbidden_violation_count = sum(
         1 for turn in turns if not turn["evaluation"]["forbidden_tools_pass"]
     )
     case_pass_ratio = _ratio(passed_cases, len(rows))
-    tool_contract_ratio = _ratio(tool_contract_count, len(turns))
-    answer_contract_ratio = _ratio(answer_contract_count, len(turns))
+    tool_contract_ratio = _ratio(case_tool_contract_count, len(rows))
+    answer_contract_ratio = _ratio(case_answer_contract_count, len(rows))
     diagnostics = _execution_diagnostics(rows)
+    expected_probe_types = frozenset(expected_probe_types or ())
+    executed_probe_types = {
+        str(row.get("probe"))
+        for row in rows
+        if row.get("case_type") == "control_probe" and row.get("probe")
+    }
+    termination_metrics = _metric_rows(rows, "termination")
+    termination_codes = _termination_codes(rows)
+    classified_termination_count = sum(
+        1 for code in termination_codes if code in KNOWN_TERMINATION_CODES
+    )
+    unclassified_termination_count = len(termination_codes) - classified_termination_count
+    graph_recursion_error_count = sum(
+        1
+        for code in termination_codes
+        if "graph_recursion" in code.lower() or "graphrecursionerror" in code.lower()
+    )
+    termination_contract_pass_count = sum(
+        1 for metric in termination_metrics if metric.get("contract_pass") is True
+    )
+    duplicate_metrics = _metric_rows(rows, "duplicate")
+    duplicate_tool_violation_count = sum(
+        1 for metric in duplicate_metrics if metric.get("violation") is True
+    )
+    evidence_metrics = _metric_rows(rows, "evidence_binding")
+    verified_finding_count = sum(
+        int(metric.get("verified_finding_count", 0)) for metric in evidence_metrics
+    )
+    bound_verified_finding_count = sum(
+        int(metric.get("bound_verified_finding_count", 0))
+        for metric in evidence_metrics
+    )
+    evidence_binding_required = "verified_evidence_binding" in expected_probe_types
+    evidence_binding_ratio = (
+        _ratio(bound_verified_finding_count, verified_finding_count)
+        if verified_finding_count
+        else 0.0 if evidence_binding_required else 1.0
+    )
+    resume_metrics = _metric_rows(rows, "resume")
+    checkpoint_resume_pass_count = sum(
+        1 for metric in resume_metrics if metric.get("checkpoint_resume_pass") is True
+    )
+    resume_required = "pause_resume_checkpoint" in expected_probe_types
+    checkpoint_resume_ratio = (
+        _ratio(checkpoint_resume_pass_count, len(resume_metrics))
+        if resume_metrics
+        else 0.0 if resume_required else 1.0
+    )
+    control_metrics = _metric_rows(rows, "control")
     expected_case_count = len(rows) if expected_case_count is None else expected_case_count
     expected_turn_count = len(turns) if expected_turn_count is None else expected_turn_count
     gate_checks = {
@@ -466,6 +613,29 @@ def summarize_agent_eval(
         "tool_contract_ratio": tool_contract_ratio >= min_tool_contract_ratio,
         "answer_contract_ratio": answer_contract_ratio >= min_answer_contract_ratio,
         "forbidden_tool_violations": forbidden_violation_count == 0,
+        "graph_recursion_errors": graph_recursion_error_count == 0,
+        "classified_termination": unclassified_termination_count == 0,
+        "termination_contracts": all(
+            metric.get("contract_pass") is True for metric in termination_metrics
+        ),
+        "duplicate_tool_violations": (
+            duplicate_tool_violation_count == 0
+            and all(metric.get("contract_pass") is True for metric in duplicate_metrics)
+        ),
+        "verified_finding_evidence_binding": (
+            evidence_binding_ratio == 1.0
+            and (not evidence_binding_required or verified_finding_count > 0)
+            and all(metric.get("contract_pass") is True for metric in evidence_metrics)
+        ),
+        "checkpoint_resume": (
+            checkpoint_resume_ratio == 1.0
+            and (not resume_required or bool(resume_metrics))
+            and all(metric.get("contract_pass") is True for metric in resume_metrics)
+        ),
+        "control_contracts": all(
+            metric.get("contract_pass") is True for metric in control_metrics
+        ),
+        "control_probe_coverage": expected_probe_types <= executed_probe_types,
         "evaluation_executed": not skipped and bool(rows),
         "evaluation_complete": (
             not skipped
@@ -480,11 +650,33 @@ def summarize_agent_eval(
         "expected_turn_count": expected_turn_count,
         "passed_case_count": passed_cases,
         "case_pass_ratio": case_pass_ratio,
-        "tool_contract_pass_count": tool_contract_count,
+        "tool_contract_pass_count": case_tool_contract_count,
         "tool_contract_pass_ratio": tool_contract_ratio,
-        "answer_contract_pass_count": answer_contract_count,
+        "answer_contract_pass_count": case_answer_contract_count,
         "answer_contract_pass_ratio": answer_contract_ratio,
+        "case_tool_contract_pass_count": case_tool_contract_count,
+        "case_answer_contract_pass_count": case_answer_contract_count,
+        "turn_tool_contract_pass_count": turn_tool_contract_count,
+        "turn_tool_contract_pass_ratio": _ratio(turn_tool_contract_count, len(turns)),
+        "turn_answer_contract_pass_count": turn_answer_contract_count,
+        "turn_answer_contract_pass_ratio": _ratio(turn_answer_contract_count, len(turns)),
         "forbidden_tool_violation_count": forbidden_violation_count,
+        "termination_case_count": len(termination_metrics),
+        "termination_contract_pass_count": termination_contract_pass_count,
+        "classified_termination_count": classified_termination_count,
+        "unclassified_termination_count": unclassified_termination_count,
+        "graph_recursion_error_count": graph_recursion_error_count,
+        "duplicate_probe_case_count": len(duplicate_metrics),
+        "duplicate_tool_violation_count": duplicate_tool_violation_count,
+        "evidence_binding_case_count": len(evidence_metrics),
+        "verified_finding_count": verified_finding_count,
+        "bound_verified_finding_count": bound_verified_finding_count,
+        "verified_finding_evidence_binding_ratio": evidence_binding_ratio,
+        "checkpoint_resume_case_count": len(resume_metrics),
+        "checkpoint_resume_pass_count": checkpoint_resume_pass_count,
+        "checkpoint_resume_pass_ratio": checkpoint_resume_ratio,
+        "expected_probe_types": sorted(expected_probe_types),
+        "executed_probe_types": sorted(executed_probe_types),
         "corpus_coverage_ratio": corpus_manifest["coverage_ratio"],
         **diagnostics,
         "skipped": skipped,
@@ -570,8 +762,16 @@ def run_agent_eval(
     cases = selected_cases[:max_cases] if max_cases is not None else selected_cases
     expected_case_count = len(dataset["cases"])
     expected_turn_count = sum(len(case["turns"]) for case in dataset["cases"])
+    expected_probe_types = {
+        case["probe"]
+        for case in dataset["cases"]
+        if case["case_type"] == "control_probe"
+    }
     selected_turn_count = sum(len(case["turns"]) for case in cases)
     selected_case_ids = [case["id"] for case in cases]
+    selected_probe_types = {
+        case["probe"] for case in cases if case["case_type"] == "control_probe"
+    }
     selection_complete = len(cases) == expected_case_count
     run_id = run_id or f"agent-eval-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
     run_dir = Path(out_dir) / run_id
@@ -583,6 +783,17 @@ def run_agent_eval(
     )
     corpus_ready = corpus_manifest["coverage_ratio"] >= DEFAULT_MIN_CORPUS_COVERAGE
     rows = []
+    git_revision = get_git_revision()
+    git_dirty = get_git_dirty()
+
+    from agent.research import ResearchExecutionIdentity
+
+    probe_identity = ResearchExecutionIdentity(
+        corpus_fingerprint=corpus_manifest["corpus_fingerprint"],
+        registry_fingerprint=corpus_manifest["registry_fingerprint"],
+        code_revision=git_revision or CONTRACT_VERSION,
+        code_dirty=False,
+    )
 
     runtime = {"provider": "injected", "chat_model_name": "injected"}
     execution = {
@@ -657,16 +868,36 @@ def run_agent_eval(
                     )
             else:
                 factory = agent_factory
-            temp_context = (
-                tempfile.TemporaryDirectory() if agent_factory is None else nullcontext(None)
-            )
+            temp_context = tempfile.TemporaryDirectory()
             with temp_context as temp_dir:
                 task_memory_store = None
-                if temp_dir is not None:
+                if agent_factory is None:
                     from agent.memory import TaskMemoryStore
 
                     task_memory_store = TaskMemoryStore(Path(temp_dir) / "task-memory.sqlite3")
                 for case_index, case in enumerate(cases, start=1):
+                    if case["case_type"] == "control_probe":
+                        probe_result = run_control_probe(
+                            case["probe"],
+                            probe_identity,
+                            Path(temp_dir) / case["id"],
+                        )
+                        case_row = {
+                            "id": case["id"],
+                            "category": case["category"],
+                            "case_type": case["case_type"],
+                            **probe_result,
+                        }
+                        rows.append(case_row)
+                        if progress_callback is not None:
+                            progress_callback(
+                                case_index,
+                                len(cases),
+                                case["id"],
+                                case_row["case_pass"],
+                            )
+                        continue
+
                     attempt_count = 0
                     max_attempts = 1 + execution["case_infrastructure_retries"]
                     attempt_history = []
@@ -760,6 +991,7 @@ def run_agent_eval(
                     case_row = {
                         "id": case["id"],
                         "category": case["category"],
+                        "case_type": case["case_type"],
                         "turns": turn_rows,
                         "attempts": attempt_history,
                         "case_pass": all(
@@ -767,6 +999,16 @@ def run_agent_eval(
                         ),
                         "attempt_count": attempt_count,
                         "infrastructure_retry_count": attempt_count - 1,
+                    }
+                    case_row["evaluation"] = {
+                        "tool_contract_pass": all(
+                            turn["evaluation"]["tool_contract_pass"]
+                            for turn in turn_rows
+                        ),
+                        "answer_contract_pass": all(
+                            turn["evaluation"]["answer_contract_pass"]
+                            for turn in turn_rows
+                        ),
                     }
                     rows.append(case_row)
                     if progress_callback is not None:
@@ -785,6 +1027,7 @@ def run_agent_eval(
         corpus_manifest=corpus_manifest,
         expected_case_count=expected_case_count,
         expected_turn_count=expected_turn_count,
+        expected_probe_types=expected_probe_types,
         skipped=skipped,
     )
 
@@ -797,8 +1040,8 @@ def run_agent_eval(
         "registry_path": str(Path(registry_path)),
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "runner_script": "eval/eval_agent.py",
-        "git_revision": get_git_revision(),
-        "git_dirty": get_git_dirty(),
+        "git_revision": git_revision,
+        "git_dirty": git_dirty,
         "runtime": runtime,
         "execution": execution,
         "allow_stale_corpus": allow_stale_corpus,
@@ -812,6 +1055,14 @@ def run_agent_eval(
             "executed_case_count": len(rows),
             "executed_turn_count": sum(len(row["turns"]) for row in rows),
             "selected_case_ids": selected_case_ids,
+            "expected_probe_types": sorted(expected_probe_types),
+            "selected_probe_types": sorted(selected_probe_types),
+            "executed_probe_types": sorted(
+                str(row.get("probe"))
+                for row in rows
+                if row.get("case_type") == "control_probe" and row.get("probe")
+            ),
+            "probe_selection_complete": expected_probe_types <= selected_probe_types,
             "selection_complete": selection_complete,
             "evaluation_complete": summary["gate_checks"]["evaluation_complete"],
         },
@@ -829,7 +1080,7 @@ def run_agent_eval(
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run the v1.4 Agent behavior evaluation.")
+    parser = argparse.ArgumentParser(description="Run the v1.5 controlled Agent evaluation.")
     parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET_PATH)
     parser.add_argument("--registry", type=Path, default=DEFAULT_REGISTRY_PATH)
     parser.add_argument(
