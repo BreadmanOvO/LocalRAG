@@ -80,11 +80,109 @@ class ResearchRunControlTests(unittest.TestCase):
             [
                 (1, "v1.5-a2-research-state"),
                 (2, "v1.5-a3-research-recovery"),
+                (3, "v1.5-a4-research-usage-checkpoints"),
             ],
             migrations,
         )
         self.assertIn("research_run_identities", tables)
         self.assertIn("research_step_commits", tables)
+        self.assertIn("research_step_usage_events", tables)
+
+    def test_usage_checkpoint_is_idempotent_without_claiming_revision(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            service, plan = self._create_plan(self._path(temp_dir))
+            started_run, step = service.claim_next_step(
+                plan.run.run_id,
+                expected_revision=plan.run.revision,
+            )
+
+            first = service.record_step_usage(
+                plan.run.run_id,
+                step.step_id,
+                attempt_count=step.attempt_count,
+                event_index=1,
+                event_kind="model_completed",
+            )
+            repeated = service.record_step_usage(
+                plan.run.run_id,
+                step.step_id,
+                attempt_count=step.attempt_count,
+                event_index=1,
+                event_kind="model_completed",
+            )
+            with self.assertRaisesRegex(ResearchStateError, "different event kind"):
+                service.record_step_usage(
+                    plan.run.run_id,
+                    step.step_id,
+                    attempt_count=step.attempt_count,
+                    event_index=1,
+                    event_kind="tool_started",
+                )
+
+        self.assertEqual(started_run.revision, first.revision)
+        self.assertEqual(first, repeated)
+        self.assertEqual(0, repeated.tool_call_count)
+        self.assertEqual(1, repeated.model_call_count)
+
+    def test_usage_returning_after_pause_is_still_counted(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            service, plan = self._create_plan(self._path(temp_dir))
+            started_run, step = service.claim_next_step(
+                plan.run.run_id,
+                expected_revision=plan.run.revision,
+            )
+            paused = service.pause_run(
+                plan.run.run_id,
+                expected_revision=started_run.revision,
+            )
+
+            recorded = service.record_step_usage(
+                plan.run.run_id,
+                step.step_id,
+                attempt_count=step.attempt_count,
+                event_index=1,
+                event_kind="model_completed",
+            )
+
+        self.assertEqual(paused.revision, recorded.revision)
+        self.assertEqual("blocked", recorded.status)
+        self.assertEqual("research_paused", recorded.stop_reason)
+        self.assertEqual(1, recorded.model_call_count)
+
+    def test_usage_storage_failure_has_stable_code_without_mutation(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = self._path(temp_dir)
+            service, plan = self._create_plan(path)
+            started_run, step = service.claim_next_step(
+                plan.run.run_id,
+                expected_revision=plan.run.revision,
+            )
+            with closing(sqlite3.connect(path)) as connection:
+                connection.execute(
+                    """
+                    CREATE TRIGGER reject_research_usage
+                    BEFORE INSERT ON research_step_usage_events
+                    BEGIN
+                        SELECT RAISE(ABORT, 'forced usage failure');
+                    END
+                    """
+                )
+                connection.commit()
+
+            with self.assertRaises(ResearchControlError) as raised:
+                service.record_step_usage(
+                    plan.run.run_id,
+                    step.step_id,
+                    attempt_count=step.attempt_count,
+                    event_index=1,
+                    event_kind="tool_started",
+                )
+            restored = service.get_plan(plan.run.run_id)
+
+        self.assertEqual("research_storage_failed", raised.exception.error_code)
+        self.assertEqual(started_run.revision, restored.run.revision)
+        self.assertEqual(0, restored.run.tool_call_count)
+        self.assertEqual("running", restored.steps[0].status)
 
     def test_a2_review_rejects_incomplete_direct_resume(self):
         with tempfile.TemporaryDirectory() as temp_dir:

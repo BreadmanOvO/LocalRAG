@@ -95,6 +95,7 @@ class ResearchRunStoreTests(unittest.TestCase):
                 "research_evidence_refs",
                 "research_findings",
                 "research_finding_evidence",
+                "research_step_usage_events",
             }.issubset(tables)
         )
         self.assertEqual(1, migration_count)
@@ -138,6 +139,61 @@ class ResearchRunStoreTests(unittest.TestCase):
         self.assertEqual(("evidence-a",), committed.steps[0].evidence_ids)
         self.assertEqual("verified", committed.findings[0].status)
         self.assertEqual(("evidence-a",), committed.findings[0].evidence_ids)
+
+    def test_concurrent_usage_checkpoint_replay_counts_once(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = self._path(temp_dir)
+            store = ResearchRunStore(path)
+            plan = self._create_plan(store)
+            _, step = store.start_next_step(
+                plan.run.run_id,
+                expected_revision=plan.run.revision,
+            )
+
+            def record_usage(_):
+                return ResearchRunStore(path).record_step_usage(
+                    plan.run.run_id,
+                    step.step_id,
+                    attempt_count=step.attempt_count,
+                    event_index=1,
+                    event_kind="tool_started",
+                )
+
+            with ThreadPoolExecutor(max_workers=4) as executor:
+                results = list(executor.map(record_usage, range(4)))
+            restored = ResearchRunStore(path).get_plan(plan.run.run_id)
+
+        self.assertTrue(all(result.tool_call_count == 1 for result in results))
+        self.assertEqual(1, restored.run.tool_call_count)
+        self.assertEqual(0, restored.run.model_call_count)
+        self.assertEqual(1, restored.run.revision)
+
+    def test_late_usage_does_not_replace_the_latest_task_run(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            store = ResearchRunStore(self._path(temp_dir))
+            first = self._create_plan(store, run_id="run-a")
+            started_run, step = store.start_next_step(
+                first.run.run_id,
+                expected_revision=first.run.revision,
+            )
+            store.transition_run(
+                first.run.run_id,
+                "cancelled",
+                expected_revision=started_run.revision,
+                stop_reason="research_cancelled",
+            )
+            second = self._create_plan(store, run_id="run-b")
+
+            store.record_step_usage(
+                first.run.run_id,
+                step.step_id,
+                attempt_count=step.attempt_count,
+                event_index=1,
+                event_kind="model_completed",
+            )
+            latest = store.get_latest_plan_for_task("task-a")
+
+        self.assertEqual(second.run.run_id, latest.run.run_id)
 
     def test_verified_finding_without_valid_evidence_rolls_back_step_commit(self):
         with tempfile.TemporaryDirectory() as temp_dir:

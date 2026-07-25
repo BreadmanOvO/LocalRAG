@@ -197,6 +197,62 @@ class ResearchAgentRuntimeTests(unittest.TestCase):
         self.assertEqual(2, completed.run.model_call_count)
         self.assertEqual(2, completed.steps[0].attempt_count)
 
+    def test_pause_after_model_event_preserves_partial_usage(self):
+        events = (
+            AgentEvent(kind="model_completed", status="completed"),
+            AgentEvent(kind="answer_delta", content="Too late"),
+        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            runtime, service = self._runtime(
+                self._path(temp_dir),
+                FakeResearchAgent([events]),
+            )
+            created = runtime.create_run("Pause after the model call")
+            execution = runtime.execute_events(created.run.run_id)
+
+            self.assertEqual(events[0], next(execution))
+            active = service.get_plan(created.run.run_id)
+            service.pause_run(
+                created.run.run_id,
+                expected_revision=active.run.revision,
+            )
+            stopped = next(execution)
+            restored = service.get_plan(created.run.run_id)
+
+        self.assertEqual("research_paused", stopped.error_code)
+        self.assertEqual("blocked", restored.run.status)
+        self.assertEqual(0, restored.run.tool_call_count)
+        self.assertEqual(1, restored.run.model_call_count)
+
+    def test_cancel_after_tool_event_preserves_partial_usage(self):
+        events = (
+            AgentEvent(kind="model_completed", status="completed"),
+            AgentEvent(kind="tool_started", tool_name="rag_search"),
+            AgentEvent(kind="tool_completed", tool_name="rag_search"),
+        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            runtime, service = self._runtime(
+                self._path(temp_dir),
+                FakeResearchAgent([events]),
+            )
+            created = runtime.create_run("Cancel after the tool call")
+            execution = runtime.execute_events(created.run.run_id)
+
+            self.assertEqual(events[0], next(execution))
+            self.assertEqual(events[1], next(execution))
+            active = service.get_plan(created.run.run_id)
+            service.cancel_run(
+                created.run.run_id,
+                expected_revision=active.run.revision,
+            )
+            stopped = next(execution)
+            restored = service.get_plan(created.run.run_id)
+
+        self.assertEqual("research_cancelled", stopped.error_code)
+        self.assertEqual("cancelled", restored.run.status)
+        self.assertEqual(1, restored.run.tool_call_count)
+        self.assertEqual(1, restored.run.model_call_count)
+
     def test_repeated_evidence_is_scoped_to_each_run(self):
         events = (
             AgentEvent(kind="model_completed", status="completed"),

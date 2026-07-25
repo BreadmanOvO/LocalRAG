@@ -6,6 +6,7 @@ import sqlite3
 MIGRATIONS = (
     (1, "v1.5-a2-research-state"),
     (2, "v1.5-a3-research-recovery"),
+    (3, "v1.5-a4-research-usage-checkpoints"),
 )
 
 RESEARCH_SCHEMA = """
@@ -130,6 +131,20 @@ CREATE TABLE IF NOT EXISTS research_step_commits (
     created_at TEXT NOT NULL,
     PRIMARY KEY(run_id, step_id),
     UNIQUE(run_id, commit_id),
+    FOREIGN KEY(run_id, step_id)
+        REFERENCES research_steps(run_id, step_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS research_step_usage_events (
+    run_id TEXT NOT NULL,
+    step_id TEXT NOT NULL,
+    attempt_count INTEGER NOT NULL CHECK (attempt_count > 0),
+    event_index INTEGER NOT NULL CHECK (event_index > 0),
+    event_kind TEXT NOT NULL CHECK (
+        event_kind IN ('tool_started', 'model_completed')
+    ),
+    created_at TEXT NOT NULL,
+    PRIMARY KEY(run_id, step_id, attempt_count, event_index),
     FOREIGN KEY(run_id, step_id)
         REFERENCES research_steps(run_id, step_id) ON DELETE CASCADE
 );

@@ -150,6 +150,25 @@ class ResearchRunService:
             )
         )
 
+    def record_step_usage(
+        self,
+        run_id: str,
+        step_id: str,
+        *,
+        attempt_count: int,
+        event_index: int,
+        event_kind: str,
+    ) -> ResearchRun:
+        return self._storage_call(
+            lambda: self.store.record_step_usage(
+                run_id,
+                step_id,
+                attempt_count=attempt_count,
+                event_index=event_index,
+                event_kind=event_kind,
+            )
+        )
+
     def ensure_step_active(
         self,
         run_id: str,

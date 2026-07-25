@@ -68,6 +68,9 @@ class ResearchRevisionConflictError(RuntimeError):
         )
 
 
+_USAGE_EVENT_KINDS = frozenset({"tool_started", "model_completed"})
+
+
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -333,6 +336,75 @@ class ResearchRunStore:
                 (step_row["step_id"],),
             ).fetchone()
         return run, step_from_row(updated_step, ())
+
+    def record_step_usage(
+        self,
+        run_id: str,
+        step_id: str,
+        *,
+        attempt_count: int,
+        event_index: int,
+        event_kind: str,
+    ) -> ResearchRun:
+        """Persist an observed model/tool call without changing the claim revision."""
+        run_id = clean_identifier(run_id, "run_id")
+        step_id = clean_identifier(step_id, "step_id")
+        attempt_count = validate_counter(attempt_count, "attempt_count")
+        event_index = validate_counter(event_index, "event_index")
+        event_kind = clean_text(event_kind, "event_kind", max_length=64)
+        if attempt_count == 0:
+            raise ValueError("attempt_count must be positive")
+        if event_index == 0:
+            raise ValueError("event_index must be positive")
+        if event_kind not in _USAGE_EVENT_KINDS:
+            raise ValueError(f"unsupported usage event kind: {event_kind}")
+        now = _utc_now()
+
+        with self._lock, self._connect() as connection:
+            self._require_run(connection, run_id)
+            step_row = self._require_step(connection, run_id, step_id)
+            if attempt_count > step_row["attempt_count"]:
+                raise ResearchStateError(
+                    f"usage attempt {attempt_count} has not been claimed"
+                )
+            inserted = connection.execute(
+                """
+                INSERT OR IGNORE INTO research_step_usage_events(
+                    run_id, step_id, attempt_count, event_index, event_kind, created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (run_id, step_id, attempt_count, event_index, event_kind, now),
+            )
+            if not inserted.rowcount:
+                existing = connection.execute(
+                    """
+                    SELECT event_kind FROM research_step_usage_events
+                    WHERE run_id = ? AND step_id = ?
+                        AND attempt_count = ? AND event_index = ?
+                    """,
+                    (run_id, step_id, attempt_count, event_index),
+                ).fetchone()
+                if existing is None or existing["event_kind"] != event_kind:
+                    raise ResearchStateError(
+                        "usage checkpoint identity was reused with a different event kind"
+                    )
+                return run_from_row(self._require_run(connection, run_id))
+
+            connection.execute(
+                """
+                UPDATE research_runs
+                SET tool_call_count = tool_call_count + ?,
+                    model_call_count = model_call_count + ?
+                WHERE run_id = ?
+                """,
+                (
+                    int(event_kind == "tool_started"),
+                    int(event_kind == "model_completed"),
+                    run_id,
+                ),
+            )
+            return run_from_row(self._require_run(connection, run_id))
 
     def transition_run(
         self,

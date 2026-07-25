@@ -57,17 +57,11 @@ def execution_identity_from_observability(
 class _AttemptState:
     answer_parts: list[str] = field(default_factory=list)
     observations: list[dict[str, Any]] = field(default_factory=list)
-    tool_call_count: int = 0
-    model_call_count: int = 0
     retrieval_completed: bool = False
     error_code: str = ""
 
     def record(self, event: AgentEvent) -> None:
-        if event.kind == "model_completed":
-            self.model_call_count += 1
-        elif event.kind == "tool_started":
-            self.tool_call_count += 1
-        elif event.kind == "tool_completed":
+        if event.kind == "tool_completed":
             self.observations.extend(event.observations)
             if event.tool_name == "rag_search" and event.status not in {
                 "error",
@@ -136,6 +130,7 @@ class ResearchAgentRuntime:
             started_run, step = claimed
             query = str(step.arguments.get("query") or plan.run.goal)
             attempt = _AttemptState()
+            event_index = 0
             events = iter(self.agent.execute_events(query))
             while True:
                 self.service.ensure_step_active(
@@ -147,7 +142,16 @@ class ResearchAgentRuntime:
                     event = next(events)
                 except StopIteration:
                     break
+                event_index += 1
                 attempt.record(event)
+                if event.kind in {"tool_started", "model_completed"}:
+                    self.service.record_step_usage(
+                        run_id,
+                        step.step_id,
+                        attempt_count=step.attempt_count,
+                        event_index=event_index,
+                        event_kind=event.kind,
+                    )
                 yield event
         except (ResearchControlError, ResearchRevisionConflictError, ResearchStateError) as exc:
             error_code = getattr(exc, "error_code", "research_execution_stopped")
@@ -167,8 +171,6 @@ class ResearchAgentRuntime:
                         "blocked",
                         result_summary=attempt.answer,
                         error_code=error_code,
-                        tool_call_count=attempt.tool_call_count,
-                        model_call_count=attempt.model_call_count,
                     ),
                     expected_revision=started_run.revision,
                 )
@@ -293,8 +295,6 @@ class ResearchAgentRuntime:
             evidence_refs=evidence,
             findings=(finding,),
             commit_id=f"commit-{commit_hash}",
-            tool_call_count=attempt.tool_call_count,
-            model_call_count=attempt.model_call_count,
         )
 
     @staticmethod

@@ -62,6 +62,7 @@ def _reset_runtime_for_task(task_id: str) -> None:
     st.session_state["message"] = [{"role": "assistant", "content": WELCOME_MESSAGE}]
     st.session_state.pop("agent", None)
     st.session_state.pop("research_runtime", None)
+    st.session_state.pop("research_autostart_run_id", None)
 
 
 def _query_task_id() -> str | None:
@@ -300,6 +301,19 @@ def _load_research_runtime(agent: ReactAgent, runtime_status: dict):
     return runtime, ""
 
 
+def _research_execute_button_config(run) -> tuple[str, str, str | None]:
+    taking_over = run.status == "running" and run.current_step_id is not None
+    if run.status == "planned":
+        return "开始执行", "primary", None
+    if taking_over:
+        return (
+            "接管并重试",
+            "secondary",
+            "当前步骤可能仍由另一会话执行；接管后旧执行器会停止，本步骤重新执行。",
+        )
+    return "继续执行", "primary", None
+
+
 def _render_research_plan(plan, runtime, identity_error: str) -> str:
     st.subheader("研究执行")
     if plan is None:
@@ -345,12 +359,13 @@ def _render_research_plan(plan, runtime, identity_error: str) -> str:
 
     active = is_active_plan(plan)
     execute_column, pause_column, cancel_column = st.columns(3)
-    execute_label = "开始执行" if run.status == "planned" else "继续执行"
+    execute_label, execute_type, execute_help = _research_execute_button_config(run)
     execute = execute_column.button(
         execute_label,
-        type="primary",
+        type=execute_type,
         use_container_width=True,
         disabled=not active or runtime is None,
+        help=execute_help,
         key=f"research_execute_{run.run_id}_{run.revision}",
     )
     pause = pause_column.button(
@@ -546,11 +561,12 @@ research_action = _render_research_plan(
     research_runtime,
     research_identity_error,
 )
+research_run_to_execute = ""
 if research_action and research_plan is not None:
     try:
         if research_action == "execute":
             _ensure_user_message(research_plan.run.goal)
-            _execute_research_run(research_runtime, research_plan.run.run_id)
+            research_run_to_execute = research_plan.run.run_id
         elif research_action == "pause":
             research_service.pause_run(
                 research_plan.run.run_id,
@@ -565,7 +581,8 @@ if research_action and research_plan is not None:
         error_code = getattr(exc, "error_code", "research_control_failed")
         st.error(f"研究控制失败：{error_code}")
     else:
-        st.rerun()
+        if research_action != "execute":
+            st.rerun()
 
 st.divider()
 
@@ -574,6 +591,30 @@ for message in st.session_state["message"]:
         st.write(message["content"])
         if message["role"] == "assistant":
             _render_assistant_details(message)
+
+autostart_run_id = st.session_state.pop("research_autostart_run_id", "")
+if autostart_run_id:
+    if (
+        research_runtime is not None
+        and research_plan is not None
+        and research_plan.run.run_id == autostart_run_id
+        and is_active_plan(research_plan)
+    ):
+        research_run_to_execute = autostart_run_id
+    else:
+        st.session_state["message"].append(
+            {
+                "role": "assistant",
+                "content": "研究任务启动失败，请检查运行状态后重试。",
+                "error": True,
+                "error_code": research_identity_error or "research_runtime_unavailable",
+            }
+        )
+        st.rerun()
+
+if research_run_to_execute:
+    _execute_research_run(research_runtime, research_run_to_execute)
+    st.rerun()
 
 prompt = st.chat_input(
     "输入研究问题",
@@ -584,18 +625,28 @@ if prompt:
         st.write(prompt)
     st.session_state["message"].append({"role": "user", "content": prompt})
 
-    try:
-        research_plan = research_runtime.create_run(prompt)
-    except (ResearchControlError, ResearchRevisionConflictError, ResearchStateError) as exc:
-        error_code = getattr(exc, "error_code", "research_control_failed")
+    if research_runtime is None:
         st.session_state["message"].append(
             {
                 "role": "assistant",
                 "content": "研究任务创建失败，请检查运行状态后重试。",
                 "error": True,
-                "error_code": error_code,
+                "error_code": research_identity_error or "research_runtime_unavailable",
             }
         )
     else:
-        _execute_research_run(research_runtime, research_plan.run.run_id)
+        try:
+            research_plan = research_runtime.create_run(prompt)
+        except (ResearchControlError, ResearchRevisionConflictError, ResearchStateError) as exc:
+            error_code = getattr(exc, "error_code", "research_control_failed")
+            st.session_state["message"].append(
+                {
+                    "role": "assistant",
+                    "content": "研究任务创建失败，请检查运行状态后重试。",
+                    "error": True,
+                    "error_code": error_code,
+                }
+            )
+        else:
+            st.session_state["research_autostart_run_id"] = research_plan.run.run_id
     st.rerun()
