@@ -3,7 +3,8 @@ import unittest
 from pathlib import Path
 
 from agent.research import ResearchExecutionIdentity
-from eval.agent_control_probes import CONTROL_PROBE_NAMES, run_control_probe
+from eval.agent_control_probes import run_control_probe
+from eval.agent_eval_contract import CONTROL_PROBE_NAMES
 
 
 class AgentControlProbeTests(unittest.TestCase):

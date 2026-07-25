@@ -23,21 +23,6 @@ from agent.research import (
     ResearchStepCommit,
     ResearchStepDraft,
 )
-
-
-CONTROL_PROBE_NAMES = frozenset(
-    {
-        "tool_budget_termination",
-        "duplicate_call_block",
-        "no_progress_termination",
-        "insufficient_evidence_rejection",
-        "verified_evidence_binding",
-        "pause_resume_checkpoint",
-        "cancel_run_control",
-    }
-)
-
-
 def _tool_call(call_id: str, *, source_id: str = "paper-001") -> AIMessage:
     return AIMessage(
         content="",

@@ -6,6 +6,17 @@ from pathlib import Path
 from eval.release_gate import evaluate_agent_stability_gate, load_formal_agent_runs
 
 
+REQUIRED_PROBES = [
+    "cancel_run_control",
+    "duplicate_call_block",
+    "insufficient_evidence_rejection",
+    "no_progress_termination",
+    "pause_resume_checkpoint",
+    "tool_budget_termination",
+    "verified_evidence_binding",
+]
+
+
 class AgentStabilityGateTests(unittest.TestCase):
     def _write_run(
         self,
@@ -22,9 +33,11 @@ class AgentStabilityGateTests(unittest.TestCase):
         retry_count: int = 0,
         contract_version: str = "agent-eval-v2",
         summary_overrides: dict | None = None,
+        probe_types: list[str] | None = None,
     ) -> None:
         run_dir = root / run_id
         run_dir.mkdir()
+        probe_types = REQUIRED_PROBES if probe_types is None else probe_types
         manifest = {
             "contract_version": contract_version,
             "run_id": run_id,
@@ -49,15 +62,9 @@ class AgentStabilityGateTests(unittest.TestCase):
                 "evaluation_complete": complete,
                 "expected_case_count": 15,
                 "expected_turn_count": 9,
-                "expected_probe_types": [
-                    "cancel_run_control",
-                    "duplicate_call_block",
-                    "insufficient_evidence_rejection",
-                    "no_progress_termination",
-                    "pause_resume_checkpoint",
-                    "tool_budget_termination",
-                    "verified_evidence_binding",
-                ],
+                "expected_probe_types": probe_types,
+                "selected_probe_types": probe_types,
+                "executed_probe_types": probe_types,
                 "probe_selection_complete": True,
             },
             "corpus": {
@@ -78,9 +85,14 @@ class AgentStabilityGateTests(unittest.TestCase):
             "case_pass_ratio": 1.0 if gate_pass else 0.0,
             "case_tool_contract_pass_count": 15 if gate_pass else 0,
             "case_answer_contract_pass_count": 15 if gate_pass else 0,
+            "termination_case_count": 3,
+            "termination_contract_pass_count": 3,
+            "classified_termination_count": 3,
             "graph_recursion_error_count": 0,
+            "duplicate_probe_case_count": 1,
             "duplicate_tool_violation_count": 0,
             "unclassified_termination_count": 0,
+            "evidence_binding_case_count": 2,
             "verified_finding_count": 1,
             "bound_verified_finding_count": 1,
             "verified_finding_evidence_binding_ratio": 1.0,
@@ -88,15 +100,8 @@ class AgentStabilityGateTests(unittest.TestCase):
             "checkpoint_resume_pass_count": 1,
             "checkpoint_resume_pass_ratio": 1.0,
             "forbidden_tool_violation_count": 0,
-            "expected_probe_types": [
-                "cancel_run_control",
-                "duplicate_call_block",
-                "insufficient_evidence_rejection",
-                "no_progress_termination",
-                "pause_resume_checkpoint",
-                "tool_budget_termination",
-                "verified_evidence_binding",
-            ],
+            "expected_probe_types": probe_types,
+            "executed_probe_types": probe_types,
             "infrastructure_retry_count": retry_count,
             "gate_thresholds": {
                 "min_corpus_coverage": 1.0,
@@ -109,10 +114,12 @@ class AgentStabilityGateTests(unittest.TestCase):
                 "control_probe_coverage": True,
                 "graph_recursion_errors": True,
                 "classified_termination": True,
+                "termination_contracts": True,
                 "duplicate_tool_violations": True,
                 "verified_finding_evidence_binding": True,
                 "checkpoint_resume": True,
                 "forbidden_tool_violations": True,
+                "control_contracts": True,
             },
         }
         summary.update(summary_overrides or {})
@@ -257,6 +264,42 @@ class AgentStabilityGateTests(unittest.TestCase):
         self.assertFalse(result["gate_pass"])
         self.assertFalse(result["checks"]["all_a5_contracts"])
         self.assertFalse(result["checks"]["no_duplicate_tool_violations"])
+
+    def test_missing_required_probe_type_fails_closed(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            incomplete_probes = REQUIRED_PROBES[:-1]
+            for index in range(1, 4):
+                self._write_run(
+                    root,
+                    f"agent-eval-{index}",
+                    f"2026-01-01T0{index}:00:00",
+                    probe_types=incomplete_probes,
+                )
+
+            result = evaluate_agent_stability_gate(root)
+
+        self.assertFalse(result["gate_pass"])
+        self.assertFalse(result["checks"]["control_probe_coverage"])
+
+    def test_underreported_probe_metric_count_fails_closed(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            for index in range(1, 4):
+                self._write_run(
+                    root,
+                    f"agent-eval-{index}",
+                    f"2026-01-01T0{index}:00:00",
+                    summary_overrides={
+                        "termination_case_count": 2,
+                        "termination_contract_pass_count": 2,
+                    },
+                )
+
+            result = evaluate_agent_stability_gate(root)
+
+        self.assertFalse(result["gate_pass"])
+        self.assertFalse(result["checks"]["all_a5_probe_contracts"])
 
     def test_insufficient_run_count_fails(self):
         with tempfile.TemporaryDirectory() as temp_dir:

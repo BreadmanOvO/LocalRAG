@@ -10,10 +10,17 @@ from typing import Any
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from eval.agent_eval_contract import (
+    A5_MIN_CASE_COUNT,
+    AGENT_EVAL_CONTRACT_VERSION,
+    CONTROL_PROBE_NAMES,
+    DUPLICATE_CONTROL_PROBES,
+    EVIDENCE_BINDING_CONTROL_PROBES,
+    RESUME_CONTROL_PROBES,
+    STABILITY_GATE_CONTRACT_VERSION,
+    TERMINATION_CONTROL_PROBES,
+)
 
-STABILITY_GATE_CONTRACT_VERSION = "agent-stability-gate-v2"
-AGENT_EVAL_CONTRACT_VERSION = "agent-eval-v2"
-MIN_A5_CASE_COUNT = 15
 DEFAULT_REQUIRED_RUNS = 3
 DEFAULT_RESULTS_DIR = Path("results/agent_eval")
 
@@ -127,7 +134,7 @@ def _identity_is_complete(manifest: dict[str, Any], summary: dict[str, Any]) -> 
         and isinstance(scope, dict)
         and isinstance(scope.get("expected_case_count"), int)
         and isinstance(scope.get("expected_turn_count"), int)
-        and scope.get("expected_case_count", 0) >= MIN_A5_CASE_COUNT
+        and scope.get("expected_case_count", 0) >= A5_MIN_CASE_COUNT
         and scope.get("probe_selection_complete") is True
         and isinstance(scope_probes, list)
         and bool(scope_probes)
@@ -152,7 +159,7 @@ def _has_graph_recursion(run: dict[str, Any]) -> bool:
 def _a5_case_contracts_pass(summary: dict[str, Any]) -> bool:
     case_count = _nonnegative_int(summary.get("case_count"))
     return (
-        case_count >= MIN_A5_CASE_COUNT
+        case_count >= A5_MIN_CASE_COUNT
         and _nonnegative_int(summary.get("expected_case_count")) == case_count
         and _nonnegative_int(summary.get("passed_case_count")) == case_count
         and _nonnegative_int(summary.get("case_tool_contract_pass_count")) == case_count
@@ -167,9 +174,14 @@ def _a5_contract_is_complete(manifest: dict[str, Any], summary: dict[str, Any]) 
         "passed_case_count",
         "case_tool_contract_pass_count",
         "case_answer_contract_pass_count",
+        "termination_case_count",
+        "termination_contract_pass_count",
+        "classified_termination_count",
         "graph_recursion_error_count",
+        "duplicate_probe_case_count",
         "duplicate_tool_violation_count",
         "unclassified_termination_count",
+        "evidence_binding_case_count",
         "verified_finding_count",
         "bound_verified_finding_count",
         "checkpoint_resume_case_count",
@@ -186,10 +198,12 @@ def _a5_contract_is_complete(manifest: dict[str, Any], summary: dict[str, Any]) 
         "control_probe_coverage",
         "graph_recursion_errors",
         "classified_termination",
+        "termination_contracts",
         "duplicate_tool_violations",
         "verified_finding_evidence_binding",
         "checkpoint_resume",
         "forbidden_tool_violations",
+        "control_contracts",
     )
     return (
         manifest.get("contract_version") == AGENT_EVAL_CONTRACT_VERSION
@@ -197,6 +211,56 @@ def _a5_contract_is_complete(manifest: dict[str, Any], summary: dict[str, Any]) 
         and all(_is_ratio(summary.get(field)) for field in required_ratios)
         and isinstance(gate_checks, dict)
         and all(isinstance(gate_checks.get(field), bool) for field in required_gate_checks)
+    )
+
+
+def _probe_types(value: Any) -> frozenset[str] | None:
+    if not isinstance(value, list) or not value:
+        return None
+    if any(not isinstance(item, str) or not item for item in value):
+        return None
+    normalized = frozenset(value)
+    return normalized if len(normalized) == len(value) else None
+
+
+def _a5_probe_coverage_pass(
+    manifest: dict[str, Any],
+    summary: dict[str, Any],
+) -> bool:
+    scope = manifest.get("evaluation_scope")
+    if not isinstance(scope, dict):
+        return False
+    probe_sets = (
+        _probe_types(scope.get("expected_probe_types")),
+        _probe_types(scope.get("selected_probe_types")),
+        _probe_types(scope.get("executed_probe_types")),
+        _probe_types(summary.get("expected_probe_types")),
+        _probe_types(summary.get("executed_probe_types")),
+    )
+    return (
+        all(probes == CONTROL_PROBE_NAMES for probes in probe_sets)
+        and scope.get("probe_selection_complete") is True
+        and isinstance(summary.get("gate_checks"), dict)
+        and summary["gate_checks"].get("control_probe_coverage") is True
+    )
+
+
+def _a5_probe_contracts_pass(summary: dict[str, Any]) -> bool:
+    gate_checks = summary.get("gate_checks")
+    return (
+        _nonnegative_int(summary.get("termination_case_count"))
+        == len(TERMINATION_CONTROL_PROBES)
+        and _nonnegative_int(summary.get("termination_contract_pass_count"))
+        == len(TERMINATION_CONTROL_PROBES)
+        and _nonnegative_int(summary.get("duplicate_probe_case_count"))
+        == len(DUPLICATE_CONTROL_PROBES)
+        and _nonnegative_int(summary.get("evidence_binding_case_count"))
+        == len(EVIDENCE_BINDING_CONTROL_PROBES)
+        and _nonnegative_int(summary.get("checkpoint_resume_case_count"))
+        == len(RESUME_CONTROL_PROBES)
+        and isinstance(gate_checks, dict)
+        and gate_checks.get("termination_contracts") is True
+        and gate_checks.get("control_contracts") is True
     )
 
 
@@ -315,6 +379,8 @@ def evaluate_agent_stability_gate(
         ),
         "all_a5_case_contracts": enough_runs
         and all(_a5_case_contracts_pass(run["summary"]) for run in selected_runs),
+        "all_a5_probe_contracts": enough_runs
+        and all(_a5_probe_contracts_pass(run["summary"]) for run in selected_runs),
         "no_graph_recursion": enough_runs
         and all(not _has_graph_recursion(run) for run in selected_runs),
         "no_duplicate_tool_violations": enough_runs
@@ -347,10 +413,7 @@ def evaluate_agent_stability_gate(
         ),
         "control_probe_coverage": enough_runs
         and all(
-            isinstance(run["summary"].get("gate_checks"), dict)
-            and run["summary"]["gate_checks"].get("control_probe_coverage") is True
-            and isinstance(run["manifest"].get("evaluation_scope"), dict)
-            and run["manifest"]["evaluation_scope"].get("probe_selection_complete") is True
+            _a5_probe_coverage_pass(run["manifest"], run["summary"])
             for run in selected_runs
         ),
     }

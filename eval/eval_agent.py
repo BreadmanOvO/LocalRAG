@@ -18,11 +18,17 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from config import settings as config
-from eval.agent_control_probes import CONTROL_PROBE_NAMES, run_control_probe
+from eval.agent_control_probes import run_control_probe
+from eval.agent_eval_contract import (
+    AGENT_EVAL_CONTRACT_VERSION,
+    CONTROL_PROBE_NAMES,
+    EVIDENCE_BINDING_CONTROL_PROBES,
+    RESUME_CONTROL_PROBES,
+)
 from utils.path_tools import get_abs_path
 
 
-CONTRACT_VERSION = "agent-eval-v2"
+CONTRACT_VERSION = AGENT_EVAL_CONTRACT_VERSION
 DEFAULT_DATASET_PATH = Path("data/evaluation/agent/agent_eval_set.json")
 DEFAULT_REGISTRY_PATH = Path("data/evaluation/shared/source_registry.json")
 DEFAULT_OUT_DIR = Path("results/agent_eval")
@@ -588,7 +594,9 @@ def summarize_agent_eval(
         int(metric.get("bound_verified_finding_count", 0))
         for metric in evidence_metrics
     )
-    evidence_binding_required = "verified_evidence_binding" in expected_probe_types
+    evidence_binding_required = bool(
+        EVIDENCE_BINDING_CONTROL_PROBES & expected_probe_types
+    )
     evidence_binding_ratio = (
         _ratio(bound_verified_finding_count, verified_finding_count)
         if verified_finding_count
@@ -598,7 +606,7 @@ def summarize_agent_eval(
     checkpoint_resume_pass_count = sum(
         1 for metric in resume_metrics if metric.get("checkpoint_resume_pass") is True
     )
-    resume_required = "pause_resume_checkpoint" in expected_probe_types
+    resume_required = bool(RESUME_CONTROL_PROBES & expected_probe_types)
     checkpoint_resume_ratio = (
         _ratio(checkpoint_resume_pass_count, len(resume_metrics))
         if resume_metrics
@@ -880,7 +888,7 @@ def run_agent_eval(
                         probe_result = run_control_probe(
                             case["probe"],
                             probe_identity,
-                            Path(temp_dir) / case["id"],
+                            Path(temp_dir) / f"probe-{case_index:03d}",
                         )
                         case_row = {
                             "id": case["id"],
