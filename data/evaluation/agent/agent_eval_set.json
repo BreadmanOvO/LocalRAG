@@ -105,9 +105,9 @@
       "category": "table_interference",
       "turns": [
         {
-          "prompt": "请检索 Apollo 规划模块的输入，列出并说明 /apollo/canbus/chassis、/apollo/localization/pose、/apollo/prediction 和 /apollo/relative_map 这四个 channel。",
+          "prompt": "只调用一次 rag_search 检索 Apollo 规划模块的输入，直接使用工具返回内容回答，不要再调用其他工具。列出并说明 /apollo/canbus/chassis、/apollo/localization/pose、/apollo/prediction 和 /apollo/relative_map 这四个 channel，并在回答中保留 source_id=apollo-doc-008。",
           "required_tools": ["rag_search"],
-          "forbidden_tools": [],
+          "forbidden_tools": ["show_sources", "inspect_source", "expand_context"],
           "expected_source_ids": ["apollo-doc-008"],
           "expected_answer_terms_any": [],
           "expected_answer_terms_all": ["/apollo/canbus/chassis", "/apollo/localization/pose", "/apollo/prediction", "/apollo/relative_map"],
