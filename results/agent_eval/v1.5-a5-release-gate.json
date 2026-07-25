@@ -1,36 +1,17 @@
 {
-  "contract_version": "agent-stability-gate-v2",
+  "contract_version": "agent-stability-gate-v2.1",
   "required_run_count": 3,
-  "available_formal_run_count": 20,
+  "available_formal_run_count": 23,
   "selected_run_ids": [
-    "agent-eval-20260725-210441",
-    "agent-eval-20260725-210802",
-    "agent-eval-20260725-211102"
+    "agent-eval-20260725-231333",
+    "agent-eval-20260725-231620",
+    "agent-eval-20260725-231846"
   ],
   "runs": [
     {
-      "run_id": "agent-eval-20260725-210441",
-      "created_at": "2026-07-25T21:07:31",
-      "git_revision": "e3394781a65862f35e6aff9beff9d6264b5a5632",
-      "git_dirty": false,
-      "artifact_valid": true,
-      "gate_pass": true,
-      "evaluation_complete": true,
-      "case_pass_ratio": 1.0,
-      "case_count": 15,
-      "duplicate_tool_violation_count": 0,
-      "unclassified_termination_count": 0,
-      "verified_finding_evidence_binding_ratio": 1.0,
-      "checkpoint_resume_pass_ratio": 1.0,
-      "infrastructure_retry_count": 1,
-      "error_counts": {
-        "model_request_failed": 1
-      }
-    },
-    {
-      "run_id": "agent-eval-20260725-210802",
-      "created_at": "2026-07-25T21:10:32",
-      "git_revision": "e3394781a65862f35e6aff9beff9d6264b5a5632",
+      "run_id": "agent-eval-20260725-231333",
+      "created_at": "2026-07-25T23:15:48",
+      "git_revision": "13882d18c69abf698ff9b0c8ab9447975cfbaa00",
       "git_dirty": false,
       "artifact_valid": true,
       "gate_pass": true,
@@ -45,9 +26,26 @@
       "error_counts": {}
     },
     {
-      "run_id": "agent-eval-20260725-211102",
-      "created_at": "2026-07-25T21:13:37",
-      "git_revision": "e3394781a65862f35e6aff9beff9d6264b5a5632",
+      "run_id": "agent-eval-20260725-231620",
+      "created_at": "2026-07-25T23:18:15",
+      "git_revision": "13882d18c69abf698ff9b0c8ab9447975cfbaa00",
+      "git_dirty": false,
+      "artifact_valid": true,
+      "gate_pass": true,
+      "evaluation_complete": true,
+      "case_pass_ratio": 1.0,
+      "case_count": 15,
+      "duplicate_tool_violation_count": 0,
+      "unclassified_termination_count": 0,
+      "verified_finding_evidence_binding_ratio": 1.0,
+      "checkpoint_resume_pass_ratio": 1.0,
+      "infrastructure_retry_count": 0,
+      "error_counts": {}
+    },
+    {
+      "run_id": "agent-eval-20260725-231846",
+      "created_at": "2026-07-25T23:20:56",
+      "git_revision": "13882d18c69abf698ff9b0c8ab9447975cfbaa00",
       "git_dirty": false,
       "artifact_valid": true,
       "gate_pass": true,
@@ -73,6 +71,7 @@
     "identity_consistent": true,
     "all_a5_contracts": true,
     "all_a5_case_contracts": true,
+    "all_a5_probe_contracts": true,
     "no_graph_recursion": true,
     "no_duplicate_tool_violations": true,
     "no_unclassified_termination": true,
