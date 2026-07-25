@@ -366,19 +366,19 @@ def _render_research_plan(plan, runtime, identity_error: str) -> str:
         use_container_width=True,
         disabled=not active or runtime is None,
         help=execute_help,
-        key=f"research_execute_{run.run_id}_{run.revision}",
+        key=f"research_execute_{run.run_id}",
     )
     pause = pause_column.button(
         "暂停",
         use_container_width=True,
         disabled=run.status not in {"planned", "running"},
-        key=f"research_pause_{run.run_id}_{run.revision}",
+        key=f"research_pause_{run.run_id}",
     )
     cancel = cancel_column.button(
         "取消",
         use_container_width=True,
         disabled=not active,
-        key=f"research_cancel_{run.run_id}_{run.revision}",
+        key=f"research_cancel_{run.run_id}",
     )
     if identity_error:
         st.error(f"研究执行不可用：{identity_error}")
