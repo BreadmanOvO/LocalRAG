@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import threading
@@ -29,6 +30,23 @@ def get_history(session_id: str) -> "FileChatMessageHistory":
     return FileChatMessageHistory(session_id, get_abs_path("chat_history"))
 
 
+def message_identity(message: BaseMessage) -> str:
+    message_id = getattr(message, "id", None)
+    if message_id is not None:
+        stripped_id = str(message_id).strip()
+        if stripped_id:
+            return f"id:{stripped_id}"
+
+    serialized = json.dumps(
+        message_to_dict(message),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    digest = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+    return f"sha256:{digest}"
+
+
 class FileChatMessageHistory(BaseChatMessageHistory):
     def __init__(self, session_id: str, storage_path: str):
         self.session_id = validate_session_id(session_id)
@@ -41,6 +59,50 @@ class FileChatMessageHistory(BaseChatMessageHistory):
         with self._lock:
             all_messages = [*self.messages, *messages]
             self._write_messages(all_messages)
+
+    def add_messages_unique(self, messages: Sequence[BaseMessage]) -> None:
+        incoming_messages = list(messages)
+        if not incoming_messages:
+            return
+
+        with self._lock:
+            stored_messages = self.messages
+            stored_identities = [message_identity(message) for message in stored_messages]
+            incoming_identities = [
+                message_identity(message) for message in incoming_messages
+            ]
+            overlap = 0
+            for size in range(
+                min(len(stored_identities), len(incoming_identities)),
+                0,
+                -1,
+            ):
+                if stored_identities[-size:] == incoming_identities[:size]:
+                    overlap = size
+                    break
+
+            # Prefer transcript completeness for a single hash overlap;
+            # replay inference requires a multi-message state envelope.
+            if overlap == 1 and incoming_identities[0].startswith("sha256:"):
+                overlap = 0
+
+            seen_explicit_ids = {
+                identity for identity in stored_identities if identity.startswith("id:")
+            }
+            additions = []
+            for message, identity in zip(
+                incoming_messages[overlap:],
+                incoming_identities[overlap:],
+                strict=True,
+            ):
+                if identity.startswith("id:"):
+                    if identity in seen_explicit_ids:
+                        continue
+                    seen_explicit_ids.add(identity)
+                additions.append(message)
+
+            if additions:
+                self._write_messages([*stored_messages, *additions])
 
     def _write_messages(self, messages: Sequence[BaseMessage]) -> None:
         serialized = [message_to_dict(message) for message in messages]

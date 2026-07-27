@@ -16,7 +16,11 @@ from agent import react_agent
 from agent.memory import SessionRetrievalMemory
 from agent.tools.rag_search import build_rag_search_tool
 from agent.tools.show_sources import build_show_sources_tool
-from core.chat_history import ChatHistoryCorruptionError, FileChatMessageHistory
+from core.chat_history import (
+    ChatHistoryCorruptionError,
+    FileChatMessageHistory,
+    message_identity,
+)
 from utils.session import validate_session_id, validate_task_id
 
 
@@ -55,6 +59,20 @@ class SessionIdValidationTests(unittest.TestCase):
 
 
 class FileChatMessageHistoryTests(unittest.TestCase):
+    def test_message_identity_prefers_stripped_explicit_id(self):
+        first = HumanMessage(content="same", id=" message-1 ")
+        second = HumanMessage(content="same", id="message-2")
+
+        self.assertEqual("id:message-1", message_identity(first))
+        self.assertEqual("id:message-2", message_identity(second))
+
+    def test_message_identity_hashes_same_serialized_message_stably(self):
+        first = HumanMessage(content="same semantic message")
+        second = HumanMessage(content="same semantic message")
+
+        self.assertEqual(message_identity(first), message_identity(second))
+        self.assertRegex(message_identity(first), r"^sha256:[0-9a-f]{64}$")
+
     def test_file_history_is_isolated_by_session(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             first = FileChatMessageHistory("session-a", temp_dir)
@@ -104,6 +122,189 @@ class FileChatMessageHistoryTests(unittest.TestCase):
 
         self.assertEqual(40, len(contents))
         self.assertEqual(40, len(set(contents)))
+
+    def test_unique_append_deduplicates_same_explicit_id(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            history = FileChatMessageHistory("session-a", temp_dir)
+
+            history.add_messages_unique(
+                [
+                    HumanMessage(content="first", id="m1"),
+                    HumanMessage(content="duplicate in batch", id="m1"),
+                ]
+            )
+            history.add_messages_unique([HumanMessage(content="replayed", id="m1")])
+
+            self.assertEqual(1, len(history.messages))
+            self.assertEqual("first", history.messages[0].content)
+
+    def test_unique_append_skips_no_id_full_history_replay(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            history = FileChatMessageHistory("session-a", temp_dir)
+            messages = [
+                HumanMessage(content="question-1"),
+                AIMessage(content="answer-1"),
+            ]
+
+            history.add_messages_unique(messages)
+            history.add_messages_unique(messages)
+
+            self.assertEqual(
+                ["question-1", "answer-1"],
+                [message.content for message in history.messages],
+            )
+
+    def test_unique_append_preserves_adjacent_single_no_id_messages(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            history = FileChatMessageHistory("session-a", temp_dir)
+
+            history.add_messages_unique([HumanMessage(content="same")])
+            history.add_messages_unique([HumanMessage(content="same")])
+
+            stored = history.messages
+            self.assertEqual(["same", "same"], [message.content for message in stored])
+            self.assertEqual([None, None], [message.id for message in stored])
+
+    def test_unique_append_preserves_single_hash_overlap_before_new_tail(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            history = FileChatMessageHistory("session-a", temp_dir)
+            history.add_messages_unique([HumanMessage(content="same")])
+
+            history.add_messages_unique(
+                [
+                    HumanMessage(content="same"),
+                    AIMessage(content="answer"),
+                ]
+            )
+
+            self.assertEqual(
+                ["same", "same", "answer"],
+                [message.content for message in history.messages],
+            )
+
+    def test_unique_append_skips_mixed_id_full_history_replay(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            history = FileChatMessageHistory("session-a", temp_dir)
+            messages = [
+                HumanMessage(content="question-1"),
+                AIMessage(content="answer-1", id="a1"),
+            ]
+
+            history.add_messages_unique(messages)
+            history.add_messages_unique(messages)
+
+            self.assertEqual(
+                ["question-1", "answer-1"],
+                [message.content for message in history.messages],
+            )
+
+    def test_unique_append_skips_no_id_suffix_replay_and_appends_tail(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            history = FileChatMessageHistory("session-a", temp_dir)
+            history.add_messages_unique(
+                [
+                    HumanMessage(content="older-question"),
+                    AIMessage(content="older-answer"),
+                    HumanMessage(content="question-1"),
+                    AIMessage(content="answer-1"),
+                ]
+            )
+
+            history.add_messages_unique(
+                [
+                    HumanMessage(content="question-1"),
+                    AIMessage(content="answer-1"),
+                    HumanMessage(content="question-2"),
+                ]
+            )
+
+            self.assertEqual(
+                [
+                    "older-question",
+                    "older-answer",
+                    "question-1",
+                    "answer-1",
+                    "question-2",
+                ],
+                [message.content for message in history.messages],
+            )
+
+    def test_unique_append_skips_mixed_id_suffix_replay_and_appends_tail(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            history = FileChatMessageHistory("session-a", temp_dir)
+            history.add_messages_unique(
+                [
+                    HumanMessage(content="question-1"),
+                    AIMessage(content="answer-1", id="a1"),
+                    HumanMessage(content="question-2"),
+                    AIMessage(content="answer-2", id="a2"),
+                ]
+            )
+
+            history.add_messages_unique(
+                [
+                    AIMessage(content="answer-1", id="a1"),
+                    HumanMessage(content="question-2"),
+                    AIMessage(content="answer-2", id="a2"),
+                    HumanMessage(content="question-3"),
+                ]
+            )
+
+            self.assertEqual(
+                ["question-1", "answer-1", "question-2", "answer-2", "question-3"],
+                [message.content for message in history.messages],
+            )
+
+    def test_unique_append_preserves_repeated_content_after_intervening_message(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            history = FileChatMessageHistory("session-a", temp_dir)
+            history.add_messages_unique(
+                [
+                    HumanMessage(content="repeat this question"),
+                    AIMessage(content="first answer"),
+                ]
+            )
+
+            history.add_messages_unique([HumanMessage(content="repeat this question")])
+
+            self.assertEqual(
+                ["repeat this question", "first answer", "repeat this question"],
+                [message.content for message in history.messages],
+            )
+
+    def test_unique_append_does_not_write_when_replay_adds_nothing(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            history = FileChatMessageHistory("session-a", temp_dir)
+            history.add_messages_unique([HumanMessage(content="question", id="m1")])
+
+            with mock.patch.object(history, "_write_messages") as write_messages:
+                history.add_messages_unique([HumanMessage(content="replay", id="m1")])
+
+            write_messages.assert_not_called()
+
+    def test_unique_append_serializes_concurrent_same_explicit_id(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            histories = [
+                FileChatMessageHistory("session-a", temp_dir),
+                FileChatMessageHistory("session-a", temp_dir),
+            ]
+            start = threading.Barrier(2)
+
+            def add_message(history):
+                start.wait()
+                history.add_messages_unique(
+                    [HumanMessage(content="same graph message", id="m1")]
+                )
+
+            with ThreadPoolExecutor(max_workers=2) as executor:
+                futures = [executor.submit(add_message, history) for history in histories]
+                for future in futures:
+                    future.result()
+
+            stored = histories[0].messages
+
+        self.assertEqual(1, len(stored))
+        self.assertEqual("m1", stored[0].id)
 
     def test_atomic_write_preserves_previous_history_when_replace_fails(self):
         with tempfile.TemporaryDirectory() as temp_dir:

@@ -4,7 +4,7 @@ from dataclasses import FrozenInstanceError
 from pathlib import Path
 from unittest import mock
 
-from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 
 from agent.context import (
     CompressionDecision,
@@ -16,6 +16,7 @@ from agent.context import (
     decide_compression,
 )
 from agent.context import __all__ as context_exports
+from agent.context.budget import partition_messages
 
 
 class ConversationBudgetTests(unittest.TestCase):
@@ -311,6 +312,200 @@ class ConversationBudgetTests(unittest.TestCase):
             ],
             context_exports,
         )
+
+
+class ConversationPartitionTests(unittest.TestCase):
+    def assert_reconstructs(self, messages, prefix, recent):
+        reconstructed = prefix + recent
+
+        self.assertIs(type(prefix), tuple)
+        self.assertIs(type(recent), tuple)
+        self.assertEqual(len(messages), len(reconstructed))
+        for expected, actual in zip(messages, reconstructed, strict=True):
+            self.assertIs(expected, actual)
+
+    def test_empty_and_too_few_turns_remain_recent(self):
+        self.assertEqual(
+            ((), ()),
+            partition_messages(iter(()), recent_turns=4, target_tokens=0),
+        )
+        messages = [
+            HumanMessage(content="question-1"),
+            AIMessage(content="answer-1"),
+            HumanMessage(content="question-2"),
+            AIMessage(content="answer-2"),
+        ]
+
+        prefix, recent = partition_messages(
+            (message for message in messages),
+            recent_turns=4,
+            target_tokens=0,
+        )
+
+        self.assertEqual((), prefix)
+        self.assertEqual(tuple(messages), recent)
+        self.assert_reconstructs(messages, prefix, recent)
+
+    def test_exactly_latest_four_complete_turns_remain_verbatim(self):
+        messages = []
+        for index in range(5):
+            messages.extend(
+                [
+                    HumanMessage(content=f"question-{index}"),
+                    AIMessage(content=f"answer-{index}"),
+                ]
+            )
+
+        prefix, recent = partition_messages(messages, recent_turns=4, target_tokens=0)
+
+        self.assertEqual(tuple(messages[:2]), prefix)
+        self.assertEqual(tuple(messages[2:]), recent)
+        self.assert_reconstructs(messages, prefix, recent)
+
+    def test_final_unanswered_human_is_kept_after_recent_complete_turns(self):
+        messages = [
+            HumanMessage(content="question-0"),
+            AIMessage(content="answer-0"),
+            HumanMessage(content="question-1"),
+            AIMessage(content="answer-1"),
+            HumanMessage(content="question-2"),
+            AIMessage(content="answer-2"),
+            HumanMessage(content="current request"),
+        ]
+
+        prefix, recent = partition_messages(messages, recent_turns=2, target_tokens=0)
+
+        self.assertEqual(tuple(messages[:2]), prefix)
+        self.assertEqual(tuple(messages[2:]), recent)
+        self.assertIs(messages[-1], recent[-1])
+        self.assert_reconstructs(messages, prefix, recent)
+
+    def test_latest_multi_tool_turn_stays_wholly_recent(self):
+        messages = [
+            HumanMessage(content="older question"),
+            AIMessage(content="older answer"),
+            HumanMessage(content="inspect both sources"),
+            AIMessage(
+                content="",
+                tool_calls=[
+                    {"name": "inspect", "args": {"source": "a"}, "id": "call-a"},
+                    {"name": "inspect", "args": {"source": "b"}, "id": "call-b"},
+                ],
+            ),
+            ToolMessage(content="result-a", tool_call_id="call-a"),
+            ToolMessage(content="result-b", tool_call_id="call-b"),
+            AIMessage(content="combined answer"),
+        ]
+
+        prefix, recent = partition_messages(messages, recent_turns=1, target_tokens=0)
+
+        self.assertEqual(tuple(messages[:2]), prefix)
+        self.assertEqual(tuple(messages[2:]), recent)
+        self.assert_reconstructs(messages, prefix, recent)
+
+    def test_crossing_tool_result_moves_boundary_to_calling_human_turn(self):
+        messages = [
+            HumanMessage(content="older question"),
+            AIMessage(content="older answer"),
+            HumanMessage(content="start tool work"),
+            AIMessage(
+                content="",
+                tool_calls=[
+                    {"name": "inspect", "args": {}, "id": "call-a"},
+                    {"name": "inspect", "args": {}, "id": "call-b"},
+                ],
+            ),
+            HumanMessage(content="malformed crossing turn"),
+            ToolMessage(content="result-a", tool_call_id="call-a"),
+            ToolMessage(content="result-b", tool_call_id="call-b"),
+            AIMessage(content="answer after tools"),
+        ]
+
+        prefix, recent = partition_messages(messages, recent_turns=1, target_tokens=0)
+
+        self.assertEqual(tuple(messages[:2]), prefix)
+        self.assertEqual(tuple(messages[2:]), recent)
+        self.assertFalse(
+            isinstance(prefix[-1], AIMessage) and bool(prefix[-1].tool_calls)
+        )
+        self.assert_reconstructs(messages, prefix, recent)
+
+    def test_optional_preceding_turn_is_retained_with_generous_target(self):
+        messages = [
+            HumanMessage(content="question-0"),
+            AIMessage(content="answer-0"),
+            HumanMessage(content="question-1"),
+            AIMessage(content="answer-1"),
+            HumanMessage(content="question-2"),
+            AIMessage(content="answer-2"),
+        ]
+        target_tokens = count_message_tokens(messages[2:])
+
+        prefix, recent = partition_messages(
+            messages,
+            recent_turns=1,
+            target_tokens=target_tokens,
+        )
+
+        self.assertEqual(tuple(messages[:2]), prefix)
+        self.assertEqual(tuple(messages[2:]), recent)
+        self.assert_reconstructs(messages, prefix, recent)
+
+    def test_mandatory_recent_turn_can_exceed_target(self):
+        messages = [
+            HumanMessage(content="older question"),
+            AIMessage(content="older answer"),
+            HumanMessage(content="mandatory question with substantial detail"),
+            AIMessage(content="mandatory answer with substantial detail"),
+        ]
+
+        prefix, recent = partition_messages(messages, recent_turns=1, target_tokens=0)
+
+        self.assertEqual(tuple(messages[:2]), prefix)
+        self.assertEqual(tuple(messages[2:]), recent)
+        self.assertGreater(count_message_tokens(recent), 0)
+        self.assert_reconstructs(messages, prefix, recent)
+
+    def test_partition_rejects_invalid_limits(self):
+        messages = [HumanMessage(content="question")]
+        invalid_cases = (
+            ({"recent_turns": True, "target_tokens": 0}, TypeError, "recent_turns"),
+            ({"recent_turns": 1.5, "target_tokens": 0}, TypeError, "recent_turns"),
+            ({"recent_turns": 0, "target_tokens": 0}, ValueError, "recent_turns"),
+            ({"recent_turns": -1, "target_tokens": 0}, ValueError, "recent_turns"),
+            ({"recent_turns": 1, "target_tokens": True}, TypeError, "target_tokens"),
+            ({"recent_turns": 1, "target_tokens": 1.5}, TypeError, "target_tokens"),
+            ({"recent_turns": 1, "target_tokens": -1}, ValueError, "target_tokens"),
+        )
+
+        for kwargs, error_type, field_name in invalid_cases:
+            with self.subTest(kwargs=kwargs):
+                with self.assertRaisesRegex(error_type, field_name):
+                    partition_messages(messages, **kwargs)
+
+    def test_partition_rejects_text_and_bytes_inputs(self):
+        for messages in ("not messages", b"not messages"):
+            with self.subTest(messages=messages):
+                with self.assertRaisesRegex(
+                    TypeError,
+                    "^messages must be an iterable of BaseMessage$",
+                ):
+                    partition_messages(messages, recent_turns=1, target_tokens=0)
+
+    def test_partition_rejects_iterable_containing_non_message(self):
+        messages = (
+            item
+            for item in (
+                HumanMessage(content="valid"),
+                "not a message",
+            )
+        )
+
+        with self.assertRaisesRegex(
+            TypeError,
+            "^messages must contain only BaseMessage values$",
+        ):
+            partition_messages(messages, recent_turns=1, target_tokens=0)
 
 
 class LongContextDatasetContractTests(unittest.TestCase):
