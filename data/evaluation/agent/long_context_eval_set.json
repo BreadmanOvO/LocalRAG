@@ -1,0 +1,193 @@
+{
+  "contract_version": "long-context-eval-v1",
+  "cases": [
+    {
+      "id": "constraint-retention-001",
+      "description": "An early publication-date constraint remains available after compression.",
+      "required_constraints": [
+        "Use only peer-reviewed sources published in or after 2024."
+      ],
+      "required_findings": [],
+      "required_evidence_ids": [],
+      "required_source_ids": [],
+      "required_recent_message_ids": [
+        "msg-constraint-008",
+        "msg-constraint-009"
+      ],
+      "expected_compression_count": 1,
+      "expected_error_code": ""
+    },
+    {
+      "id": "evidence-retention-001",
+      "description": "A confirmed finding retains its evidence and source identifiers across compression.",
+      "required_constraints": [],
+      "required_findings": [
+        "Method A reduced median retrieval latency by 18 percent."
+      ],
+      "required_evidence_ids": [
+        "evidence-latency-001"
+      ],
+      "required_source_ids": [
+        "source-benchmark-001"
+      ],
+      "required_recent_message_ids": [
+        "msg-evidence-010",
+        "msg-evidence-011"
+      ],
+      "expected_compression_count": 1,
+      "expected_error_code": ""
+    },
+    {
+      "id": "unresolved-question-001",
+      "description": "An unresolved deployment-hardware question remains open after compression.",
+      "required_constraints": [
+        "Do not resolve the deployment GPU question without supporting evidence."
+      ],
+      "required_findings": [],
+      "required_evidence_ids": [],
+      "required_source_ids": [],
+      "required_recent_message_ids": [
+        "msg-unresolved-question-006",
+        "msg-unresolved-question-007"
+      ],
+      "expected_compression_count": 1,
+      "expected_error_code": ""
+    },
+    {
+      "id": "failed-tool-001",
+      "description": "A failed source inspection remains recorded and is not promoted to evidence.",
+      "required_constraints": [
+        "Do not treat the timed-out inspect_source call as evidence."
+      ],
+      "required_findings": [],
+      "required_evidence_ids": [],
+      "required_source_ids": [],
+      "required_recent_message_ids": [
+        "msg-failed-tool-call-001",
+        "msg-failed-tool-result-001"
+      ],
+      "expected_compression_count": 1,
+      "expected_error_code": ""
+    },
+    {
+      "id": "tool-pair-boundary-001",
+      "description": "Compression preserves a complete assistant tool call and matching tool result pair.",
+      "required_constraints": [],
+      "required_findings": [],
+      "required_evidence_ids": [],
+      "required_source_ids": [
+        "source-tool-pair-001"
+      ],
+      "required_recent_message_ids": [
+        "msg-tool-call-001",
+        "msg-tool-result-001",
+        "msg-tool-followup-001"
+      ],
+      "expected_compression_count": 1,
+      "expected_error_code": ""
+    },
+    {
+      "id": "rolling-summary-001",
+      "description": "Two rolling compressions retain earlier constraints and findings.",
+      "required_constraints": [
+        "Report latency in milliseconds."
+      ],
+      "required_findings": [
+        "Method A median latency is 42 milliseconds.",
+        "Method B median latency is 57 milliseconds."
+      ],
+      "required_evidence_ids": [
+        "evidence-rolling-001",
+        "evidence-rolling-002"
+      ],
+      "required_source_ids": [
+        "source-rolling-001",
+        "source-rolling-002"
+      ],
+      "required_recent_message_ids": [
+        "msg-rolling-021",
+        "msg-rolling-022",
+        "msg-rolling-023",
+        "msg-rolling-024"
+      ],
+      "expected_compression_count": 2,
+      "expected_error_code": ""
+    },
+    {
+      "id": "session-resume-001",
+      "description": "A resumed session rebuilds context from the saved summary and uncovered messages.",
+      "required_constraints": [
+        "Keep the comparison limited to the selected corpus."
+      ],
+      "required_findings": [
+        "The selected corpus contains three benchmark reports."
+      ],
+      "required_evidence_ids": [
+        "evidence-resume-001"
+      ],
+      "required_source_ids": [
+        "source-resume-001"
+      ],
+      "required_recent_message_ids": [
+        "msg-resume-012",
+        "msg-resume-013"
+      ],
+      "expected_compression_count": 1,
+      "expected_error_code": ""
+    },
+    {
+      "id": "revision-conflict-001",
+      "description": "A revision conflict retries against the latest summary and commits once.",
+      "required_constraints": [
+        "Preserve the user's source-exclusion constraint during the retry."
+      ],
+      "required_findings": [
+        "Source C was excluded at the user's request."
+      ],
+      "required_evidence_ids": [],
+      "required_source_ids": [
+        "source-conflict-accepted-001"
+      ],
+      "required_recent_message_ids": [
+        "msg-conflict-014",
+        "msg-conflict-015"
+      ],
+      "expected_compression_count": 1,
+      "expected_error_code": ""
+    },
+    {
+      "id": "local-summary-fallback-001",
+      "description": "Cloud fallback completes one compression after local summarization fails.",
+      "required_constraints": [
+        "Retain the original answer format after summary fallback."
+      ],
+      "required_findings": [
+        "The local summary request failed before producing valid JSON."
+      ],
+      "required_evidence_ids": [],
+      "required_source_ids": [],
+      "required_recent_message_ids": [
+        "msg-fallback-010",
+        "msg-fallback-011"
+      ],
+      "expected_compression_count": 1,
+      "expected_error_code": ""
+    },
+    {
+      "id": "dual-summary-failure-001",
+      "description": "Local and cloud summarizers both fail near the hard context limit.",
+      "required_constraints": [
+        "Do not silently discard original messages after summary failure."
+      ],
+      "required_findings": [],
+      "required_evidence_ids": [],
+      "required_source_ids": [],
+      "required_recent_message_ids": [
+        "msg-dual-failure-018",
+        "msg-dual-failure-019"
+      ],
+      "expected_compression_count": 0,
+      "expected_error_code": "conversation_compression_failed"
+    }
+  ]
+}
