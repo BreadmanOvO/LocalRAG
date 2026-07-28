@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from typing import TypedDict
+
+from agent.context.store import ConversationSummarySnapshot
 from agent.research.control import RESEARCH_PAUSED
 from agent.research.models import ResearchPlanSnapshot
 
@@ -12,6 +15,119 @@ RUN_STATUS_LABELS = {
     "cancelled": "已取消",
     "failed": "失败",
 }
+
+
+class ConversationContextFindingView(TypedDict):
+    claim: str
+    evidence_ids: tuple[str, ...]
+
+
+class ConversationContextSummaryView(TypedDict):
+    goal: str
+    user_constraints: tuple[str, ...]
+    confirmed_findings: tuple[ConversationContextFindingView, ...]
+    decisions: tuple[str, ...]
+    unresolved_questions: tuple[str, ...]
+    failed_attempts: tuple[str, ...]
+    referenced_source_ids: tuple[str, ...]
+
+
+class ConversationContextView(TypedDict):
+    available: bool
+    status: str
+    revision: int
+    compression_count: int
+    tokens_before: int
+    tokens_after: int
+    token_reduction: int
+    token_reduction_ratio: float
+    messages_before: int
+    messages_after: int
+    retained_messages: int
+    summary_model: str
+    fallback_reason: str
+    summary: ConversationContextSummaryView
+
+
+def build_conversation_context_view(
+    snapshot: ConversationSummarySnapshot | None,
+    event_count: int,
+) -> ConversationContextView:
+    if snapshot is not None and not isinstance(
+        snapshot,
+        ConversationSummarySnapshot,
+    ):
+        raise TypeError("snapshot must be a ConversationSummarySnapshot or None")
+    if type(event_count) is not int:
+        raise TypeError("event_count must be an int")
+    if event_count < 0:
+        raise ValueError("event_count must be non-negative")
+
+    empty_summary: ConversationContextSummaryView = {
+        "goal": "",
+        "user_constraints": (),
+        "confirmed_findings": (),
+        "decisions": (),
+        "unresolved_questions": (),
+        "failed_attempts": (),
+        "referenced_source_ids": (),
+    }
+    if snapshot is None:
+        return {
+            "available": False,
+            "status": "",
+            "revision": 0,
+            "compression_count": event_count,
+            "tokens_before": 0,
+            "tokens_after": 0,
+            "token_reduction": 0,
+            "token_reduction_ratio": 0.0,
+            "messages_before": 0,
+            "messages_after": 0,
+            "retained_messages": 0,
+            "summary_model": "",
+            "fallback_reason": "",
+            "summary": empty_summary,
+        }
+
+    token_reduction = max(0, snapshot.tokens_before - snapshot.tokens_after)
+    token_reduction_ratio = (
+        token_reduction / snapshot.tokens_before
+        if snapshot.tokens_before > 0 and token_reduction > 0
+        else 0.0
+    )
+    summary = snapshot.summary
+    summary_view: ConversationContextSummaryView = {
+        "goal": summary.goal if summary.goal else "",
+        "user_constraints": tuple(summary.user_constraints),
+        "confirmed_findings": tuple(
+            ConversationContextFindingView(
+                claim=finding.claim if finding.claim else "",
+                evidence_ids=tuple(finding.evidence_ids),
+            )
+            for finding in summary.confirmed_findings
+        ),
+        "decisions": tuple(summary.decisions),
+        "unresolved_questions": tuple(summary.unresolved_questions),
+        "failed_attempts": tuple(summary.failed_attempts),
+        "referenced_source_ids": tuple(summary.referenced_source_ids),
+    }
+    return {
+        "available": True,
+        "status": "已压缩",
+        "revision": snapshot.revision,
+        "compression_count": event_count,
+        "tokens_before": snapshot.tokens_before,
+        "tokens_after": snapshot.tokens_after,
+        "token_reduction": token_reduction,
+        "token_reduction_ratio": token_reduction_ratio,
+        "messages_before": snapshot.messages_before,
+        "messages_after": snapshot.messages_after,
+        "retained_messages": snapshot.messages_after,
+        "summary_model": snapshot.summary_model or "",
+        "fallback_reason": snapshot.fallback_reason or "",
+        "summary": summary_view,
+    }
 
 
 def run_status_label(plan: ResearchPlanSnapshot) -> str:

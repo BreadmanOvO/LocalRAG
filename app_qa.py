@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 import streamlit as st
@@ -28,6 +29,7 @@ from agent.research import (
     research_progress,
     run_status_label,
 )
+from agent.research.presentation import build_conversation_context_view
 from config import settings as config
 from utils.session import validate_task_id
 
@@ -47,6 +49,7 @@ MEMORY_VALUE_FIELDS = {
     "open_question": "open_questions",
     "confirmed_source": "confirmed_sources",
 }
+logger = logging.getLogger(__name__)
 
 
 st.set_page_config(page_title="LocalRAG 研究助手", layout="wide")
@@ -391,6 +394,69 @@ def _render_research_plan(plan, runtime, identity_error: str) -> str:
     return ""
 
 
+def _render_conversation_context(agent) -> None:
+    snapshot = None
+    event_count = 0
+    read_error = ""
+    try:
+        snapshot = agent.get_conversation_context()
+    except Exception as exc:
+        read_error = "会话压缩状态读取失败"
+        logger.warning("failed to read conversation compression state: %s", exc)
+    else:
+        context_middleware = getattr(agent, "context_middleware", None)
+        if snapshot is not None and context_middleware is not None:
+            try:
+                events = context_middleware.store.list_events(agent.session_id)
+                event_count = len(events)
+            except Exception as exc:
+                event_count = snapshot.revision
+                read_error = "压缩次数读取失败，已使用 revision"
+                logger.warning("failed to read conversation compression events: %s", exc)
+
+    view = build_conversation_context_view(snapshot, event_count)
+    with st.expander("会话压缩状态", expanded=view["available"]):
+        if read_error:
+            st.error(read_error)
+        if not view["available"]:
+            st.caption("尚未触发会话压缩")
+            return
+
+        revision_column, count_column, token_column, retained_column = st.columns(4)
+        revision_column.metric("Revision", view["revision"])
+        count_column.metric("压缩次数", view["compression_count"])
+        token_column.metric(
+            "Token 降幅",
+            f'{view["token_reduction"]} '
+            f'({view["token_reduction_ratio"]:.1%})',
+        )
+        retained_column.metric("保留消息", view["retained_messages"])
+
+        st.caption(f'摘要模型：{view["summary_model"]}')
+        if view["fallback_reason"]:
+            st.caption(f'降级原因：{view["fallback_reason"]}')
+        else:
+            st.caption("降级状态：未触发")
+
+        summary = view["summary"]
+        summary_payload = {
+            "goal": summary["goal"],
+            "user_constraints": list(summary["user_constraints"]),
+            "confirmed_findings": [
+                {
+                    "claim": finding["claim"],
+                    "evidence_ids": list(finding["evidence_ids"]),
+                }
+                for finding in summary["confirmed_findings"]
+            ],
+            "decisions": list(summary["decisions"]),
+            "unresolved_questions": list(summary["unresolved_questions"]),
+            "failed_attempts": list(summary["failed_attempts"]),
+            "referenced_source_ids": list(summary["referenced_source_ids"]),
+        }
+        st.json(summary_payload)
+
+
 def _ensure_user_message(goal: str) -> None:
     if any(
         message.get("role") == "user" and message.get("content") == goal
@@ -561,6 +627,7 @@ research_action = _render_research_plan(
     research_runtime,
     research_identity_error,
 )
+_render_conversation_context(agent)
 research_run_to_execute = ""
 if research_action and research_plan is not None:
     try:
