@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import Annotated, Any
 
@@ -223,8 +223,18 @@ class AgentExecutionBudget:
         if self.no_progress_limit is not None and self.no_progress_limit <= 0:
             raise ValueError("no_progress_limit must be greater than zero")
 
-    def build_middleware(self, *, progress_token: Callable[[], Any] | None = None) -> list:
-        middleware = []
+    def build_middleware(
+        self,
+        *,
+        progress_token: Callable[[], Any] | None = None,
+        prefix: Sequence[AgentMiddleware] = (),
+    ) -> list[AgentMiddleware]:
+        if isinstance(prefix, (str, bytes, bytearray)) or not isinstance(prefix, Sequence):
+            raise TypeError("prefix must be a sequence of AgentMiddleware values")
+        if not all(isinstance(item, AgentMiddleware) for item in prefix):
+            raise TypeError("prefix must contain only AgentMiddleware values")
+
+        middleware = list(prefix)
         if self.duplicate_tool_call_detection or self.no_progress_limit is not None:
             middleware.append(
                 ExecutionGuardMiddleware(

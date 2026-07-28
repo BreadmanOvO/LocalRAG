@@ -7,6 +7,8 @@ from langchain.agents.middleware.tool_call_limit import ToolCallLimitExceededErr
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.errors import GraphRecursionError
 
+from agent.context.middleware import ConversationContextMiddleware
+from agent.context.models import ConversationCompressionError
 from agent.execution import (
     AgentExecutionBudget,
     DEFAULT_AGENT_EXECUTION_BUDGET,
@@ -38,6 +40,8 @@ logger = logging.getLogger(__name__)
 
 
 def _execution_error_code(exc: Exception) -> str:
+    if isinstance(exc, ConversationCompressionError):
+        return ConversationCompressionError.error_code
     if isinstance(exc, DuplicateToolCallError):
         return "duplicate_tool_call"
     if isinstance(exc, NoProgressLimitExceededError):
@@ -144,6 +148,7 @@ class ReactAgent:
         checkpointer=None,
         execution_budget: AgentExecutionBudget | None = None,
         recursion_limit: int | None = None,
+        context_middleware: ConversationContextMiddleware | None = None,
     ):
         self.session_id = validate_session_id(session_id)
         self.task_id = validate_task_id(task_id or session_id)
@@ -161,6 +166,19 @@ class ReactAgent:
             ),
         )
         self.recursion_limit = self.execution_budget.recursion_limit
+        if context_middleware is not None and not isinstance(
+            context_middleware,
+            ConversationContextMiddleware,
+        ):
+            raise TypeError(
+                "context_middleware must be a ConversationContextMiddleware or None"
+            )
+        if (
+            context_middleware is not None
+            and context_middleware.session_id != self.session_id
+        ):
+            raise ValueError("context_middleware session_id must match session_id")
+        self.context_middleware = context_middleware
         self.evidence_service = evidence_service or SourceEvidenceService()
         self.task_memory_store.ensure_task(self.task_id)
 
@@ -208,6 +226,7 @@ class ReactAgent:
             checkpointer=checkpointer or InMemorySaver(),
             middleware=self.execution_budget.build_middleware(
                 progress_token=self._execution_progress_token,
+                prefix=(context_middleware,) if context_middleware is not None else (),
             ),
         )
 
@@ -223,6 +242,11 @@ class ReactAgent:
 
     def get_task_memory(self):
         return self.task_memory_store.get_task(self.task_id)
+
+    def get_conversation_context(self):
+        if self.context_middleware is None:
+            return None
+        return self.context_middleware.get_snapshot()
 
     def set_task_memory_enabled(self, enabled: bool) -> None:
         self.task_memory_policy.enabled = bool(enabled)

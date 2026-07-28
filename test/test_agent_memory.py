@@ -13,6 +13,9 @@ from pydantic import Field
 from langgraph.errors import GraphRecursionError
 
 from agent import react_agent
+from agent.context.compressor import ConversationCompressor
+from agent.context.middleware import ConversationContextMiddleware
+from agent.context.store import ConversationContextStore
 from agent.memory import SessionRetrievalMemory
 from agent.tools.rag_search import build_rag_search_tool
 from agent.tools.show_sources import build_show_sources_tool
@@ -442,6 +445,68 @@ class ReactAgentSessionTests(unittest.TestCase):
         )
         self.assertEqual(3, middleware[1].run_limit)
         self.assertEqual(4, middleware[2].run_limit)
+
+    def test_constructor_injects_context_middleware_only_when_explicit(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            context_middleware = ConversationContextMiddleware(
+                session_id="session-a",
+                compressor=mock.create_autospec(ConversationCompressor, instance=True),
+                store=mock.create_autospec(ConversationContextStore, instance=True),
+                history=FileChatMessageHistory("session-a", temp_dir),
+            )
+            with (
+                mock.patch.object(react_agent, "create_agent", return_value=mock.Mock()) as create_agent,
+                mock.patch.object(react_agent, "load_agent_system_prompt", return_value="system"),
+            ):
+                agent = react_agent.ReactAgent(
+                    "session-a",
+                    task_id="task-a",
+                    task_memory_store=mock.Mock(),
+                    chat_model=object(),
+                    rag_service=mock.Mock(),
+                    context_middleware=context_middleware,
+                )
+
+        middleware = create_agent.call_args.kwargs["middleware"]
+        self.assertEqual(
+            [
+                "ConversationContextMiddleware",
+                "ExecutionGuardMiddleware",
+                "ToolCallLimitMiddleware",
+                "ModelCallLimitMiddleware",
+            ],
+            [type(item).__name__ for item in middleware],
+        )
+        self.assertIs(context_middleware, agent.context_middleware)
+
+    def test_get_conversation_context_returns_snapshot_or_none(self):
+        without_context = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+        without_context.context_middleware = None
+        self.assertIsNone(without_context.get_conversation_context())
+
+        snapshot = object()
+        with_context = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+        with_context.context_middleware = mock.Mock()
+        with_context.context_middleware.get_snapshot.return_value = snapshot
+        self.assertIs(snapshot, with_context.get_conversation_context())
+
+    def test_constructor_rejects_context_middleware_for_another_session(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            context_middleware = ConversationContextMiddleware(
+                session_id="session-b",
+                compressor=mock.create_autospec(ConversationCompressor, instance=True),
+                store=mock.create_autospec(ConversationContextStore, instance=True),
+                history=FileChatMessageHistory("session-b", temp_dir),
+            )
+            with self.assertRaisesRegex(ValueError, "context_middleware"):
+                react_agent.ReactAgent(
+                    "session-a",
+                    task_id="task-a",
+                    task_memory_store=mock.Mock(),
+                    chat_model=object(),
+                    rag_service=mock.Mock(),
+                    context_middleware=context_middleware,
+                )
 
     def test_execution_progress_token_ignores_memory_and_retrieval_order(self):
         agent = react_agent.ReactAgent.__new__(react_agent.ReactAgent)

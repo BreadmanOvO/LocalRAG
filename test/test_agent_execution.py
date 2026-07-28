@@ -1,7 +1,11 @@
 import unittest
 from unittest import mock
 
-from langchain.agents.middleware import ModelCallLimitMiddleware, ToolCallLimitMiddleware
+from langchain.agents.middleware import (
+    AgentMiddleware,
+    ModelCallLimitMiddleware,
+    ToolCallLimitMiddleware,
+)
 from langchain.agents.middleware.model_call_limit import ModelCallLimitExceededError
 from langchain.agents.middleware.tool_call_limit import ToolCallLimitExceededError
 from langchain_core.language_models.chat_models import BaseChatModel
@@ -17,6 +21,7 @@ from agent.execution import (
     ExecutionGuardMiddleware,
     NoProgressLimitExceededError,
 )
+from agent.context.models import ConversationCompressionError
 
 
 class LoopingToolChatModel(BaseChatModel):
@@ -157,6 +162,30 @@ class AgentExecutionBudgetTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "no_progress_limit"):
             AgentExecutionBudget(no_progress_limit=0)
 
+    def test_budget_accepts_strict_middleware_prefix_in_order(self):
+        prefix = AgentMiddleware()
+
+        middleware = DEFAULT_AGENT_EXECUTION_BUDGET.build_middleware(prefix=(prefix,))
+
+        self.assertIs(prefix, middleware[0])
+        self.assertEqual(
+            [
+                "AgentMiddleware",
+                "ExecutionGuardMiddleware",
+                "ToolCallLimitMiddleware",
+                "ModelCallLimitMiddleware",
+            ],
+            [type(item).__name__ for item in middleware],
+        )
+
+    def test_budget_rejects_invalid_prefix_sequences_and_items(self):
+        for prefix in ("middleware", 1, object()):
+            with self.subTest(prefix=prefix):
+                with self.assertRaisesRegex(TypeError, "prefix"):
+                    DEFAULT_AGENT_EXECUTION_BUDGET.build_middleware(prefix=prefix)
+        with self.assertRaisesRegex(TypeError, "AgentMiddleware"):
+            DEFAULT_AGENT_EXECUTION_BUDGET.build_middleware(prefix=(object(),))
+
     def test_tool_limit_allows_boundary_and_blocks_next_call(self):
         limiter = ToolCallLimitMiddleware(run_limit=3, exit_behavior="error")
         message = AIMessage(
@@ -248,6 +277,12 @@ class AgentExecutionErrorTests(unittest.TestCase):
         self.assertEqual(
             "[运行错误] no_progress_limit\n",
             self._stream_error(NoProgressLimitExceededError(2, 2)),
+        )
+
+    def test_compression_failure_is_exposed_as_structured_error_code(self):
+        self.assertEqual(
+            "[运行错误] conversation_compression_failed\n",
+            self._stream_error(ConversationCompressionError("hard limit")),
         )
 
 
