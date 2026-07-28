@@ -540,6 +540,8 @@ class LongContextDatasetContractTests(unittest.TestCase):
     EXPECTED_FIELDS = {
         "id",
         "description",
+        "fixture",
+        "answer_contract",
         "required_constraints",
         "required_findings",
         "required_evidence_ids",
@@ -570,6 +572,26 @@ class LongContextDatasetContractTests(unittest.TestCase):
                 self.assertEqual(self.EXPECTED_FIELDS, set(case))
                 self.assertIs(type(case["id"]), str)
                 self.assertIs(type(case["description"]), str)
+                self.assertEqual(
+                    {
+                        "messages",
+                        "previous_summary",
+                        "expected_observations",
+                        "expected_summary",
+                    },
+                    set(case["fixture"]),
+                )
+                self.assertIs(type(case["fixture"]["messages"]), list)
+                self.assertTrue(case["fixture"]["messages"])
+                self.assertEqual(
+                    {
+                        "required_terms",
+                        "forbidden_terms",
+                        "min_chars",
+                        "required_source_ids",
+                    },
+                    set(case["answer_contract"]),
+                )
                 for field_name in self.LIST_FIELDS:
                     self.assertIs(type(case[field_name]), list)
                     self.assertTrue(all(type(item) is str for item in case[field_name]))
