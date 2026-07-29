@@ -60,6 +60,15 @@ saves/
 # oh-my-claudecode state
 .omc/
 
+# Local model serving builds and benchmark outputs
+artifacts/models/
+tools/llama.cpp/
+results/model_serving/
+results/model_quality/
+results/model_benchmark/
+!model_deployment/manifests/.gitkeep
+!model_deployment/manifests/*.json
+
 # Local secrets / env files
 .env
 .env.*

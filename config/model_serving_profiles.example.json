@@ -1,0 +1,31 @@
+{
+  "contract_version": "localrag-model-profile-v1",
+  "profiles": {
+    "e6_1_adapter_bf16": {
+      "model_id": "localrag-qwen3-4b-e6.1",
+      "backend": "transformers",
+      "base_model_path": "models/Qwen3-4B",
+      "adapter_path": "saves/Qwen3-4B-Thinking/lora/localrag_sft_e6_1_qlora_webui",
+      "artifact_path": null,
+      "dtype": "bfloat16",
+      "quantization": "none",
+      "context_limit": 40960,
+      "max_new_tokens": 1024,
+      "enable_thinking": false,
+      "manifest_path": "model_deployment/manifests/e6_1_input_manifest.json"
+    },
+    "e6_1_q4_k_m": {
+      "model_id": "localrag-qwen3-4b-e6.1",
+      "backend": "llama_cpp",
+      "base_model_path": null,
+      "adapter_path": null,
+      "artifact_path": "artifacts/models/qwen3-4b-e6.1-q4_k_m.gguf",
+      "dtype": "float16",
+      "quantization": "Q4_K_M",
+      "context_limit": 40960,
+      "max_new_tokens": 1024,
+      "enable_thinking": false,
+      "manifest_path": "model_deployment/manifests/e6_1_q4_k_m_manifest.json"
+    }
+  }
+}
