@@ -42,4 +42,13 @@ __all__ = [
     "ProfileValidationError",
     "create_app",
     "load_profiles",
+    "TransformersGenerationBackend",
 ]
+
+
+def __getattr__(name: str):
+    if name == "TransformersGenerationBackend":
+        from .transformers_backend import TransformersGenerationBackend
+
+        return TransformersGenerationBackend
+    raise AttributeError(name)

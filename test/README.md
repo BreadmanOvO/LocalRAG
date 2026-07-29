@@ -25,3 +25,18 @@ python test/chunk_benchmark.py --input data/your_doc.txt --pairs "500:80,800:120
 ```bash
 python test/chunk_benchmark.py --input data/your_doc.txt --out test/chunk_report.json
 ```
+
+## 2) v1.6 本地模型服务合同
+
+以下测试不加载真实 4B 权重：
+
+```powershell
+python -m unittest test.test_model_serving_profiles test.test_model_manifest -v
+python -m unittest test.test_model_serving_api -v
+python -m unittest test.test_transformers_backend -v
+```
+
+- `test_model_serving_profiles.py`：固定 BF16/Q4 profile 和路径边界。
+- `test_model_manifest.py`：验证模型输入 SHA-256 与 E6.1 LoRA 身份。
+- `test_model_serving_api.py`：验证 OpenAI-compatible API、队列、SSE 和指标。
+- `test_transformers_backend.py`：使用 mock 验证 BF16/PEFT 加载、生成、取消和 OOM latch。
