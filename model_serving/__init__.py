@@ -1,3 +1,20 @@
+from .api import create_app
+from .backend import (
+    BackendConnectionError,
+    BackendError,
+    BackendGenerationError,
+    BackendIdentity,
+    BackendIdentityError,
+    BackendMessage,
+    BackendOutOfMemoryError,
+    BackendReadiness,
+    BackendRequestError,
+    BackendTimeoutError,
+    GenerationBackend,
+    GenerationChunk,
+    GenerationHandle,
+    GenerationRequest,
+)
 from .profiles import (
     ModelServingProfile,
     ModelServingProfiles,
@@ -6,8 +23,23 @@ from .profiles import (
 )
 
 __all__ = [
+    "BackendConnectionError",
+    "BackendError",
+    "BackendGenerationError",
+    "BackendIdentity",
+    "BackendIdentityError",
+    "BackendMessage",
+    "BackendOutOfMemoryError",
+    "BackendReadiness",
+    "BackendRequestError",
+    "BackendTimeoutError",
+    "GenerationBackend",
+    "GenerationChunk",
+    "GenerationHandle",
+    "GenerationRequest",
     "ModelServingProfile",
     "ModelServingProfiles",
     "ProfileValidationError",
+    "create_app",
     "load_profiles",
 ]
