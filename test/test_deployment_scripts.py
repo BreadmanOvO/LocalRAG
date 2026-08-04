@@ -77,6 +77,8 @@ class DeploymentScriptTests(unittest.TestCase):
         self.assertIn('"--ctx-size", "40960"', source)
         self.assertIn('"--n-gpu-layers", "999"', source)
         self.assertIn('"--parallel", "1"', source)
+        self.assertIn("LLAMA_ARG_CHAT_TEMPLATE_KWARGS", source)
+        self.assertIn('{"enable_thinking":false}', source)
         self.assertIn("--llama-base-url", source)
 
 

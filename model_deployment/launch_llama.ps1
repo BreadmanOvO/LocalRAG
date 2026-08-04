@@ -47,11 +47,12 @@ try {
         "--port", $InternalPort.ToString(),
         "--ctx-size", "40960",
         "--jinja",
-        "--chat-template-kwargs", '{"enable_thinking":false}',
         "--parallel", "1",
         "--n-gpu-layers", "999",
         "--temp", "0"
     )
+    $PreviousChatTemplateKwargs = $env:LLAMA_ARG_CHAT_TEMPLATE_KWARGS
+    $env:LLAMA_ARG_CHAT_TEMPLATE_KWARGS = '{"enable_thinking":false}'
     if (-not $PSCmdlet.ShouldProcess($ModelFull, "Launch llama.cpp mode $Mode")) {
         Write-Output "what_if=true"
         Write-Output "mode=$Mode"
@@ -108,5 +109,6 @@ try {
     }
 }
 finally {
+    $env:LLAMA_ARG_CHAT_TEMPLATE_KWARGS = $PreviousChatTemplateKwargs
     Pop-Location
 }
