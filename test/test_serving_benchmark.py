@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
+import tempfile
 import unittest
+from unittest import mock
 
 import httpx
 
@@ -12,7 +15,13 @@ from eval.benchmark_serving import (
     OUTPUT_TOKENS,
     PROMPT_TARGETS,
     ServingBenchmarkError,
+    _atomic_write_text,
+    _completed_cells,
     _deterministic_samples,
+    _jsonl_write,
+    _load_jsonl,
+    _validate_request_timeout_seconds,
+    _validate_resume_identity,
     build_prompt,
     compare_profiles,
     deterministic_fixture,
@@ -124,6 +133,100 @@ class ServingBenchmarkTests(unittest.TestCase):
         failed = summarize_profile(samples)
         self.assertFalse(failed["gate_pass"])
         self.assertIn("cell_512_c1", failed["failures"])
+
+    def test_checkpoint_detects_only_complete_cells_and_round_trips_atomically(self):
+        samples = _deterministic_samples(
+            "e6_1_adapter_bf16", peak=10 * 1024**3, throughput=30.0
+        )
+        self.assertEqual(9, len(_completed_cells(samples)))
+        samples.pop()
+        self.assertNotIn((8192, 4), _completed_cells(samples))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "samples.jsonl"
+            _jsonl_write(path, samples)
+            self.assertEqual(samples, _load_jsonl(path))
+            self.assertEqual([], list(path.parent.glob("*.tmp")))
+
+    def test_checkpoint_rejects_semantically_corrupt_or_duplicate_cells(self):
+        base = _deterministic_samples(
+            "e6_1_adapter_bf16", peak=10 * 1024**3, throughput=30.0
+        )
+        corruptions = {
+            "profile": "e6_1_q4_k_m",
+            "model_id": "other",
+            "git_revision": "b" * 40,
+            "git_dirty": True,
+            "output_token_limit": 1,
+            "http_status": 500,
+            "error_code": "failed",
+            "completion_tokens": 0,
+            "tokens_per_second": 0.0,
+            "gpu_peak_used_bytes": None,
+        }
+        for field, value in corruptions.items():
+            with self.subTest(field=field):
+                samples = [dict(row) for row in base]
+                samples[0][field] = value
+                completed = _completed_cells(
+                    samples,
+                    profile="e6_1_adapter_bf16",
+                    git_revision="a" * 40,
+                    git_dirty=False,
+                )
+                self.assertNotIn((512, 1), completed)
+        samples = [dict(row) for row in base]
+        first = next(
+            row
+            for row in samples
+            if row["prompt_target_tokens"] == 512 and row["concurrency"] == 1
+        )
+        first["request_id"] = next(
+            row["request_id"]
+            for row in samples
+            if row["prompt_target_tokens"] == 512
+            and row["concurrency"] == 1
+            and row is not first
+        )
+        self.assertNotIn((512, 1), _completed_cells(samples))
+
+        numeric_corruptions = (
+            ("queue_seconds", -1.0),
+            ("queue_seconds", float("nan")),
+            ("ttft_seconds", float("inf")),
+            ("latency_seconds", True),
+            ("tokens_per_second", float("nan")),
+        )
+        for field, value in numeric_corruptions:
+            with self.subTest(field=field, value=value):
+                samples = [dict(row) for row in base]
+                samples[0][field] = value
+                self.assertNotIn((512, 1), _completed_cells(samples))
+
+    def test_atomic_write_failure_preserves_previous_checkpoint(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "samples.jsonl"
+            path.write_text("original\n", encoding="utf-8")
+            with mock.patch.object(Path, "replace", side_effect=OSError("replace failed")):
+                with self.assertRaises(OSError):
+                    _atomic_write_text(path, "replacement\n")
+            self.assertEqual("original\n", path.read_text(encoding="utf-8"))
+            self.assertEqual([], list(path.parent.glob("*.tmp")))
+
+    def test_resume_identity_binds_output_root(self):
+        manifest = {"profile": "e6_1_adapter_bf16", "output_root": "results/one"}
+        _validate_resume_identity(manifest, dict(manifest))
+        with self.assertRaisesRegex(ServingBenchmarkError, "identity does not match"):
+            _validate_resume_identity(
+                manifest,
+                {"profile": "e6_1_adapter_bf16", "output_root": "results/two"},
+            )
+
+    def test_request_timeout_must_be_positive_and_finite(self):
+        self.assertEqual(1200.0, _validate_request_timeout_seconds(1200))
+        for value in (0, -1, float("nan"), float("inf"), True):
+            with self.subTest(value=value):
+                with self.assertRaises(ServingBenchmarkError):
+                    _validate_request_timeout_seconds(value)
 
     def test_summary_rejects_prompt_error_missing_cell_and_warmup_substitution(self):
         samples = _deterministic_samples(

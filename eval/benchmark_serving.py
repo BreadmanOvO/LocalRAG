@@ -15,7 +15,7 @@ import subprocess
 import sys
 from threading import Barrier, Event, Thread
 import time
-from typing import Any
+from typing import Any, TypeGuard
 from uuid import uuid4
 
 import httpx
@@ -34,6 +34,7 @@ CONCURRENCY_LEVELS = (1, 2, 4)
 OUTPUT_TOKENS = 256
 WARMUP_ROUNDS = 2
 MEASURED_ROUNDS = 5
+REQUEST_TIMEOUT_SECONDS = 1200.0
 PROFILE_MANIFESTS = {
     "e6_1_adapter_bf16": Path(
         "model_deployment/manifests/e6_1_input_manifest.json"
@@ -591,18 +592,129 @@ def _git_state(repo_root: Path) -> tuple[str, bool]:
 
 def _json_write(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
+    _atomic_write_text(
+        path,
         json.dumps(value, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
     )
 
 
 def _jsonl_write(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
+    _atomic_write_text(
+        path,
         "".join(json.dumps(dict(row), ensure_ascii=False) + "\n" for row in rows),
-        encoding="utf-8",
     )
+
+
+def _atomic_write_text(path: Path, text: str) -> None:
+    temporary = path.with_name(f".{path.name}.{uuid4().hex}.tmp")
+    try:
+        temporary.write_text(text, encoding="utf-8")
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _load_jsonl(path: Path) -> list[dict[str, Any]]:
+    rows = []
+    try:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            value = json.loads(line)
+            if not isinstance(value, Mapping):
+                raise ValueError("row is not an object")
+            rows.append(dict(value))
+    except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
+        raise ServingBenchmarkError("benchmark checkpoint is invalid") from exc
+    return rows
+
+
+def _is_finite_number(value: object) -> TypeGuard[int | float]:
+    return not isinstance(value, bool) and isinstance(value, (int, float)) and math.isfinite(value)
+
+
+def _validate_request_timeout_seconds(value: object) -> float:
+    if not _is_finite_number(value) or float(value) <= 0:
+        raise ServingBenchmarkError("benchmark request timeout must be positive and finite")
+    return float(value)
+
+
+def _validate_resume_identity(
+    manifest: object,
+    expected_identity: Mapping[str, Any],
+) -> None:
+    if not isinstance(manifest, Mapping) or any(
+        manifest.get(key) != value for key, value in expected_identity.items()
+    ):
+        raise ServingBenchmarkError("benchmark resume identity does not match")
+
+
+def _completed_cells(
+    samples: Sequence[Mapping[str, Any]],
+    *,
+    profile: str | None = None,
+    git_revision: str | None = None,
+    git_dirty: bool | None = None,
+) -> set[tuple[int, int]]:
+    completed = set()
+    for target in PROMPT_TARGETS:
+        for concurrency in CONCURRENCY_LEVELS:
+            rows = [
+                row
+                for row in samples
+                if row.get("prompt_target_tokens") == target
+                and row.get("concurrency") == concurrency
+            ]
+            expected = {
+                (phase, round_index, worker)
+                for phase, rounds in (
+                    ("warmup", WARMUP_ROUNDS),
+                    ("measurement", MEASURED_ROUNDS),
+                )
+                for round_index in range(rounds)
+                for worker in range(concurrency)
+            }
+            actual = {
+                (row.get("phase"), row.get("round"), row.get("worker"))
+                for row in rows
+            }
+            request_ids = [row.get("request_id") for row in rows]
+            semantic_valid = all(
+                (profile is None or row.get("profile") == profile)
+                and row.get("model_id") == MODEL_ID
+                and (git_revision is None or row.get("git_revision") == git_revision)
+                and (git_dirty is None or row.get("git_dirty") is git_dirty)
+                and row.get("prompt_target_tokens") == target
+                and type(row.get("prompt_tokens")) is int
+                and abs(int(row["prompt_tokens"]) - target) / target <= 0.02
+                and row.get("output_token_limit") == OUTPUT_TOKENS
+                and row.get("concurrency") == concurrency
+                and row.get("http_status") == 200
+                and row.get("error_code") is None
+                and row.get("oom") is False
+                and _is_finite_number(row.get("queue_seconds"))
+                and float(row["queue_seconds"]) >= 0
+                and _is_finite_number(row.get("ttft_seconds"))
+                and float(row["ttft_seconds"]) >= 0
+                and _is_finite_number(row.get("latency_seconds"))
+                and float(row["latency_seconds"]) >= 0
+                and _is_finite_number(row.get("tokens_per_second"))
+                and float(row["tokens_per_second"]) > 0
+                and type(row.get("completion_tokens")) is int
+                and int(row["completion_tokens"]) > 0
+                and type(row.get("gpu_peak_used_bytes")) is int
+                for row in rows
+            )
+            if (
+                len(rows) == len(expected)
+                and actual == expected
+                and len(request_ids) == len(set(request_ids))
+                and all(isinstance(value, str) and value for value in request_ids)
+                and semantic_valid
+            ):
+                completed.add((target, concurrency))
+    return completed
 
 
 def run_profile(
@@ -612,12 +724,17 @@ def run_profile(
     tokenizer_path: Path,
     out_dir: Path,
     api_token: str | None,
+    request_timeout_seconds: float = REQUEST_TIMEOUT_SECONDS,
+    resume_run: Path | None = None,
 ) -> dict[str, Any]:
     if profile not in PROFILES:
         raise ServingBenchmarkError("benchmark profile is invalid")
     parsed = httpx.URL(endpoint)
     if parsed.host not in {"127.0.0.1", "localhost"} or parsed.path.rstrip("/") != "/v1":
         raise ServingBenchmarkError("benchmark endpoint must be loopback and end with /v1")
+    request_timeout_seconds = _validate_request_timeout_seconds(
+        request_timeout_seconds
+    )
     manifest_path = REPO_ROOT / PROFILE_MANIFESTS[profile]
     manifest = load_manifest(manifest_path)
     validate_manifest(REPO_ROOT, manifest)
@@ -632,12 +749,98 @@ def run_profile(
         target: build_prompt(tokenizer, target) for target in PROMPT_TARGETS
     }
     revision, dirty = _git_state(REPO_ROOT)
+    prompt_fingerprint = hashlib.sha256(
+        "\n".join(prompts[target] for target in PROMPT_TARGETS).encode("utf-8")
+    ).hexdigest()
+    out_root = Path(out_dir).resolve()
+    try:
+        output_root = out_root.relative_to(REPO_ROOT.resolve()).as_posix()
+    except ValueError:
+        raise ServingBenchmarkError(
+            "benchmark output must remain inside the repository"
+        ) from None
+    command = [sys.executable, *sys.argv]
+    if resume_run is None:
+        run_id = (
+            f"serving-benchmark-{profile}-{datetime.now().strftime('%Y%m%d-%H%M%S')}-"
+            f"{uuid4().hex[:8]}"
+        )
+        run_dir = out_root / run_id
+        run_manifest = {
+            "contract_version": "localrag-serving-benchmark-v1",
+            "run_id": run_id,
+            "profile": profile,
+            "model_id": MODEL_ID,
+            "model_manifest_path": PROFILE_MANIFESTS[profile].as_posix(),
+            "model_manifest_sha256": sha256_file(manifest_path),
+            "git_revision": revision,
+            "git_dirty": dirty,
+            "service_revision": revision,
+            "prompt_fingerprint": prompt_fingerprint,
+            "prompt_targets": list(PROMPT_TARGETS),
+            "concurrency_levels": list(CONCURRENCY_LEVELS),
+            "output_tokens": OUTPUT_TOKENS,
+            "warmup_rounds": WARMUP_ROUNDS,
+            "measured_rounds": MEASURED_ROUNDS,
+            "request_timeout_seconds": request_timeout_seconds,
+            "output_root": output_root,
+            "gpu": dict(_gpu_memory()),
+            "commands": [command],
+        }
+        samples: list[dict[str, Any]] = []
+        _json_write(run_dir / "manifest.json", run_manifest)
+        _jsonl_write(run_dir / "samples.jsonl", samples)
+    else:
+        run_dir = Path(resume_run).resolve()
+        if run_dir.parent != out_root or not run_dir.is_dir():
+            raise ServingBenchmarkError("resume run must remain inside benchmark output")
+        if (run_dir / "summary.json").exists():
+            raise ServingBenchmarkError("benchmark run is already complete")
+        try:
+            run_manifest = json.loads(
+                (run_dir / "manifest.json").read_text(encoding="utf-8")
+            )
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise ServingBenchmarkError("benchmark resume manifest is invalid") from exc
+        expected_identity = {
+            "contract_version": "localrag-serving-benchmark-v1",
+            "profile": profile,
+            "model_id": MODEL_ID,
+            "model_manifest_sha256": sha256_file(manifest_path),
+            "git_revision": revision,
+            "git_dirty": dirty,
+            "service_revision": revision,
+            "prompt_fingerprint": prompt_fingerprint,
+            "prompt_targets": list(PROMPT_TARGETS),
+            "concurrency_levels": list(CONCURRENCY_LEVELS),
+            "output_tokens": OUTPUT_TOKENS,
+            "warmup_rounds": WARMUP_ROUNDS,
+            "measured_rounds": MEASURED_ROUNDS,
+            "request_timeout_seconds": request_timeout_seconds,
+            "output_root": output_root,
+        }
+        _validate_resume_identity(run_manifest, expected_identity)
+        resume_run_id = run_manifest.get("run_id")
+        if not isinstance(resume_run_id, str) or run_dir.name != resume_run_id:
+            raise ServingBenchmarkError("benchmark resume run ID does not match")
+        run_id = resume_run_id
+        commands = run_manifest.get("commands")
+        if not isinstance(commands, list):
+            raise ServingBenchmarkError("benchmark resume commands are invalid")
+        commands.append(command)
+        _json_write(run_dir / "manifest.json", run_manifest)
+        samples = _load_jsonl(run_dir / "samples.jsonl")
+    complete = _completed_cells(
+        samples,
+        profile=profile,
+        git_revision=revision,
+        git_dirty=dirty,
+    )
     headers = {"Authorization": f"Bearer {api_token}"} if api_token else {}
-    samples: list[dict[str, Any]] = []
     with httpx.Client(
         base_url=endpoint.rstrip("/") + "/",
         headers=headers,
-        timeout=httpx.Timeout(600.0, connect=10.0),
+        timeout=httpx.Timeout(request_timeout_seconds, connect=10.0),
     ) as client:
         models = client.get("models")
         if models.status_code != 200:
@@ -652,6 +855,17 @@ def run_profile(
             prompt = prompts[target]
             actual_tokens = len(_encode(tokenizer, prompt))
             for concurrency in CONCURRENCY_LEVELS:
+                cell = (target, concurrency)
+                if cell in complete:
+                    continue
+                samples = [
+                    row
+                    for row in samples
+                    if not (
+                        row.get("prompt_target_tokens") == target
+                        and row.get("concurrency") == concurrency
+                    )
+                ]
                 samples.extend(
                     run_benchmark_cell(
                         client,
@@ -666,35 +880,8 @@ def run_profile(
                         ),
                     )
                 )
+                _jsonl_write(run_dir / "samples.jsonl", samples)
     summary = summarize_profile(samples)
-    run_id = (
-        f"serving-benchmark-{profile}-{datetime.now().strftime('%Y%m%d-%H%M%S')}-"
-        f"{uuid4().hex[:8]}"
-    )
-    run_dir = Path(out_dir) / run_id
-    gpu = dict(_gpu_memory())
-    prompt_fingerprint = hashlib.sha256(
-        "\n".join(prompts[target] for target in PROMPT_TARGETS).encode("utf-8")
-    ).hexdigest()
-    run_manifest = {
-        "contract_version": "localrag-serving-benchmark-v1",
-        "run_id": run_id,
-        "profile": profile,
-        "model_id": MODEL_ID,
-        "model_manifest_path": PROFILE_MANIFESTS[profile].as_posix(),
-        "model_manifest_sha256": sha256_file(manifest_path),
-        "git_revision": revision,
-        "git_dirty": dirty,
-        "service_revision": revision,
-        "prompt_fingerprint": prompt_fingerprint,
-        "prompt_targets": list(PROMPT_TARGETS),
-        "concurrency_levels": list(CONCURRENCY_LEVELS),
-        "output_tokens": OUTPUT_TOKENS,
-        "warmup_rounds": WARMUP_ROUNDS,
-        "measured_rounds": MEASURED_ROUNDS,
-        "gpu": gpu,
-        "command": [sys.executable, *sys.argv],
-    }
     output = {
         "run_id": run_id,
         "profile": profile,
@@ -702,9 +889,7 @@ def run_profile(
         "manifest": run_manifest,
         "artifacts": {"run_dir": str(run_dir)},
     }
-    _jsonl_write(run_dir / "samples.jsonl", samples)
     _json_write(run_dir / "summary.json", output)
-    _json_write(run_dir / "manifest.json", run_manifest)
     return output
 
 
@@ -790,6 +975,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--tokenizer-path", type=Path, default=Path("models/Qwen3-4B"))
     parser.add_argument("--out-dir", type=Path, default=Path("results/model_benchmark"))
     parser.add_argument("--api-token-env", default="LOCALRAG_MODEL_API_TOKEN")
+    parser.add_argument(
+        "--request-timeout-seconds",
+        type=float,
+        default=REQUEST_TIMEOUT_SECONDS,
+    )
+    parser.add_argument("--resume-run", type=Path)
     parser.add_argument("--compare-latest", type=Path)
     return parser
 
@@ -812,6 +1003,8 @@ def main() -> dict[str, Any]:
             tokenizer_path=args.tokenizer_path,
             out_dir=args.out_dir,
             api_token=os.environ.get(args.api_token_env),
+            request_timeout_seconds=args.request_timeout_seconds,
+            resume_run=args.resume_run,
         )
     print(json.dumps(output, ensure_ascii=False, indent=2))
     return output
