@@ -9,6 +9,7 @@ import uvicorn
 from model_deployment.manifest import load_manifest
 
 from .api import create_app
+from .llama_cpp_backend import LlamaCppGenerationBackend
 from .profiles import load_profiles
 from .transformers_backend import TransformersGenerationBackend
 
@@ -31,6 +32,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--waiting-limit", type=int, default=4)
     parser.add_argument("--queue-timeout-seconds", type=float, default=30.0)
     parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--llama-base-url")
     return parser
 
 
@@ -48,15 +50,25 @@ def main() -> None:
         profiles_path = REPO_ROOT / profiles_path
     profiles = load_profiles(profiles_path, repo_root=REPO_ROOT)
     profile = profiles.require(args.profile)
-    if profile.backend != "transformers":
-        raise ValueError("this launcher only supports the Transformers profile")
     manifest_path = REPO_ROOT / profile.manifest_path
     manifest = load_manifest(manifest_path)
-    backend = TransformersGenerationBackend(
-        profile=profile,
-        repo_root=REPO_ROOT,
-        expected_manifest=manifest,
-    )
+    if profile.backend == "transformers":
+        if args.llama_base_url is not None:
+            raise ValueError("llama base URL is invalid for Transformers")
+        backend = TransformersGenerationBackend(
+            profile=profile,
+            repo_root=REPO_ROOT,
+            expected_manifest=manifest,
+        )
+    else:
+        if args.llama_base_url is None:
+            raise ValueError("llama base URL is required for llama.cpp")
+        backend = LlamaCppGenerationBackend(
+            profile=profile,
+            repo_root=REPO_ROOT,
+            expected_manifest=manifest,
+            base_url=args.llama_base_url,
+        )
     backend.warmup()
     if not backend.readiness().ready:
         raise RuntimeError("model warm-up did not reach ready state")

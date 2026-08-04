@@ -10,6 +10,7 @@ from model_deployment.manifest import (
     FIXED_MODEL_INPUT_PATHS,
     ManifestMismatchError,
     build_manifest,
+    build_derived_artifact_manifest,
     load_manifest,
     sha256_file,
     validate_fixed_model_identity,
@@ -165,6 +166,88 @@ class ModelManifestTests(unittest.TestCase):
         (self.root / FIXED_MODEL_INPUT_PATHS[-1]).unlink()
         with self.assertRaises(ManifestMismatchError):
             validate_fixed_model_identity(self.root)
+
+    def test_derived_gguf_manifests_chain_input_identity(self):
+        merged_file = self._write("artifacts/models/merged/model.safetensors")
+        merged_manifest = build_manifest(
+            self.root,
+            [merged_file.relative_to(self.root)],
+            kind="model-merged-bf16",
+        )
+        merged_manifest["metadata"] = {
+            "model_identity": {
+                "model_id": "localrag-qwen3-4b-e6.1",
+                "architecture": "Qwen3ForCausalLM",
+                "context_limit": 40960,
+                "dtype": "bfloat16",
+                "quantization": "none",
+                "artifact_path": "artifacts/models/merged",
+            }
+        }
+        merged_manifest_path = self.root / "model_deployment/manifests/merged.json"
+        write_manifest(merged_manifest_path, merged_manifest)
+        f16 = self._write("artifacts/models/model-f16.gguf", "f16")
+
+        f16_manifest = build_derived_artifact_manifest(
+            repo_root=self.root,
+            artifact=f16.relative_to(self.root),
+            artifact_profile="gguf_f16",
+            input_manifest=merged_manifest_path.relative_to(self.root),
+            tool_version="b10256",
+            elapsed_seconds=1.25,
+        )
+
+        self.assertEqual("model-gguf-f16", f16_manifest["kind"])
+        self.assertEqual(
+            "float16", f16_manifest["metadata"]["model_identity"]["dtype"]
+        )
+        self.assertEqual("none", f16_manifest["metadata"]["model_identity"]["quantization"])
+        self.assertEqual("b10256", f16_manifest["metadata"]["tool"]["version"])
+        self.assertNotIn(str(self.root), json.dumps(f16_manifest))
+
+        f16_manifest_path = self.root / "model_deployment/manifests/f16.json"
+        write_manifest(f16_manifest_path, f16_manifest)
+        q4 = self._write("artifacts/models/model-q4.gguf", "q4")
+        q4_manifest = build_derived_artifact_manifest(
+            repo_root=self.root,
+            artifact=q4.relative_to(self.root),
+            artifact_profile="gguf_q4_k_m",
+            input_manifest=f16_manifest_path.relative_to(self.root),
+            tool_version="b10256",
+            elapsed_seconds=2,
+        )
+        self.assertEqual("model-gguf-q4-k-m", q4_manifest["kind"])
+        self.assertEqual(
+            "Q4_K_M", q4_manifest["metadata"]["model_identity"]["quantization"]
+        )
+
+    def test_derived_manifest_rejects_wrong_input_stage(self):
+        source = self._write("source.bin")
+        source_manifest = build_manifest(
+            self.root,
+            [source.relative_to(self.root)],
+            kind="model-input",
+        )
+        source_manifest["metadata"] = {
+            "model_identity": {
+                "model_id": "localrag-qwen3-4b-e6.1",
+                "architecture": "Qwen3ForCausalLM",
+                "context_limit": 40960,
+            }
+        }
+        source_manifest_path = self.root / "source.json"
+        write_manifest(source_manifest_path, source_manifest)
+        artifact = self._write("artifacts/models/model.gguf")
+
+        with self.assertRaises(ManifestMismatchError):
+            build_derived_artifact_manifest(
+                repo_root=self.root,
+                artifact=artifact.relative_to(self.root),
+                artifact_profile="gguf_q4_k_m",
+                input_manifest=source_manifest_path.relative_to(self.root),
+                tool_version="b10256",
+                elapsed_seconds=1,
+            )
 
 
 if __name__ == "__main__":

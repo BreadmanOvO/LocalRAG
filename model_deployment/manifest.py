@@ -35,6 +35,20 @@ FIXED_MODEL_INPUT_PATHS = (
 )
 _MANIFEST_FIELDS = frozenset({"contract_version", "kind", "files", "metadata"})
 _FILE_FIELDS = frozenset({"path", "size", "sha256"})
+_ARTIFACT_PROFILES = {
+    "gguf_f16": {
+        "kind": "model-gguf-f16",
+        "dtype": "float16",
+        "quantization": "none",
+        "input_kind": "model-merged-bf16",
+    },
+    "gguf_q4_k_m": {
+        "kind": "model-gguf-q4-k-m",
+        "dtype": "float16",
+        "quantization": "Q4_K_M",
+        "input_kind": "model-gguf-f16",
+    },
+}
 
 
 class ManifestMismatchError(ValueError):
@@ -275,26 +289,121 @@ def validate_fixed_model_identity(repo_root: Path) -> dict[str, Any]:
     }
 
 
+def build_derived_artifact_manifest(
+    *,
+    repo_root: Path,
+    artifact: Path,
+    artifact_profile: str,
+    input_manifest: Path,
+    tool_version: str,
+    elapsed_seconds: float,
+) -> dict[str, Any]:
+    repo_root = Path(repo_root).resolve()
+    if artifact_profile not in _ARTIFACT_PROFILES:
+        raise ManifestMismatchError("artifact profile is invalid")
+    if not isinstance(tool_version, str) or not tool_version.strip():
+        raise ManifestMismatchError("tool version is invalid")
+    if not isinstance(elapsed_seconds, (int, float)) or elapsed_seconds < 0:
+        raise ManifestMismatchError("elapsed seconds is invalid")
+    artifact_portable, artifact_path = _portable_relative_path(
+        repo_root, artifact, "artifact"
+    )
+    if artifact_path.suffix.lower() != ".gguf" or not artifact_path.is_file():
+        raise ManifestMismatchError("artifact must be an existing GGUF file")
+    input_portable, input_path = _portable_relative_path(
+        repo_root, input_manifest, "input_manifest"
+    )
+    input_payload = load_manifest(input_path)
+    validate_manifest(repo_root, input_payload)
+    profile = _ARTIFACT_PROFILES[artifact_profile]
+    if input_payload.get("kind") != profile["input_kind"]:
+        raise ManifestMismatchError("artifact input manifest kind is invalid")
+    input_metadata = input_payload.get("metadata")
+    input_identity = (
+        input_metadata.get("model_identity")
+        if isinstance(input_metadata, Mapping)
+        else None
+    )
+    if (
+        not isinstance(input_identity, Mapping)
+        or input_identity.get("model_id") != "localrag-qwen3-4b-e6.1"
+        or input_identity.get("architecture") != "Qwen3ForCausalLM"
+        or input_identity.get("context_limit") != 40960
+    ):
+        raise ManifestMismatchError("artifact input identity is invalid")
+
+    manifest = build_manifest(
+        repo_root,
+        [Path(artifact_portable)],
+        kind=str(profile["kind"]),
+    )
+    manifest["metadata"] = {
+        "model_identity": {
+            "model_id": "localrag-qwen3-4b-e6.1",
+            "architecture": "Qwen3ForCausalLM",
+            "context_limit": 40960,
+            "dtype": profile["dtype"],
+            "quantization": profile["quantization"],
+            "artifact_path": artifact_portable,
+        },
+        "input_manifest_path": input_portable,
+        "input_manifest_sha256": sha256_file(input_path),
+        "tool": {
+            "name": "llama.cpp",
+            "version": tool_version.strip(),
+        },
+        "build": {
+            "artifact_profile": artifact_profile,
+            "elapsed_seconds": round(float(elapsed_seconds), 3),
+        },
+    }
+    return manifest
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Build or verify model manifests.")
     parser.add_argument("--repo-root", type=Path, required=True)
     action = parser.add_mutually_exclusive_group(required=True)
     action.add_argument("--out", type=Path)
     action.add_argument("--verify", type=Path)
+    parser.add_argument("--artifact", type=Path)
+    parser.add_argument("--artifact-profile", choices=tuple(_ARTIFACT_PROFILES))
+    parser.add_argument("--input-manifest", type=Path)
+    parser.add_argument("--tool-version")
+    parser.add_argument("--elapsed-seconds", type=float)
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
     repo_root = args.repo_root.resolve()
-    identity = validate_fixed_model_identity(repo_root)
     if args.out is not None:
-        manifest = build_manifest(
-            repo_root,
-            [Path(path) for path in FIXED_MODEL_INPUT_PATHS],
-            kind="model-input",
+        artifact_values = (
+            args.artifact,
+            args.artifact_profile,
+            args.input_manifest,
+            args.tool_version,
+            args.elapsed_seconds,
         )
-        manifest["metadata"] = {"model_identity": identity}
+        if any(value is not None for value in artifact_values):
+            if any(value is None for value in artifact_values):
+                raise ManifestMismatchError("artifact manifest arguments are incomplete")
+            manifest = build_derived_artifact_manifest(
+                repo_root=repo_root,
+                artifact=args.artifact,
+                artifact_profile=args.artifact_profile,
+                input_manifest=args.input_manifest,
+                tool_version=args.tool_version,
+                elapsed_seconds=args.elapsed_seconds,
+            )
+        else:
+            identity = validate_fixed_model_identity(repo_root)
+            manifest = build_manifest(
+                repo_root,
+                [Path(path) for path in FIXED_MODEL_INPUT_PATHS],
+                kind="model-input",
+            )
+            manifest["metadata"] = {"model_identity": identity}
         write_manifest(args.out, manifest)
         validate_manifest(repo_root, manifest)
         print("model_identity=valid")
@@ -304,11 +413,14 @@ def main() -> None:
 
     manifest = load_manifest(args.verify)
     validate_manifest(repo_root, manifest)
-    metadata = manifest.get("metadata")
-    if not isinstance(metadata, Mapping) or metadata.get("model_identity") != identity:
-        raise ManifestMismatchError("manifest model identity does not match local inputs")
+    if manifest.get("kind") == "model-input":
+        identity = validate_fixed_model_identity(repo_root)
+        metadata = manifest.get("metadata")
+        if not isinstance(metadata, Mapping) or metadata.get("model_identity") != identity:
+            raise ManifestMismatchError("manifest model identity does not match local inputs")
     print("model_identity=valid")
     print(f"files={len(manifest['files'])}")
+    print(f"kind={manifest['kind']}")
     print("manifest_valid=true")
 
 
