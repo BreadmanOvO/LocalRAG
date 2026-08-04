@@ -54,6 +54,9 @@ class DeploymentScriptTests(unittest.TestCase):
         self.assertIn("llama-server.exe", source)
         self.assertIn("llama-quantize.exe", source)
         self.assertIn("convert_hf_to_gguf.py", source)
+        self.assertIn("$SegmentThresholdBytes = 64MB", source)
+        self.assertIn("archive size mismatch", source)
+        self.assertIn("segmented archive part size mismatch", source)
 
     def test_conversion_and_quantization_write_manifests(self):
         conversion = SCRIPTS[1].read_text(encoding="utf-8")

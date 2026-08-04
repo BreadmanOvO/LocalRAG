@@ -77,10 +77,14 @@ function Receive-VerifiedArchive {
     if (-not (Test-Path -LiteralPath $Curl)) {
         $Curl = (Get-Command curl.exe -ErrorAction Stop).Source
     }
-    if ($ExpectedSize -le 0) {
+    $SegmentThresholdBytes = 64MB
+    if ($ExpectedSize -le $SegmentThresholdBytes) {
         & $Curl --fail --location --silent --show-error --retry 3 --header "User-Agent: LocalRAG-v1.6-deployment" --output $Path $Uri
         if ($LASTEXITCODE -ne 0) {
             throw "archive download exited with code $LASTEXITCODE"
+        }
+        if ($ExpectedSize -gt 0 -and (Get-Item -LiteralPath $Path).Length -ne $ExpectedSize) {
+            throw "archive size mismatch"
         }
     }
     else {
@@ -105,6 +109,18 @@ function Receive-VerifiedArchive {
             $Process.WaitForExit()
             if ($Process.ExitCode -ne 0) {
                 throw "segmented archive download exited with code $($Process.ExitCode)"
+            }
+        }
+        for ($Index = 0; $Index -lt $PartCount; $Index++) {
+            $Start = [long]($Index * $PartSize)
+            if ($Start -ge $ExpectedSize) { break }
+            $ExpectedPartSize = [long][math]::Min($PartSize, $ExpectedSize - $Start)
+            $PartPath = Join-Path $PartRoot ("part-{0:D2}" -f $Index)
+            if (-not (Test-Path -LiteralPath $PartPath)) {
+                throw "segmented archive part is missing: $Index"
+            }
+            if ((Get-Item -LiteralPath $PartPath).Length -ne $ExpectedPartSize) {
+                throw "segmented archive part size mismatch: $Index"
             }
         }
         $Output = [System.IO.File]::Open($Path, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
