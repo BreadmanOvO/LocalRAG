@@ -28,6 +28,15 @@ param(
     [ValidatePattern("^[0-9a-fA-F]{64}$")]
     [string]$SourceArchiveSha256,
 
+    [ValidateRange(0, 2147483647)]
+    [long]$BinarySize = 0,
+
+    [ValidateRange(0, 2147483647)]
+    [long]$CudaRuntimeSize = 0,
+
+    [ValidateRange(0, 2147483647)]
+    [long]$SourceArchiveSize = 0,
+
     [string]$DestinationRoot = "tools/llama.cpp"
 )
 
@@ -61,11 +70,60 @@ function Receive-VerifiedArchive {
     param(
         [Parameter(Mandatory = $true)][string]$Uri,
         [Parameter(Mandatory = $true)][string]$Path,
-        [Parameter(Mandatory = $true)][string]$Sha256
+        [Parameter(Mandatory = $true)][string]$Sha256,
+        [long]$ExpectedSize = 0
     )
-    & curl.exe --fail --location --silent --show-error --retry 3 --header "User-Agent: LocalRAG-v1.6-deployment" --output $Path $Uri
-    if ($LASTEXITCODE -ne 0) {
-        throw "archive download exited with code $LASTEXITCODE"
+    $Curl = Join-Path $env:SystemRoot "System32/curl.exe"
+    if (-not (Test-Path -LiteralPath $Curl)) {
+        $Curl = (Get-Command curl.exe -ErrorAction Stop).Source
+    }
+    if ($ExpectedSize -le 0) {
+        & $Curl --fail --location --silent --show-error --retry 3 --header "User-Agent: LocalRAG-v1.6-deployment" --output $Path $Uri
+        if ($LASTEXITCODE -ne 0) {
+            throw "archive download exited with code $LASTEXITCODE"
+        }
+    }
+    else {
+        $PartRoot = Join-Path (Split-Path -Parent $Path) ((Split-Path -Leaf $Path) + ".parts")
+        New-Item -ItemType Directory -Force -Path $PartRoot | Out-Null
+        $PartCount = 16
+        $PartSize = [math]::Ceiling($ExpectedSize / $PartCount)
+        $Processes = @()
+        for ($Index = 0; $Index -lt $PartCount; $Index++) {
+            $Start = [long]($Index * $PartSize)
+            if ($Start -ge $ExpectedSize) { break }
+            $End = [math]::Min($ExpectedSize - 1, $Start + $PartSize - 1)
+            $PartPath = Join-Path $PartRoot ("part-{0:D2}" -f $Index)
+            $Arguments = @(
+                "--fail", "--location", "--silent", "--show-error", "--retry", "3",
+                "--range", "$Start-$End", "--header", "User-Agent:LocalRAG-v1.6-deployment",
+                "--output", $PartPath, $Uri
+            )
+            $Processes += Start-Process -FilePath $Curl -ArgumentList $Arguments -WindowStyle Hidden -PassThru
+        }
+        foreach ($Process in $Processes) {
+            $Process.WaitForExit()
+            if ($Process.ExitCode -ne 0) {
+                throw "segmented archive download exited with code $($Process.ExitCode)"
+            }
+        }
+        $Output = [System.IO.File]::Open($Path, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+        try {
+            for ($Index = 0; $Index -lt $PartCount; $Index++) {
+                $PartPath = Join-Path $PartRoot ("part-{0:D2}" -f $Index)
+                if (-not (Test-Path -LiteralPath $PartPath)) {
+                    throw "segmented archive part is missing: $Index"
+                }
+                $Part = [System.IO.File]::OpenRead($PartPath)
+                try { $Part.CopyTo($Output) }
+                finally { $Part.Dispose() }
+            }
+        }
+        finally { $Output.Dispose() }
+        if ((Get-Item -LiteralPath $Path).Length -ne $ExpectedSize) {
+            throw "segmented archive size mismatch"
+        }
+        Remove-Item -LiteralPath $PartRoot -Recurse -Force
     }
     Assert-FileHash -Path $Path -Expected $Sha256
 }
@@ -87,9 +145,9 @@ New-Item -ItemType Directory -Path $DownloadRoot,$SourceExtractRoot,$BinRoot,$So
 $BinaryArchive = Join-Path $DownloadRoot "llama-bin.zip"
 $CudaArchive = Join-Path $DownloadRoot "cudart.zip"
 $SourceArchive = Join-Path $DownloadRoot "source.zip"
-Receive-VerifiedArchive -Uri $BinaryAssetUrl -Path $BinaryArchive -Sha256 $BinarySha256
-Receive-VerifiedArchive -Uri $CudaRuntimeAssetUrl -Path $CudaArchive -Sha256 $CudaRuntimeSha256
-Receive-VerifiedArchive -Uri $SourceArchiveUrl -Path $SourceArchive -Sha256 $SourceArchiveSha256
+Receive-VerifiedArchive -Uri $BinaryAssetUrl -Path $BinaryArchive -Sha256 $BinarySha256 -ExpectedSize $BinarySize
+Receive-VerifiedArchive -Uri $CudaRuntimeAssetUrl -Path $CudaArchive -Sha256 $CudaRuntimeSha256 -ExpectedSize $CudaRuntimeSize
+Receive-VerifiedArchive -Uri $SourceArchiveUrl -Path $SourceArchive -Sha256 $SourceArchiveSha256 -ExpectedSize $SourceArchiveSize
 
 Expand-Archive -LiteralPath $BinaryArchive -DestinationPath $BinRoot -Force
 Expand-Archive -LiteralPath $CudaArchive -DestinationPath $BinRoot -Force
