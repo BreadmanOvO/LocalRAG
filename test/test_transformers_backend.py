@@ -194,7 +194,7 @@ class TransformersBackendTests(unittest.TestCase):
         )
         self.auto_model.from_pretrained.assert_called_once_with(
             Path(_profile().base_model_path).resolve(),
-            torch_dtype=torch.bfloat16,
+            dtype=torch.bfloat16,
             local_files_only=True,
             trust_remote_code=False,
             low_cpu_mem_usage=True,
@@ -246,7 +246,9 @@ class TransformersBackendTests(unittest.TestCase):
         self.assertEqual((32, 2), (chunks[-1].input_tokens, chunks[-1].output_tokens))
         generate_kwargs = self.model.generate.call_args.kwargs
         self.assertFalse(generate_kwargs["do_sample"])
-        self.assertNotIn("temperature", generate_kwargs)
+        self.assertIsNone(generate_kwargs["temperature"])
+        self.assertIsNone(generate_kwargs["top_p"])
+        self.assertIsNone(generate_kwargs["top_k"])
         self.assertEqual(16, generate_kwargs["max_new_tokens"])
         self.assertTrue(self.streamer.call_args.kwargs["skip_prompt"])
         self.assertTrue(self.streamer.call_args.kwargs["skip_special_tokens"])
@@ -266,6 +268,17 @@ class TransformersBackendTests(unittest.TestCase):
         kwargs = self.model.generate.call_args.kwargs
         self.assertTrue(kwargs["do_sample"])
         self.assertEqual(0.7, kwargs["temperature"])
+
+    def test_generation_reaching_token_limit_reports_length(self):
+        backend = self._backend()
+        self.model.generate.side_effect = lambda **kwargs: FakeSequences(
+            self.token_count + 16
+        )
+
+        chunks = list(backend.start(_request(max_tokens=16)))
+
+        self.assertEqual("length", chunks[-1].finish_reason)
+        self.assertEqual(16, chunks[-1].output_tokens)
 
     def test_closing_handle_stops_and_joins_generation_thread(self):
         backend = self._backend()

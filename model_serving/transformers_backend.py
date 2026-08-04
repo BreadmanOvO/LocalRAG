@@ -84,6 +84,12 @@ class _TransformersGenerationHandle(GenerationHandle):
         }
         if self._request.temperature > 0:
             generation_kwargs["temperature"] = self._request.temperature
+        else:
+            generation_kwargs.update(
+                temperature=None,
+                top_p=None,
+                top_k=None,
+            )
         try:
             with torch.inference_mode():
                 self._result = self._model.generate(**generation_kwargs)
@@ -136,11 +142,17 @@ class _TransformersGenerationHandle(GenerationHandle):
         shape = getattr(self._result, "shape", None)
         if isinstance(shape, tuple) and len(shape) >= 2 and type(shape[-1]) is int:
             output_tokens = max(0, shape[-1] - self._input_tokens)
+        if self._cancel_event.is_set():
+            finish_reason = "cancelled"
+        elif output_tokens >= self._request.max_tokens:
+            finish_reason = "length"
+        else:
+            finish_reason = "stop"
         yield GenerationChunk(
             text="",
             input_tokens=self._input_tokens,
             output_tokens=output_tokens,
-            finish_reason="cancelled" if self._cancel_event.is_set() else "stop",
+            finish_reason=finish_reason,
         )
 
 
@@ -212,7 +224,7 @@ class TransformersGenerationBackend:
             tokenizer.chat_template = chat_template
             base_model = AutoModelForCausalLM.from_pretrained(
                 base_path,
-                torch_dtype=torch.bfloat16,
+                dtype=torch.bfloat16,
                 local_files_only=True,
                 trust_remote_code=False,
                 low_cpu_mem_usage=True,
