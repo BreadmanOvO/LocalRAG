@@ -57,6 +57,19 @@ function Assert-FileHash {
     }
 }
 
+function Receive-VerifiedArchive {
+    param(
+        [Parameter(Mandatory = $true)][string]$Uri,
+        [Parameter(Mandatory = $true)][string]$Path,
+        [Parameter(Mandatory = $true)][string]$Sha256
+    )
+    & curl.exe --fail --location --silent --show-error --retry 3 --header "User-Agent: LocalRAG-v1.6-deployment" --output $Path $Uri
+    if ($LASTEXITCODE -ne 0) {
+        throw "archive download exited with code $LASTEXITCODE"
+    }
+    Assert-FileHash -Path $Path -Expected $Sha256
+}
+
 if (-not $PSCmdlet.ShouldProcess($VersionRoot, "Install verified llama.cpp release $Version")) {
     Write-Output "what_if=true"
     Write-Output "install_path=$VersionRoot"
@@ -74,12 +87,9 @@ New-Item -ItemType Directory -Path $DownloadRoot,$SourceExtractRoot,$BinRoot,$So
 $BinaryArchive = Join-Path $DownloadRoot "llama-bin.zip"
 $CudaArchive = Join-Path $DownloadRoot "cudart.zip"
 $SourceArchive = Join-Path $DownloadRoot "source.zip"
-Invoke-WebRequest -Uri $BinaryAssetUrl -OutFile $BinaryArchive -UseBasicParsing
-Invoke-WebRequest -Uri $CudaRuntimeAssetUrl -OutFile $CudaArchive -UseBasicParsing
-Invoke-WebRequest -Uri $SourceArchiveUrl -OutFile $SourceArchive -UseBasicParsing
-Assert-FileHash -Path $BinaryArchive -Expected $BinarySha256
-Assert-FileHash -Path $CudaArchive -Expected $CudaRuntimeSha256
-Assert-FileHash -Path $SourceArchive -Expected $SourceArchiveSha256
+Receive-VerifiedArchive -Uri $BinaryAssetUrl -Path $BinaryArchive -Sha256 $BinarySha256
+Receive-VerifiedArchive -Uri $CudaRuntimeAssetUrl -Path $CudaArchive -Sha256 $CudaRuntimeSha256
+Receive-VerifiedArchive -Uri $SourceArchiveUrl -Path $SourceArchive -Sha256 $SourceArchiveSha256
 
 Expand-Archive -LiteralPath $BinaryArchive -DestinationPath $BinRoot -Force
 Expand-Archive -LiteralPath $CudaArchive -DestinationPath $BinRoot -Force
