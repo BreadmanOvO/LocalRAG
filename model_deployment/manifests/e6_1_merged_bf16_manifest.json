@@ -1,0 +1,73 @@
+{
+  "contract_version": "localrag-model-manifest-v1",
+  "kind": "model-merged-bf16",
+  "files": [
+    {
+      "path": "artifacts/models/qwen3-4b-e6.1-merged-bf16/chat_template.jinja",
+      "size": 4256,
+      "sha256": "51fa65c79bb57f058dc7ef8734884bd325fe9d45bb03a61bfef59785d3bc2da9"
+    },
+    {
+      "path": "artifacts/models/qwen3-4b-e6.1-merged-bf16/config.json",
+      "size": 1663,
+      "sha256": "7c91c4a96b0efae2cca5443be4ad036e655c415c7c8dedd51b8167fd2e6031b3"
+    },
+    {
+      "path": "artifacts/models/qwen3-4b-e6.1-merged-bf16/generation_config.json",
+      "size": 226,
+      "sha256": "db09d10416e9b516d8d8e22396e8a81e8f265f63edf31c6f0dfb6e075de2f20d"
+    },
+    {
+      "path": "artifacts/models/qwen3-4b-e6.1-merged-bf16/model-00001-of-00003.safetensors",
+      "size": 3981504152,
+      "sha256": "5361519a25cd0af2d7cfab0d3c0cab8b4b10aae0d62ad6be627a4c6efc5e8a75"
+    },
+    {
+      "path": "artifacts/models/qwen3-4b-e6.1-merged-bf16/model-00002-of-00003.safetensors",
+      "size": 3961229912,
+      "sha256": "e5b719157f0b0dee662b5d6fb352b9e9b40a10cc13d952d241f45f9e0f6738c0"
+    },
+    {
+      "path": "artifacts/models/qwen3-4b-e6.1-merged-bf16/model-00003-of-00003.safetensors",
+      "size": 102247936,
+      "sha256": "f4756befe729776efcffbe98936766edd316b57573339fe926f9cc0bf269d1fe"
+    },
+    {
+      "path": "artifacts/models/qwen3-4b-e6.1-merged-bf16/model.safetensors.index.json",
+      "size": 33261,
+      "sha256": "646973887378a236d3cf81292de5cd631218b940ec0aecf03a16f57890572efc"
+    },
+    {
+      "path": "artifacts/models/qwen3-4b-e6.1-merged-bf16/tokenizer.json",
+      "size": 11422650,
+      "sha256": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506"
+    },
+    {
+      "path": "artifacts/models/qwen3-4b-e6.1-merged-bf16/tokenizer_config.json",
+      "size": 722,
+      "sha256": "b3d4aae9670f7c2de3e3b32675b0118e7e7b517544f5ab32efe04bd74f2238c1"
+    }
+  ],
+  "metadata": {
+    "model_identity": {
+      "model_id": "localrag-qwen3-4b-e6.1",
+      "architecture": "Qwen3ForCausalLM",
+      "context_limit": 40960,
+      "dtype": "bfloat16",
+      "quantization": "none",
+      "artifact_path": "artifacts/models/qwen3-4b-e6.1-merged-bf16"
+    },
+    "input_manifest_path": "model_deployment/manifests/e6_1_input_manifest.json",
+    "input_manifest_sha256": "81b6e2f5943d964245ce69c350f342c858580c75816654fe698a4cf951474fea",
+    "merge": {
+      "safe_merge": true,
+      "safe_serialization": true,
+      "max_shard_size": "4GB"
+    },
+    "tool_versions": {
+      "torch": "2.6.0+cu124",
+      "transformers": "5.6.0",
+      "peft": "0.18.1"
+    }
+  }
+}
