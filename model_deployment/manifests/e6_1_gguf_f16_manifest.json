@@ -1,0 +1,31 @@
+{
+  "contract_version": "localrag-model-manifest-v1",
+  "kind": "model-gguf-f16",
+  "files": [
+    {
+      "path": "artifacts/models/qwen3-4b-e6.1-f16.gguf",
+      "size": 8051284864,
+      "sha256": "7b0bc06f72b8ac4dfb1804da01fff0125caa673e0d3aee4dfdab1e48077f6be5"
+    }
+  ],
+  "metadata": {
+    "model_identity": {
+      "model_id": "localrag-qwen3-4b-e6.1",
+      "architecture": "Qwen3ForCausalLM",
+      "context_limit": 40960,
+      "dtype": "float16",
+      "quantization": "none",
+      "artifact_path": "artifacts/models/qwen3-4b-e6.1-f16.gguf"
+    },
+    "input_manifest_path": "model_deployment/manifests/e6_1_merged_bf16_manifest.json",
+    "input_manifest_sha256": "ae65136cb1e656ddcaf03b4bbd50da4d77bb0168bf139773a4155944f3d0e0a4",
+    "tool": {
+      "name": "llama.cpp",
+      "version": "b10256"
+    },
+    "build": {
+      "artifact_profile": "gguf_f16",
+      "elapsed_seconds": 25.514
+    }
+  }
+}
