@@ -1,4 +1,18 @@
 from .client import GatewayStream, OpenAICompatibleClient
+from .circuit_breaker import (
+    CircuitBreaker,
+    CircuitOpenError,
+    CircuitSnapshot,
+    CircuitState,
+)
+from .gateway import (
+    GatewayFallbackError,
+    GatewaySnapshot,
+    LocalModelGateway,
+    RoutedResponse,
+    RoutedStream,
+)
+from .metrics import GatewayMetrics
 from .models import (
     GatewayBadRequestError,
     GatewayCancelledError,
@@ -24,6 +38,7 @@ __all__ = [
     "GatewayChunk",
     "GatewayConnectionError",
     "GatewayError",
+    "GatewayFallbackError",
     "GatewayIdentityError",
     "GatewayOOMError",
     "GatewayQueueFullError",
@@ -35,6 +50,15 @@ __all__ = [
     "GatewayStreamInterruptedError",
     "GatewayTimeoutError",
     "GatewayUsage",
+    "GatewayMetrics",
+    "GatewaySnapshot",
+    "CircuitBreaker",
+    "CircuitOpenError",
+    "CircuitSnapshot",
+    "CircuitState",
+    "LocalModelGateway",
     "ModelPurpose",
     "OpenAICompatibleClient",
+    "RoutedResponse",
+    "RoutedStream",
 ]
