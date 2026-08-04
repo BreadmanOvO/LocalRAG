@@ -353,6 +353,7 @@ def create_app(
                 output_tokens=0,
             )
             return _error_response(429, "queue_unavailable", request_id)
+        queue_wait_seconds = time.monotonic() - started_at
         try:
             handle = backend.start(generation_request)
         except Exception as exc:
@@ -432,7 +433,10 @@ def create_app(
                         "total_tokens": input_tokens + output_tokens,
                     },
                 },
-                headers={"X-Request-ID": request_id},
+                headers={
+                    "X-Request-ID": request_id,
+                    "X-Queue-Wait-Seconds": f"{queue_wait_seconds:.6f}",
+                },
             )
 
         iterator = iter(handle)
@@ -513,7 +517,10 @@ def create_app(
         return StreamingResponse(
             body(),
             media_type="text/event-stream",
-            headers={"X-Request-ID": request_id},
+            headers={
+                "X-Request-ID": request_id,
+                "X-Queue-Wait-Seconds": f"{queue_wait_seconds:.6f}",
+            },
         )
 
     return app

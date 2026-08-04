@@ -211,6 +211,10 @@ class ModelServingApiTests(unittest.TestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertEqual("req-1", response.headers["X-Request-ID"])
+        self.assertGreaterEqual(
+            float(response.headers["X-Queue-Wait-Seconds"]),
+            0.0,
+        )
         payload = response.json()
         self.assertEqual("fake answer", payload["choices"][0]["message"]["content"])
         self.assertEqual("stop", payload["choices"][0]["finish_reason"])
@@ -238,6 +242,10 @@ class ModelServingApiTests(unittest.TestCase):
         )
 
         self.assertEqual(200, response.status_code)
+        self.assertGreaterEqual(
+            float(response.headers["X-Queue-Wait-Seconds"]),
+            0.0,
+        )
         events = [line for line in response.text.splitlines() if line.startswith("data:")]
         self.assertIn('"role":"assistant"', events[0])
         self.assertTrue(any('"content":"first"' in event for event in events))
