@@ -7,7 +7,11 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from core.chat_history import get_history
 from config.runtime_keys import load_runtime_config
-from config.provider_factory import build_chat_model, build_embedding_model
+from config.provider_factory import (
+    build_agent_chat_model,
+    build_embedding_model,
+    build_rag_chat_model,
+)
 from uuid import uuid4
 
 DEFAULT_RAG_SYSTEM_PROMPT = (
@@ -130,8 +134,18 @@ def _format_retrieved_context(documents: list[Document]) -> str:
 
 
 class RagService(object):
-    def __init__(self, *, chat_model=None, embedding_model=None) -> None:
-        runtime_config = load_runtime_config()
+    def __init__(
+        self,
+        *,
+        chat_model=None,
+        embedding_model=None,
+        gateway=None,
+        runtime_config=None,
+    ) -> None:
+        runtime_config = runtime_config or load_runtime_config()
+        self.runtime_config = runtime_config
+        self.gateway = gateway
+        self.last_generation_route = None
         self.vector_service = VectorStoreService(
             embedding=(
                 embedding_model
@@ -149,9 +163,12 @@ class RagService(object):
             ]
         )
         
-        self.chat_model = (
-            chat_model if chat_model is not None else build_chat_model(runtime_config)
-        )
+        if chat_model is not None:
+            self.chat_model = chat_model
+        elif gateway is not None or getattr(runtime_config, "local_model_gateway", None) is not None:
+            self.chat_model = build_rag_chat_model(runtime_config, gateway=gateway)
+        else:
+            self.chat_model = build_agent_chat_model(runtime_config)
 
         self.chain = self.__get_chain()
 
@@ -183,13 +200,19 @@ class RagService(object):
 
     def answer_from_documents(self, question: str, documents: list[Document], session_id: str = "eval-session") -> str:
         effective_session_id = self._get_effective_session_id(session_id)
-        return self.chain.invoke(
+        answer = self.chain.invoke(
             {
                 "question": question,
                 "context": _format_documents(documents),
             },
             config={"configurable": {"session_id": effective_session_id}},
         )
+        self.last_generation_route = getattr(
+            getattr(self, "chat_model", None),
+            "last_route",
+            None,
+        )
+        return answer
 
     def answer_once(self, question: str, session_id: str = "eval-session") -> str:
         documents = self.retrieve_documents(question)
@@ -206,4 +229,5 @@ class RagService(object):
             "retrieved_context": _format_retrieved_context(generation_documents),
             "retrieved_rows": generation_rows,
             "retrieval_debug_candidates": scored_rows,
+            "generation_route": getattr(self, "last_generation_route", None),
         }

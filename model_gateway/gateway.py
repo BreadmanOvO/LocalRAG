@@ -222,6 +222,8 @@ class LocalModelGateway:
         context: GatewayRequestContext,
         fallback: FallbackResponse,
         response_validator: Callable[[str], object] | None = None,
+        temperature: float = 0.0,
+        max_tokens: int = 256,
     ) -> RoutedResponse:
         permit: CircuitPermit | None = None
         try:
@@ -247,6 +249,8 @@ class LocalModelGateway:
                 response = self.primary.complete(
                     messages,
                     context=context,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
                 )
                 _validate_response(response, response_validator)
                 self.breaker.record_success(permit)

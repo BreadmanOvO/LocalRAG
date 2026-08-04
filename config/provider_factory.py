@@ -215,7 +215,7 @@ def build_rag_chat_model(
     gateway=None,
     **overrides,
 ):
-    local_config = runtime_config.local_model_gateway
+    local_config = getattr(runtime_config, "local_model_gateway", None)
     if (
         local_config is not None
         and local_config.rag_generation_enabled
@@ -230,7 +230,7 @@ def build_summary_chat_model(
     gateway=None,
     **overrides,
 ):
-    local_config = runtime_config.local_model_gateway
+    local_config = getattr(runtime_config, "local_model_gateway", None)
     if (
         local_config is not None
         and local_config.conversation_summary_enabled

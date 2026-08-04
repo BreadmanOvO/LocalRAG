@@ -79,7 +79,7 @@ class RagEvaluationHelperTests(unittest.TestCase):
         with (
             mock.patch.object(rag, "load_runtime_config", return_value=runtime_config),
             mock.patch.object(rag, "build_embedding_model") as build_embedding,
-            mock.patch.object(rag, "build_chat_model") as build_chat,
+            mock.patch.object(rag, "build_agent_chat_model") as build_chat,
             mock.patch.object(rag, "VectorStoreService", return_value=mock.Mock()) as vector_store,
             mock.patch.object(rag.RagService, "_RagService__get_chain", return_value=mock.Mock()),
         ):
@@ -106,7 +106,7 @@ class RagEvaluationHelperTests(unittest.TestCase):
             mock.patch.object(rag, "load_runtime_config", return_value=runtime_config),
             mock.patch.object(rag, "build_embedding_model", return_value=object()) as mock_embeddings,
             mock.patch.object(rag, "VectorStoreService", return_value=mock.Mock()),
-            mock.patch.object(rag, "build_chat_model", return_value=mock.Mock()) as mock_chat,
+            mock.patch.object(rag, "build_agent_chat_model", return_value=mock.Mock()) as mock_chat,
             mock.patch.object(rag.RagService, "_RagService__get_chain", return_value=mock.Mock()),
         ):
             rag.RagService()
@@ -128,7 +128,7 @@ class RagEvaluationHelperTests(unittest.TestCase):
             mock.patch.object(rag, "load_runtime_config", return_value=runtime_config),
             mock.patch.object(rag, "build_embedding_model", return_value=object()),
             mock.patch.object(rag, "VectorStoreService", return_value=mock.Mock()),
-            mock.patch.object(rag, "build_chat_model", return_value=mock.Mock()),
+            mock.patch.object(rag, "build_agent_chat_model", return_value=mock.Mock()),
             mock.patch.object(rag.RagService, "_RagService__get_chain", return_value=mock.Mock()),
         ):
             service = rag.RagService()
@@ -149,7 +149,7 @@ class RagEvaluationHelperTests(unittest.TestCase):
             mock.patch.object(rag, "load_runtime_config", return_value=runtime_config),
             mock.patch.object(rag, "build_embedding_model", return_value=object()),
             mock.patch.object(rag, "VectorStoreService", return_value=mock.Mock()),
-            mock.patch.object(rag, "build_chat_model", return_value=mock.Mock()),
+            mock.patch.object(rag, "build_agent_chat_model", return_value=mock.Mock()),
             mock.patch.object(rag.RagService, "_RagService__get_chain", return_value=mock.Mock()),
         ):
             service = rag.RagService()

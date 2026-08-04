@@ -29,7 +29,7 @@ from agent.tools import (
     clarify_question,
 )
 from config.runtime_keys import load_runtime_config
-from config.provider_factory import build_chat_model
+from config.provider_factory import build_agent_chat_model
 from core.source_evidence import SourceEvidenceService
 from utils.path_tools import get_abs_path
 from utils.session import validate_session_id, validate_task_id
@@ -184,7 +184,7 @@ class ReactAgent:
 
         if chat_model is None:
             runtime_config = load_runtime_config()
-            chat_model = build_chat_model(runtime_config, temperature=0.7)
+            chat_model = build_agent_chat_model(runtime_config, temperature=0.7)
         self.chat_model = chat_model
 
         self.tools = [

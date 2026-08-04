@@ -45,8 +45,8 @@ class FakePrimary:
         self.complete_calls = 0
         self.stream_calls = 0
 
-    def complete(self, messages, *, context):
-        del messages, context
+    def complete(self, messages, *, context, **kwargs):
+        del messages, context, kwargs
         self.complete_calls += 1
         value = self.complete_values.pop(0)
         if isinstance(value, BaseException):

@@ -1,6 +1,6 @@
 from langchain_core.tools import tool
 from config.runtime_keys import load_runtime_config
-from config.provider_factory import build_chat_model
+from config.provider_factory import build_agent_chat_model
 
 
 @tool
@@ -15,7 +15,7 @@ def clarify_question(reason: str) -> str:
     """
     runtime_config = load_runtime_config()
 
-    chat_model = build_chat_model(runtime_config)
+    chat_model = build_agent_chat_model(runtime_config)
 
     prompt = f"""你是一个自动驾驶领域的专业问答助手。
 用户的问题不够清晰，原因如下：{reason}
