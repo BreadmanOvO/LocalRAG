@@ -1,0 +1,67 @@
+{
+  "contract_version": "localrag-model-serving-release-v1",
+  "release": "v1.6",
+  "model_id": "localrag-qwen3-4b-e6.1",
+  "git_revision": "4fa5c05b48c97ba0d20d998218fb4bebb94fa9cc",
+  "git_dirty": false,
+  "model_manifests": {
+    "input": {
+      "path": "model_deployment/manifests/e6_1_input_manifest.json",
+      "sha256": "81b6e2f5943d964245ce69c350f342c858580c75816654fe698a4cf951474fea"
+    },
+    "merged_bf16": {
+      "path": "model_deployment/manifests/e6_1_merged_bf16_manifest.json",
+      "sha256": "ae65136cb1e656ddcaf03b4bbd50da4d77bb0168bf139773a4155944f3d0e0a4"
+    },
+    "gguf_f16": {
+      "path": "model_deployment/manifests/e6_1_gguf_f16_manifest.json",
+      "sha256": "aece4aca78e1010205d7ace8f8a8521e44bca42f3ce1300fb9d7b979069f4154"
+    },
+    "gguf_q4_k_m": {
+      "path": "model_deployment/manifests/e6_1_q4_k_m_manifest.json",
+      "sha256": "0b3378b2769e1fae85dc576a01e4e4016cae2eee1d79ea54346035a2351abfa0"
+    }
+  },
+  "quality": {
+    "gate_pass": true,
+    "profiles": {
+      "adapter_bf16": {
+        "path": "results/model_quality/model-quality-adapter_bf16-20260804-223521-16ca3dcf/summary.json",
+        "sha256": "bcdaf7b8f39c4239e79067cfabb79e833f262459a8a86234d0cda56221bca258"
+      },
+      "merged_bf16": {
+        "path": "results/model_quality/model-quality-merged_bf16-20260805-015853-d1f8bf4e/summary.json",
+        "sha256": "c34e408987c0000eb142385b050a9dede322fa29f571154485b04a328b0cef03"
+      },
+      "gguf_f16": {
+        "path": "results/model_quality/model-quality-gguf_f16-20260805-020159-5328e724/summary.json",
+        "sha256": "a368e4aa823cc7a19a0d5fd9e58e7448e99256e42501f72e1b1109801fb70232"
+      },
+      "gguf_q4_k_m": {
+        "path": "results/model_quality/model-quality-gguf_q4_k_m-20260805-020331-a9dfeb28/summary.json",
+        "sha256": "a8f35b1af4a60cb3df136938467cdd46797cf6bbb3eb1b677437c791f2921c94"
+      }
+    },
+    "comparison": {
+      "path": "results/model_quality/comparison-latest.json",
+      "sha256": "d8acd9e6fe720234d66e37d8b34e22c6e49e0edf9e259c8886b65e456187908d"
+    }
+  },
+  "benchmark": {
+    "gate_pass": true,
+    "profiles": {
+      "e6_1_adapter_bf16": {
+        "path": "results/model_benchmark/serving-benchmark-e6_1_adapter_bf16-20260804-223602-6bb678b0/summary.json",
+        "sha256": "66276cb13ccf2ddc900785ea0bdadfb96d40fd7526a3a5d0c8f606c133ff9289"
+      },
+      "e6_1_q4_k_m": {
+        "path": "results/model_benchmark/serving-benchmark-e6_1_q4_k_m-20260805-020635-97c2c369/summary.json",
+        "sha256": "bcd339ea450adde99a29f9b77aebac4da5b857fb827f327c0d35a06b77515eda"
+      }
+    },
+    "comparison": {
+      "path": "results/model_benchmark/comparison-latest.json",
+      "sha256": "b3f45cb9f62d86e14bd668b3696b0652abe2ff979015aabc9aa02554ee13aeac"
+    }
+  }
+}
