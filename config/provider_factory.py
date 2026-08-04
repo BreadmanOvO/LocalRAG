@@ -177,7 +177,7 @@ class LocalHashEmbeddings:
         return [value / norm for value in vector]
 
 
-def build_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
+def build_agent_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
     if runtime_config.provider == "local_transformers":
         return LocalTransformersChatModel(
             runtime_config.chat_model_name,
@@ -204,6 +204,40 @@ def build_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
         options["http_async_client"] = httpx.AsyncClient(verify=False)
     options.update(overrides)
     return ChatOpenAI(**options)
+
+
+def build_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
+    return build_agent_chat_model(runtime_config, **overrides)
+
+
+def build_rag_chat_model(
+    runtime_config: RuntimeProviderConfig,
+    gateway=None,
+    **overrides,
+):
+    local_config = runtime_config.local_model_gateway
+    if (
+        local_config is not None
+        and local_config.rag_generation_enabled
+        and gateway is not None
+    ):
+        return gateway
+    return build_agent_chat_model(runtime_config, **overrides)
+
+
+def build_summary_chat_model(
+    runtime_config: RuntimeProviderConfig,
+    gateway=None,
+    **overrides,
+):
+    local_config = runtime_config.local_model_gateway
+    if (
+        local_config is not None
+        and local_config.conversation_summary_enabled
+        and gateway is not None
+    ):
+        return gateway
+    return build_agent_chat_model(runtime_config, **overrides)
 
 
 def build_embedding_model(runtime_config: RuntimeProviderConfig):

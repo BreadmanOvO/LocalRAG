@@ -85,6 +85,7 @@ class RuntimeKeysTests(unittest.TestCase):
 
             self.assertEqual("local_embedding", config.provider)
             self.assertEqual("local-hash-embedding", config.embedding_model_name)
+            self.assertIsNone(config.local_model_gateway)
 
     def test_successfully_parses_local_transformers_provider(self):
         with tempfile.TemporaryDirectory() as tmpdir:
