@@ -40,3 +40,18 @@ python -m unittest test.test_transformers_backend -v
 - `test_model_manifest.py`：验证模型输入 SHA-256 与 E6.1 LoRA 身份。
 - `test_model_serving_api.py`：验证 OpenAI-compatible API、队列、SSE 和指标。
 - `test_transformers_backend.py`：使用 mock 验证 BF16/PEFT 加载、生成、取消和 OOM latch。
+
+## 3) v1.6 模型质量与服务性能
+
+以下测试默认不加载真实权重；真实模型结果保存在 `results/model_quality/` 和
+`results/model_benchmark/`，由 release manifest 记录路径与 SHA-256：
+
+```powershell
+python -m unittest test.test_model_quality_eval test.test_serving_benchmark -v
+python eval/eval_model_quality.py --mode deterministic
+python eval/benchmark_serving.py --mode deterministic
+```
+
+- `test_model_quality_eval.py`：验证四 profile、三段质量隔离和固定 10-case Gate。
+- `test_serving_benchmark.py`：验证 9-cell 矩阵、队列指标、原子 checkpoint、断点恢复和失败关闭。
+- 正式部署结果见 `model_deployment/manifests/v1_6_model_serving_release.json`。
