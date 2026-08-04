@@ -510,6 +510,7 @@ class ConversationCompressorTests(unittest.TestCase):
         self.assertEqual(frozenset({"e-1"}), client.requests[0].allowed_evidence_ids)
         self.assertEqual(frozenset({"s-1"}), client.requests[0].allowed_source_ids)
         self.assertEqual(5000, client.requests[0].input_token_limit)
+        self.assertEqual("session-a", client.requests[0].session_id)
         self.assertEqual(
             (message_identity(messages[0]), message_identity(messages[1])),
             snapshot.covered_message_ids,

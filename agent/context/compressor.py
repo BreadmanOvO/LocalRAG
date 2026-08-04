@@ -40,6 +40,42 @@ _SUMMARY_FIELDS = frozenset(
     }
 )
 _FINDING_FIELDS = frozenset({"claim", "evidence_ids"})
+SUMMARY_JSON_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "goal",
+        "user_constraints",
+        "confirmed_findings",
+        "decisions",
+        "unresolved_questions",
+        "failed_attempts",
+        "referenced_source_ids",
+    ],
+    "properties": {
+        "goal": {"type": "string"},
+        "user_constraints": {"type": "array", "items": {"type": "string"}},
+        "confirmed_findings": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": ["claim", "evidence_ids"],
+                "properties": {
+                    "claim": {"type": "string"},
+                    "evidence_ids": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                    },
+                },
+            },
+        },
+        "decisions": {"type": "array", "items": {"type": "string"}},
+        "unresolved_questions": {"type": "array", "items": {"type": "string"}},
+        "failed_attempts": {"type": "array", "items": {"type": "string"}},
+        "referenced_source_ids": {"type": "array", "items": {"type": "string"}},
+    },
+}
 _MAX_SUMMARY_ITEM_LENGTH = 4000
 _DEFAULT_LOCAL_CONTEXT_LIMIT = 40960
 _ERROR_CODE = ConversationCompressionError.error_code
@@ -60,6 +96,7 @@ class SummaryRequest:
     allowed_evidence_ids: frozenset[str]
     allowed_source_ids: frozenset[str]
     input_token_limit: int
+    session_id: str = ""
 
     def __post_init__(self) -> None:
         if self.previous_summary is not None and not isinstance(
@@ -74,6 +111,10 @@ class SummaryRequest:
         _validate_id_frozenset(self.allowed_evidence_ids, "allowed_evidence_ids")
         _validate_id_frozenset(self.allowed_source_ids, "allowed_source_ids")
         _positive_int(self.input_token_limit, "input_token_limit")
+        if not isinstance(self.session_id, str):
+            raise TypeError("session_id must be a string")
+        if self.session_id:
+            object.__setattr__(self, "session_id", validate_session_id(self.session_id))
 
 
 @dataclass(frozen=True)
@@ -663,6 +704,7 @@ class ConversationCompressor:
                 (*protected_source_ids, *previous_source_ids, *extracted_source_ids)
             ),
             input_token_limit=input_token_limit,
+            session_id=session_id,
         )
         try:
             result = self._summary_client.summarize(request)

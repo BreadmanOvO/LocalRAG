@@ -479,6 +479,75 @@ class ReactAgentSessionTests(unittest.TestCase):
         )
         self.assertIs(context_middleware, agent.context_middleware)
 
+    def test_constructor_auto_builds_context_middleware_when_summary_is_enabled(self):
+        local_config = SimpleNamespace(
+            base_url="http://127.0.0.1:8002/v1",
+            model="localrag-qwen3-4b-e6.1",
+            api_token="secret",
+            conversation_summary_enabled=True,
+            connect_timeout_seconds=2.0,
+            read_timeout_seconds=120.0,
+            circuit_failure_threshold=3,
+            circuit_reset_seconds=30.0,
+        )
+        runtime_config = SimpleNamespace(local_model_gateway=local_config)
+        context_middleware = ConversationContextMiddleware.__new__(
+            ConversationContextMiddleware
+        )
+        task_store = mock.Mock()
+
+        with (
+            mock.patch.object(react_agent, "load_runtime_config", return_value=runtime_config),
+            mock.patch.object(react_agent, "OpenAICompatibleClient") as http_client,
+            mock.patch.object(react_agent, "CircuitBreaker") as circuit_breaker,
+            mock.patch.object(react_agent, "LocalModelGateway") as gateway,
+            mock.patch.object(react_agent, "build_summary_chat_model", return_value=mock.Mock()) as cloud,
+            mock.patch.object(react_agent, "ConversationContextStore") as store_factory,
+            mock.patch.object(react_agent, "ConversationCompressor") as compressor_factory,
+            mock.patch.object(
+                react_agent,
+                "ConversationContextMiddleware",
+                return_value=context_middleware,
+            ) as middleware_factory,
+            mock.patch.object(react_agent, "get_history", return_value=mock.Mock()) as history,
+            mock.patch(
+                "model_gateway.summary_adapter.LocalGatewaySummaryClient"
+            ) as summary_client,
+            mock.patch.object(react_agent, "create_agent", return_value=mock.Mock()) as create_agent,
+            mock.patch.object(react_agent, "load_agent_system_prompt", return_value="system"),
+        ):
+            agent = react_agent.ReactAgent(
+                "session-a",
+                task_id="task-a",
+                task_memory_store=task_store,
+                chat_model=object(),
+                rag_service=mock.Mock(),
+            )
+
+        http_client.assert_called_once_with(
+            local_config.base_url,
+            model=local_config.model,
+            api_token=local_config.api_token,
+            connect_timeout_seconds=2.0,
+            read_timeout_seconds=120.0,
+        )
+        circuit_breaker.assert_called_once_with(
+            failure_threshold=3,
+            reset_seconds=30.0,
+        )
+        gateway.assert_called_once()
+        cloud.assert_called_once_with(runtime_config, temperature=0.0)
+        summary_client.assert_called_once()
+        store_factory.assert_called_once_with()
+        compressor_factory.assert_called_once()
+        history.assert_called_once_with("session-a")
+        middleware_factory.assert_called_once()
+        self.assertIs(context_middleware, agent.context_middleware)
+        self.assertEqual("", agent.context_disabled_reason)
+        self.assertIs(gateway.return_value, agent.local_model_gateway)
+        self.assertIs(summary_client.return_value, agent.summary_client)
+        self.assertIs(context_middleware, create_agent.call_args.kwargs["middleware"][0])
+
     def test_get_conversation_context_returns_snapshot_or_none(self):
         without_context = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
         without_context.context_middleware = None

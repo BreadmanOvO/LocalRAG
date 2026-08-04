@@ -7,7 +7,10 @@ from langchain.agents.middleware.tool_call_limit import ToolCallLimitExceededErr
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.errors import GraphRecursionError
 
+from agent.context import ConversationCompressor
+from agent.context.compressor import parse_and_validate_summary
 from agent.context.middleware import ConversationContextMiddleware
+from agent.context.store import ConversationContextStore
 from agent.context.models import ConversationCompressionError
 from agent.execution import (
     AgentExecutionBudget,
@@ -29,8 +32,14 @@ from agent.tools import (
     clarify_question,
 )
 from config.runtime_keys import load_runtime_config
-from config.provider_factory import build_agent_chat_model
+from config.provider_factory import build_agent_chat_model, build_summary_chat_model
+from core.chat_history import get_history
 from core.source_evidence import SourceEvidenceService
+from model_gateway import (
+    CircuitBreaker,
+    LocalModelGateway,
+    OpenAICompatibleClient,
+)
 from utils.path_tools import get_abs_path
 from utils.session import validate_session_id, validate_task_id
 
@@ -178,12 +187,23 @@ class ReactAgent:
             and context_middleware.session_id != self.session_id
         ):
             raise ValueError("context_middleware session_id must match session_id")
-        self.context_middleware = context_middleware
+        self.context_disabled_reason = ""
+        self.local_model_gateway = None
+        self.summary_client = None
         self.evidence_service = evidence_service or SourceEvidenceService()
         self.task_memory_store.ensure_task(self.task_id)
 
+        runtime_config = None
+        if chat_model is None or context_middleware is None:
+            try:
+                runtime_config = load_runtime_config()
+            except Exception:
+                if chat_model is None:
+                    raise
+                self.context_disabled_reason = "runtime_config_unavailable"
+
         if chat_model is None:
-            runtime_config = load_runtime_config()
+            assert runtime_config is not None
             chat_model = build_agent_chat_model(runtime_config, temperature=0.7)
         self.chat_model = chat_model
 
@@ -218,6 +238,10 @@ class ReactAgent:
             clarify_question,
         ]
 
+        if context_middleware is None:
+            context_middleware = self._build_context_middleware(runtime_config)
+        self.context_middleware = context_middleware
+
         system_prompt = load_agent_system_prompt()
         self.agent_graph = create_agent(
             model=self.chat_model,
@@ -229,6 +253,65 @@ class ReactAgent:
                 prefix=(context_middleware,) if context_middleware is not None else (),
             ),
         )
+
+    def _build_context_middleware(self, runtime_config):
+        if runtime_config is None:
+            return None
+        local_config = getattr(runtime_config, "local_model_gateway", None)
+        if local_config is None or not local_config.conversation_summary_enabled:
+            self.context_disabled_reason = "disabled_by_config"
+            return None
+
+        try:
+            from model_gateway.summary_adapter import LocalGatewaySummaryClient
+
+            client = OpenAICompatibleClient(
+                local_config.base_url,
+                model=local_config.model,
+                api_token=local_config.api_token,
+                connect_timeout_seconds=local_config.connect_timeout_seconds,
+                read_timeout_seconds=local_config.read_timeout_seconds,
+            )
+            gateway = LocalModelGateway(
+                client,
+                breaker=CircuitBreaker(
+                    failure_threshold=local_config.circuit_failure_threshold,
+                    reset_seconds=local_config.circuit_reset_seconds,
+                ),
+            )
+            summary_client = LocalGatewaySummaryClient(
+                gateway,
+                build_summary_chat_model(runtime_config, temperature=0.0),
+                summary_validator=parse_and_validate_summary,
+                task_id=self.task_id,
+            )
+            store = ConversationContextStore()
+            compressor = ConversationCompressor(store, summary_client)
+            middleware = ConversationContextMiddleware(
+                session_id=self.session_id,
+                compressor=compressor,
+                store=store,
+                history=get_history(self.session_id),
+                protected_source_ids=self._protected_source_ids,
+            )
+            self.local_model_gateway = gateway
+            self.summary_client = summary_client
+            return middleware
+        except Exception:
+            self.context_disabled_reason = "context_setup_failed"
+            logger.exception("Conversation context middleware setup failed")
+            return None
+
+    def _protected_source_ids(self) -> tuple[str, ...]:
+        try:
+            memory = self.task_memory_store.get_task(self.task_id)
+        except Exception:
+            return ()
+        source_ids = (
+            *getattr(memory, "retrieved_sources", ()),
+            *getattr(memory, "confirmed_sources", ()),
+        )
+        return tuple(dict.fromkeys(str(source_id) for source_id in source_ids if source_id))
 
     def _graph_config(self) -> dict:
         return {

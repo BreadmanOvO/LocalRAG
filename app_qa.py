@@ -4,6 +4,7 @@ import uuid
 import streamlit as st
 
 from agent import ReactAgent
+from agent.context.store import ConversationContextStore
 from agent.observability import (
     build_source_observations,
     build_tool_trace_rows,
@@ -31,6 +32,7 @@ from agent.research import (
 )
 from agent.research.presentation import build_conversation_context_view
 from config import settings as config
+from core.chat_history import get_history
 from utils.session import validate_task_id
 
 
@@ -59,7 +61,18 @@ def _new_runtime_id() -> str:
     return str(uuid.uuid4())
 
 
+def _clear_session_artifacts(session_id: str) -> None:
+    try:
+        ConversationContextStore().clear_session(session_id)
+        get_history(session_id).clear()
+    except Exception:
+        logger.exception("Failed to clear conversation session")
+
+
 def _reset_runtime_for_task(task_id: str) -> None:
+    previous_session_id = st.session_state.get("session_id")
+    if previous_session_id:
+        _clear_session_artifacts(previous_session_id)
     st.session_state["task_id"] = validate_task_id(task_id)
     st.session_state["session_id"] = _new_runtime_id()
     st.session_state["message"] = [{"role": "assistant", "content": WELCOME_MESSAGE}]
