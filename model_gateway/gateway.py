@@ -359,6 +359,45 @@ class LocalModelGateway:
             last_route=self._last_route,
         )
 
+    def probe_snapshot(self) -> GatewaySnapshot:
+        try:
+            health_payload = self.primary.health()
+        except Exception:
+            return GatewaySnapshot(
+                circuit=self.breaker.snapshot(),
+                primary_model=self.primary.model,
+                available=False,
+                health="unavailable",
+                ready="unknown",
+                last_route=self._last_route,
+            )
+
+        health = (
+            "ok"
+            if isinstance(health_payload, Mapping)
+            and health_payload.get("status") == "ok"
+            else "unknown"
+        )
+        try:
+            ready_payload = self.primary.ready()
+        except Exception:
+            ready = "not_ready"
+        else:
+            ready = (
+                "ready"
+                if isinstance(ready_payload, Mapping)
+                and ready_payload.get("status") == "ready"
+                else "not_ready"
+            )
+        return GatewaySnapshot(
+            circuit=self.breaker.snapshot(),
+            primary_model=self.primary.model,
+            available=True,
+            health=health,
+            ready=ready,
+            last_route=self._last_route,
+        )
+
     def _local_response(
         self,
         response: GatewayResponse,
@@ -453,15 +492,24 @@ class LocalModelGateway:
         *,
         response: RoutedResponse | None,
     ) -> None:
+        usage = response.usage if response is not None else None
+        backend = response.backend if response else "unknown"
+        quantization = response.quantization if response else "unknown"
         self._last_route = {
             "request_id": context.request_id,
             "purpose": context.purpose.value,
             "status": status,
+            "profile": profile_name_for_route(backend, quantization),
+            "primary_model": self.primary.model,
             "actual_model": response.actual_model if response else "unknown",
-            "backend": response.backend if response else "unknown",
-            "quantization": response.quantization if response else "unknown",
+            "backend": backend,
+            "quantization": quantization,
             "fallback_used": response.fallback_used if response else False,
             "fallback_reason": response.fallback_reason if response else "",
+            "ttft_seconds": response.ttft_seconds if response else None,
+            "latency_seconds": response.latency_seconds if response else None,
+            "input_tokens": usage.prompt_tokens if usage else None,
+            "output_tokens": usage.completion_tokens if usage else None,
         }
         self.metrics.record_request(
             purpose=context.purpose.value,
@@ -495,3 +543,13 @@ def _validate_response(
 
 def _error_code(error: GatewayError) -> str:
     return error.__class__.__name__.removeprefix("Gateway").removesuffix("Error").lower()
+
+
+def profile_name_for_route(backend: str, quantization: str) -> str:
+    normalized_backend = backend.strip().lower().replace(".", "_")
+    normalized_quantization = quantization.strip().lower()
+    if normalized_backend == "transformers" and normalized_quantization == "none":
+        return "e6_1_adapter_bf16"
+    if normalized_backend == "llama_cpp" and normalized_quantization == "q4_k_m":
+        return "e6_1_q4_k_m"
+    return ""

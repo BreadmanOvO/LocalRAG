@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import math
+from collections.abc import Mapping
 from typing import TypedDict
 
 from agent.context.store import ConversationSummarySnapshot
 from agent.research.control import RESEARCH_PAUSED
 from agent.research.models import ResearchPlanSnapshot
+from model_gateway.gateway import GatewaySnapshot, profile_name_for_route
 
 
 RUN_STATUS_LABELS = {
@@ -47,6 +50,90 @@ class ConversationContextView(TypedDict):
     summary_model: str
     fallback_reason: str
     summary: ConversationContextSummaryView
+
+
+class ModelGatewayView(TypedDict):
+    available: bool
+    health: str
+    ready: str
+    profile: str
+    backend: str
+    quantization: str
+    circuit_state: str
+    primary_model: str
+    actual_model: str
+    fallback_reason: str
+    request_id: str
+    ttft_seconds: float | None
+    latency_seconds: float | None
+    input_tokens: int | None
+    output_tokens: int | None
+
+
+def _display_text(value: object) -> str:
+    return value.strip() if isinstance(value, str) else ""
+
+
+def _display_float(value: object) -> float | None:
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+        or value < 0
+    ):
+        return None
+    return float(value)
+
+
+def _display_int(value: object) -> int | None:
+    return value if type(value) is int and value >= 0 else None
+
+
+def build_model_gateway_view(
+    gateway_snapshot: GatewaySnapshot | None,
+    last_route: Mapping[str, object] | None,
+) -> ModelGatewayView:
+    if gateway_snapshot is not None and not isinstance(
+        gateway_snapshot,
+        GatewaySnapshot,
+    ):
+        raise TypeError("gateway_snapshot must be a GatewaySnapshot or None")
+    if last_route is not None and not isinstance(last_route, Mapping):
+        raise TypeError("last_route must be a mapping or None")
+
+    route = last_route or {}
+    backend = _display_text(route.get("backend"))
+    quantization = _display_text(route.get("quantization"))
+    profile = _display_text(route.get("profile")) or profile_name_for_route(
+        backend,
+        quantization,
+    )
+    circuit_state = ""
+    if gateway_snapshot is not None:
+        circuit_state = _display_text(gateway_snapshot.circuit.state.value)
+
+    return {
+        "available": gateway_snapshot.available if gateway_snapshot else False,
+        "health": _display_text(gateway_snapshot.health) if gateway_snapshot else "",
+        "ready": _display_text(gateway_snapshot.ready) if gateway_snapshot else "",
+        "profile": profile,
+        "backend": backend,
+        "quantization": quantization,
+        "circuit_state": circuit_state,
+        "primary_model": _display_text(route.get("primary_model"))
+        or (
+            _display_text(gateway_snapshot.primary_model)
+            if gateway_snapshot is not None
+            else ""
+        ),
+        "actual_model": _display_text(route.get("actual_model")),
+        "fallback_reason": _display_text(route.get("fallback_reason")),
+        "request_id": _display_text(route.get("request_id")),
+        "ttft_seconds": _display_float(route.get("ttft_seconds")),
+        "latency_seconds": _display_float(route.get("latency_seconds")),
+        "input_tokens": _display_int(route.get("input_tokens")),
+        "output_tokens": _display_int(route.get("output_tokens")),
+    }
 
 
 def build_conversation_context_view(

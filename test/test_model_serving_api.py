@@ -215,6 +215,9 @@ class ModelServingApiTests(unittest.TestCase):
             float(response.headers["X-Queue-Wait-Seconds"]),
             0.0,
         )
+        self.assertGreaterEqual(float(response.headers["X-TTFT-Seconds"]), 0.0)
+        self.assertEqual("transformers", response.headers["X-Backend"])
+        self.assertEqual("none", response.headers["X-Quantization"])
         payload = response.json()
         self.assertEqual("fake answer", payload["choices"][0]["message"]["content"])
         self.assertEqual("stop", payload["choices"][0]["finish_reason"])

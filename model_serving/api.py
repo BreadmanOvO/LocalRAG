@@ -436,6 +436,9 @@ def create_app(
                 headers={
                     "X-Request-ID": request_id,
                     "X-Queue-Wait-Seconds": f"{queue_wait_seconds:.6f}",
+                    "X-TTFT-Seconds": f"{(ttft or 0.0):.6f}",
+                    "X-Backend": profile.backend,
+                    "X-Quantization": profile.quantization,
                 },
             )
 
@@ -520,6 +523,8 @@ def create_app(
             headers={
                 "X-Request-ID": request_id,
                 "X-Queue-Wait-Seconds": f"{queue_wait_seconds:.6f}",
+                "X-Backend": profile.backend,
+                "X-Quantization": profile.quantization,
             },
         )
 

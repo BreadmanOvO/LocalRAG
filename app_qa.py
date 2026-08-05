@@ -30,7 +30,10 @@ from agent.research import (
     research_progress,
     run_status_label,
 )
-from agent.research.presentation import build_conversation_context_view
+from agent.research.presentation import (
+    build_conversation_context_view,
+    build_model_gateway_view,
+)
 from config import settings as config
 from core.chat_history import get_history
 from utils.session import validate_task_id
@@ -470,6 +473,85 @@ def _render_conversation_context(agent) -> None:
         st.json(summary_payload)
 
 
+def _load_model_gateway_view(agent) -> dict[str, object]:
+    gateway = getattr(agent, "local_model_gateway", None)
+    if gateway is None:
+        return build_model_gateway_view(None, None)
+    try:
+        snapshot = gateway.probe_snapshot()
+    except Exception:
+        logger.warning("failed to probe local model gateway")
+        return build_model_gateway_view(None, None)
+    return build_model_gateway_view(snapshot, snapshot.last_route)
+
+
+def _render_model_gateway_sidebar(view: dict[str, object]) -> None:
+    primary_model = str(view.get("primary_model") or "")
+    if not primary_model:
+        st.sidebar.caption("本地模型：未配置")
+        return
+    ready = str(view.get("ready") or "unknown")
+    if not view.get("available"):
+        ready_label = "离线"
+    else:
+        ready_label = {"ready": "就绪", "not_ready": "未就绪"}.get(
+            ready,
+            "未知",
+        )
+    circuit = str(view.get("circuit_state") or "unknown")
+    circuit_label = {
+        "closed": "关闭",
+        "open": "打开",
+        "half_open": "半开",
+    }.get(circuit, "未知")
+    st.sidebar.caption(f"本地模型：{ready_label} · 熔断：{circuit_label}")
+
+
+def _render_model_gateway(view: dict[str, object]) -> None:
+    fallback_reason = str(view.get("fallback_reason") or "")
+    with st.expander("模型路由", expanded=bool(fallback_reason)):
+        primary_model = str(view.get("primary_model") or "")
+        if not primary_model:
+            st.caption("本地模型未配置")
+            return
+
+        profile = str(view.get("profile") or "未识别")
+        backend = str(view.get("backend") or "未知")
+        quantization = str(view.get("quantization") or "未知")
+        st.caption(f"部署：{profile} · {backend} · {quantization}")
+        st.write(f"主模型：{primary_model}")
+
+        actual_model = str(view.get("actual_model") or "")
+        if not actual_model:
+            st.caption("暂无模型请求")
+            return
+        st.write(f"实际模型：{actual_model}")
+        if fallback_reason:
+            st.warning(f"已降级：{fallback_reason}")
+        else:
+            st.caption("降级状态：未触发")
+
+        ttft = view.get("ttft_seconds")
+        latency = view.get("latency_seconds")
+        input_tokens = view.get("input_tokens")
+        output_tokens = view.get("output_tokens")
+        ttft_column, latency_column, input_column, output_column = st.columns(4)
+        ttft_column.metric("TTFT", f"{ttft:.3f}s" if isinstance(ttft, float) else "-")
+        latency_column.metric(
+            "总延迟",
+            f"{latency:.3f}s" if isinstance(latency, float) else "-",
+        )
+        input_column.metric(
+            "输入 Token",
+            input_tokens if isinstance(input_tokens, int) else "-",
+        )
+        output_column.metric(
+            "输出 Token",
+            output_tokens if isinstance(output_tokens, int) else "-",
+        )
+        st.caption(f'请求 ID：{view.get("request_id") or "-"}')
+
+
 def _ensure_user_message(goal: str) -> None:
     if any(
         message.get("role") == "user" and message.get("content") == goal
@@ -634,6 +716,8 @@ with st.sidebar.expander("任务记忆", expanded=not task_memory.is_empty):
 
 _render_memory_editor(agent, task_memory, enabled=memory_enabled)
 _render_runtime_sidebar(runtime_status)
+model_gateway_view = _load_model_gateway_view(agent)
+_render_model_gateway_sidebar(model_gateway_view)
 
 research_action = _render_research_plan(
     research_plan,
@@ -641,6 +725,7 @@ research_action = _render_research_plan(
     research_identity_error,
 )
 _render_conversation_context(agent)
+_render_model_gateway(model_gateway_view)
 research_run_to_execute = ""
 if research_action and research_plan is not None:
     try:
