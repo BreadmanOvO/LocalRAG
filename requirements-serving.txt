@@ -1,8 +1,0 @@
-fastapi
-httpx
-peft
-prometheus-client
-pydantic
-torch
-transformers
-uvicorn[standard]
