@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from langchain_core.tools import tool
@@ -16,6 +17,7 @@ def build_rag_search_tool(
     retrieval_memory: SessionRetrievalMemory,
     rag_service: RagService | None = None,
     *,
+    rag_service_factory: Callable[[], RagService] | None = None,
     task_id: str | None = None,
     task_memory_store: TaskMemoryStore | None = None,
     task_memory_policy: TaskMemoryPolicy | None = None,
@@ -23,6 +25,10 @@ def build_rag_search_tool(
     """Build a RAG search tool bound to one agent session."""
     bound_session_id = validate_session_id(session_id)
     bound_task_id = validate_task_id(task_id) if task_id is not None else None
+    if rag_service is not None and rag_service_factory is not None:
+        raise ValueError("rag_service and rag_service_factory are mutually exclusive")
+    if rag_service_factory is not None and not callable(rag_service_factory):
+        raise TypeError("rag_service_factory must be callable")
     service = rag_service
 
     @tool("rag_search")
@@ -30,9 +36,12 @@ def build_rag_search_tool(
         """从自动驾驶知识库检索相关内容并生成有引用的回答。"""
         nonlocal service
         if service is None:
-            from core.rag import RagService
+            if rag_service_factory is not None:
+                service = rag_service_factory()
+            else:
+                from core.rag import RagService
 
-            service = RagService()
+                service = RagService()
 
         result = service.answer_with_retrieval(query, session_id=bound_session_id)
         documents = result.get("retrieved_rows", [])

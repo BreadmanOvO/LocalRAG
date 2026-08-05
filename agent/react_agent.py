@@ -1,5 +1,6 @@
 import logging
 import time
+from functools import partial
 
 from langchain.agents import create_agent
 from langchain.agents.middleware.model_call_limit import ModelCallLimitExceededError
@@ -207,11 +208,24 @@ class ReactAgent:
             chat_model = build_agent_chat_model(runtime_config, temperature=0.7)
         self.chat_model = chat_model
 
+        self.local_model_gateway = self._build_local_model_gateway(runtime_config)
+        rag_service_factory = None
+        if (
+            rag_service is None
+            and self.local_model_gateway is not None
+            and self._local_rag_enabled(runtime_config)
+        ):
+            rag_service_factory = partial(
+                self._build_local_rag_service,
+                runtime_config,
+            )
+
         self.tools = [
             build_rag_search_tool(
                 self.session_id,
                 self.retrieval_memory,
                 rag_service=rag_service,
+                rag_service_factory=rag_service_factory,
                 task_id=self.task_id,
                 task_memory_store=self.task_memory_store,
                 task_memory_policy=self.task_memory_policy,
@@ -254,17 +268,24 @@ class ReactAgent:
             ),
         )
 
-    def _build_context_middleware(self, runtime_config):
+    @staticmethod
+    def _local_rag_enabled(runtime_config) -> bool:
+        local_config = getattr(runtime_config, "local_model_gateway", None)
+        return bool(
+            local_config is not None
+            and getattr(local_config, "rag_generation_enabled", False)
+        )
+
+    def _build_local_model_gateway(self, runtime_config):
         if runtime_config is None:
             return None
         local_config = getattr(runtime_config, "local_model_gateway", None)
-        if local_config is None or not local_config.conversation_summary_enabled:
-            self.context_disabled_reason = "disabled_by_config"
+        if local_config is None or not (
+            getattr(local_config, "rag_generation_enabled", False)
+            or getattr(local_config, "conversation_summary_enabled", False)
+        ):
             return None
-
         try:
-            from model_gateway.summary_adapter import LocalGatewaySummaryClient
-
             client = OpenAICompatibleClient(
                 local_config.base_url,
                 model=local_config.model,
@@ -272,15 +293,48 @@ class ReactAgent:
                 connect_timeout_seconds=local_config.connect_timeout_seconds,
                 read_timeout_seconds=local_config.read_timeout_seconds,
             )
-            gateway = LocalModelGateway(
+            return LocalModelGateway(
                 client,
                 breaker=CircuitBreaker(
                     failure_threshold=local_config.circuit_failure_threshold,
                     reset_seconds=local_config.circuit_reset_seconds,
                 ),
             )
+        except Exception:
+            logger.exception("Local model gateway setup failed")
+            return None
+
+    def _build_local_rag_service(self, runtime_config):
+        from core.rag import RagService
+        from model_gateway.langchain_adapter import LocalGatewayChatModel
+
+        if self.local_model_gateway is None:
+            raise RuntimeError("local model gateway is unavailable")
+        fallback_model = build_agent_chat_model(runtime_config)
+        return RagService(
+            runtime_config=runtime_config,
+            gateway=LocalGatewayChatModel(
+                self.local_model_gateway,
+                fallback_model,
+            ),
+        )
+
+    def _build_context_middleware(self, runtime_config):
+        if runtime_config is None:
+            return None
+        local_config = getattr(runtime_config, "local_model_gateway", None)
+        if local_config is None or not local_config.conversation_summary_enabled:
+            self.context_disabled_reason = "disabled_by_config"
+            return None
+        if self.local_model_gateway is None:
+            self.context_disabled_reason = "context_setup_failed"
+            return None
+
+        try:
+            from model_gateway.summary_adapter import LocalGatewaySummaryClient
+
             summary_client = LocalGatewaySummaryClient(
-                gateway,
+                self.local_model_gateway,
                 build_summary_chat_model(runtime_config, temperature=0.0),
                 summary_validator=parse_and_validate_summary,
                 task_id=self.task_id,
@@ -294,7 +348,6 @@ class ReactAgent:
                 history=get_history(self.session_id),
                 protected_source_ids=self._protected_source_ids,
             )
-            self.local_model_gateway = gateway
             self.summary_client = summary_client
             return middleware
         except Exception:

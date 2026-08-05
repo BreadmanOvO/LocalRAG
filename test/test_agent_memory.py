@@ -374,6 +374,26 @@ class SessionRetrievalMemoryTests(unittest.TestCase):
         self.assertIn("page=2", source_tool_a.invoke({}))
         self.assertEqual("当前会话暂无检索记录，请先提问。", source_tool_b.invoke({}))
 
+    def test_rag_tool_builds_lazy_service_once(self):
+        memory = SessionRetrievalMemory()
+        rag_service = mock.Mock()
+        rag_service.answer_with_retrieval.return_value = {
+            "answer": "grounded answer",
+            "retrieved_rows": [],
+        }
+        factory = mock.Mock(return_value=rag_service)
+        rag_tool = build_rag_search_tool(
+            "session-a",
+            memory,
+            rag_service_factory=factory,
+        )
+
+        self.assertEqual("grounded answer", rag_tool.invoke({"query": "first"}))
+        self.assertEqual("grounded answer", rag_tool.invoke({"query": "second"}))
+
+        factory.assert_called_once_with()
+        self.assertEqual(2, rag_service.answer_with_retrieval.call_count)
+
 
 class ReactAgentSessionTests(unittest.TestCase):
     def test_system_prompt_prioritizes_explicit_source_tools(self):
@@ -547,6 +567,63 @@ class ReactAgentSessionTests(unittest.TestCase):
         self.assertIs(gateway.return_value, agent.local_model_gateway)
         self.assertIs(summary_client.return_value, agent.summary_client)
         self.assertIs(context_middleware, create_agent.call_args.kwargs["middleware"][0])
+
+    def test_default_rag_tool_reuses_local_gateway_and_cloud_fallback(self):
+        local_config = SimpleNamespace(
+            base_url="http://127.0.0.1:8002/v1",
+            model="localrag-qwen3-4b-e6.1",
+            api_token="secret",
+            rag_generation_enabled=True,
+            conversation_summary_enabled=False,
+            connect_timeout_seconds=2.0,
+            read_timeout_seconds=120.0,
+            circuit_failure_threshold=3,
+            circuit_reset_seconds=30.0,
+        )
+        runtime_config = SimpleNamespace(local_model_gateway=local_config)
+        rag_service = mock.Mock()
+        rag_service.answer_with_retrieval.return_value = {
+            "answer": "local answer",
+            "retrieved_rows": [],
+        }
+        fallback_model = object()
+        gateway_adapter = object()
+
+        with (
+            mock.patch.object(react_agent, "load_runtime_config", return_value=runtime_config),
+            mock.patch.object(react_agent, "OpenAICompatibleClient"),
+            mock.patch.object(react_agent, "CircuitBreaker"),
+            mock.patch.object(react_agent, "LocalModelGateway") as gateway,
+            mock.patch.object(
+                react_agent,
+                "build_agent_chat_model",
+                return_value=fallback_model,
+            ) as build_cloud,
+            mock.patch(
+                "model_gateway.langchain_adapter.LocalGatewayChatModel",
+                return_value=gateway_adapter,
+            ) as adapter,
+            mock.patch("core.rag.RagService", return_value=rag_service) as rag_factory,
+            mock.patch.object(react_agent, "create_agent", return_value=mock.Mock()),
+            mock.patch.object(react_agent, "load_agent_system_prompt", return_value="system"),
+        ):
+            agent = react_agent.ReactAgent(
+                "session-a",
+                task_id="task-a",
+                task_memory_store=mock.Mock(),
+                chat_model=object(),
+            )
+            answer = agent.tools[0].invoke({"query": "question"})
+
+        self.assertEqual("local answer", answer)
+        gateway.assert_called_once()
+        build_cloud.assert_called_once_with(runtime_config)
+        adapter.assert_called_once_with(gateway.return_value, fallback_model)
+        rag_factory.assert_called_once_with(
+            runtime_config=runtime_config,
+            gateway=gateway_adapter,
+        )
+        self.assertIs(gateway.return_value, agent.local_model_gateway)
 
     def test_get_conversation_context_returns_snapshot_or_none(self):
         without_context = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
