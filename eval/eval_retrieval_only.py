@@ -4,7 +4,6 @@ This script evaluates whether the evidence source documents are retrieved
 in the top-k results, without requiring a chat model for answer generation.
 """
 import argparse
-import json
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -13,7 +12,6 @@ from typing import Any
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from config import settings as config
 from config.runtime_keys import load_runtime_config
 from eval.eval_hybrid import _build_hybrid_retriever
 from eval.eval_ragas import load_dataset, write_json
@@ -144,7 +142,7 @@ def main() -> None:
 
     # Print summary
     print(f"\n{'='*50}")
-    print(f"Results:")
+    print("Results:")
     print(f"  Total questions: {results['sample_count']}")
     print(f"  Hit count: {results['hit_count']}")
     print(f"  Hit ratio (hit@{args.final_top_k}): {results['hit_ratio']:.3f}")

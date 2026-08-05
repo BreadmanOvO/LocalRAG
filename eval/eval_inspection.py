@@ -9,7 +9,6 @@ if __package__ in {None, ""}:
 
 from config import settings as config
 from config.runtime_keys import load_runtime_config
-from config.provider_factory import build_embedding_model
 from core.hybrid_retriever import HybridRetriever
 from eval.eval_hybrid import _build_hybrid_retriever
 from eval.eval_chunking import load_dataset
@@ -47,7 +46,7 @@ def inspect_query(
 
 def render_inspection_markdown(inspection: dict[str, Any]) -> str:
     lines = [
-        f"# Retrieval Inspection",
+        "# Retrieval Inspection",
         "",
         f"**Query**: {inspection['query']}",
         "",
@@ -109,7 +108,6 @@ def main() -> None:
         md = render_inspection_markdown(inspection)
         (out_dir / f"{sample['id']}.md").write_text(md, encoding="utf-8")
 
-    import json
     (out_dir / "inspections.json").write_text(
         json.dumps(inspections, ensure_ascii=False, indent=2), encoding="utf-8"
     )

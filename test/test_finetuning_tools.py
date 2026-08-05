@@ -17,12 +17,6 @@ from scripts import prepare_sft_e6_dataset
 from scripts import prepare_sft_e6_1_dataset
 from scripts import check_e7_regression_gate
 from scripts import check_finetune_exit_gate
-from scripts import audit_sft_dataset
-from scripts import check_finetune_env
-from scripts import run_local_qwen3_e0
-from scripts import smoke_local_qwen3
-from scripts import smoke_local_rag_qwen3
-from data.evaluation.shared.eval_schema import validate_dataset
 
 
 def _sample(sample_id: str = "train-001") -> dict:

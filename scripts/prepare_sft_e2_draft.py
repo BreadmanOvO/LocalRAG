@@ -10,7 +10,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from data.evaluation.shared.eval_schema import validate_dataset
-from scripts.prepare_sft_dataset import DEFAULT_INSTRUCTION, build_llamafactory_record
+from scripts.prepare_sft_dataset import build_llamafactory_record
 
 
 DEFAULT_DATASET_VERSION = "v1.3-e2-draft"

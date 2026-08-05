@@ -4,16 +4,15 @@ import shlex
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from eval import eval_chunking
-from eval import eval_llm_judge as judge_runner
-from eval import eval_ragas as ragas_runner
+from eval import eval_chunking  # noqa: E402
+from eval import eval_llm_judge as judge_runner  # noqa: E402
+from eval import eval_ragas as ragas_runner  # noqa: E402
 
 
 def build_judge_formal_run(*, dataset_path: Path, baseline_run_dir: Path, chunking_run_dir: Path, judge_run_dir: Path) -> dict[str, Path]:

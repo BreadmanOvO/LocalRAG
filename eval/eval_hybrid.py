@@ -13,17 +13,12 @@ from config import settings as config
 from config.runtime_keys import load_runtime_config
 from config.provider_factory import build_embedding_model
 from core.hybrid_retriever import HybridRetriever
-from core.rag import RagService, _format_documents, _normalize_scored_rows
+from core.rag import _format_documents
 from eval.eval_chunking import (
-    _build_prediction_record,
-    _empty_summary,
-    build_comparison_artifacts,
     load_dataset,
-    render_chunking_report,
     summarize_chunking_predictions,
-    write_chunking_run_artifacts,
 )
-from eval.eval_ragas import build_runtime_manifest_fields, build_session_id, write_json
+from eval.eval_ragas import build_runtime_manifest_fields, write_json
 
 STRATEGY_DENSE = "dense_only"
 STRATEGY_SPARSE = "sparse_only"
@@ -73,7 +68,7 @@ def run_hybrid_evaluation(
     runtime_config = load_runtime_config()
     from config.provider_factory import build_chat_model
     chat_model = build_chat_model(runtime_config)
-    from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+    from langchain_core.prompts import ChatPromptTemplate
 
     prompt_template = ChatPromptTemplate.from_messages(
         [

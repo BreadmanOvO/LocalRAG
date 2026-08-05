@@ -42,7 +42,7 @@ for entry in old_papers:
         md_parts = [
             f"# {title}\n",
             f"**Source**: arxiv PDF, {total_pages} pages\n",
-            f"**Type**: Academic Paper\n",
+            "**Type**: Academic Paper\n",
             "---\n",
             "## Document Content\n",
         ]

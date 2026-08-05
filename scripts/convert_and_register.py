@@ -92,7 +92,7 @@ def pdf_to_markdown(pdf_path, title):
     md_parts = [
         f"# {title}\n",
         f"**Source**: arxiv PDF, {total_pages} pages\n",
-        f"**Type**: Academic Paper\n",
+        "**Type**: Academic Paper\n",
         "---\n",
         "## Document Content\n",
     ]
@@ -187,7 +187,7 @@ def main():
     with open(REGISTRY_PATH, 'w', encoding='utf-8') as f:
         json.dump(registry, f, indent=2, ensure_ascii=False)
 
-    print(f"\n=== Results ===")
+    print("\n=== Results ===")
     print(f"Converted: {converted}")
     print(f"Skipped (already registered): {skipped}")
     print(f"Total registry entries: {len(registry)}")

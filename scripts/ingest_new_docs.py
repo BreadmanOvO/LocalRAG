@@ -57,7 +57,6 @@ def main():
         source_metadata = {
             "source": entry["path_or_url"],
             "source_id": entry["source_id"],
-            "doc_type": entry["doc_type"],
             "doc_type": entry.get("doc_type", "untyped"),
             "category": entry.get("category", ""),
             "language": entry.get("language", "zh"),

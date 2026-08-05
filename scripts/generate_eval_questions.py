@@ -130,10 +130,7 @@ def main():
 
     os.makedirs(TRAIN_DIR, exist_ok=True)
 
-    existing_gold = []
     eval_path = os.path.join(EVAL_DIR, "eval_set.json")
-    if os.path.exists(eval_path):
-        existing_gold = json.load(open(eval_path, 'r', encoding='utf-8'))
 
     # Check which source_ids already have questions in existing eval/train sets
     train_path = os.path.join(TRAIN_DIR, "train_set.json")
@@ -191,7 +188,7 @@ def main():
             print(f"  OK ({len(questions)} questions)")
         else:
             failed += 1
-            print(f"  FAILED")
+            print("  FAILED")
 
         time.sleep(0.5)
 
@@ -258,7 +255,7 @@ def main():
     with open(os.path.join(EVAL_DIR, "gold_set_100.json"), 'w', encoding='utf-8') as f:
         json.dump(eval_questions, f, indent=2, ensure_ascii=False)
 
-    print(f"\n=== Results ===")
+    print("\n=== Results ===")
     print(f"Processed: {processed}")
     print(f"Skipped (already covered): {skipped}")
     print(f"Failed: {failed}")

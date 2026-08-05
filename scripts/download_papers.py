@@ -123,7 +123,7 @@ for arxiv_id, filename in PAPERS:
             os.remove(filepath)
     time.sleep(1)  # rate limit
 
-print(f"\n=== Results ===")
+print("\n=== Results ===")
 print(f"Downloaded: {success}/{len(PAPERS)}")
 if failed:
     print(f"Failed ({len(failed)}):")

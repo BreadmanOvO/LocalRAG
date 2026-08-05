@@ -15,8 +15,7 @@ if __package__ in {None, ""}:
 
 from config import settings as config
 from config.runtime_keys import load_runtime_config
-from config.provider_factory import build_chat_model, build_embedding_model
-from core.hybrid_retriever import HybridRetriever
+from config.provider_factory import build_chat_model
 from core.reranker import CrossEncoderReranker, LLMReranker
 from core.rag import _format_documents
 from eval.eval_chunking import summarize_chunking_predictions
