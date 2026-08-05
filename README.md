@@ -163,6 +163,7 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 - [E5 pairwise contrast 数据报告](RAG_md/docs/reports/e5-pairwise-contrast-review.md) — E5 完整上下文 / 部分上下文对照样本与设计原则
 - [v1.4 Agent 可靠性复核](RAG_md/docs/reports/v1.4-agent-reliability-review.md) — M1-M5 Gate、失败状态与运行身份收口
 - [v1.5 研究任务 UI A4 报告](RAG_md/docs/reports/v1.5-research-task-ui-a4.md) — 可恢复执行入口、状态控制、证据关系和浏览器验证
+- [v1.6 发布报告](docs/v1.6-release.md) — 本地模型部署、服务可靠性、会话压缩与端到端验证
 
 ## 版本
 
@@ -173,4 +174,5 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 | v1.2 | 检索层（hybrid retrieval + reranker + semantic chunking） | 已完成 |
 | v1.3 | 数据扩充与评测重建 + Qwen3-4B 微调 E1-E9 闭环 | 已完成 |
 | v1.4.2 | Agent + Memory 研究助手 | 已完成（M1-M5、稳定性补强与代码精简收口） |
-| v1.5 | 可控研究 Agent | 开发中（A1-A4 已完成，下一阶段 A5 评测发布） |
+| v1.5 | 可控研究 Agent | 已完成（A1-A5 评测发布） |
+| v1.6 | 本地模型部署与会话压缩 | 已完成（Task 8/9 验证通过） |

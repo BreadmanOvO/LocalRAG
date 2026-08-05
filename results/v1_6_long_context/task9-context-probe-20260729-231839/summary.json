@@ -1,0 +1,44 @@
+{
+  "run_id": "task9-context-probe-20260729-231839",
+  "git_revision": "4de26dc9bd901a11bb506ebd96743ed4bc9f7f36",
+  "session_id": "task9-same-session",
+  "first_revision": 1,
+  "recovered_revision_before_second_round": 1,
+  "second_revision": 2,
+  "event_revisions": [
+    1,
+    2
+  ],
+  "transcript_message_count": 8,
+  "unique_transcript_identity_count": 8,
+  "covered_message_count": 6,
+  "unique_covered_identity_count": 6,
+  "second_summary_request_message_ids": [
+    "id:probe-m3",
+    "id:probe-m4",
+    "id:probe-m5",
+    "id:probe-m6"
+  ],
+  "second_recent_message_ids": [
+    "probe-m7",
+    "probe-m8"
+  ],
+  "target_budget": 750,
+  "second_tokens_before": 1956,
+  "second_tokens_after": 116,
+  "checks": {
+    "first_compressed": true,
+    "recovered_revision_matches_first": true,
+    "second_compressed": true,
+    "revision_incremented_once": true,
+    "event_revisions_are_1_2": true,
+    "transcript_identity_unique": true,
+    "covered_identity_unique": true,
+    "covered_identity_from_transcript": true,
+    "covered_prefix_not_resummarized": true,
+    "model_view_below_target": true,
+    "inputs_not_mutated": true,
+    "previous_summary_supplied_after_recovery": true
+  },
+  "probe_pass": true
+}
