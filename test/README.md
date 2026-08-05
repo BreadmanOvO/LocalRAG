@@ -55,3 +55,10 @@ python eval/benchmark_serving.py --mode deterministic
 - `test_model_quality_eval.py`：验证四 profile、三段质量隔离和固定 10-case Gate。
 - `test_serving_benchmark.py`：验证 9-cell 矩阵、队列指标、原子 checkpoint、断点恢复和失败关闭。
 - 正式部署结果见 `model_deployment/manifests/v1_6_model_serving_release.json`。
+
+## 4) v1.6 本地服务端到端验证
+
+`results/v1_6_e2e/task8_e2e_summary.json` 记录 Q4 llama.cpp、LocalRAG gateway 和
+前端页面的去敏验证结果，包括健康检查、鉴权、SSE、模型路由和会话压缩面板。
+该报告不包含 prompt、answer、API token、权重或截图；未配置云凭据时，真实云降级不在
+本地端到端范围内。

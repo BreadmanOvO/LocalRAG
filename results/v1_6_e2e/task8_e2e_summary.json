@@ -1,0 +1,55 @@
+{
+  "contract_version": "localrag-v1.6-task8-e2e-v1",
+  "model": {
+    "model_id": "localrag-qwen3-4b-e6.1",
+    "backend": "llama_cpp",
+    "quantization": "Q4_K_M",
+    "manifest_valid": true
+  },
+  "service": {
+    "internal_llama_models": 200,
+    "gateway_health": 200,
+    "gateway_ready": 200,
+    "gateway_models": 200
+  },
+  "api_contract": {
+    "non_streaming_generation": 200,
+    "streaming_generation": {
+      "status": 200,
+      "has_role_event": true,
+      "has_done_event": true
+    },
+    "unauthenticated_request": 401,
+    "invalid_request_cases": {
+      "missing_purpose": 400,
+      "wrong_model": 400,
+      "max_tokens_exceeded": 400
+    }
+  },
+  "ui": {
+    "desktop_1440x900": {
+      "model_gateway_ready": true,
+      "conversation_context_panel": true,
+      "model_route_panel": true,
+      "horizontal_overflow": false,
+      "input_overlaps_message": false
+    },
+    "mobile_390x844": {
+      "model_gateway_ready": true,
+      "conversation_context_panel": true,
+      "model_route_panel": true,
+      "horizontal_overflow": false,
+      "input_overlaps_message": false
+    }
+  },
+  "known_environment_limits": [
+    "No cloud provider credential was configured, so real cloud fallback was not invoked.",
+    "The local Chroma rag collection was unavailable, so research execution was disabled."
+  ],
+  "redaction": {
+    "prompts": false,
+    "answers": false,
+    "api_tokens": false,
+    "screenshots": false
+  }
+}

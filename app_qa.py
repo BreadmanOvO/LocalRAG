@@ -60,6 +60,18 @@ logger = logging.getLogger(__name__)
 st.set_page_config(page_title="LocalRAG 研究助手", layout="wide")
 
 
+st.markdown(
+    """
+    <style>
+    section.main [data-testid="stBottom"] {
+        position: static;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
 def _new_runtime_id() -> str:
     return str(uuid.uuid4())
 
