@@ -75,7 +75,9 @@ LocalRAG/
 │   ├── rag.py                 # RAG 服务核心
 │   ├── knowledge_base.py      # 知识库入库与 chunk 写入
 │   ├── chunking.py            # 分块策略（baseline / doc_type_aware / semantic）
-│   ├── hybrid_retriever.py    # Hybrid Retrieval（dense + BM25 sparse）
+│   ├── bm25_retriever.py      # BM25 稀疏召回
+│   ├── retrieval_pipeline.py  # Dense + BM25 → RRF → Reranker 主链路
+│   ├── hybrid_retriever.py    # 历史加权 Hybrid 对照实现
 │   └── reranker.py            # Cross-Encoder Reranker
 ├── config/
 │   ├── runtime_models.json    # 运行时配置（不提交）
@@ -162,7 +164,9 @@ python eval/eval_finetune_behavior.py \
   --predictions results/finetuned_eval/<run_id>/predictions.json
 ```
 
-### 最新评测结果（100 题，bge-m3，100 篇文档，sensenova-6.7-flash-lite）
+### 检索评测结果与口径（100 题，BGE-M3，100 篇文档）
+
+下表是 v1.2/v1.3 的分块与 Cross-Encoder 消融结果，使用历史 semantic/doc-type-aware 检索评测入口；它用于比较分块和精排收益，不等同于 v1.7 的在线默认主链路。
 
 | 分块策略 | Reranker | Hit@5 | MRR | Hit@1 | Hit@3 |
 |---------|:--------:|:-----:|:---:|:-----:|:-----:|
@@ -173,11 +177,19 @@ python eval/eval_finetune_behavior.py \
 | semantic | No | 0.930 | 0.798 | 0.710 | 0.870 |
 | **semantic** | **Yes** | **0.940** | **0.893** | **0.860** | 0.930 |
 
-最优 Hit@5：doc_type_aware + reranker 与 semantic + reranker 均为 94%；semantic + reranker 的 MRR 最高（0.893）。
+该组实验中，doc_type_aware + reranker 与 semantic + reranker 的 Hit@5 均为 0.94；semantic + reranker 的 MRR 最高，为 0.893。
 
 Reranker 的收益主要体现在排序质量：semantic 的 MRR 从 0.798 提升到 0.893，Hit@1 从 0.71 提升到 0.86。v1.7 默认链路固定为 Dense + BM25 → RRF → Cross-Encoder → Top5；加权融合 `HybridRetriever` 作为历史对照保留，失败时降级到 Dense + reranker、Dense-only。
 
-v1.7 最终默认链路在同一 100 题活动语料上完成 retrieval-only 回归：Hit@1=0.85、Hit@3=0.97、Hit@5=0.97、MRR=0.9067，100/100 进入 `rrf_rerank` 且无 fallback；该结果不调用线上生成模型。
+v1.7 最终默认链路在同一 100 题活动评测集、当前 doc-type-aware 活动语料上完成 retrieval-only 回归：Dense Top20 + BM25 Top20 → RRF → Cross-Encoder → Top5，Hit@1=0.85、Hit@3=0.97、Hit@5=0.97、MRR=0.9067，100/100 进入 `rrf_rerank` 且无 fallback；该结果不调用生成模型。由于分块索引、融合方法和评测入口同时发生变化，不能将 0.94→0.97 归因于 RRF 单项收益。
+
+RAGAS 端到端对照中，hybrid + reranker 的 Context Precision/Recall 为 0.847/0.937；该指标评估生成上下文质量，与 retrieval-only 的 Hit@k/MRR 分属不同评测层。
+
+### 微调、模型服务与长上下文
+
+- 基于 LLaMA-Factory 对 Qwen3-4B 开展 4-bit QLoRA 微调，完成 LoRA 权重合并、Transformers 与 llama.cpp 双路径推理验证，并通过生成行为评测与训练退出门禁闭环微调目标。
+- 基于 FastAPI 搭建 OpenAI-compatible 流式推理服务，支持请求排队、超时取消、API 鉴权和 Prometheus 指标；完成 BF16、GGUF F16 与 Q4_K_M 部署 profile 验证。
+- 引入结构化滚动摘要和摘要 revision，长会话评测中的上下文 Token 中位数降低 73.5%。
 
 Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/stores/eval_set-20260522-071034/baseline`）重跑后，`answered_ratio=1.00`、`context_hit_ratio=1.00`、`evidence_source_hit_ratio=0.97`。
 
