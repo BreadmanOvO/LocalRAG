@@ -46,6 +46,7 @@ class AgentEvent:
     error_code: str = ""
     elapsed_ms: int | None = None
     observations: tuple[dict[str, Any], ...] = field(default_factory=tuple)
+    details: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return deepcopy(asdict(self))
@@ -126,6 +127,7 @@ def build_tool_trace_rows(
                 "状态": status,
                 "耗时": elapsed,
                 "参数": json.dumps(started.get("arguments") or {}, ensure_ascii=False),
+                "错误码": str(completed.get("error_code") or "") if completed else "",
             }
         )
     return rows
@@ -144,6 +146,11 @@ def build_source_observation(
         "chunk_strategy": str(document.get("chunk_strategy") or "unknown"),
         "rank": document.get("rank"),
         "score": document.get("score"),
+        "dense_rank": document.get("dense_rank"),
+        "bm25_rank": document.get("bm25_rank"),
+        "rrf_rank": document.get("rrf_rank"),
+        "rerank_rank": document.get("rerank_rank"),
+        "retrieval_stage": document.get("retrieval_stage"),
         "summary": content[:240] + ("..." if len(content) > 240 else ""),
         "evidence_status": evidence_status,
     }
@@ -190,7 +197,7 @@ def diff_task_memory(before, after) -> list[dict[str, str]]:
     if before is None or after is None:
         return []
 
-    changes = []
+    changes: list[dict[str, str]] = []
     for field_name, label in MEMORY_FIELD_LABELS.items():
         before_value = getattr(before, field_name)
         after_value = getattr(after, field_name)

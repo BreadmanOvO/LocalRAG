@@ -1,8 +1,6 @@
 import unittest
 from unittest import mock
 
-from pydantic import ValidationError
-
 from agent.memory import SessionRetrievalMemory
 from agent.tools.research import (
     build_compare_sources_tool,
@@ -236,8 +234,28 @@ class ResearchToolTests(unittest.TestCase):
     def test_compare_tool_rejects_a_single_source(self):
         compare_tool = build_compare_sources_tool(self.service)
 
-        with self.assertRaises(ValidationError):
-            compare_tool.invoke({"source_ids": ["paper-001"]})
+        result = compare_tool.invoke({"source_ids": ["paper-001"]})
+
+        self.assertIn("[error_code=tool_invalid_input]", result)
+        self.assertNotIn("validation error", result.lower())
+
+    def test_evidence_check_converts_memory_failure_to_safe_error_code(self):
+        memory = mock.Mock(spec=SessionRetrievalMemory)
+        memory.recall.side_effect = RuntimeError("private session memory path")
+        evidence_tool = build_evidence_check_tool("session-a", memory, self.service)
+
+        message = evidence_tool.invoke(
+            {
+                "type": "tool_call",
+                "id": "call-evidence-failed",
+                "name": "evidence_check",
+                "args": {"claim": "claim"},
+            }
+        )
+
+        self.assertEqual("error", message.status)
+        self.assertIn("[error_code=evidence_check_failed]", message.content)
+        self.assertNotIn("private session memory path", message.content)
 
     def test_research_tools_return_source_observation_artifacts(self):
         calls = [
@@ -295,6 +313,7 @@ class ResearchToolTests(unittest.TestCase):
             )
 
         self.assertEqual("error", message.status)
+        self.assertIn("[error_code=source_comparison_failed]", message.content)
         self.assertIn("来源对比失败", message.content)
         self.assertNotIn("private service details", message.content)
 

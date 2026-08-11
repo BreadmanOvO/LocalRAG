@@ -21,6 +21,7 @@ from agent.execution import (
 )
 from agent.memory import SessionRetrievalMemory, TaskMemoryPolicy, TaskMemoryStore
 from agent.observability import AgentEvent
+from agent.tools.failures import extract_tool_error_code
 from agent.tools import (
     build_rag_search_tool,
     build_compare_sources_tool,
@@ -132,14 +133,24 @@ def _events_from_message(message, started_at: float) -> list[AgentEvent]:
         else []
     )
     observations = tuple(item for item in raw_observations if isinstance(item, dict))
+    raw_trace = artifact.get("trace") if isinstance(artifact, dict) else None
+    trace_details = raw_trace if isinstance(raw_trace, dict) else {}
+    status = str(getattr(message, "status", None) or "success")
+    error_code = (
+        extract_tool_error_code(getattr(message, "content", ""))
+        if status in {"error", "failed"}
+        else ""
+    )
     return [
         AgentEvent(
             kind="tool_completed",
             tool_name=getattr(message, "name", None) or "unknown",
             call_id=str(getattr(message, "tool_call_id", None) or ""),
-            status=str(getattr(message, "status", None) or "success"),
+            status=status,
+            error_code=error_code,
             elapsed_ms=_elapsed_ms(started_at),
             observations=observations,
+            details=trace_details,
         )
     ]
 
@@ -190,6 +201,7 @@ class ReactAgent:
             raise ValueError("context_middleware session_id must match session_id")
         self.context_disabled_reason = ""
         self.local_model_gateway = None
+        self.local_model_gateway_status = "not_configured"
         self.summary_client = None
         self.evidence_service = evidence_service or SourceEvidenceService()
         self.task_memory_store.ensure_task(self.task_id)
@@ -278,12 +290,17 @@ class ReactAgent:
 
     def _build_local_model_gateway(self, runtime_config):
         if runtime_config is None:
+            self.local_model_gateway_status = "not_configured"
             return None
         local_config = getattr(runtime_config, "local_model_gateway", None)
-        if local_config is None or not (
+        if local_config is None:
+            self.local_model_gateway_status = "not_configured"
+            return None
+        if not (
             getattr(local_config, "rag_generation_enabled", False)
             or getattr(local_config, "conversation_summary_enabled", False)
         ):
+            self.local_model_gateway_status = "disabled_by_config"
             return None
         try:
             client = OpenAICompatibleClient(
@@ -293,14 +310,17 @@ class ReactAgent:
                 connect_timeout_seconds=local_config.connect_timeout_seconds,
                 read_timeout_seconds=local_config.read_timeout_seconds,
             )
-            return LocalModelGateway(
+            gateway = LocalModelGateway(
                 client,
                 breaker=CircuitBreaker(
                     failure_threshold=local_config.circuit_failure_threshold,
                     reset_seconds=local_config.circuit_reset_seconds,
                 ),
             )
+            self.local_model_gateway_status = "configured"
+            return gateway
         except Exception:
+            self.local_model_gateway_status = "unhealthy"
             logger.exception("Local model gateway setup failed")
             return None
 

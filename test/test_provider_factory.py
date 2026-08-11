@@ -63,6 +63,24 @@ class ProviderFactoryTests(unittest.TestCase):
             temperature=0.7,
         )
 
+    def test_sensenova_keeps_default_tls_verification(self):
+        from config import provider_factory
+
+        runtime_config = RuntimeProviderConfig(
+            provider="sensenova",
+            api_key="test-key",
+            base_url="https://example.invalid/v1",
+            chat_model_name="test-chat",
+            embedding_model_name="test-embedding",
+        )
+
+        with mock.patch.object(provider_factory, "ChatOpenAI") as chat_model:
+            provider_factory.build_agent_chat_model(runtime_config)
+
+        options = chat_model.call_args.kwargs
+        self.assertNotIn("http_client", options)
+        self.assertNotIn("http_async_client", options)
+
     def test_build_local_transformers_chat_model_passes_adapter_path(self):
         from config import provider_factory
 

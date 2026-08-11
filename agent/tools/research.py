@@ -3,11 +3,16 @@ from __future__ import annotations
 import logging
 from typing import Annotated
 
-from langchain_core.tools import ToolException, tool
+from langchain_core.tools import tool
 from pydantic import Field
 
 from agent.memory import SessionRetrievalMemory
 from agent.observability import build_source_observation
+from agent.tools.failures import (
+    build_tool_failure,
+    render_tool_error,
+    render_tool_validation_error,
+)
 from core.source_evidence import SourceEvidenceService
 from utils.session import validate_session_id
 
@@ -22,11 +27,6 @@ CompareChunkLimit = Annotated[int, Field(ge=1, le=3)]
 EvidenceCandidateLimit = Annotated[int, Field(ge=1, le=5)]
 
 
-def _tool_failure(operation: str, exc: Exception) -> ToolException:
-    logger.exception("Research tool failed during %s", operation)
-    return ToolException(f"{operation}失败，请检查输入后重试。")
-
-
 def _artifact(chunks: list[dict], *, evidence_status: str) -> dict:
     return {
         "source_observations": [
@@ -34,10 +34,6 @@ def _artifact(chunks: list[dict], *, evidence_status: str) -> dict:
             for chunk in chunks
         ]
     }
-
-
-def _handle_tool_error(exc: ToolException) -> str:
-    return str(exc)
 
 
 def _source_header(source: dict) -> list[str]:
@@ -70,7 +66,12 @@ def build_inspect_source_tool(evidence_service: SourceEvidenceService):
         try:
             result = evidence_service.inspect_source(source_id, max_chunks=max_chunks)
         except Exception as exc:
-            raise _tool_failure("来源检查", exc) from exc
+            raise build_tool_failure(
+                "来源检查",
+                exc,
+                default_code="source_inspection_failed",
+                logger=logger,
+            ) from exc
         if not result["found"]:
             return f"未找到来源：{result['source_id']}", _artifact([], evidence_status="inspected")
 
@@ -80,7 +81,8 @@ def build_inspect_source_tool(evidence_service: SourceEvidenceService):
             lines.extend(["", *_chunk_lines(chunk, index)])
         return "\n".join(lines), _artifact(result["chunks"], evidence_status="inspected")
 
-    inspect_source.handle_tool_error = _handle_tool_error
+    inspect_source.handle_tool_error = render_tool_error
+    inspect_source.handle_validation_error = render_tool_validation_error
     return inspect_source
 
 
@@ -103,7 +105,12 @@ def build_expand_context_tool(evidence_service: SourceEvidenceService):
                 chunk_strategy=chunk_strategy,
             )
         except Exception as exc:
-            raise _tool_failure("上下文扩展", exc) from exc
+            raise build_tool_failure(
+                "上下文扩展",
+                exc,
+                default_code="context_expansion_failed",
+                logger=logger,
+            ) from exc
         if not result["found"]:
             message = (
                 f"未找到 {result['source_id']} 的 chunk_order={result['chunk_order']}。"
@@ -119,7 +126,8 @@ def build_expand_context_tool(evidence_service: SourceEvidenceService):
             lines.extend(["", *_chunk_lines(chunk, index)])
         return "\n".join(lines), _artifact(result["chunks"], evidence_status="expanded")
 
-    expand_context.handle_tool_error = _handle_tool_error
+    expand_context.handle_tool_error = render_tool_error
+    expand_context.handle_validation_error = render_tool_validation_error
     return expand_context
 
 
@@ -138,7 +146,12 @@ def build_compare_sources_tool(evidence_service: SourceEvidenceService):
                 max_chunks_per_source=max_chunks_per_source,
             )
         except Exception as exc:
-            raise _tool_failure("来源对比", exc) from exc
+            raise build_tool_failure(
+                "来源对比",
+                exc,
+                default_code="source_comparison_failed",
+                logger=logger,
+            ) from exc
 
         lines = [f"对比焦点：{result['focus'] or '未指定'}"]
         observed_chunks = []
@@ -156,7 +169,8 @@ def build_compare_sources_tool(evidence_service: SourceEvidenceService):
                 lines.extend(_chunk_lines(chunk, chunk_index))
         return "\n".join(lines), _artifact(observed_chunks, evidence_status="compared")
 
-    compare_sources.handle_tool_error = _handle_tool_error
+    compare_sources.handle_tool_error = render_tool_error
+    compare_sources.handle_validation_error = render_tool_validation_error
     return compare_sources
 
 
@@ -174,9 +188,9 @@ def build_evidence_check_tool(
         max_candidates: EvidenceCandidateLimit = 3,
     ) -> tuple[str, dict]:
         """在当前会话最近一次检索片段中检查某项结论是否存在候选证据。"""
-        snapshot = retrieval_memory.recall(bound_session_id)
-        documents = snapshot.documents if snapshot is not None else ()
         try:
+            snapshot = retrieval_memory.recall(bound_session_id)
+            documents = snapshot.documents if snapshot is not None else ()
             result = evidence_service.check_evidence(
                 claim,
                 documents,
@@ -184,7 +198,12 @@ def build_evidence_check_tool(
                 max_candidates=max_candidates,
             )
         except Exception as exc:
-            raise _tool_failure("证据检查", exc) from exc
+            raise build_tool_failure(
+                "证据检查",
+                exc,
+                default_code="evidence_check_failed",
+                logger=logger,
+            ) from exc
 
         status_text = {
             "no_retrieval": "当前会话没有可检查的检索片段，请先检索。",
@@ -216,5 +235,6 @@ def build_evidence_check_tool(
             evidence_status=evidence_status,
         )
 
-    evidence_check.handle_tool_error = _handle_tool_error
+    evidence_check.handle_tool_error = render_tool_error
+    evidence_check.handle_validation_error = render_tool_validation_error
     return evidence_check

@@ -394,6 +394,109 @@ class SessionRetrievalMemoryTests(unittest.TestCase):
         factory.assert_called_once_with()
         self.assertEqual(2, rag_service.answer_with_retrieval.call_count)
 
+    def test_rag_tool_returns_trace_artifact_for_tool_call(self):
+        memory = SessionRetrievalMemory()
+        rag_service = mock.Mock()
+        rag_service.answer_with_retrieval.return_value = {
+            "answer": "grounded answer",
+            "retrieved_rows": [
+                {
+                    "source_id": "paper-001",
+                    "locator": "page=1",
+                    "content": "evidence",
+                    "rank": 1,
+                }
+            ],
+            "retrieval_strategy": "rrf_rerank",
+            "retrieval_fallback_reason": None,
+            "retrieval_errors": [],
+            "retrieval_final_count": 5,
+            "retrieval_candidate_count": 20,
+            "generation_context_count": 8,
+            "generation_route": {"actual_model": "local"},
+        }
+        rag_tool = build_rag_search_tool("session-a", memory, rag_service=rag_service)
+
+        message = rag_tool.invoke(
+            {
+                "type": "tool_call",
+                "id": "call-rag",
+                "name": "rag_search",
+                "args": {"query": "question"},
+            }
+        )
+
+        self.assertEqual("success", message.status)
+        self.assertEqual("rrf_rerank", message.artifact["trace"]["retrieval_strategy"])
+        self.assertEqual(5, message.artifact["trace"]["retrieval_final_count"])
+        self.assertEqual(20, message.artifact["trace"]["retrieval_candidate_count"])
+        self.assertEqual(8, message.artifact["trace"]["generation_context_count"])
+        self.assertEqual("paper-001", message.artifact["source_observations"][0]["source_id"])
+
+    def test_rag_tool_converts_internal_failure_to_safe_error_code(self):
+        memory = SessionRetrievalMemory()
+        rag_service = mock.Mock()
+        rag_service.answer_with_retrieval.side_effect = RuntimeError("private chroma path")
+        rag_tool = build_rag_search_tool("session-a", memory, rag_service=rag_service)
+
+        message = rag_tool.invoke(
+            {
+                "type": "tool_call",
+                "id": "call-rag-failed",
+                "name": "rag_search",
+                "args": {"query": "question"},
+            }
+        )
+
+        self.assertEqual("error", message.status)
+        self.assertIn("[error_code=rag_search_failed]", message.content)
+        self.assertNotIn("private chroma path", message.content)
+
+    def test_rag_tool_keeps_answer_when_session_memory_write_fails(self):
+        memory = mock.Mock(spec=SessionRetrievalMemory)
+        memory.remember.side_effect = RuntimeError("private session memory path")
+        rag_service = mock.Mock()
+        rag_service.answer_with_retrieval.return_value = {
+            "answer": "grounded answer",
+            "retrieved_rows": [],
+        }
+        rag_tool = build_rag_search_tool("session-a", memory, rag_service=rag_service)
+
+        message = rag_tool.invoke(
+            {
+                "type": "tool_call",
+                "id": "call-rag-memory-failed",
+                "name": "rag_search",
+                "args": {"query": "question"},
+            }
+        )
+
+        self.assertEqual("success", message.status)
+        self.assertEqual("grounded answer", message.content)
+        self.assertEqual(
+            ["session_memory_write_failed"],
+            message.artifact["trace"]["memory_errors"],
+        )
+        self.assertNotIn("private session memory path", str(message.artifact))
+
+    def test_show_sources_converts_memory_failure_to_safe_error_code(self):
+        memory = mock.Mock(spec=SessionRetrievalMemory)
+        memory.recall.side_effect = RuntimeError("private session memory path")
+        source_tool = build_show_sources_tool("session-a", memory)
+
+        message = source_tool.invoke(
+            {
+                "type": "tool_call",
+                "id": "call-sources-failed",
+                "name": "show_sources",
+                "args": {},
+            }
+        )
+
+        self.assertEqual("error", message.status)
+        self.assertIn("[error_code=source_memory_read_failed]", message.content)
+        self.assertNotIn("private session memory path", message.content)
+
 
 class ReactAgentSessionTests(unittest.TestCase):
     def test_system_prompt_prioritizes_explicit_source_tools(self):
@@ -567,6 +670,47 @@ class ReactAgentSessionTests(unittest.TestCase):
         self.assertIs(gateway.return_value, agent.local_model_gateway)
         self.assertIs(summary_client.return_value, agent.summary_client)
         self.assertIs(context_middleware, create_agent.call_args.kwargs["middleware"][0])
+
+    def test_local_gateway_status_distinguishes_configuration_states(self):
+        agent = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+
+        self.assertIsNone(agent._build_local_model_gateway(None))
+        self.assertEqual("not_configured", agent.local_model_gateway_status)
+
+        disabled_config = SimpleNamespace(
+            local_model_gateway=SimpleNamespace(
+                rag_generation_enabled=False,
+                conversation_summary_enabled=False,
+            )
+        )
+        self.assertIsNone(agent._build_local_model_gateway(disabled_config))
+        self.assertEqual("disabled_by_config", agent.local_model_gateway_status)
+
+    def test_local_gateway_status_marks_setup_failure_unhealthy(self):
+        agent = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+        local_config = SimpleNamespace(
+            base_url="http://127.0.0.1:8002/v1",
+            model="localrag-qwen3-4b-e6.1",
+            api_token="secret",
+            rag_generation_enabled=True,
+            conversation_summary_enabled=False,
+            connect_timeout_seconds=2.0,
+            read_timeout_seconds=120.0,
+            circuit_failure_threshold=3,
+            circuit_reset_seconds=30.0,
+        )
+
+        with mock.patch.object(
+            react_agent,
+            "OpenAICompatibleClient",
+            side_effect=RuntimeError("private setup details"),
+        ):
+            gateway = agent._build_local_model_gateway(
+                SimpleNamespace(local_model_gateway=local_config)
+            )
+
+        self.assertIsNone(gateway)
+        self.assertEqual("unhealthy", agent.local_model_gateway_status)
 
     def test_default_rag_tool_reuses_local_gateway_and_cloud_fallback(self):
         local_config = SimpleNamespace(
@@ -867,6 +1011,35 @@ class ReactAgentSessionTests(unittest.TestCase):
         output = "".join(agent.execute_stream("question"))
 
         self.assertEqual("[工具结果] inspect_source 失败\n", output)
+
+    def test_execute_events_extracts_tool_error_code_and_trace_details(self):
+        fake_graph = mock.Mock()
+        fake_graph.stream.return_value = iter(
+            [
+                {
+                    "tools": {
+                        "messages": [
+                            SimpleNamespace(
+                                type="tool",
+                                name="rag_search",
+                                tool_call_id="call-1",
+                                status="error",
+                                content="[error_code=tool_timeout] safe failure",
+                                artifact={"trace": {"retrieval_strategy": "dense_rerank"}},
+                            )
+                        ]
+                    }
+                }
+            ]
+        )
+        agent = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+        agent.session_id = "session-a"
+        agent.agent_graph = fake_graph
+
+        events = list(agent.execute_events("question"))
+
+        self.assertEqual("tool_timeout", events[0].error_code)
+        self.assertEqual("dense_rerank", events[0].details["retrieval_strategy"])
 
     def test_execute_stream_marks_graph_recursion_without_exposing_exception(self):
         fake_graph = mock.Mock()

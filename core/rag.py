@@ -12,6 +12,13 @@ from config.provider_factory import (
     build_embedding_model,
     build_rag_chat_model,
 )
+from core.retrieval_pipeline import (
+    DocumentKey,
+    RankedDocument,
+    RetrievalPipeline,
+    RetrievalResult,
+    document_key,
+)
 from uuid import uuid4
 
 DEFAULT_RAG_SYSTEM_PROMPT = (
@@ -20,6 +27,8 @@ DEFAULT_RAG_SYSTEM_PROMPT = (
     "回答必须简洁、直接，并且答案末尾必须包含“引用：”小节，"
     "逐条列出使用到的 source_id 和 locator。参考资料：\n{context}"
 )
+
+NO_EVIDENCE_ANSWER = "抱歉，未检索到足够的参考资料，无法根据知识库回答。"
 
 
 def _normalize_retrieved_row(doc: Document, score: float | None = None, rank: int | None = None) -> dict:
@@ -45,13 +54,35 @@ def _normalize_scored_rows(scored_documents: list[tuple[Document, float]]) -> li
     ]
 
 
-def _document_key(doc: Document) -> tuple[str, str, str, str]:
-    return (
-        str(doc.metadata.get("source_id", "")),
-        str(doc.metadata.get("locator", "")),
-        str(doc.metadata.get("chunk_strategy", "")),
-        doc.page_content,
-    )
+def _document_key(doc: Document) -> DocumentKey:
+    return document_key(doc)
+
+
+def _normalize_ranked_document(item: RankedDocument) -> dict:
+    row = _normalize_retrieved_row(item.document, score=item.score, rank=item.rank)
+    row["retrieval_stage"] = item.stage
+    for field_name in ("dense_rank", "bm25_rank", "rrf_rank", "rerank_rank"):
+        value = getattr(item, field_name)
+        if value is not None:
+            row[field_name] = value
+    return row
+
+
+def _rows_for_ranked_documents(
+    documents: list[Document],
+    ranked_documents: list[RankedDocument],
+) -> list[dict]:
+    ranked_by_key: dict[DocumentKey, dict] = {}
+    for item in ranked_documents:
+        ranked_by_key.setdefault(_document_key(item.document), _normalize_ranked_document(item))
+
+    rows = []
+    for index, document in enumerate(documents, start=1):
+        row = ranked_by_key.get(_document_key(document))
+        if row is None:
+            row = _normalize_retrieved_row(document, rank=index)
+        rows.append(dict(row))
+    return rows
 
 
 def _extend_documents_with_same_source_candidates(
@@ -95,7 +126,7 @@ def _rows_for_documents(
     documents: list[Document],
     scored_documents: list[tuple[Document, float]],
 ) -> list[dict]:
-    scored_rows_by_key: dict[tuple[str, str, str, str], dict] = {}
+    scored_rows_by_key: dict[DocumentKey, dict] = {}
     for index, (doc, score) in enumerate(scored_documents, start=1):
         scored_rows_by_key.setdefault(
             _document_key(doc),
@@ -141,17 +172,24 @@ class RagService(object):
         embedding_model=None,
         gateway=None,
         runtime_config=None,
+        retrieval_pipeline=None,
     ) -> None:
         runtime_config = runtime_config or load_runtime_config()
         self.runtime_config = runtime_config
         self.gateway = gateway
-        self.last_generation_route = None
+        self.last_generation_route: dict[str, object] | None = None
         self.vector_service = VectorStoreService(
             embedding=(
                 embedding_model
                 if embedding_model is not None
                 else build_embedding_model(runtime_config)
             ),
+        )
+        self.retrieval_pipeline = retrieval_pipeline or RetrievalPipeline(
+            self.vector_service.vector_store,
+            candidate_top_k=config.retrieval_candidate_top_k,
+            final_top_k=config.similarity_top_k,
+            rrf_k=config.retrieval_rrf_k,
         )
 
         system_prompt = getattr(runtime_config, "rag_system_prompt", None) or DEFAULT_RAG_SYSTEM_PROMPT
@@ -191,12 +229,13 @@ class RagService(object):
         return session_id
 
     def retrieve_documents(self, question: str) -> list[Document]:
-        retriever = self.vector_service.get_retriever()
-        return retriever.invoke(question)
+        return self.retrieve_result(question).documents
 
     def retrieve_scored_documents(self, question: str) -> list[tuple[Document, float]]:
-        debug_top_k = max(config.similarity_top_k, config.retrieval_debug_top_k)
-        return self.vector_service.get_scored_documents(question, k=debug_top_k)
+        return self.retrieve_result(question).scored_documents
+
+    def retrieve_result(self, question: str) -> RetrievalResult:
+        return self.retrieval_pipeline.retrieve(question)
 
     def answer_from_documents(self, question: str, documents: list[Document], session_id: str = "eval-session") -> str:
         effective_session_id = self._get_effective_session_id(session_id)
@@ -212,6 +251,16 @@ class RagService(object):
             "last_route",
             None,
         )
+        runtime_config = getattr(self, "runtime_config", None)
+        if self.last_generation_route is None and runtime_config is not None:
+            self.last_generation_route = {
+                "primary_model": runtime_config.chat_model_name,
+                "actual_model": runtime_config.chat_model_name,
+                "provider": runtime_config.provider,
+                "backend": "cloud",
+                "fallback_used": False,
+                "fallback_reason": None,
+            }
         return answer
 
     def answer_once(self, question: str, session_id: str = "eval-session") -> str:
@@ -219,15 +268,66 @@ class RagService(object):
         return self.answer_from_documents(question, documents, session_id=session_id)
 
     def answer_with_retrieval(self, question: str, session_id: str = "eval-session") -> dict:
-        documents = self.retrieve_documents(question)
-        scored_documents = self.retrieve_scored_documents(question)
+        retrieval_result = None
+        retrieve_result = getattr(self, "retrieve_result", None)
+        if callable(retrieve_result) and getattr(self, "retrieval_pipeline", None) is not None:
+            retrieval_result = retrieve_result(question)
+
+        if retrieval_result is None:
+            documents = self.retrieve_documents(question)
+            scored_documents = self.retrieve_scored_documents(question)
+            ranked_documents = []
+            retrieval_strategy = "legacy"
+            retrieval_fallback_reason = None
+            retrieval_errors = []
+            retrieval_final_count = len(documents)
+            retrieval_candidate_count = len(scored_documents)
+        else:
+            documents = retrieval_result.documents
+            scored_documents = retrieval_result.scored_documents
+            ranked_documents = list(retrieval_result.final) + list(retrieval_result.candidates)
+            retrieval_strategy = retrieval_result.strategy
+            retrieval_fallback_reason = retrieval_result.fallback_reason
+            retrieval_errors = list(retrieval_result.errors)
+            retrieval_final_count = len(retrieval_result.final)
+            retrieval_candidate_count = len(retrieval_result.candidates)
+
         generation_documents = _extend_documents_with_same_source_candidates(documents, scored_documents)
-        scored_rows = _normalize_scored_rows(scored_documents)
-        generation_rows = _rows_for_documents(generation_documents, scored_documents)
+        if ranked_documents and retrieval_result is not None:
+            scored_rows = [
+                _normalize_ranked_document(item)
+                for item in retrieval_result.candidates
+            ]
+            generation_rows = _rows_for_ranked_documents(generation_documents, ranked_documents)
+        else:
+            scored_rows = _normalize_scored_rows(scored_documents)
+            generation_rows = _rows_for_documents(generation_documents, scored_documents)
+        if retrieval_result is not None and not generation_documents:
+            self.last_generation_route = {
+                "backend": "none",
+                "actual_model": None,
+                "fallback_used": False,
+                "fallback_reason": retrieval_fallback_reason,
+                "termination_reason": "no_candidate",
+            }
+            answer = NO_EVIDENCE_ANSWER
+        else:
+            answer = self.answer_from_documents(
+                question,
+                generation_documents,
+                session_id=session_id,
+            )
+
         return {
-            "answer": self.answer_from_documents(question, generation_documents, session_id=session_id),
+            "answer": answer,
             "retrieved_context": _format_retrieved_context(generation_documents),
             "retrieved_rows": generation_rows,
             "retrieval_debug_candidates": scored_rows,
+            "retrieval_strategy": retrieval_strategy,
+            "retrieval_fallback_reason": retrieval_fallback_reason,
+            "retrieval_errors": retrieval_errors,
+            "retrieval_final_count": retrieval_final_count,
+            "retrieval_candidate_count": retrieval_candidate_count,
+            "generation_context_count": len(generation_rows),
             "generation_route": getattr(self, "last_generation_route", None),
         }

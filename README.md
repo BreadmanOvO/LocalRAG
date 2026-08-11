@@ -91,7 +91,7 @@ LocalRAG/
 │   └── sources/               # 知识源文档（100 篇：10 Apollo + 81 论文/报告 + 9 标准）
 ├── results/                   # 评测结果
 ├── scripts/                   # 工具脚本
-├── release_note.md            # v1.1–v1.6 累计发布记录
+├── release_note.md            # v1.1–v1.7 累计发布记录
 └── requirements.txt           # 应用与本地模型服务的统一依赖入口
 ```
 
@@ -175,13 +175,21 @@ python eval/eval_finetune_behavior.py \
 
 最优 Hit@5：doc_type_aware + reranker 与 semantic + reranker 均为 94%；semantic + reranker 的 MRR 最高（0.893）。
 
+Reranker 的收益主要体现在排序质量：semantic 的 MRR 从 0.798 提升到 0.893，Hit@1 从 0.71 提升到 0.86。v1.7 默认链路固定为 Dense + BM25 → RRF → Cross-Encoder → Top5；加权融合 `HybridRetriever` 作为历史对照保留，失败时降级到 Dense + reranker、Dense-only。
+
+v1.7 最终默认链路在同一 100 题活动语料上完成 retrieval-only 回归：Hit@1=0.85、Hit@3=0.97、Hit@5=0.97、MRR=0.9067，100/100 进入 `rrf_rerank` 且无 fallback；该结果不调用线上生成模型。
+
 Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/stores/eval_set-20260522-071034/baseline`）重跑后，`answered_ratio=1.00`、`context_hit_ratio=1.00`、`evidence_source_hit_ratio=0.97`。
 
 v1.6 本地模型服务与长会话验证：模型服务质量 gate、性能 benchmark、Task 8 UI 端到端验证和 Task 9 双轮压缩探针均通过；Task 9 的摘要 revision 从 `1` 正确递增到 `2`。
 
 ## 文档与发布记录
 
-- [累计发布记录](release_note.md) — v1.1–v1.6 的功能、验证结果、门禁结论和已知限制
+- [累计发布记录](release_note.md) — v1.1–v1.7 的功能、验证结果、门禁结论和已知限制
+- [仓库使用说明](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/repo_guide.md) — 工程入口、评测脚本与结果目录合同
+- [v1.7 Agentic RAG 与生产化开发计划](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/v1.7-agent-production-plan.md) — 面向 Agent/RAG/工程化面试能力的架构复审、里程碑与发布门槛
+- [v1.7 架构掌握与面试复盘](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/v1.7-architecture-interview-guide.md) — 六层架构、线上/本地路径、工具失败、模型评测与深挖题
+- [v1.7 Agentic RAG 收口报告](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/reports/v1.7-agentic-rag-closure.md) — 默认 RRF 主链路、工具失败合同、provider smoke、真实 Agent trace 与 100 题回归
 - 评测结果与 manifest：`results/`（原始截图、运行数据库等本地文件不提交）
 - 配置示例：`config/*.example.json`
 
@@ -196,6 +204,7 @@ v1.6 本地模型服务与长会话验证：模型服务质量 gate、性能 ben
 | v1.4.2 | Agent + Memory 研究助手 | 已完成（M1-M5、稳定性补强与代码精简收口） |
 | v1.5 | 可控研究 Agent | 已完成（A1-A5 评测发布） |
 | v1.6 | 本地模型部署与会话压缩 | 已完成（Task 8/9 验证通过） |
+| v1.7 | Agentic RAG 收口：Dense + BM25 → RRF → Cross-Encoder、工具失败合同与架构证据 | 已完成 |
 
 ## 仓库维护约定
 

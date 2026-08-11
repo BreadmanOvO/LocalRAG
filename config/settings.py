@@ -55,6 +55,8 @@ semantic_embedding_model = "models/bge-m3"  # 本地模型路径，fallback 到 
 # VectorStoreService 参数
 similarity_top_k = 5 # 相似度top k
 retrieval_debug_top_k = 10 # 调试/实验分析使用的候选召回 top k
+retrieval_candidate_top_k = 20 # Dense/BM25 分别召回的候选数量
+retrieval_rrf_k = 60 # Reciprocal Rank Fusion 常量
 same_source_context_extension_per_source = 1 # 生成前从调试候选中为已命中 source_id 追加的同源 chunk 数
 
 # 模型参数

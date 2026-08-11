@@ -159,3 +159,31 @@ v1.6 完成本地模型服务与长会话运行能力建设：本地模型可以
 ### 下一版本入口
 
 v1.7 优先恢复活动语料库，并验收“提问 → 检索 → 研究步骤 → 证据 → finding → 会话压缩 → 会话恢复”完整链路；随后补统一部署启动、停止、状态检查和真实云 fallback 验证。
+
+## v1.7
+
+**收口日期**：2026-08-10
+
+### Agentic RAG 主链路
+
+- 在线默认检索统一为 Dense Top20 + BM25 Top20 → RRF → Cross-Encoder → Top5；BM25/RRF 失败降级到 Dense + Reranker，Reranker 失败降级到 Dense-only。
+- 拆出独立 `BM25Retriever` 和 `RetrievalPipeline`，保留历史加权 `HybridRetriever` 作为学习/消融资产，避免加权融合与 RRF 重复串联。
+- 中文 BM25 使用英文 token + 中文字符 bigram，解决自然中文问句大量 `bm25_empty` 的问题。
+- provenance/trace 支持 Dense、BM25、RRF、Rerank 四级排名、retrieval stage、降级原因、route 与 final/candidate/context count。
+
+### Agent 工具与模型边界
+
+- 工具统一安全错误码和 schema validation 输出；内部异常不进入 ToolMessage。
+- `rag_search` 核心结果与 session/task memory 副作用隔离，记忆失败只记录 `memory_errors`，不丢弃已生成回答。
+- 移除 SenseNova 不安全的 `verify=False`；local gateway 初始化状态区分未配置、配置禁用、已构造和不健康。
+- 新增 provider 功能 smoke，真实 SenseNova 普通请求、强制 tool-call 和 stream 均通过；线上模型未执行质量评测。
+
+### 验证结果
+
+- 100 题默认 retrieval pipeline：Hit@1=0.85、Hit@3=0.97、Hit@5=0.97、MRR=0.9067，100/100 使用 `rrf_rerank`，无 fallback。
+- 真实 Agent trace 跑通 planner → `rag_search` → 四级检索排名 → provider generation route → task memory write → final answer。
+- 全量自动化测试最终通过；详细证据见 `RAG_md/docs/reports/v1.7-agentic-rag-closure.md`。
+
+### 版本边界
+
+v1.7 不新增第二套显式 Graph、异步 Tool Queue、三层 Memory、Redis/Kafka/ES 或多 Agent；这些内容只作为面试设计题和后续容量驱动选项。

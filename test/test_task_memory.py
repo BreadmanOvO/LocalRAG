@@ -129,6 +129,50 @@ class TaskMemoryToolTests(unittest.TestCase):
             self.assertEqual("当前任务记忆已禁用。", show_tool.invoke({}))
             self.assertTrue(store.get_task("task-a").is_empty)
 
+    def test_show_tool_converts_store_failure_to_safe_error_code(self):
+        store = mock.Mock(spec=TaskMemoryStore)
+        store.get_task.side_effect = RuntimeError("private sqlite read path")
+        show_tool = build_show_task_memory_tool(
+            "task-a",
+            store,
+            TaskMemoryPolicy(enabled=True),
+        )
+
+        message = show_tool.invoke(
+            {
+                "type": "tool_call",
+                "id": "call-show-task-failed",
+                "name": "show_task_memory",
+                "args": {},
+            }
+        )
+
+        self.assertEqual("error", message.status)
+        self.assertIn("[error_code=task_memory_read_failed]", message.content)
+        self.assertNotIn("private sqlite read path", message.content)
+
+    def test_update_tool_converts_store_failure_to_safe_error_code(self):
+        store = mock.Mock(spec=TaskMemoryStore)
+        store.update_task.side_effect = RuntimeError("private sqlite write path")
+        update_tool = build_update_task_memory_tool(
+            "task-a",
+            store,
+            TaskMemoryPolicy(enabled=True),
+        )
+
+        message = update_tool.invoke(
+            {
+                "type": "tool_call",
+                "id": "call-update-task-failed",
+                "name": "update_task_memory",
+                "args": {"finding": "new finding"},
+            }
+        )
+
+        self.assertEqual("error", message.status)
+        self.assertIn("[error_code=task_memory_update_failed]", message.content)
+        self.assertNotIn("private sqlite write path", message.content)
+
     def test_rag_search_records_retrieved_but_not_confirmed_sources(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             store = TaskMemoryStore(Path(temp_dir) / "task-memory.sqlite3")
@@ -162,6 +206,43 @@ class TaskMemoryToolTests(unittest.TestCase):
         self.assertEqual(("paper-030",), snapshot.retrieved_sources)
         self.assertEqual((), snapshot.confirmed_sources)
         self.assertEqual(("CRN sensors",), disabled_snapshot.searched_queries)
+
+    def test_rag_search_keeps_answer_when_task_memory_write_fails(self):
+        retrieval_memory = SessionRetrievalMemory()
+        store = mock.Mock(spec=TaskMemoryStore)
+        store.record_retrieval.side_effect = RuntimeError("private sqlite write path")
+        rag_service = mock.Mock()
+        rag_service.answer_with_retrieval.return_value = {
+            "answer": "grounded answer",
+            "retrieved_rows": [
+                {"source_id": "paper-030", "locator": "page=1", "content": "evidence"}
+            ],
+        }
+        rag_tool = build_rag_search_tool(
+            "session-a",
+            retrieval_memory,
+            rag_service=rag_service,
+            task_id="task-a",
+            task_memory_store=store,
+            task_memory_policy=TaskMemoryPolicy(enabled=True),
+        )
+
+        message = rag_tool.invoke(
+            {
+                "type": "tool_call",
+                "id": "call-rag-task-memory-failed",
+                "name": "rag_search",
+                "args": {"query": "question"},
+            }
+        )
+
+        self.assertEqual("success", message.status)
+        self.assertEqual("grounded answer", message.content)
+        self.assertEqual(
+            ["task_memory_write_failed"],
+            message.artifact["trace"]["memory_errors"],
+        )
+        self.assertNotIn("private sqlite write path", str(message.artifact))
 
 
 if __name__ == "__main__":

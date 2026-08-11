@@ -349,6 +349,42 @@ class ModelGatewayAdapterTests(unittest.TestCase):
         self.assertEqual("answer", answer)
         self.assertEqual({"actual_model": "local"}, service.last_generation_route)
 
+    def test_rag_service_exposes_provider_route_without_gateway(self):
+        runtime_config = RuntimeProviderConfig(
+            provider="sensenova",
+            api_key="cloud",
+            base_url="https://example.invalid/v1",
+            chat_model_name="cloud-chat",
+            embedding_model_name="embedding",
+        )
+        with (
+            mock.patch.object(rag, "build_embedding_model", return_value=object()),
+            mock.patch.object(rag, "VectorStoreService", return_value=mock.Mock()),
+            mock.patch.object(rag, "build_agent_chat_model", return_value=object()),
+            mock.patch.object(
+                rag.RagService,
+                "_RagService__get_chain",
+                return_value=SimpleNamespace(invoke=lambda *args, **kwargs: "answer"),
+            ),
+        ):
+            service = rag.RagService(runtime_config=runtime_config)
+
+        self.assertEqual(
+            "answer",
+            service.answer_from_documents("question", [], session_id="session-001"),
+        )
+        self.assertEqual(
+            {
+                "primary_model": "cloud-chat",
+                "actual_model": "cloud-chat",
+                "provider": "sensenova",
+                "backend": "cloud",
+                "fallback_used": False,
+                "fallback_reason": None,
+            },
+            service.last_generation_route,
+        )
+
     def test_rag_answer_bundle_contains_generation_route(self):
         service = SimpleNamespace(
             retrieve_documents=lambda question: [],

@@ -28,6 +28,11 @@ class SourceObservationTests(unittest.TestCase):
                     "chunk_strategy": "doc_type_aware",
                     "rank": 1,
                     "score": 0.91,
+                    "dense_rank": 2,
+                    "bm25_rank": 1,
+                    "rrf_rank": 1,
+                    "rerank_rank": 1,
+                    "retrieval_stage": "rerank",
                     "content": "  multi-line\n evidence  ",
                 },
                 {
@@ -45,6 +50,11 @@ class SourceObservationTests(unittest.TestCase):
         self.assertEqual("retrieved", rows[1]["evidence_status"])
         self.assertEqual("page=2", rows[0]["locator"])
         self.assertEqual(3, rows[0]["chunk_order"])
+        self.assertEqual(2, rows[0]["dense_rank"])
+        self.assertEqual(1, rows[0]["bm25_rank"])
+        self.assertEqual(1, rows[0]["rrf_rank"])
+        self.assertEqual(1, rows[0]["rerank_rank"])
+        self.assertEqual("rerank", rows[0]["retrieval_stage"])
         self.assertEqual("multi-line evidence", rows[0]["summary"])
 
     def test_merge_sources_keeps_first_observation_per_chunk(self):
@@ -140,6 +150,7 @@ class RunStatusTests(unittest.TestCase):
                 "tool_name": "inspect_source",
                 "call_id": "call-1",
                 "status": "error",
+                "error_code": "source_comparison_failed",
                 "elapsed_ms": 350,
             },
         ]
@@ -149,6 +160,7 @@ class RunStatusTests(unittest.TestCase):
         self.assertEqual("检查来源", rows[0]["工具"])
         self.assertEqual("失败", rows[0]["状态"])
         self.assertEqual("0.25s", rows[0]["耗时"])
+        self.assertEqual("source_comparison_failed", rows[0]["错误码"])
         self.assertIn("paper-001", rows[0]["参数"])
 
 

@@ -5,7 +5,6 @@ import math
 from pathlib import Path
 from typing import Any
 
-import httpx
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.runnables import Runnable
@@ -142,6 +141,7 @@ class LocalSentenceTransformerEmbeddings:
         resolved_model_name = model_name
         if not resolved_model_name or resolved_model_name == "BAAI/bge-m3":
             resolved_model_name = get_bge_m3_path()
+        assert resolved_model_name is not None
         local_files_only = Path(resolved_model_name).exists()
         self.model = SentenceTransformer(
             resolved_model_name,
@@ -199,9 +199,6 @@ def build_agent_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
     }
     if runtime_config.provider in {"local_embedding", "modelscope", "local_sentence_transformer"} and runtime_config.chat_model_name.startswith("Qwen/Qwen3"):
         options["extra_body"] = {"enable_thinking": False}
-    if runtime_config.provider == "sensenova":
-        options["http_client"] = httpx.Client(verify=False)
-        options["http_async_client"] = httpx.AsyncClient(verify=False)
     options.update(overrides)
     return ChatOpenAI(**options)
 

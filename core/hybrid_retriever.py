@@ -1,16 +1,10 @@
 from __future__ import annotations
 
-import re
 from typing import Any
 
 from langchain_core.documents import Document
-from rank_bm25 import BM25Okapi
-
-BM25_BATCH_SIZE = 500
-
-
-def _tokenize(text: str) -> list[str]:
-    return re.findall(r"\w+", text.lower())
+from core.bm25_retriever import BM25_BATCH_SIZE as BM25_BATCH_SIZE
+from core.bm25_retriever import BM25Retriever
 
 
 class HybridRetriever:
@@ -29,52 +23,31 @@ class HybridRetriever:
         self.sparse_top_k = sparse_top_k
         self.final_top_k = final_top_k
 
-        self._bm25: BM25Okapi | None = None
-        self._bm25_docs: list[Document] = []
-        self._bm25_ids: list[str] = []
-        self._build_bm25_index()
+        self._bm25_retriever = BM25Retriever(vector_store)
 
-    def _build_bm25_index(self) -> None:
-        collection = self.vector_store._collection
-        offset = 0
-        while True:
-            result = collection.get(
-                include=["documents", "metadatas"],
-                limit=BM25_BATCH_SIZE,
-                offset=offset,
-            )
-            ids = result["ids"]
-            if not ids:
-                break
+    @property
+    def _bm25_docs(self) -> list[Document]:
+        """Compatibility view for historical evaluation tests."""
+        return self._bm25_retriever.documents
 
-            self._bm25_ids.extend(ids)
-            self._bm25_docs.extend(
-                Document(page_content=text, metadata=meta or {})
-                for text, meta in zip(result["documents"], result["metadatas"])
-            )
-            if len(ids) < BM25_BATCH_SIZE:
-                break
-            offset += BM25_BATCH_SIZE
-
-        if not self._bm25_docs:
-            return
-
-        tokenized = [_tokenize(doc.page_content) for doc in self._bm25_docs]
-        self._bm25 = BM25Okapi(tokenized)
+    @property
+    def _bm25_ids(self) -> list[str]:
+        """Compatibility view for historical inspection scripts."""
+        return self._bm25_retriever.ids
 
     def _dense_search(self, query: str, k: int) -> list[tuple[Document, float]]:
         return self.vector_store.similarity_search_with_relevance_scores(query, k=k)
 
     def _sparse_search(self, query: str, k: int) -> list[tuple[Document, float]]:
-        if self._bm25 is None or not self._bm25_docs:
-            return []
-        scores = self._bm25.get_scores(_tokenize(query))
-        top_indices = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:k]
-        max_score = max(scores[i] for i in top_indices) if top_indices else 1.0
-        return [
-            (self._bm25_docs[i], float(scores[i] / max_score) if max_score > 0 else 0.0)
-            for i in top_indices
-        ]
+        return self._bm25_retriever.retrieve_scored(query, k=k)
+
+    def retrieve_dense_scored(self, query: str, *, k: int | None = None) -> list[tuple[Document, float]]:
+        """Return the unfused dense ranking for shared retrieval pipelines."""
+        return self._dense_search(query, k=k or self.dense_top_k)
+
+    def retrieve_sparse_scored(self, query: str, *, k: int | None = None) -> list[tuple[Document, float]]:
+        """Return the unfused BM25 ranking for RRF or evaluation."""
+        return self._sparse_search(query, k=k or self.sparse_top_k)
 
     @staticmethod
     def _normalize_scores(results: list[tuple[Document, float]]) -> list[tuple[Document, float]]:
