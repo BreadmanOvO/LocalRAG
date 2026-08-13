@@ -35,6 +35,30 @@ Copy-Item config/runtime_v1_6_local_service.example.json config/runtime_v1_6_loc
 Copy-Item config/model_serving_profiles.example.json config/model_serving_profiles.json
 ```
 
+默认配置用于保证云端 Agent Planner 可以直接启动；本地 Gateway 是独立的 RAG 生成/摘要路径，只有显式配置并启动本地 OpenAI-compatible 服务后才启用。项目当前不是“整个 Agent 本地优先”：Planner 仍使用运行时配置中的云端模型，本地 Gateway 只负责 RAG 生成和长上下文摘要，并在本地失败时按既有 Gateway 策略降级云端。
+
+运行时配置支持 `model_route_mode`：`auto` 按配置启用本地并允许云端降级，`local` 手动选择本地优先路径（失败仍可降级云端），`cloud` 手动选择云端并关闭本地 Gateway。`local_model_gateway` 下的 `rag_generation_enabled` 和 `conversation_summary_enabled` 仍是对应功能的安全开关。UI 侧边栏可直接切换该模式，切换后会重建 Agent；该选项不改变外层 Planner 的模型。
+
+默认 `runtime_models.json` 未配置 `local_model_gateway`，因此 UI 显示本地服务未启用是正常状态。要启用本地 Gateway，需要显式切换运行时配置；仅复制文件不会自动切换：
+
+```powershell
+Copy-Item config/runtime_v1_6_local_service.example.json config/runtime_v1_6_local_service.json
+$env:LOCALRAG_RUNTIME_CONFIG = "config/runtime_v1_6_local_service.json"
+$env:LOCALRAG_MODEL_API_TOKEN = "your-local-service-token"
+# 可选：在配置 JSON 中设置 "model_route_mode": "local"
+streamlit run app_qa.py --server.fileWatcherType none
+```
+
+例如使用本地 Q4_K_M Gateway 时，可先启动内部 llama.cpp 服务，再启动本项目的 OpenAI-compatible 服务：
+
+```powershell
+python -m model_serving.main --profiles config/model_serving_profiles.json --profile e6_1_q4_k_m --port 8002 --llama-base-url http://127.0.0.1:18002/v1
+```
+
+本地 Gateway 默认地址为 `http://127.0.0.1:8002/v1`，需要先单独启动对应的 OpenAI-compatible 模型服务；未启动时 UI 会显示本地服务不可用，并由 RAG/摘要路径降级到云端。手动选择 `cloud` 时，摘要也直接使用云端模型，不会关闭长上下文压缩。
+
+本地模型 Gate 继续复用 v1.6 的四 profile 质量 Gate、Q4 性能 Gate 和服务可靠性 Gate；v1.7 不新增线上模型质量评测。只有在本地服务实际启动后，才需要补一轮“路由接入 Gate”：验证 `local`/`auto` 路由、RAG 生成、摘要 JSON 校验、超时/429/熔断后的 cloud fallback 和 route trace。当前机器未启动 8002 Gateway，因此本轮只完成配置与自动化 contract 验证，未声称新的 live model Gate 通过。
+
 服务端和应用端依赖已合并到唯一的 `requirements.txt`；不再维护单独的 serving requirements 文件。
 
 ### 3. 启动问答服务
@@ -196,6 +220,8 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 v1.6 本地模型服务与长会话验证：模型服务质量 gate、性能 benchmark、Task 8 UI 端到端验证和 Task 9 双轮压缩探针均通过；Task 9 的摘要 revision 从 `1` 正确递增到 `2`。
 
 ## 文档与发布记录
+
+第一次看项目或准备面试，建议先读文档仓库的 [v1.7 面试掌握指南](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/v1.7-interview-guide.md)，它按“项目是什么 → 六层架构 → 一次请求 → RAG/Agent → 高频面经 → 当前边界”组织材料。
 
 - [累计发布记录](release_note.md) — v1.1–v1.7 的功能、验证结果、门禁结论和已知限制
 - [仓库使用说明](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/repo_guide.md) — 工程入口、评测脚本与结果目录合同

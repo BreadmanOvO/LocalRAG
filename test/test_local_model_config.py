@@ -59,6 +59,35 @@ class LocalModelConfigTests(unittest.TestCase):
             config = load_runtime_config(path, environ={})
 
         self.assertIsNone(config.local_model_gateway)
+        self.assertEqual("auto", config.model_route_mode)
+
+    def test_model_route_mode_accepts_supported_values(self):
+        for mode in ("auto", "local", "cloud"):
+            with self.subTest(mode=mode):
+                with tempfile.TemporaryDirectory() as directory:
+                    payload = self._valid_local_config()
+                    path = self._write_config(directory, payload)
+                    raw = json.loads(path.read_text(encoding="utf-8"))
+                    raw["model_route_mode"] = mode
+                    path.write_text(json.dumps(raw), encoding="utf-8")
+                    config = load_runtime_config(
+                        path,
+                        environ={"LOCALRAG_MODEL_API_TOKEN": "secret"},
+                    )
+                self.assertEqual(mode, config.model_route_mode)
+
+    def test_model_route_mode_rejects_unknown_value(self):
+        with tempfile.TemporaryDirectory() as directory:
+            payload = self._valid_local_config()
+            path = self._write_config(directory, payload)
+            raw = json.loads(path.read_text(encoding="utf-8"))
+            raw["model_route_mode"] = "sometimes"
+            path.write_text(json.dumps(raw), encoding="utf-8")
+            with self.assertRaises(RuntimeError):
+                load_runtime_config(
+                    path,
+                    environ={"LOCALRAG_MODEL_API_TOKEN": "secret"},
+                )
 
     def test_local_config_rejects_invalid_or_secret_bearing_fields(self):
         invalid_values = (

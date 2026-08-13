@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from utils.path_tools import get_abs_path, get_project_root
+from utils.git_identity import CODE_IDENTITY_PATHSPEC
 
 
 TOOL_LABELS = {
@@ -297,9 +298,7 @@ def _git_revisions_compatible(
                 evaluated_revision,
                 current_revision,
                 "--",
-                ".",
-                ":(exclude)results/**",
-                ":(exclude)RAG_md/**",
+                *CODE_IDENTITY_PATHSPEC,
             ],
             cwd=project_root,
             check=False,

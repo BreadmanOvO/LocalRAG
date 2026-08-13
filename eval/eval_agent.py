@@ -26,6 +26,7 @@ from eval.agent_eval_contract import (
     RESUME_CONTROL_PROBES,
 )
 from utils.path_tools import get_abs_path
+from utils.git_identity import CODE_IDENTITY_PATHSPEC
 
 
 CONTRACT_VERSION = AGENT_EVAL_CONTRACT_VERSION
@@ -262,9 +263,7 @@ def get_git_dirty(project_root: Path | None = None) -> bool | None:
                 "status",
                 "--porcelain",
                 "--",
-                ".",
-                ":(exclude)results/**",
-                ":(exclude)RAG_md/**",
+                *CODE_IDENTITY_PATHSPEC,
             ],
             cwd=root,
             check=True,

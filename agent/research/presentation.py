@@ -56,6 +56,7 @@ class ModelGatewayView(TypedDict):
     available: bool
     health: str
     ready: str
+    configuration_status: str
     profile: str
     backend: str
     quantization: str
@@ -92,6 +93,8 @@ def _display_int(value: object) -> int | None:
 def build_model_gateway_view(
     gateway_snapshot: GatewaySnapshot | None,
     last_route: Mapping[str, object] | None,
+    *,
+    configuration_status: str = "not_configured",
 ) -> ModelGatewayView:
     if gateway_snapshot is not None and not isinstance(
         gateway_snapshot,
@@ -116,6 +119,8 @@ def build_model_gateway_view(
         "available": gateway_snapshot.available if gateway_snapshot else False,
         "health": _display_text(gateway_snapshot.health) if gateway_snapshot else "",
         "ready": _display_text(gateway_snapshot.ready) if gateway_snapshot else "",
+        "configuration_status": _display_text(configuration_status)
+        or "not_configured",
         "profile": profile,
         "backend": backend,
         "quantization": quantization,

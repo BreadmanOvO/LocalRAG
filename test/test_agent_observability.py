@@ -3,7 +3,9 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
+import agent.observability as observability
 from agent.observability import (
     build_source_observations,
     build_tool_trace_rows,
@@ -48,6 +50,7 @@ class SourceObservationTests(unittest.TestCase):
 
         self.assertEqual("confirmed", rows[0]["evidence_status"])
         self.assertEqual("retrieved", rows[1]["evidence_status"])
+
         self.assertEqual("page=2", rows[0]["locator"])
         self.assertEqual(3, rows[0]["chunk_order"])
         self.assertEqual(2, rows[0]["dense_rank"])
@@ -56,6 +59,22 @@ class SourceObservationTests(unittest.TestCase):
         self.assertEqual(1, rows[0]["rerank_rank"])
         self.assertEqual("rerank", rows[0]["retrieval_stage"])
         self.assertEqual("multi-line evidence", rows[0]["summary"])
+
+    def test_code_compatibility_excludes_markdown_paths(self):
+        completed = SimpleNamespace(returncode=0)
+        with patch.object(observability.subprocess, "run", return_value=completed) as run:
+            self.assertTrue(
+                observability._git_revisions_compatible(
+                    "old-revision",
+                    "new-revision",
+                    Path("C:/project"),
+                )
+            )
+
+        command = run.call_args.args[0]
+        self.assertIn(":(exclude)*.md", command)
+        self.assertIn(":(exclude)**/*.md", command)
+        self.assertIn(":(exclude)RAG_md/**", command)
 
     def test_merge_sources_keeps_first_observation_per_chunk(self):
         retrieved = {

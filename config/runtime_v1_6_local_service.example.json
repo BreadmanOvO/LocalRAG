@@ -4,6 +4,7 @@
   "base_url": "https://api-inference.modelscope.cn/v1",
   "chat_model_name": "Qwen/Qwen3-8B",
   "embedding_model_name": "models/bge-m3",
+  "model_route_mode": "auto",
   "local_model_gateway": {
     "base_url": "http://127.0.0.1:8002/v1",
     "model": "localrag-qwen3-4b-e6.1",

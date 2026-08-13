@@ -80,6 +80,7 @@ class ModelGatewayViewTests(unittest.TestCase):
                 "available": True,
                 "health": "ok",
                 "ready": "ready",
+                "configuration_status": "not_configured",
                 "profile": "",
                 "backend": "",
                 "quantization": "",
@@ -161,6 +162,11 @@ class ModelGatewayViewTests(unittest.TestCase):
         self.assertNotIn("api_token", render_source)
         self.assertNotIn("prompt", render_source)
         self.assertNotIn("answer", render_source)
+        self.assertIn("disabled_by_route", render_source)
+        self.assertIn("Planner / RAG 生成使用云端", render_source)
+        self.assertIn('"model_route_mode"', source)
+        self.assertIn('list(MODEL_ROUTE_MODES)', source)
+        self.assertIn('model_route_mode=selected_route_mode', source)
 
 
 class ModelGatewayProbeTests(unittest.TestCase):

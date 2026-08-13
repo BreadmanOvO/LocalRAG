@@ -150,6 +150,27 @@ class ProviderFactoryTests(unittest.TestCase):
         self.assertIsNot(summary, gateway)
         self.assertEqual(2, cloud.call_count)
 
+    def test_cloud_route_mode_bypasses_injected_local_gateway(self):
+        from config import provider_factory
+
+        gateway = object()
+        cloud_route = RuntimeProviderConfig(
+            **{
+                **self._runtime_config().__dict__,
+                "model_route_mode": "cloud",
+            }
+        )
+        with mock.patch.object(
+            provider_factory,
+            "ChatOpenAI",
+            side_effect=lambda **kwargs: object(),
+        ) as cloud:
+            rag = provider_factory.build_rag_chat_model(cloud_route, gateway=gateway)
+            summary = provider_factory.build_summary_chat_model(cloud_route, gateway=gateway)
+        self.assertIsNot(rag, gateway)
+        self.assertIsNot(summary, gateway)
+        self.assertEqual(2, cloud.call_count)
+
 
 if __name__ == "__main__":
     unittest.main()

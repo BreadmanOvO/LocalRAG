@@ -23,7 +23,7 @@ from model_gateway import (
     ModelPurpose,
     RoutedResponse,
 )
-from model_gateway.summary_adapter import LocalGatewaySummaryClient
+from model_gateway.summary_adapter import CloudSummaryClient, LocalGatewaySummaryClient
 
 
 class RecordingGateway:
@@ -228,6 +228,17 @@ class ModelGatewayAdapterTests(unittest.TestCase):
         self.assertEqual(["source-001"], prompt_payload["allowed_source_ids"])
         self.assertEqual("localrag-qwen3-4b-e6.1", result.model_id)
         self.assertEqual("", result.fallback_reason)
+
+    def test_cloud_summary_adapter_preserves_structured_summary_contract(self):
+        cloud = FakeCloudModel(_summary_json())
+        client = CloudSummaryClient(cloud)
+
+        result = client.summarize(_summary_request())
+
+        self.assertEqual("cloud-model", result.model_id)
+        self.assertEqual("", result.fallback_reason)
+        self.assertEqual("cloud-model", client.last_route["actual_model"])
+        self.assertEqual(1, len(cloud.calls))
 
     def test_invalid_local_summary_falls_back_to_cloud_once(self):
         primary = SummaryPrimary("not-json")

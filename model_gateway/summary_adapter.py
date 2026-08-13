@@ -251,6 +251,42 @@ class LocalGatewaySummaryClient:
         return payload
 
 
+class CloudSummaryClient:
+    """Use the configured cloud chat model for structured summaries."""
+
+    def __init__(
+        self,
+        model: object,
+        *,
+        summary_validator: SummaryValidator = parse_and_validate_summary,
+    ) -> None:
+        if not callable(getattr(model, "invoke", None)):
+            raise TypeError("model must provide invoke")
+        if not callable(summary_validator):
+            raise TypeError("summary_validator must be callable")
+        self.model = model
+        self.summary_validator = summary_validator
+        self.last_route: dict[str, object] | None = None
+
+    def summarize(self, request: SummaryRequest) -> SummaryClientResult:
+        if not isinstance(request, SummaryRequest):
+            raise TypeError("request must be a SummaryRequest")
+        request_id = uuid4().hex
+        try:
+            response = _cloud_response(self.model, _prompt_messages(request), request_id)
+            payload = _parse_payload(response.text)
+            self.summary_validator(payload, request)
+        except Exception:
+            raise ConversationCompressionError("summary clients failed") from None
+        self.last_route = {
+            "request_id": response.request_id,
+            "actual_model": response.model,
+            "fallback_used": False,
+            "fallback_reason": "",
+        }
+        return SummaryClientResult(payload=payload, model_id=response.model)
+
+
 def _gateway_messages(messages: Sequence[BaseMessage]) -> list[dict[str, str]]:
     return [
         {

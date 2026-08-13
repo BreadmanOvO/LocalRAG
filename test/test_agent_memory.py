@@ -769,6 +769,31 @@ class ReactAgentSessionTests(unittest.TestCase):
         )
         self.assertIs(gateway.return_value, agent.local_model_gateway)
 
+    def test_cloud_route_mode_does_not_construct_local_gateway(self):
+        runtime_config = SimpleNamespace(
+            model_route_mode="cloud",
+            local_model_gateway=SimpleNamespace(
+                rag_generation_enabled=True,
+                conversation_summary_enabled=True,
+            ),
+        )
+        with (
+            mock.patch.object(react_agent, "load_runtime_config", return_value=runtime_config),
+            mock.patch.object(react_agent, "build_agent_chat_model", return_value=object()),
+            mock.patch.object(react_agent, "LocalModelGateway") as gateway,
+            mock.patch.object(react_agent, "create_agent", return_value=mock.Mock()),
+            mock.patch.object(react_agent, "load_agent_system_prompt", return_value="system"),
+        ):
+            agent = react_agent.ReactAgent(
+                "session-cloud-route",
+                task_id="task-cloud-route",
+                task_memory_store=mock.Mock(),
+                chat_model=object(),
+            )
+        gateway.assert_not_called()
+        self.assertEqual("cloud", agent.model_route_mode)
+        self.assertEqual("disabled_by_route", agent.local_model_gateway_status)
+
     def test_get_conversation_context_returns_snapshot_or_none(self):
         without_context = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
         without_context.context_middleware = None

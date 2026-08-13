@@ -27,6 +27,7 @@ UNIFIED_REQUIRED_FIELDS = (
 DEFAULT_RUNTIME_CONFIG_NAME = "runtime_models.json"
 LEGACY_RUNTIME_CONFIG_NAME = "key.json"
 RUNTIME_CONFIG_ENV_VAR = "LOCALRAG_RUNTIME_CONFIG"
+MODEL_ROUTE_MODES = ("auto", "local", "cloud")
 LOCAL_MODEL_ID = "localrag-qwen3-4b-e6.1"
 LOCAL_MODEL_GATEWAY_FIELDS = frozenset(
     {
@@ -69,6 +70,9 @@ class RuntimeProviderConfig:
     adapter_path: str | None = None
     rag_system_prompt: str | None = None
     local_model_gateway: LocalModelGatewayConfig | None = None
+    # Applies to the local Gateway-backed RAG generation and summary paths.
+    # The outer Agent Planner remains on the configured runtime provider.
+    model_route_mode: str = "auto"
 
 
 def get_default_runtime_config_path() -> Path:
@@ -157,6 +161,18 @@ def _read_optional_nullable_string(raw_data: dict[str, Any], field: str) -> str 
     if not isinstance(value, str) or not value.strip():
         raise RuntimeError(f"Empty optional runtime config field: {field}")
     return value.strip()
+
+
+def normalize_model_route_mode(value: object) -> str:
+    if not isinstance(value, str):
+        raise RuntimeError("Invalid runtime config field: model_route_mode")
+    normalized = value.strip().lower()
+    if normalized not in MODEL_ROUTE_MODES:
+        raise RuntimeError(
+            "Invalid runtime config field: model_route_mode "
+            f"(expected one of: {', '.join(MODEL_ROUTE_MODES)})"
+        )
+    return normalized
 
 
 def _read_optional_int(raw_data: dict[str, Any], field: str, default: int) -> int:
@@ -312,6 +328,9 @@ def load_runtime_config(
         "max_new_tokens": _read_optional_int(raw_data, "max_new_tokens", 128),
         "adapter_path": _read_optional_nullable_string(raw_data, "adapter_path"),
         "rag_system_prompt": _read_optional_nullable_string(raw_data, "rag_system_prompt"),
+        "model_route_mode": normalize_model_route_mode(
+            raw_data.get("model_route_mode", "auto")
+        ),
         "local_model_gateway": _load_local_model_gateway(
             raw_data.get("local_model_gateway"),
             runtime_environ,

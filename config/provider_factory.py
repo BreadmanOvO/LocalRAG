@@ -214,6 +214,8 @@ def build_rag_chat_model(
 ):
     local_config = getattr(runtime_config, "local_model_gateway", None)
     if (
+        getattr(runtime_config, "model_route_mode", "auto") != "cloud"
+        and
         local_config is not None
         and local_config.rag_generation_enabled
         and gateway is not None
@@ -229,6 +231,8 @@ def build_summary_chat_model(
 ):
     local_config = getattr(runtime_config, "local_model_gateway", None)
     if (
+        getattr(runtime_config, "model_route_mode", "auto") != "cloud"
+        and
         local_config is not None
         and local_config.conversation_summary_enabled
         and gateway is not None
