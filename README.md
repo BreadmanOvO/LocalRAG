@@ -79,8 +79,12 @@ UI 会同时检查 active corpus profile、最近一次完整 Agent Gate 的 cor
 ### 4. 上传文档入库
 
 ```bash
-python app_file_uploader.py
+streamlit run app_file_uploader.py
 ```
+
+上传入口采用显式发布的两阶段流程：上传后先做文本规范化、元数据生成和分块，结果写入 `results/ingestion_staging/` 并展示预览；点击“发布到正式知识库”后，才会写入 Chroma、`source_registry.json` 和 `config/active_corpus.json`。发布后的 BM25 是内存快照：如果问答服务在独立进程中运行，需要刷新/重建 `RagService` 才能检索到新文档。
+
+评测是可选步骤。默认发布不调用评测；只有调用 `IngestionWorkflow.publish(..., evaluate=True, evaluator=...)` 并注入 evaluator callback 时才执行。即使跳过评测，发布仍会更新 active corpus profile；运行时 Gate 在没有匹配评测产物时会诚实地保持未通过。
 
 ## 项目结构
 
@@ -98,6 +102,7 @@ LocalRAG/
 ├── core/
 │   ├── rag.py                 # RAG 服务核心
 │   ├── knowledge_base.py      # 知识库入库与 chunk 写入
+│   ├── ingestion_workflow.py  # staging、预览、显式发布与可选评测
 │   ├── chunking.py            # 分块策略（baseline / doc_type_aware / semantic）
 │   ├── bm25_retriever.py      # BM25 稀疏召回
 │   ├── retrieval_pipeline.py  # Dense + BM25 → RRF → Reranker 主链路

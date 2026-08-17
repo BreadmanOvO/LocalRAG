@@ -237,6 +237,10 @@ class RagService(object):
     def retrieve_result(self, question: str) -> RetrievalResult:
         return self.retrieval_pipeline.retrieve(question)
 
+    def refresh_sparse_index(self) -> None:
+        """Refresh the BM25 snapshot after a document is published."""
+        self.retrieval_pipeline.refresh_sparse_index()
+
     def answer_from_documents(self, question: str, documents: list[Document], session_id: str = "eval-session") -> str:
         effective_session_id = self._get_effective_session_id(session_id)
         answer = self.chain.invoke(

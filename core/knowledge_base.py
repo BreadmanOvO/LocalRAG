@@ -50,13 +50,25 @@ def get_string_md5(input_str : str, encoding_style="utf-8"):
     # return md5_obj.hexdigest()
 
 class KnowledgeBaseService(object):
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        *,
+        persist_directory: str | os.PathLike[str] | None = None,
+        collection_name: str | None = None,
+        embedding_model=None,
+    ) -> None:
         runtime_config = load_runtime_config()
-        os.makedirs(config.persist_directory, exist_ok=True)
+        persist_directory = persist_directory or config.persist_directory
+        collection_name = collection_name or config.collection_name
+        os.makedirs(persist_directory, exist_ok=True)
         self.chroma = Chroma(
-            collection_name=config.collection_name,
-            embedding_function=build_embedding_model(runtime_config),
-            persist_directory=config.persist_directory,
+            collection_name=collection_name,
+            embedding_function=(
+                embedding_model
+                if embedding_model is not None
+                else build_embedding_model(runtime_config)
+            ),
+            persist_directory=str(persist_directory),
         )
 
     def _build_upload_source_metadata(self, filename: str) -> dict:
@@ -79,11 +91,34 @@ class KnowledgeBaseService(object):
             return chunk_text_semantic(data, source_metadata=source_metadata)
         return chunk_text_baseline(data, source_metadata=source_metadata)
 
-    def _add_chunk_records(self, chunk_records):
-        self.chroma.add_texts(
-            texts=[record.text for record in chunk_records],
-            metadatas=[record.metadata for record in chunk_records]
-        )
+    def _add_chunk_records(self, chunk_records, *, ids: list[str] | None = None):
+        kwargs = {
+            "texts": [record.text for record in chunk_records],
+            "metadatas": [record.metadata for record in chunk_records],
+        }
+        if ids is not None:
+            if len(ids) != len(chunk_records):
+                raise ValueError("ids length must match chunk_records length")
+            kwargs["ids"] = ids
+        self.chroma.add_texts(**kwargs)
+
+    def add_chunk_records(self, chunk_records, *, ids: list[str] | None = None):
+        """Persist already-cleaned chunks.
+
+        The ingestion workflow uses this method so staging never writes to the
+        active collection.  The original private method and ``upload_by_str``
+        remain compatible with existing callers.
+        """
+        self._add_chunk_records(chunk_records, ids=ids)
+
+    @staticmethod
+    def chunk_record_id(source_id: str, chunk_record) -> str:
+        """Return a deterministic Chroma id for an ingested chunk."""
+        order = chunk_record.metadata.get("chunk_order", 0)
+        strategy = chunk_record.metadata.get("chunk_strategy", "baseline")
+        return hashlib.sha256(
+            f"{source_id}\0{strategy}\0{order}\0{chunk_record.text}".encode("utf-8")
+        ).hexdigest()
 
     def ingest_document(self, data: str, source_metadata: dict, chunking_strategy: str | None = None):
         chunk_records = self._chunk_upload(data, source_metadata, chunking_strategy=chunking_strategy)

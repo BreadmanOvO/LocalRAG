@@ -52,6 +52,11 @@ semantic_chunk_threshold = 0.5  # 相邻句子余弦相似度断点阈值
 semantic_max_chunk_size = 1000  # 语义段最大字符数，超长则二次拆分
 semantic_embedding_model = "models/bge-m3"  # 本地模型路径，fallback 到 HuggingFace
 
+# Upload ingestion workflow.  Files remain in staging until an explicit
+# publish operation updates the active collection and source registry.
+ingestion_staging_directory = "./results/ingestion_staging"
+uploaded_documents_directory = "./data/evaluation/shared/uploads"
+
 # VectorStoreService 参数
 similarity_top_k = 5 # 相似度top k
 retrieval_debug_top_k = 10 # 调试/实验分析使用的候选召回 top k

@@ -187,3 +187,18 @@ v1.7 优先恢复活动语料库，并验收“提问 → 检索 → 研究步�
 ### 版本边界
 
 v1.7 不新增第二套显式 Graph、异步 Tool Queue、三层 Memory、Redis/Kafka/ES 或多 Agent；这些内容只作为面试设计题和后续容量驱动选项。
+
+## 未发布：文档上传入库工作流补强
+
+### 上传链路
+
+- `app_file_uploader.py` 支持 txt/Markdown 上传，先执行文本规范化、元数据生成和 chunking，不直接污染 active Chroma。
+- 新增 `core/ingestion_workflow.py`，把流程拆为 `stage_text → preview → publish`；staging manifest、规范化原文和 chunk JSON 写入 `results/ingestion_staging/`，便于预览、失败恢复和幂等重试。
+- 显式 publish 才会写入 Chroma、正式 `source_registry.json`、clean upload markdown 和 `active_corpus.json`；source ID 基于规范化内容 SHA-256，chunk ID 确定性生成。
+- 发布后可通过 `RagService.refresh_sparse_index()` 或 callback 刷新 BM25 内存快照；独立问答进程需要重建/刷新服务。
+
+### 评测边界
+
+- 评测改为可选：`publish(evaluate=False)` 默认跳过，不在上传 UI 中隐式调用耗时或需要凭据的评测。
+- 需要评测时显式传入 `evaluate=True` 和 evaluator callback；评测失败会记录错误，但不会撤销已经完成的数据发布。
+- 跳过评测不会伪造 Gate 通过；active profile 更新后，缺少匹配评测产物的运行时仍保持未通过。
