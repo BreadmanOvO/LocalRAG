@@ -62,3 +62,13 @@ python eval/benchmark_serving.py --mode deterministic
 前端页面的去敏验证结果，包括健康检查、鉴权、SSE、模型路由和会话压缩面板。
 该报告不包含 prompt、answer、API token、权重或截图；未配置云凭据时，真实云降级不在
 本地端到端范围内。
+
+## 5) 文档上传入库工作流
+
+以下测试覆盖文本规范化、预览、显式发布、重复发布和可选评测回调：
+
+```powershell
+python -m unittest test.test_ingestion_workflow -v
+```
+
+测试使用内存 Chroma 替身，不会修改当前知识库。

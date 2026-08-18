@@ -88,7 +88,7 @@ $env:LOCALRAG_PERSIST_DIRECTORY = "path\to\chroma_store"
 streamlit run app_qa.py
 ```
 
-UI 会同时检查 active corpus profile、最近一次完整 Agent Gate 的 corpus/代码身份，以及最近三轮正式评测的连续稳定性 Gate。任一身份不一致、artifact 损坏或出现递归上限错误时不会显示 Gate 通过。
+UI 会检查 active corpus profile、最近一次 Agent Gate 的 corpus/代码身份和最近三轮评测的稳定性 Gate。任一身份不一致、artifact 损坏或出现递归上限错误时，Gate 均显示为未通过。
 
 ### 4. 上传文档入库
 
@@ -136,6 +136,7 @@ LocalRAG/
 │   └── sources/               # 知识源文档（100 篇：10 Apollo + 81 论文/报告 + 9 标准）
 ├── results/                   # 评测结果
 ├── scripts/                   # 工具脚本
+├── test/                      # 单元测试与评测脚本
 ├── release_note.md            # v1.1–v1.7 累计发布记录
 └── requirements.txt           # 应用与本地模型服务的统一依赖入口
 ```
@@ -180,7 +181,7 @@ python eval/eval_judge_formal_run.py \
 # Agent 正式 Gate（默认使用 active corpus）
 python eval/eval_agent.py
 
-# 最近三轮正式 Agent Gate 的发布稳定性检查
+# 检查最近三轮 Agent Gate 的稳定性
 python eval/release_gate.py
 
 # 本地模型服务质量与可靠性评测
@@ -230,7 +231,7 @@ RAGAS 端到端对照中，hybrid + reranker 的 Context Precision/Recall 为 0.
 
 ### 微调、模型服务与长上下文
 
-- 基于 LLaMA-Factory 对 Qwen3-4B 开展 4-bit QLoRA 微调，完成 LoRA 权重合并、Transformers 与 llama.cpp 双路径推理验证，并通过生成行为评测与训练退出门禁闭环微调目标。
+- 基于 LLaMA-Factory 对 Qwen3-4B 开展 4-bit QLoRA 微调，完成 LoRA 权重合并、Transformers 与 llama.cpp 双路径推理验证，并通过生成行为评测和训练退出检查确认微调目标。
 - 基于 FastAPI 搭建 OpenAI-compatible 流式推理服务，支持请求排队、超时取消、API 鉴权和 Prometheus 指标；完成 BF16、GGUF F16 与 Q4_K_M 部署 profile 验证。
 - 引入结构化滚动摘要和摘要 revision，长会话评测中的上下文 Token 中位数降低 73.5%。
 
