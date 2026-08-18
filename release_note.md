@@ -187,6 +187,3 @@ v1.7 优先恢复活动语料库，并验收“提问 → 检索 → 研究步�
 - 真实 Agent trace 跑通 planner → `rag_search` → 四级检索排名 → provider generation route → task memory write → final answer。
 - 自动化测试通过；详细证据见 `RAG_md/docs/reports/v1.7-agentic-rag-closure.md`。
 
-### 版本边界
-
-v1.7 暂不包含第二套显式 Graph、异步 Tool Queue、三层 Memory、Redis/Kafka/ES 或多 Agent。是否增加这些组件取决于实际容量和并发需求。
