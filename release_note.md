@@ -1,6 +1,6 @@
 # LocalRAG 发布记录
 
-记录各版本已合并的功能、验证结果和已知限制。指标保留对应的评测口径。
+记录各版本和 main 分支已合并的功能、验证结果和已知限制。指标保留对应的评测口径。
 
 ## v1.1
 
@@ -187,11 +187,7 @@ v1.7 优先恢复活动语料库，并验收“提问 → 检索 → 研究步�
 - 真实 Agent trace 跑通 planner → `rag_search` → 四级检索排名 → provider generation route → task memory write → final answer。
 - 自动化测试通过；详细证据见 `RAG_md/docs/reports/v1.7-agentic-rag-closure.md`。
 
-### 版本边界
-
-v1.7 暂不包含第二套显式 Graph、异步 Tool Queue、三层 Memory、Redis/Kafka/ES 或多 Agent。是否增加这些组件取决于实际容量和并发需求。
-
-## 待发布：文档上传入库工作流
+## main：文档上传入库工作流
 
 2026-08-18 · main · `7f4c78e`
 
@@ -207,3 +203,7 @@ v1.7 暂不包含第二套显式 Graph、异步 Tool Queue、三层 Memory、Red
 - `publish(evaluate=False)` 默认跳过评测，上传 UI 不会隐式调用耗时或需要凭据的评测。
 - 需要评测时显式传入 `evaluate=True` 和 evaluator callback；评测失败会记录错误，但不会撤销已完成的数据发布。
 - 跳过评测时不生成 Gate 通过标记；active profile 更新后，缺少匹配评测产物的运行时仍显示未通过。
+
+### 验证
+
+- `python -m unittest test.test_ingestion_workflow -v` 通过，覆盖文本规范化、预览、显式发布、重复发布和可选评测回调。
