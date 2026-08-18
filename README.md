@@ -1,6 +1,24 @@
 # 自动驾驶感知算法 LocalRAG
 
-面向自动驾驶感知算法场景的研究型 Agent，支持会话与任务记忆、来源研究工具、可观察运行轨迹、独立 Agent Gate，以及本地模型服务和长会话压缩。
+LocalRAG 是一个面向自动驾驶感知算法资料的 Agentic RAG 系统。它将混合检索、来源核验、任务记忆和可恢复研究流程组合在一个 Streamlit 应用中，并支持云端模型、本地模型服务和长会话压缩。
+
+## 工作原理
+
+一次问答由 `ReactAgent` 负责选择工具。检索工具从 Chroma 中分别执行 Dense 和 BM25 召回，通过 RRF 合并排名，再由 Cross-Encoder 精排；最终答案只使用检索到的证据，并保留来源、定位和各阶段排名。研究任务、会话摘要和任务记忆独立持久化，页面刷新后仍可继续。
+
+```mermaid
+flowchart LR
+    Q[用户问题] --> A[ReactAgent]
+    A --> T[检索与来源工具]
+    T --> D[Dense Top20]
+    T --> B[BM25 Top20]
+    D --> R[RRF]
+    B --> R
+    R --> X[Cross-Encoder]
+    X --> G[证据约束生成]
+    G --> O[答案与来源]
+    A <--> M[任务记忆与研究状态]
+```
 
 ## 快速开始
 
@@ -35,7 +53,7 @@ Copy-Item config/runtime_v1_6_local_service.example.json config/runtime_v1_6_loc
 Copy-Item config/model_serving_profiles.example.json config/model_serving_profiles.json
 ```
 
-默认配置用于保证云端 Agent Planner 可以直接启动；本地 Gateway 是独立的 RAG 生成/摘要路径，只有显式配置并启动本地 OpenAI-compatible 服务后才启用。项目当前不是“整个 Agent 本地优先”：Planner 仍使用运行时配置中的云端模型，本地 Gateway 只负责 RAG 生成和长上下文摘要，并在本地失败时按既有 Gateway 策略降级云端。
+默认配置使用云端模型。外层 Planner 始终读取运行时配置中的聊天模型；本地 Gateway 只接管 RAG 生成和长上下文摘要，并在本地服务不可用时按配置降级到云端。
 
 运行时配置支持 `model_route_mode`：`auto` 按配置启用本地并允许云端降级，`local` 手动选择本地优先路径（失败仍可降级云端），`cloud` 手动选择云端并关闭本地 Gateway。`local_model_gateway` 下的 `rag_generation_enabled` 和 `conversation_summary_enabled` 仍是对应功能的安全开关。UI 侧边栏可直接切换该模式，切换后会重建 Agent；该选项不改变外层 Planner 的模型。
 
@@ -55,11 +73,7 @@ streamlit run app_qa.py --server.fileWatcherType none
 python -m model_serving.main --profiles config/model_serving_profiles.json --profile e6_1_q4_k_m --port 8002 --llama-base-url http://127.0.0.1:18002/v1
 ```
 
-本地 Gateway 默认地址为 `http://127.0.0.1:8002/v1`，需要先单独启动对应的 OpenAI-compatible 模型服务；未启动时 UI 会显示本地服务不可用，并由 RAG/摘要路径降级到云端。手动选择 `cloud` 时，摘要也直接使用云端模型，不会关闭长上下文压缩。
-
-本地模型 Gate 继续复用 v1.6 的四 profile 质量 Gate、Q4 性能 Gate 和服务可靠性 Gate；v1.7 不新增线上模型质量评测。只有在本地服务实际启动后，才需要补一轮“路由接入 Gate”：验证 `local`/`auto` 路由、RAG 生成、摘要 JSON 校验、超时/429/熔断后的 cloud fallback 和 route trace。当前机器未启动 8002 Gateway，因此本轮只完成配置与自动化 contract 验证，未声称新的 live model Gate 通过。
-
-服务端和应用端依赖已合并到唯一的 `requirements.txt`；不再维护单独的 serving requirements 文件。
+本地 Gateway 默认地址为 `http://127.0.0.1:8002/v1`。`local` 和 `auto` 模式需要先启动该服务；`cloud` 模式直接使用云端模型。无论选择哪种模式，长上下文压缩都保持启用。
 
 ### 3. 启动问答服务
 
@@ -67,7 +81,7 @@ python -m model_serving.main --profiles config/model_serving_profiles.json --pro
 streamlit run app_qa.py
 ```
 
-默认读取 `config/active_corpus.json`，加载 v1.4.2 已通过 Gate 的 100-source / 7339-chunk Chroma store。active corpus v2 profile 同时固定来源数、片段数和 corpus/registry 指纹。大型 Chroma 二进制不进入 Git；新环境需要先生成该 store，或通过环境变量选择其他本地 store。v1.6 的本地模型 gateway、会话压缩和模型路由状态会在配置可用时接入同一 Agent UI：
+默认读取 `config/active_corpus.json`，加载 100-source / 7339-chunk Chroma store。active corpus profile 同时记录来源数、片段数和 corpus/registry 指纹。大型 Chroma 数据不随 Git 分发；新环境需要先生成 store，或通过环境变量选择已有目录：
 
 ```powershell
 $env:LOCALRAG_PERSIST_DIRECTORY = "path\to\chroma_store"
@@ -79,7 +93,7 @@ UI 会同时检查 active corpus profile、最近一次完整 Agent Gate 的 cor
 ### 4. 上传文档入库
 
 ```bash
-python app_file_uploader.py
+streamlit run app_file_uploader.py
 ```
 
 ## 项目结构
@@ -219,32 +233,15 @@ Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/sto
 
 v1.6 本地模型服务与长会话验证：模型服务质量 gate、性能 benchmark、Task 8 UI 端到端验证和 Task 9 双轮压缩探针均通过；Task 9 的摘要 revision 从 `1` 正确递增到 `2`。
 
-## 文档与发布记录
-
-第一次看项目或准备面试，建议先读文档仓库的 [v1.7 面试掌握指南](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/v1.7-interview-guide.md)，它按“项目是什么 → 六层架构 → 一次请求 → RAG/Agent → 高频面经 → 当前边界”组织材料。
-
-- [累计发布记录](release_note.md) — v1.1–v1.7 的功能、验证结果、门禁结论和已知限制
-- [仓库使用说明](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/repo_guide.md) — 工程入口、评测脚本与结果目录合同
-- [v1.7 Agentic RAG 与生产化开发计划](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/v1.7-agent-production-plan.md) — 面向 Agent/RAG/工程化面试能力的架构复审、里程碑与发布门槛
-- [v1.7 架构掌握与面试复盘](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/v1.7-architecture-interview-guide.md) — 六层架构、线上/本地路径、工具失败、模型评测与深挖题
-- [v1.7 Agentic RAG 收口报告](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/reports/v1.7-agentic-rag-closure.md) — 默认 RRF 主链路、工具失败合同、provider smoke、真实 Agent trace 与 100 题回归
-- 评测结果与 manifest：`results/`（原始截图、运行数据库等本地文件不提交）
-- 配置示例：`config/*.example.json`
-
 ## 版本
 
-| 版本 | 核心目标 | 状态 |
-|------|---------|------|
-| v1.0 | 评估基线（Gold Set + baseline runner + judge 骨架） | 已完成 |
-| v1.1 | 数据层（文档采集、chunk、metadata、formal judge） | 已完成 |
-| v1.2 | 检索层（hybrid retrieval + reranker + semantic chunking） | 已完成 |
-| v1.3 | 数据扩充与评测重建 + Qwen3-4B 微调 E1-E9 闭环 | 已完成 |
-| v1.4.2 | Agent + Memory 研究助手 | 已完成（M1-M5、稳定性补强与代码精简收口） |
-| v1.5 | 可控研究 Agent | 已完成（A1-A5 评测发布） |
-| v1.6 | 本地模型部署与会话压缩 | 已完成（Task 8/9 验证通过） |
-| v1.7 | Agentic RAG 收口：Dense + BM25 → RRF → Cross-Encoder、工具失败合同与架构证据 | 已完成 |
-
-## 仓库维护约定
-
-- 所有运行依赖统一写入根目录 `requirements.txt`，应用与本地模型服务共用同一安装入口。
-- 历史 TODO 和临时发布文档不作为版本能力入口；版本状态以 `release_note.md`、代码和 `results/` 中的 manifest 为准。
+| 版本 | 核心能力 |
+|------|---------|
+| v1.0 | Gold Set、baseline runner 和 judge 骨架 |
+| v1.1 | 文档采集、chunk metadata 和 formal judge |
+| v1.2 | Hybrid retrieval、reranker 和 semantic chunking |
+| v1.3 | 100 篇语料、100 题评测集、Qwen3-4B 微调实验 |
+| v1.4.2 | 会话记忆、任务记忆、来源工具和 Agent Gate |
+| v1.5 | 执行预算、证据绑定、暂停恢复和 checkpoint |
+| v1.6 | 本地模型服务、Gateway fallback 和会话压缩 |
+| v1.7 | Dense + BM25 → RRF → Cross-Encoder、统一 provenance 和工具错误合同 |
