@@ -62,3 +62,4 @@ python eval/benchmark_serving.py --mode deterministic
 前端页面的去敏验证结果，包括健康检查、鉴权、SSE、模型路由和会话压缩面板。
 该报告不包含 prompt、answer、API token、权重或截图；未配置云凭据时，真实云降级不在
 本地端到端范围内。
+
