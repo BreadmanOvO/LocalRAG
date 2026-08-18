@@ -186,4 +186,3 @@ v1.7 优先恢复活动语料库，并验收“提问 → 检索 → 研究步�
 - 在 100 题、100-source/7339-chunk 活动语料上，默认 retrieval pipeline 的 Hit@1=0.85、Hit@3=0.97、Hit@5=0.97、MRR=0.9067；100/100 使用 `rrf_rerank`，无 fallback。
 - 真实 Agent trace 跑通 planner → `rag_search` → 四级检索排名 → provider generation route → task memory write → final answer。
 - 自动化测试通过；详细证据见 `RAG_md/docs/reports/v1.7-agentic-rag-closure.md`。
-
