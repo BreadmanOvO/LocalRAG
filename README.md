@@ -57,23 +57,124 @@ Copy-Item config/model_serving_profiles.example.json config/model_serving_profil
 
 运行时配置支持 `model_route_mode`：`auto` 按配置启用本地并允许云端降级，`local` 手动选择本地优先路径（失败仍可降级云端），`cloud` 手动选择云端并关闭本地 Gateway。`local_model_gateway` 下的 `rag_generation_enabled` 和 `conversation_summary_enabled` 仍是对应功能的安全开关。UI 侧边栏可直接切换该模式，切换后会重建 Agent；该选项不改变外层 Planner 的模型。
 
+| 模式 | RAG 生成/摘要 | 外层 Planner | 本地服务不可用时 |
+|---|---|---|---|
+| `auto` | 配置启用本地时优先本地 | 运行时聊天模型 | 按 Gateway 合同降级云端 |
+| `local` | 优先本地 | 运行时聊天模型 | 仍可降级云端 |
+| `cloud` | 使用云端 | 运行时聊天模型 | 不构造本地 Gateway |
+
+注意：本地 Gateway 不等于本地 Planner。`runtime_v1_6_local_service.example.json` 里的 Planner 仍配置为 ModelScope；要完整运行 Agent，需要填写有效的云端聊天配置。只想验证本地权重能否加载和生成时，可以运行 `scripts/smoke_local_qwen3.py` 或 `scripts/smoke_local_rag_qwen3.py`，这两条 smoke 不经过外层 Planner。
+
+```powershell
+python scripts/smoke_local_qwen3.py --model-path models/Qwen3-4B --device auto --max-new-tokens 64
+python scripts/smoke_local_rag_qwen3.py --config config/runtime_local_qwen3_4b_lora_e1.example.json
+```
+
 默认 `runtime_models.json` 未配置 `local_model_gateway`，因此 UI 显示本地服务未启用是正常状态。要启用本地 Gateway，需要显式切换运行时配置；仅复制文件不会自动切换：
 
 ```powershell
 Copy-Item config/runtime_v1_6_local_service.example.json config/runtime_v1_6_local_service.json
 $env:LOCALRAG_RUNTIME_CONFIG = "config/runtime_v1_6_local_service.json"
 $env:LOCALRAG_MODEL_API_TOKEN = "your-local-service-token"
-# 可选：在配置 JSON 中设置 "model_route_mode": "local"
+```
+
+#### 本地模型服务怎么启动
+
+本地链路由两层组成：模型后端（Transformers 或 `llama-server`）和本项目提供的 OpenAI-compatible wrapper。服务只监听回环地址，默认给 UI 使用 `127.0.0.1:8002`。模型权重、GGUF 文件和 `tools/llama.cpp` 二进制不随 Git 分发，启动前先准备好对应文件：
+
+| profile | 后端 | 启动前需要 | 适用场景 |
+|---|---|---|---|
+| `e6_1_adapter_bf16` | Transformers | `models/Qwen3-4B`、E6.1 LoRA adapter、`e6_1_input_manifest.json` | 教学、质量基线，显存占用较高 |
+| `e6_1_q4_k_m` | `llama.cpp` | `artifacts/models/qwen3-4b.e6.1-q4_k_m.gguf`、对应 manifest、已安装的 `llama-server.exe` | Windows 本地发布候选 |
+
+推荐在终端 A 直接使用仓库脚本。脚本会先校验 manifest，服务启动前执行 warmup 和 readiness 检查。
+
+**Transformers BF16：**
+
+```powershell
+$env:LOCALRAG_MODEL_API_TOKEN = "your-local-service-token"
+.\model_deployment\launch_transformers.ps1 -Port 8002
+```
+
+该脚本默认使用 `e6_1_adapter_bf16` 和 `config/model_serving_profiles.example.json`。如果需要自己维护 profile 文件，也可以直接运行：
+
+```powershell
+python -m model_serving.main `
+  --profiles config/model_serving_profiles.json `
+  --profile e6_1_adapter_bf16 `
+  --host 127.0.0.1 `
+  --port 8002 `
+  --workers 1
+```
+
+**Q4_K_M：一键启动内部 llama.cpp 和 wrapper：**
+
+```powershell
+$env:LOCALRAG_MODEL_API_TOKEN = "your-local-service-token"
+.\model_deployment\launch_llama.ps1 `
+  -Mode ReleaseQ4 `
+  -Model artifacts/models/qwen3-4b.e6.1-q4_k_m.gguf `
+  -Manifest model_deployment/manifests/e6_1_q4_k_m_manifest.json `
+  -InternalPort 18002 `
+  -Port 8002
+```
+
+`launch_llama.ps1` 会在 `127.0.0.1:18002` 启动 `llama-server.exe`，等待 `/v1/models` 出现 `localrag-qwen3-4b-e6.1` 后，再在 `127.0.0.1:8002` 启动本项目 wrapper；llama.cpp 的 stdout/stderr 会写入 `results/model_serving/llama/`。脚本要求 manifest 中记录的 llama.cpp 版本已经安装到 `tools/llama.cpp/<version>/bin/llama-server.exe`。安装脚本需要官方地址和 SHA-256，参数说明见：
+
+```powershell
+Get-Help .\model_deployment\install_llama_cpp.ps1 -Full
+```
+
+如果要拆开启动、单独排查内部服务，可以先运行与脚本相同的 `llama-server` 参数，再在另一个终端启动 wrapper：
+
+```powershell
+$env:LLAMA_ARG_CHAT_TEMPLATE_KWARGS = '{"enable_thinking":false}'
+& .\tools\llama.cpp\b10256\bin\llama-server.exe `
+  --model .\artifacts\models\qwen3-4b.e6.1-q4_k_m.gguf `
+  --alias localrag-qwen3-4b-e6.1 `
+  --host 127.0.0.1 `
+  --port 18002 `
+  --ctx-size 40960 `
+  --jinja `
+  --parallel 1 `
+  --n-gpu-layers 999 `
+  --temp 0
+```
+
+```powershell
+python -m model_serving.main `
+  --profiles config/model_serving_profiles.json `
+  --profile e6_1_q4_k_m `
+  --host 127.0.0.1 `
+  --port 8002 `
+  --workers 1 `
+  --llama-base-url http://127.0.0.1:18002/v1
+```
+
+服务启动后，在终端 B 检查状态：
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8002/health
+Invoke-RestMethod `
+  -Headers @{Authorization = "Bearer $env:LOCALRAG_MODEL_API_TOKEN"} `
+  http://127.0.0.1:8002/ready
+Invoke-RestMethod `
+  -Headers @{Authorization = "Bearer $env:LOCALRAG_MODEL_API_TOKEN"} `
+  http://127.0.0.1:8002/v1/models
+```
+
+三个接口依次回答“进程是否活着、模型是否 warmup 完成、服务暴露了哪个固定模型”。`/ready` 未通过时不要启动 UI；常见原因是权重路径、manifest 或内部 llama.cpp 地址不匹配。
+
+然后在终端 C 设置运行时配置并启动 UI：
+
+```powershell
+$env:LOCALRAG_RUNTIME_CONFIG = "config/runtime_v1_6_local_service.json"
+$env:LOCALRAG_MODEL_API_TOKEN = "your-local-service-token"
+# 可选：将 model_route_mode 改为 "local"，或在 UI 侧边栏切换
 streamlit run app_qa.py --server.fileWatcherType none
 ```
 
-例如使用本地 Q4_K_M Gateway 时，可先启动内部 llama.cpp 服务，再启动本项目的 OpenAI-compatible 服务：
-
-```powershell
-python -m model_serving.main --profiles config/model_serving_profiles.json --profile e6_1_q4_k_m --port 8002 --llama-base-url http://127.0.0.1:18002/v1
-```
-
-本地 Gateway 默认地址为 `http://127.0.0.1:8002/v1`。`local` 和 `auto` 模式需要先启动该服务；`cloud` 模式直接使用云端模型。无论选择哪种模式，长上下文压缩都保持启用。
+本地 Gateway 默认地址为 `http://127.0.0.1:8002/v1`。启用 `local_model_gateway` 后，`local` 和 `auto` 模式会先尝试该服务；`cloud` 模式不构造本地 Gateway。长上下文压缩不是全局强制开启：`conversation_summary_enabled` 为 `true` 且运行时配置可用时才启用；默认 `runtime_models.json` 没有本地 Gateway，`auto` 模式下显示未启用是预期行为。
 
 ### 3. 启动问答服务
 
@@ -137,9 +238,15 @@ LocalRAG/
 ├── results/                   # 评测结果
 ├── scripts/                   # 工具脚本
 ├── test/                      # 单元测试与评测脚本
-├── release_note.md            # v1.1–v1.7 累计发布记录
+├── release_note.md            # v1.1–v1.7 与 main 累计发布记录
 └── requirements.txt           # 应用与本地模型服务的统一依赖入口
 ```
+
+## 面试展示与证据
+
+如果需要快速展示项目，不建议只打开功能页面。先看 [RAG_md 小仓的面试证据索引](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/interview-evidence.md)，里面按“项目定位 → 一次请求 → 结果数据 → 日志和测试 → 已知边界”整理了现有报告、JSON 产物、smoke 日志和可直接使用的训练曲线。
+
+工程目录、评测脚本和结果产物的对照见 [仓库运行指南](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/repo_guide.md)。
 
 ## 评测
 
@@ -251,3 +358,4 @@ v1.6 本地模型服务与长会话验证：模型服务质量 gate、性能 ben
 | v1.5 | 执行预算、证据绑定、暂停恢复和 checkpoint |
 | v1.6 | 本地模型服务、Gateway fallback 和会话压缩 |
 | v1.7 | Dense + BM25 → RRF → Cross-Encoder、统一 provenance 和工具错误合同 |
+| main | 文档上传 staging、预览、显式 publish 和可选评测回调 |
