@@ -51,6 +51,37 @@ class RecordingChatModel(BaseChatModel):
         )
 
 
+class TerminalRagChatModel(BaseChatModel):
+    calls: list[list] = Field(default_factory=list)
+
+    @property
+    def _llm_type(self) -> str:
+        return "terminal-rag-chat-model"
+
+    def bind_tools(self, tools, **kwargs):
+        return self
+
+    def _generate(self, messages, stop=None, run_manager=None, **kwargs) -> ChatResult:
+        self.calls.append(list(messages))
+        return ChatResult(
+            generations=[
+                ChatGeneration(
+                    message=AIMessage(
+                        content="",
+                        tool_calls=[
+                            {
+                                "name": "rag_search",
+                                "args": {"query": "BEVFormer"},
+                                "id": f"rag-call-{len(self.calls)}",
+                                "type": "tool_call",
+                            }
+                        ],
+                    )
+                )
+            ]
+        )
+
+
 class SessionIdValidationTests(unittest.TestCase):
     def test_validate_session_id_accepts_project_session_formats(self):
         self.assertEqual("eval-session-sample-1", validate_session_id(" eval-session-sample-1 "))
@@ -563,6 +594,7 @@ class ReactAgentSessionTests(unittest.TestCase):
             ],
             [tool.name for tool in agent.tools],
         )
+        self.assertTrue(agent.tools[0].return_direct)
         self.assertIs(fake_checkpointer, create_agent.call_args.kwargs["checkpointer"])
         middleware = create_agent.call_args.kwargs["middleware"]
         self.assertEqual(
@@ -1056,7 +1088,11 @@ class ReactAgentSessionTests(unittest.TestCase):
                 {
                     "tools": {
                         "messages": [
-                            SimpleNamespace(type="tool", name="rag_search", content="tool result")
+                            SimpleNamespace(
+                                type="tool",
+                                name="rag_search",
+                                content="grounded answer",
+                            )
                         ]
                     }
                 },
@@ -1075,9 +1111,9 @@ class ReactAgentSessionTests(unittest.TestCase):
 
         self.assertIn("[工具] rag_search", output)
         self.assertIn("[工具结果] rag_search 已完成", output)
-        self.assertIn("final answer", output)
+        self.assertIn("grounded answer", output)
         self.assertNotIn("hidden reasoning", output)
-        self.assertNotIn("tool result", output)
+        self.assertNotIn("final answer", output)
         fake_graph.stream.assert_called_once_with(
             {"messages": [("user", "question")]},
             config={
@@ -1086,6 +1122,42 @@ class ReactAgentSessionTests(unittest.TestCase):
             },
             stream_mode="updates",
         )
+
+    def test_successful_rag_search_ends_the_real_agent_graph(self):
+        chat_model = TerminalRagChatModel()
+        rag_service = mock.Mock()
+        rag_service.answer_with_retrieval.return_value = {
+            "answer": "Grounded BEVFormer answer [paper-001]",
+            "retrieved_rows": [
+                {
+                    "source_id": "paper-001",
+                    "locator": "page=1",
+                    "chunk_order": 0,
+                    "chunk_strategy": "semantic",
+                }
+            ],
+        }
+        with mock.patch.object(
+            react_agent,
+            "load_runtime_config",
+            side_effect=RuntimeError("not needed for this test"),
+        ):
+            agent = react_agent.ReactAgent(
+                "session-terminal-rag",
+                task_id="task-terminal-rag",
+                task_memory_store=mock.Mock(),
+                chat_model=chat_model,
+                rag_service=rag_service,
+            )
+
+        events = list(agent.execute_events("介绍 BEVFormer"))
+
+        self.assertEqual(1, len(chat_model.calls))
+        self.assertEqual(
+            ["model_completed", "tool_started", "tool_completed", "answer_delta"],
+            [event.kind for event in events],
+        )
+        self.assertEqual("Grounded BEVFormer answer [paper-001]", events[-1].content)
 
     def test_execute_events_returns_structured_public_trace(self):
         fake_graph = mock.Mock()

@@ -100,6 +100,18 @@ def _rag_search_failure_code(message) -> str:
     return ""
 
 
+def _rag_search_answer(message) -> str:
+    """Return the cited answer produced by a successful terminal RAG tool call."""
+    if (
+        getattr(message, "type", None) != "tool"
+        or getattr(message, "name", None) != "rag_search"
+        or _rag_search_failure_code(message)
+    ):
+        return ""
+    content = getattr(message, "content", "")
+    return content.strip() if isinstance(content, str) else ""
+
+
 def load_agent_system_prompt() -> str:
     """加载 Agent 系统提示词"""
     prompt_path = get_abs_path("prompts/agent_system.txt")
@@ -670,6 +682,10 @@ class ReactAgent:
         current_messages = messages[latest_human_index + 1 :]
         if any(_rag_search_failure_code(message) for message in current_messages):
             return RAG_SEARCH_UNAVAILABLE_MESSAGE
+        for message in reversed(current_messages):
+            rag_answer = _rag_search_answer(message)
+            if rag_answer:
+                return rag_answer
         if messages:
             for msg in reversed(messages):
                 if hasattr(msg, "content") and msg.type == "ai":
@@ -713,6 +729,18 @@ class ReactAgent:
                                 content=RAG_SEARCH_UNAVAILABLE_MESSAGE,
                                 status="error",
                                 error_code=error_code,
+                                elapsed_ms=_elapsed_ms(started_at),
+                            )
+                            return
+                        rag_answer = _rag_search_answer(msg)
+                        if rag_answer:
+                            # rag_search has already generated a cited answer.
+                            # Returning it directly prevents a simple Q&A turn from
+                            # spending its remaining budget on redundant source tools.
+                            yield AgentEvent(
+                                kind="answer_delta",
+                                content=rag_answer,
+                                status="streaming",
                                 elapsed_ms=_elapsed_ms(started_at),
                             )
                             return

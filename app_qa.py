@@ -167,10 +167,12 @@ def _clear_memory_editor_state() -> None:
 
 
 def _render_memory_editor(agent: ReactAgent, task_memory, *, enabled: bool) -> None:
-    with st.sidebar.expander("编辑任务记忆"):
+    with st.sidebar.expander("编辑任务记忆", expanded=enabled and not task_memory.is_empty):
         if not enabled:
             st.caption("启用任务记忆后可编辑")
             return
+
+        st.caption("可编辑：主题、确认来源、阶段结论、证据缺口和待解决问题。")
 
         category_label = st.selectbox(
             "类别",
@@ -848,6 +850,10 @@ with st.sidebar.expander("任务记忆", expanded=not task_memory.is_empty):
         st.caption("当前任务暂无持久化记忆")
     else:
         st.json(_memory_payload(task_memory))
+        st.caption(
+            "已检索问题和检索命中来源由系统自动记录；其余字段需要用户确认后，"
+            "在下方“编辑任务记忆”中保存。"
+        )
 
 _render_memory_editor(agent, task_memory, enabled=memory_enabled)
 _render_runtime_sidebar(runtime_status)

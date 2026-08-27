@@ -40,7 +40,11 @@ def build_rag_search_tool(
         raise TypeError("rag_service_factory must be callable")
     service = rag_service
 
-    @tool("rag_search", response_format="content_and_artifact")
+    @tool(
+        "rag_search",
+        response_format="content_and_artifact",
+        return_direct=True,
+    )
     def rag_search(query: str) -> tuple[str, dict]:
         """从自动驾驶知识库检索相关内容并生成有引用的回答。"""
         nonlocal service

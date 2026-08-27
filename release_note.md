@@ -9,14 +9,17 @@
 ### 变更
 
 - `rag_search` 返回失败 ToolMessage 时，`ReactAgent` 立即结束本轮事件流，不再把失败结果交回 Planner 生成无来源回答；同步 `execute()` 也会隐藏同一轮中后续的模型文本。
+- `rag_search` 成功后也作为终止型工具直接交付其带引用答案，普通问答不会再重复调用来源查看、来源检查或上下文扩展而耗尽工具预算。
 - Research run 将失败的 `rag_search` 直接标记为 `blocked`，不提交 evidence、finding 或完成态，避免把“基于公开信息”的补答保存为研究结论。
 - 已有活动研究任务时，问答入口明确提示继续或取消当前任务，不再把并发保护误报为任务创建失败。
+- 任务记忆面板明确区分自动记录的检索历史与待确认的可编辑字段，并在已有记忆时自动展开编辑入口；未确认的结论仍不自动写入长期记忆。
 - 云端 OpenAI-compatible ChatModel 统一保留 60 秒超时，并对可重试的瞬时请求增加 1 次自动重试；鉴权、模型名和其他持久配置错误仍会以原始错误码失败。
 
 ### 验证
 
-- `python -m unittest test.test_agent_memory test.test_research_agent_runtime test.test_provider_factory -v` 通过（70 项）。
-- 回归用例覆盖：检索失败后不会消费后续 Planner 答案；即使异常事件序列包含后续文本，Research run 也不会生成 finding 或 evidence。
+- `python -m unittest test.test_agent_memory test.test_research_agent_runtime test.test_agent_execution test.test_task_memory -v` 通过（94 项）。
+- `python -m unittest discover -s test -q` 通过（646 项，跳过 1 项）。
+- 回归用例覆盖：检索成功或失败都不会消费后续 Planner 答案；即使异常事件序列包含后续文本，Research run 也不会生成 finding 或 evidence。
 
 ## v1.1
 
