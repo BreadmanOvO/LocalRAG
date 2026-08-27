@@ -19,6 +19,13 @@ from agent.context.store import ConversationContextStore
 from agent.memory import SessionRetrievalMemory
 from agent.tools.rag_search import build_rag_search_tool
 from agent.tools.show_sources import build_show_sources_tool
+from config.runtime_keys import (
+    CloudModelConfig,
+    EmbeddingModelConfig,
+    LocalModelGatewayConfig,
+    ModelRoleConfig,
+    RuntimeProviderConfig,
+)
 from core.chat_history import (
     ChatHistoryCorruptionError,
     FileChatMessageHistory,
@@ -793,6 +800,150 @@ class ReactAgentSessionTests(unittest.TestCase):
         gateway.assert_not_called()
         self.assertEqual("cloud", agent.model_route_mode)
         self.assertEqual("disabled_by_route", agent.local_model_gateway_status)
+
+    def test_v2_roles_build_independent_gateways_and_reuse_equal_local_config(self):
+        cloud = CloudModelConfig(
+            provider="sensenova",
+            api_key="cloud-secret",
+            base_url="https://example.invalid/v1",
+            model="cloud-chat",
+        )
+        shared_local = LocalModelGatewayConfig(
+            base_url="http://127.0.0.1:8001/v1",
+            model="shared-local",
+            api_token="local-secret",
+        )
+        planner_local = LocalModelGatewayConfig(
+            base_url="http://127.0.0.1:8003/v1",
+            model="planner-local",
+            api_token="planner-secret",
+        )
+        runtime_config = RuntimeProviderConfig(
+            provider="sensenova",
+            api_key=cloud.api_key,
+            base_url=cloud.base_url,
+            chat_model_name=cloud.model,
+            embedding_model_name="models/bge-m3",
+            roles={
+                "planner": ModelRoleConfig("local", cloud, planner_local),
+                "rag": ModelRoleConfig("local", cloud, shared_local),
+                "summary": ModelRoleConfig("local", cloud, shared_local),
+            },
+            embedding=EmbeddingModelConfig(
+                provider="local_sentence_transformer",
+                model="models/bge-m3",
+            ),
+        )
+        context_middleware = ConversationContextMiddleware.__new__(
+            ConversationContextMiddleware
+        )
+
+        with (
+            mock.patch.object(react_agent, "load_runtime_config", return_value=runtime_config),
+            mock.patch.object(react_agent, "build_agent_chat_model", return_value=object()) as planner,
+            mock.patch.object(react_agent, "OpenAICompatibleClient") as http_client,
+            mock.patch.object(react_agent, "CircuitBreaker"),
+            mock.patch.object(react_agent, "LocalModelGateway") as gateway,
+            mock.patch.object(react_agent, "build_summary_chat_model", return_value=object()),
+            mock.patch.object(
+                react_agent.ReactAgent,
+                "_create_context_middleware",
+                return_value=context_middleware,
+            ),
+            mock.patch("model_gateway.summary_adapter.LocalGatewaySummaryClient"),
+            mock.patch.object(react_agent, "create_agent", return_value=mock.Mock()),
+            mock.patch.object(react_agent, "load_agent_system_prompt", return_value="system"),
+        ):
+            agent = react_agent.ReactAgent(
+                "session-v2-roles",
+                task_id="task-v2-roles",
+                task_memory_store=mock.Mock(),
+                rag_service=mock.Mock(),
+            )
+
+        planner.assert_called_once()
+        planner_runtime = planner.call_args.args[0]
+        self.assertEqual(0.7, planner.call_args.kwargs["temperature"])
+        self.assertEqual("local", planner_runtime.role("planner").route)
+        self.assertEqual("local", planner_runtime.role("rag").route)
+        self.assertEqual("local", planner_runtime.role("summary").route)
+        self.assertEqual(1, http_client.call_count)
+        self.assertEqual(1, gateway.call_count)
+        self.assertIs(agent.local_model_gateways["rag"], gateway.return_value)
+        self.assertIs(agent.local_model_gateways["summary"], gateway.return_value)
+        self.assertEqual(
+            {"planner": "local", "rag": "local", "summary": "local"},
+            agent.model_routes,
+        )
+        self.assertEqual(
+            {"rag": "configured", "summary": "configured"},
+            agent.local_model_gateway_statuses,
+        )
+
+    def test_v2_roles_keep_distinct_rag_and_summary_gateways(self):
+        cloud = CloudModelConfig(
+            provider="sensenova",
+            api_key="cloud-secret",
+            base_url="https://example.invalid/v1",
+            model="cloud-chat",
+        )
+        rag_local = LocalModelGatewayConfig(
+            base_url="http://127.0.0.1:8001/v1",
+            model="rag-local",
+            api_token="rag-secret",
+        )
+        summary_local = LocalModelGatewayConfig(
+            base_url="http://127.0.0.1:8002/v1",
+            model="summary-local",
+            api_token="summary-secret",
+        )
+        runtime_config = RuntimeProviderConfig(
+            provider="sensenova",
+            api_key=cloud.api_key,
+            base_url=cloud.base_url,
+            chat_model_name=cloud.model,
+            embedding_model_name="models/bge-m3",
+            roles={
+                "planner": ModelRoleConfig("cloud", cloud, rag_local),
+                "rag": ModelRoleConfig("local", cloud, rag_local),
+                "summary": ModelRoleConfig("local", cloud, summary_local),
+            },
+            embedding=EmbeddingModelConfig(
+                provider="local_sentence_transformer",
+                model="models/bge-m3",
+            ),
+        )
+        context_middleware = ConversationContextMiddleware.__new__(
+            ConversationContextMiddleware
+        )
+        gateways = [mock.Mock(name="rag-gateway"), mock.Mock(name="summary-gateway")]
+
+        with (
+            mock.patch.object(react_agent, "load_runtime_config", return_value=runtime_config),
+            mock.patch.object(react_agent, "build_agent_chat_model", return_value=object()),
+            mock.patch.object(react_agent, "OpenAICompatibleClient"),
+            mock.patch.object(react_agent, "CircuitBreaker"),
+            mock.patch.object(react_agent, "LocalModelGateway", side_effect=gateways) as gateway,
+            mock.patch.object(react_agent, "build_summary_chat_model", return_value=object()),
+            mock.patch.object(
+                react_agent.ReactAgent,
+                "_create_context_middleware",
+                return_value=context_middleware,
+            ),
+            mock.patch("model_gateway.summary_adapter.LocalGatewaySummaryClient"),
+            mock.patch.object(react_agent, "create_agent", return_value=mock.Mock()),
+            mock.patch.object(react_agent, "load_agent_system_prompt", return_value="system"),
+        ):
+            agent = react_agent.ReactAgent(
+                "session-v2-separate",
+                task_id="task-v2-separate",
+                task_memory_store=mock.Mock(),
+                rag_service=mock.Mock(),
+            )
+
+        self.assertEqual(2, gateway.call_count)
+        self.assertIs(agent.local_model_gateways["rag"], gateways[0])
+        self.assertIs(agent.local_model_gateways["summary"], gateways[1])
 
     def test_get_conversation_context_returns_snapshot_or_none(self):
         without_context = react_agent.ReactAgent.__new__(react_agent.ReactAgent)

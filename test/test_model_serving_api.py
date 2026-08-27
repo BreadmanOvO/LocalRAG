@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from threading import Event, Thread
 import time
 import unittest
@@ -173,6 +174,50 @@ class ModelServingApiTests(unittest.TestCase):
         )
         response = self.client.get("/ready", headers=self.headers)
         self.assertEqual(503, response.status_code)
+
+    def test_planner_tool_call_is_rendered_as_openai_tool_calls(self):
+        self.backend.warmup()
+        self.backend.handles.append(
+            FakeGenerationHandle(
+                [
+                    GenerationChunk(
+                        '<tool_call>\n{"name":"rag_search","arguments":{"query":"Apollo"}}\n</tool_call>',
+                        20,
+                        8,
+                        "stop",
+                    )
+                ]
+            )
+        )
+        response = self.client.post(
+            "/v1/chat/completions",
+            headers=self.headers,
+            json=_request(
+                purpose="agent_planning",
+                tools=[
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": "rag_search",
+                            "description": "search",
+                            "parameters": {"type": "object"},
+                        },
+                    }
+                ],
+                tool_choice="auto",
+            ),
+        )
+
+        self.assertEqual(200, response.status_code)
+        choice = response.json()["choices"][0]
+        self.assertEqual("tool_calls", choice["finish_reason"])
+        self.assertIsNone(choice["message"]["content"])
+        call = choice["message"]["tool_calls"][0]
+        self.assertEqual("rag_search", call["function"]["name"])
+        self.assertEqual({"query": "Apollo"}, json.loads(call["function"]["arguments"]))
+        request = self.backend.requests[-1]
+        self.assertEqual("agent_planning", request.purpose)
+        self.assertEqual("rag_search", request.tools[0]["function"]["name"])
 
     def test_models_exposes_only_current_identity(self):
         response = self.client.get("/v1/models", headers=self.headers)

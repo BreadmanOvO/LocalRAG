@@ -40,6 +40,11 @@ from .schemas import ChatCompletionRequest
 
 logger = logging.getLogger(__name__)
 _REQUEST_ID_PATTERN = re.compile(r"^[A-Za-z0-9._:-]{1,128}$")
+_TOOL_CALL_PATTERN = re.compile(
+    r"<tool_call>\s*(\{.*?\})\s*</tool_call>",
+    re.DOTALL,
+)
+_THINK_PATTERN = re.compile(r"^\s*<think>.*?</think>\s*", re.DOTALL)
 _UNSET = object()
 
 
@@ -184,7 +189,7 @@ def _expected_identity(
 
 
 def _safe_log_request(request_id: str, payload: ChatCompletionRequest) -> None:
-    message_bytes = "\n".join(message.content for message in payload.messages).encode(
+    message_bytes = "\n".join(message.content or "" for message in payload.messages).encode(
         "utf-8"
     )
     metadata_ids = tuple(
@@ -197,14 +202,80 @@ def _safe_log_request(request_id: str, payload: ChatCompletionRequest) -> None:
         if value is not None
     )
     logger.info(
-        "model request id=%s purpose=%s metadata_ids=%s messages=%d chars=%d sha256=%s",
+        "model request id=%s purpose=%s metadata_ids=%s messages=%d tools=%d chars=%d sha256=%s",
         request_id,
         payload.purpose,
         metadata_ids,
         len(payload.messages),
+        len(payload.tools),
         len(message_bytes),
         hashlib.sha256(message_bytes).hexdigest(),
     )
+
+
+def _backend_message(message: object) -> BackendMessage:
+    role = str(getattr(message, "role"))
+    content = getattr(message, "content", None)
+    raw_tool_calls = getattr(message, "tool_calls", None) or ()
+    return BackendMessage(
+        role=role,
+        content=content if isinstance(content, str) else "",
+        name=getattr(message, "name", None),
+        tool_call_id=getattr(message, "tool_call_id", None),
+        tool_calls=tuple(
+            tool_call.model_dump(exclude_none=True)
+            if callable(getattr(tool_call, "model_dump", None))
+            else dict(tool_call)
+            for tool_call in raw_tool_calls
+        ),
+    )
+
+
+def _parse_tool_calls(
+    text: str,
+    *,
+    request_id: str,
+) -> tuple[str | None, list[dict[str, object]]]:
+    calls: list[dict[str, object]] = []
+    for index, match in enumerate(_TOOL_CALL_PATTERN.finditer(text)):
+        try:
+            value = json.loads(match.group(1))
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(value, Mapping):
+            continue
+        name = value.get("name")
+        arguments = value.get("arguments")
+        if not isinstance(name, str) or not name or not isinstance(
+            arguments, (str, Mapping)
+        ):
+            continue
+        if isinstance(arguments, Mapping):
+            arguments_text = json.dumps(
+                dict(arguments), ensure_ascii=False, separators=(",", ":")
+            )
+        else:
+            try:
+                parsed_arguments = json.loads(arguments)
+            except json.JSONDecodeError:
+                continue
+            if not isinstance(parsed_arguments, Mapping):
+                continue
+            arguments_text = json.dumps(
+                dict(parsed_arguments), ensure_ascii=False, separators=(",", ":")
+            )
+        calls.append(
+            {
+                "id": f"call_{request_id}_{index}",
+                "type": "function",
+                "function": {"name": name, "arguments": arguments_text},
+            }
+        )
+    if not calls:
+        return text, []
+    content = _TOOL_CALL_PATTERN.sub("", text)
+    content = _THINK_PATTERN.sub("", content).strip()
+    return content or None, calls
 
 
 def create_app(
@@ -322,6 +393,8 @@ def create_app(
             return _error_response(400, "invalid_request_id", "")
         if payload.model != profile.model_id or payload.max_tokens > profile.max_new_tokens:
             return _error_response(400, "invalid_request", request_id)
+        if payload.stream and payload.tools:
+            return _error_response(400, "streaming_tools_not_supported", request_id)
         unavailable = ready_error(request_id)
         if unavailable is not None:
             return unavailable
@@ -330,12 +403,14 @@ def create_app(
             request_id=request_id,
             model=payload.model,
             messages=tuple(
-                BackendMessage(message.role, message.content)
+                _backend_message(message)
                 for message in payload.messages
             ),
             temperature=payload.temperature,
             max_tokens=payload.max_tokens,
             purpose=payload.purpose,
+            tools=tuple(dict(tool) for tool in payload.tools),
+            tool_choice=payload.tool_choice,
         )
         started_at = time.monotonic()
 
@@ -412,6 +487,19 @@ def create_app(
                     input_tokens=input_tokens,
                     output_tokens=output_tokens,
                 )
+            text = "".join(text_parts)
+            content: str | None = text
+            tool_calls: list[dict[str, object]] = []
+            if payload.tools:
+                content, tool_calls = _parse_tool_calls(text, request_id=request_id)
+                if tool_calls:
+                    finish_reason = "tool_calls"
+            message: dict[str, object] = {
+                "role": "assistant",
+                "content": content,
+            }
+            if tool_calls:
+                message["tool_calls"] = tool_calls
             return JSONResponse(
                 {
                     "id": f"chatcmpl-{request_id}",
@@ -420,10 +508,7 @@ def create_app(
                     "choices": [
                         {
                             "index": 0,
-                            "message": {
-                                "role": "assistant",
-                                "content": "".join(text_parts),
-                            },
+                            "message": message,
                             "finish_reason": finish_reason,
                         }
                     ],

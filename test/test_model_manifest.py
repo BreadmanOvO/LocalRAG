@@ -10,6 +10,7 @@ from model_deployment.manifest import (
     FIXED_MODEL_INPUT_PATHS,
     ManifestMismatchError,
     build_manifest,
+    build_model_input_manifest,
     build_derived_artifact_manifest,
     load_manifest,
     sha256_file,
@@ -106,6 +107,23 @@ class ModelManifestTests(unittest.TestCase):
                 ManifestMismatchError
             ):
                 build_manifest(self.root, [relative_path], kind="model-input")
+
+    def test_model_directory_symlink_escape_is_rejected(self):
+        outside = Path(self.temp_dir.name).parent / f"{self.root.name}-outside"
+        outside.mkdir()
+        external_file = outside / "weights.safetensors"
+        external_file.write_text("external", encoding="utf-8")
+        self.addCleanup(lambda: outside.rmdir())
+        self.addCleanup(lambda: external_file.unlink(missing_ok=True))
+        link = self.root / "models" / "Custom-Qwen" / "weights.safetensors"
+        link.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            link.symlink_to(external_file)
+        except (OSError, NotImplementedError) as exc:
+            self.skipTest(f"symlinks unavailable: {exc}")
+
+        with self.assertRaises(ManifestMismatchError):
+            build_manifest(self.root, [Path("models/Custom-Qwen/weights.safetensors")], kind="model-input")
 
     def test_manifest_round_trip_rejects_absolute_machine_paths(self):
         self._write("artifact.bin")
@@ -248,6 +266,48 @@ class ModelManifestTests(unittest.TestCase):
                 tool_version="b10256",
                 elapsed_seconds=1,
             )
+
+    def test_generic_model_input_manifest_records_custom_adapter_identity(self):
+        self._write(
+            "models/Custom-Qwen/config.json",
+            json.dumps(
+                {
+                    "architectures": ["Qwen3ForCausalLM"],
+                    "max_position_embeddings": 32768,
+                }
+            ),
+        )
+        self._write("models/Custom-Qwen/model-00001-of-00001.safetensors")
+        self._write(
+            "saves/custom-adapter/adapter_config.json",
+            json.dumps(
+                {
+                    "peft_type": "LORA",
+                    "r": 16,
+                    "lora_alpha": 32,
+                    "lora_dropout": 0.05,
+                    "target_modules": ["v_proj", "q_proj"],
+                }
+            ),
+        )
+        self._write("saves/custom-adapter/adapter_model.safetensors")
+        self._write("saves/custom-adapter/chat_template.jinja")
+
+        manifest = build_model_input_manifest(
+            repo_root=self.root,
+            base_model=Path("models/Custom-Qwen"),
+            adapter=Path("saves/custom-adapter"),
+            model_id="custom-localrag",
+        )
+
+        identity = manifest["metadata"]["model_identity"]
+        self.assertEqual("custom-localrag", identity["model_id"])
+        self.assertEqual(32768, identity["context_limit"])
+        self.assertEqual("models/Custom-Qwen", identity["base_model_path"])
+        self.assertEqual("saves/custom-adapter", identity["adapter_path"])
+        self.assertEqual(16, identity["adapter"]["r"])
+        self.assertEqual(["q_proj", "v_proj"], identity["adapter"]["target_modules"])
+        validate_manifest(self.root, manifest)
 
 
 if __name__ == "__main__":

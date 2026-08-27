@@ -1,0 +1,18 @@
+{
+  "contract_version": "localrag-model-profile-v1",
+  "profiles": {
+    "full_sft_adapter_bf16": {
+      "model_id": "localrag-qwen3-4b-full-sft",
+      "backend": "transformers",
+      "base_model_path": "models/Qwen3-4B",
+      "adapter_path": "saves/Qwen3-4B-Thinking/lora/localrag_sft_full_qlora",
+      "artifact_path": null,
+      "dtype": "bfloat16",
+      "quantization": "none",
+      "context_limit": 40960,
+      "max_new_tokens": 1024,
+      "enable_thinking": false,
+      "manifest_path": "model_deployment/manifests/full_sft_input_manifest.json"
+    }
+  }
+}

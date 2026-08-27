@@ -137,12 +137,6 @@ class TransformersBackendTests(unittest.TestCase):
                 side_effect=lambda *args: self.events.append("manifest"),
             )
         )
-        self.validate_identity = self.stack.enter_context(
-            mock.patch(
-                "model_serving.transformers_backend.validate_fixed_model_identity",
-                side_effect=lambda *args: self.events.append("identity") or IDENTITY,
-            )
-        )
         self.auto_tokenizer = self.stack.enter_context(
             mock.patch("model_serving.transformers_backend.AutoTokenizer")
         )
@@ -180,11 +174,11 @@ class TransformersBackendTests(unittest.TestCase):
             device="cuda",
         )
 
-    def test_load_order_and_fixed_bf16_adapter_identity(self):
+    def test_load_order_and_manifest_bound_bf16_adapter_identity(self):
         backend = self._backend()
 
         self.assertEqual(
-            ["manifest", "identity", "tokenizer", "base", "adapter"],
+            ["manifest", "tokenizer", "base", "adapter"],
             self.events,
         )
         self.auto_tokenizer.from_pretrained.assert_called_once_with(

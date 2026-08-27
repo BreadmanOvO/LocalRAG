@@ -4,13 +4,16 @@ from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 import hashlib
 import json
-from typing import Protocol
+from typing import Any, Protocol
 
 
 @dataclass(frozen=True)
 class BackendMessage:
     role: str
-    content: str
+    content: str = ""
+    name: str | None = None
+    tool_call_id: str | None = None
+    tool_calls: tuple[Mapping[str, Any], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -21,6 +24,8 @@ class GenerationRequest:
     temperature: float
     max_tokens: int
     purpose: str
+    tools: tuple[Mapping[str, Any], ...] = ()
+    tool_choice: str | Mapping[str, Any] | None = None
 
 
 @dataclass(frozen=True)

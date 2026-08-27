@@ -35,7 +35,12 @@ from agent.research.presentation import (
     build_model_gateway_view,
 )
 from config import settings as config
-from config.runtime_keys import MODEL_ROUTE_MODES, load_runtime_config
+from config.runtime_keys import (
+    MODEL_ROLES,
+    MODEL_ROUTE_MODES,
+    load_runtime_config,
+    update_model_routes,
+)
 from core.chat_history import get_history
 from utils.session import validate_task_id
 
@@ -58,9 +63,13 @@ MEMORY_VALUE_FIELDS = {
 logger = logging.getLogger(__name__)
 
 MODEL_ROUTE_LABELS = {
-    "auto": "自动（本地优先，失败降级云端）",
-    "local": "手动：本地优先（失败降级云端）",
-    "cloud": "手动：云端（禁用本地 Gateway）",
+    "local": "本地（失败自动转云端）",
+    "cloud": "云端",
+}
+MODEL_ROLE_LABELS = {
+    "planner": "Planner",
+    "rag": "RAG 生成",
+    "summary": "会话摘要",
 }
 
 
@@ -493,29 +502,41 @@ def _render_conversation_context(agent) -> None:
 
 
 def _load_model_gateway_view(agent) -> dict[str, object]:
+    model_routes = dict(getattr(agent, "model_routes", {}) or {})
+
+    def with_routes(view: dict[str, object]) -> dict[str, object]:
+        view["model_routes"] = model_routes
+        return view
+
     configuration_status = str(
         getattr(agent, "local_model_gateway_status", "not_configured")
     )
     gateway = getattr(agent, "local_model_gateway", None)
     if gateway is None:
-        return build_model_gateway_view(
-            None,
-            None,
-            configuration_status=configuration_status,
+        return with_routes(
+            build_model_gateway_view(
+                None,
+                None,
+                configuration_status=configuration_status,
+            )
         )
     try:
         snapshot = gateway.probe_snapshot()
     except Exception:
         logger.warning("failed to probe local model gateway")
-        return build_model_gateway_view(
-            None,
-            None,
+        return with_routes(
+            build_model_gateway_view(
+                None,
+                None,
+                configuration_status=configuration_status,
+            )
+        )
+    return with_routes(
+        build_model_gateway_view(
+            snapshot,
+            snapshot.last_route,
             configuration_status=configuration_status,
         )
-    return build_model_gateway_view(
-        snapshot,
-        snapshot.last_route,
-        configuration_status=configuration_status,
     )
 
 
@@ -524,11 +545,11 @@ def _render_model_gateway_sidebar(view: dict[str, object]) -> None:
     if not primary_model:
         status = str(view.get("configuration_status") or "not_configured")
         status_label = {
-            "not_configured": "未配置，RAG 使用云端；摘要未启用",
+            "not_configured": "RAG 本地服务未配置",
             "disabled_by_config": "已配置但未启用",
-            "disabled_by_route": "手动选择云端",
-            "unhealthy": "服务异常，RAG/摘要降级云端",
-        }.get(status, "不可用，当前使用云端模型")
+            "disabled_by_route": "RAG 选择云端",
+            "unhealthy": "RAG 本地服务异常",
+        }.get(status, "RAG 本地服务不可用")
         st.sidebar.caption(f"本地模型：{status_label}")
         return
     ready = str(view.get("ready") or "unknown")
@@ -550,33 +571,32 @@ def _render_model_gateway_sidebar(view: dict[str, object]) -> None:
 
 def _render_model_gateway(view: dict[str, object]) -> None:
     fallback_reason = str(view.get("fallback_reason") or "")
+    model_routes = view.get("model_routes") or {}
+    route_summary = " / ".join(
+        f"{MODEL_ROLE_LABELS[role]}={MODEL_ROUTE_LABELS.get(str(model_routes.get(role)), '未配置')}"
+        for role in MODEL_ROLES
+    )
     with st.expander("模型路由", expanded=bool(fallback_reason)):
+        st.caption(route_summary)
         primary_model = str(view.get("primary_model") or "")
         if not primary_model:
             status = str(view.get("configuration_status") or "not_configured")
             message = {
                 "not_configured": (
-                    "未配置本地模型服务，RAG 生成使用运行时配置中的云端模型；"
-                    "当前未启用长上下文摘要。"
-                    "如需启用，请将 LOCALRAG_RUNTIME_CONFIG 指向本地服务配置，"
-                    "或手动选择云端模式启用云端摘要。"
+                    "当前 RAG 路由没有可用的本地模型服务。"
                 ),
-                "disabled_by_config": "本地模型服务已配置，但 RAG/摘要路由均未启用。",
-                "disabled_by_route": "已手动选择云端，当前 Planner、RAG 生成和摘要均使用云端模型。",
-                "unhealthy": "本地模型服务配置存在但初始化失败，RAG/摘要已降级到云端。",
-            }.get(status, "本地模型服务当前不可用，使用云端模型。")
+                "disabled_by_config": "本地模型服务未启用。",
+                "disabled_by_route": "RAG 生成当前选择云端。",
+                "unhealthy": "本地 RAG 服务初始化失败，请求会转到 RAG 的云端配置。",
+            }.get(status, "本地 RAG 服务当前不可用，请求会转到云端配置。")
             st.info(message)
-            if status == "not_configured":
-                st.caption("路由角色：Planner / RAG 生成使用云端；摘要按当前模式显示")
-            elif status == "disabled_by_route":
-                st.caption("路由角色：已手动选择云端；Planner / RAG 生成 / 摘要均使用云端模型")
             return
 
         profile = str(view.get("profile") or "未识别")
         backend = str(view.get("backend") or "未知")
         quantization = str(view.get("quantization") or "未知")
         st.caption(f"部署：{profile} · {backend} · {quantization}")
-        st.caption("路由角色：Planner 使用云端；RAG 生成/摘要本地优先，失败时降级云端")
+        st.caption("此处显示 RAG 本地 Gateway 的最近一次请求；Planner 和摘要分别记录自己的路由。")
         st.write(f"主模型：{primary_model}")
 
         actual_model = str(view.get("actual_model") or "")
@@ -707,11 +727,20 @@ if "session_id" not in st.session_state:
     st.session_state["session_id"] = _new_runtime_id()
 if "task_memory_enabled" not in st.session_state:
     st.session_state["task_memory_enabled"] = True
-if "model_route_mode" not in st.session_state:
-    try:
-        st.session_state["model_route_mode"] = load_runtime_config().model_route_mode
-    except Exception:
-        st.session_state["model_route_mode"] = "auto"
+try:
+    runtime_model_config = load_runtime_config()
+    configured_model_routes = {
+        role: runtime_model_config.role(role).route for role in MODEL_ROLES
+    }
+except Exception:
+    runtime_model_config = None
+    configured_model_routes = {role: "cloud" for role in MODEL_ROLES}
+if "persisted_model_routes" not in st.session_state:
+    st.session_state["persisted_model_routes"] = dict(configured_model_routes)
+for role in MODEL_ROLES:
+    key = f"model_route_{role}"
+    if key not in st.session_state:
+        st.session_state[key] = configured_model_routes[role]
 
 runtime_status = _runtime_observability(
     config.persist_directory,
@@ -728,42 +757,73 @@ _render_runtime_header(runtime_status)
 st.divider()
 
 memory_enabled = st.sidebar.checkbox("启用任务记忆", key="task_memory_enabled")
-selected_route_mode = st.sidebar.selectbox(
-    "模型使用模式",
-    list(MODEL_ROUTE_MODES),
-    format_func=MODEL_ROUTE_LABELS.get,
-    key="model_route_mode",
-    help=(
-        "仅控制 RAG 生成和长上下文摘要的 Local Gateway。"
-        "外层 Agent Planner 仍使用运行时配置中的云端模型。"
-    ),
-)
+research_service = _research_service()
+try:
+    research_plan = research_service.get_latest_plan(st.session_state["task_id"])
+    research_identity_error = None
+except ResearchControlError as exc:
+    research_plan = None
+    research_identity_error = exc.error_code
+research_active = is_active_plan(research_plan)
+
+st.sidebar.subheader("模型路由")
+selected_model_routes: dict[str, str] = {}
+for role in MODEL_ROLES:
+    local_verified = bool(
+        runtime_model_config is not None
+        and runtime_model_config.role(role).local.tool_calling_verified
+    )
+
+    def route_label(
+        value: str,
+        *,
+        current_role: str = role,
+        verified: bool = local_verified,
+    ) -> str:
+        label = MODEL_ROUTE_LABELS[value]
+        if current_role == "planner" and value == "local" and not verified:
+            return f"{label} · tool calling 未验证"
+        return label
+
+    selected_model_routes[role] = st.sidebar.selectbox(
+        MODEL_ROLE_LABELS[role],
+        list(MODEL_ROUTE_MODES),
+        format_func=route_label,
+        key=f"model_route_{role}",
+        disabled=research_active,
+    )
+if research_active:
+    st.sidebar.caption("研究任务运行期间不能切换模型路由。")
+
+persisted_model_routes = dict(st.session_state["persisted_model_routes"])
+if selected_model_routes != persisted_model_routes:
+    try:
+        update_model_routes(selected_model_routes)
+        st.session_state["persisted_model_routes"] = dict(selected_model_routes)
+    except Exception:
+        logger.exception("Failed to persist model routes")
+        st.sidebar.error("模型路由保存失败，继续使用上一次配置。")
+        selected_model_routes = persisted_model_routes
+
 if (
     "agent" not in st.session_state
     or getattr(st.session_state["agent"], "session_id", None) != st.session_state["session_id"]
     or getattr(st.session_state["agent"], "task_id", None) != st.session_state["task_id"]
-    or getattr(st.session_state["agent"], "model_route_mode", "auto") != selected_route_mode
+    or getattr(st.session_state["agent"], "model_routes", {}) != selected_model_routes
 ):
     st.session_state["agent"] = ReactAgent(
         session_id=st.session_state["session_id"],
         task_id=st.session_state["task_id"],
         task_memory_enabled=memory_enabled,
-        model_route_mode=selected_route_mode,
+        model_routes=selected_model_routes,
     )
 
 agent = st.session_state["agent"]
 agent.set_task_memory_enabled(memory_enabled)
-research_service = _research_service()
 research_runtime, research_identity_error = _load_research_runtime(
     agent,
     runtime_status,
 )
-try:
-    research_plan = research_service.get_latest_plan(st.session_state["task_id"])
-except ResearchControlError as exc:
-    research_plan = None
-    research_identity_error = exc.error_code
-research_active = is_active_plan(research_plan)
 
 st.sidebar.subheader("研究任务")
 st.sidebar.caption(st.session_state["task_id"])

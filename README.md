@@ -1,102 +1,84 @@
-# 自动驾驶感知算法 LocalRAG
+# LocalRAG for Autonomous Driving Perception
 
-LocalRAG 是一个面向自动驾驶感知算法资料的 Agentic RAG 系统。它将混合检索、来源核验、任务记忆和可恢复研究流程组合在一个 Streamlit 应用中，并支持云端模型、本地模型服务和长会话压缩。
+<p align="center">
+  <strong>English</strong> · <a href="README.zh-CN.md">简体中文</a>
+</p>
 
-## 工作原理
+LocalRAG is an Agentic RAG system for autonomous-driving perception research. It combines hybrid retrieval, source verification, task memory, and resumable research workflows in a Streamlit application. The system supports cloud models, a local model gateway, and long-context compression.
 
-一次问答由 `ReactAgent` 负责选择工具。检索工具从 Chroma 中分别执行 Dense 和 BM25 召回，通过 RRF 合并排名，再由 Cross-Encoder 精排；最终答案只使用检索到的证据，并保留来源、定位和各阶段排名。研究任务、会话摘要和任务记忆独立持久化，页面刷新后仍可继续。
+## How it works
+
+For each question, `ReactAgent` runs a Planner loop in which the configured chat model either calls a tool or answers directly. `rag_search` performs retrieval and RAG generation inside the tool, then returns the generated answer, sources, and trace as a `ToolMessage`. Control returns to the Planner, which can call another tool or produce the final response. Research runs, conversation summaries, and task memory are persisted separately, so a refreshed page can resume an existing task.
 
 ```mermaid
 flowchart LR
-    Q[用户问题] --> A[ReactAgent]
-    A --> T[检索与来源工具]
-    T --> D[Dense Top20]
-    T --> B[BM25 Top20]
-    D --> R[RRF]
-    B --> R
-    R --> X[Cross-Encoder]
-    X --> G[证据约束生成]
-    G --> O[答案与来源]
-    A <--> M[任务记忆与研究状态]
+    Q[User question] --> P["Planner model<br/>via ReactAgent"]
+    P --> T{Next action?}
+    T -->|answer| O[Final response]
+    T -->|rag_search| R[rag_search]
+    R --> D["Dense + BM25<br/>RRF → Rerank"]
+    D --> G["Evidence-grounded generation<br/>local Gateway or cloud"]
+    G --> M["Tool result<br/>content + optional artifact"]
+    T -->|source or memory tool| M
+    M --> P
+    C["Conversation history<br/>rolling summary"] -. before each model call .-> P
 ```
 
-## 快速开始
+## Quick start
 
-### 1. 安装依赖
+### 1. Prepare the Windows environment
 
-```bash
-pip install -r requirements.txt
-```
-
-### 2. 配置运行时
-
-复制示例配置并填写真实值：
-
-```bash
-cp config/runtime_models.example.json config/runtime_models.json
-```
-
-```json
-{
-  "provider": "modelscope",
-  "api_key": "your-api-key",
-  "base_url": "https://api-inference.modelscope.cn/v1",
-  "chat_model_name": "Qwen/Qwen2.5-72B-Instruct",
-  "embedding_model_name": "Qwen/Qwen3-Embedding-8B"
-}
-```
-
-本地模型服务使用独立的示例配置和部署 profile：
+The supported local path uses PowerShell, Python 3.11/3.12, an NVIDIA GPU, and a repository-level `.venv`:
 
 ```powershell
-Copy-Item config/runtime_v1_6_local_service.example.json config/runtime_v1_6_local_service.json
-Copy-Item config/model_serving_profiles.example.json config/model_serving_profiles.json
+.\quickstart\windows\01-check-environment.ps1 -InstallDependencies
 ```
 
-默认配置使用云端模型。外层 Planner 始终读取运行时配置中的聊天模型；本地 Gateway 只接管 RAG 生成和长上下文摘要，并在本地服务不可用时按配置降级到云端。
+The complete sequence for downloading Qwen3-4B, building the default corpus, preparing all 203 fine-tuning records, running 4-bit QLoRA, exporting the model, starting the service, and evaluating it is documented in [quickstart/windows/README.md](quickstart/windows/README.md).
 
-运行时配置支持 `model_route_mode`：`auto` 按配置启用本地并允许云端降级，`local` 手动选择本地优先路径（失败仍可降级云端），`cloud` 手动选择云端并关闭本地 Gateway。`local_model_gateway` 下的 `rag_generation_enabled` 和 `conversation_summary_enabled` 仍是对应功能的安全开关。UI 侧边栏可直接切换该模式，切换后会重建 Agent；该选项不改变外层 Planner 的模型。
+### 2. Configure model roles
 
-| 模式 | RAG 生成/摘要 | 外层 Planner | 本地服务不可用时 |
+Copy `config/runtime_models.example.json` to `config/runtime_models.json`. The runtime has three independently routed roles: `planner`, `rag`, and `summary`. Each role defines a cloud endpoint, a local endpoint, and a `route` set to either `local` or `cloud`.
+
+```powershell
+Copy-Item config/runtime_models.example.json config/runtime_models.json
+[Environment]::SetEnvironmentVariable("LOCALRAG_CLOUD_API_KEY", "your-cloud-key", "User")
+[Environment]::SetEnvironmentVariable("LOCALRAG_MODEL_API_TOKEN", "your-local-token", "User")
+```
+
+Secrets are resolved only from the environment variable names stored in JSON. For a locally routed Planner, an invocation error falls back to that role's cloud model. RAG generation and summary use the Gateway's typed fallback rules; a streaming request can switch to cloud only before the local service emits output. The three roles may share one endpoint and model, or use separate ports. Sharing a service does not mix conversations because every request carries its own messages; requests only share the model queue.
+
+The Streamlit sidebar changes the three `route` values and writes them back to the active runtime JSON. Endpoint and model names remain JSON-managed. Route controls are disabled while a research run is active.
+
+#### Local model service startup
+
+For the standard Windows path, start either the repository's evaluated E6.1 adapter or an adapter produced by the full-data QLoRA configuration:
+
+```powershell
+.\quickstart\windows\06-start-service.ps1 -Profile e6_1_adapter_bf16
+# or
+.\quickstart\windows\06-start-service.ps1 -Profile full_sft_adapter_bf16
+```
+
+The launcher validates the selected adapter and manifest, updates the local endpoint identity in the runtime JSON, and listens on `127.0.0.1:8001`. Use [quickstart/windows/README.md](quickstart/windows/README.md) for model download, training, and evaluation commands.
+
+The lower-level release scripts remain available for the evaluated E6.1 profiles. This path has two layers: a model backend (Transformers or `llama-server`) and the OpenAI-compatible wrapper in this repository. The example below exposes the wrapper at `127.0.0.1:8002`. Model weights, GGUF artifacts, and the `tools/llama.cpp` binaries are local artifacts and must be prepared before startup.
+
+| Profile | Backend | Required before startup | Intended use |
 |---|---|---|---|
-| `auto` | 配置启用本地时优先本地 | 运行时聊天模型 | 按 Gateway 合同降级云端 |
-| `local` | 优先本地 | 运行时聊天模型 | 仍可降级云端 |
-| `cloud` | 使用云端 | 运行时聊天模型 | 不构造本地 Gateway |
+| `e6_1_adapter_bf16` | Transformers | `models/Qwen3-4B`, the E6.1 LoRA adapter, and `e6_1_input_manifest.json` | Reproduce the evaluated adapter path; higher VRAM use |
+| `e6_1_q4_k_m` | `llama.cpp` | `artifacts/models/qwen3-4b.e6.1-q4_k_m.gguf`, its manifest, and an installed `llama-server.exe` | Windows local release candidate |
 
-注意：本地 Gateway 不等于本地 Planner。`runtime_v1_6_local_service.example.json` 里的 Planner 仍配置为 ModelScope；要完整运行 Agent，需要填写有效的云端聊天配置。只想验证本地权重能否加载和生成时，可以运行 `scripts/smoke_local_qwen3.py` 或 `scripts/smoke_local_rag_qwen3.py`，这两条 smoke 不经过外层 Planner。
+Use the repository launcher from terminal A. It verifies the manifest, warms up the backend, and performs a readiness check before serving requests.
 
-```powershell
-python scripts/smoke_local_qwen3.py --model-path models/Qwen3-4B --device auto --max-new-tokens 64
-python scripts/smoke_local_rag_qwen3.py --config config/runtime_local_qwen3_4b_lora_e1.example.json
-```
-
-默认 `runtime_models.json` 未配置 `local_model_gateway`，因此 UI 显示本地服务未启用是正常状态。要启用本地 Gateway，需要显式切换运行时配置；仅复制文件不会自动切换：
-
-```powershell
-Copy-Item config/runtime_v1_6_local_service.example.json config/runtime_v1_6_local_service.json
-$env:LOCALRAG_RUNTIME_CONFIG = "config/runtime_v1_6_local_service.json"
-$env:LOCALRAG_MODEL_API_TOKEN = "your-local-service-token"
-```
-
-#### 本地模型服务怎么启动
-
-本地链路由两层组成：模型后端（Transformers 或 `llama-server`）和本项目提供的 OpenAI-compatible wrapper。服务只监听回环地址，默认给 UI 使用 `127.0.0.1:8002`。模型权重、GGUF 文件和 `tools/llama.cpp` 二进制不随 Git 分发，启动前先准备好对应文件：
-
-| profile | 后端 | 启动前需要 | 适用场景 |
-|---|---|---|---|
-| `e6_1_adapter_bf16` | Transformers | `models/Qwen3-4B`、E6.1 LoRA adapter、`e6_1_input_manifest.json` | 教学、质量基线，显存占用较高 |
-| `e6_1_q4_k_m` | `llama.cpp` | `artifacts/models/qwen3-4b.e6.1-q4_k_m.gguf`、对应 manifest、已安装的 `llama-server.exe` | Windows 本地发布候选 |
-
-推荐在终端 A 直接使用仓库脚本。脚本会先校验 manifest，服务启动前执行 warmup 和 readiness 检查。
-
-**Transformers BF16：**
+**Transformers BF16:**
 
 ```powershell
 $env:LOCALRAG_MODEL_API_TOKEN = "your-local-service-token"
 .\model_deployment\launch_transformers.ps1 -Port 8002
 ```
 
-该脚本默认使用 `e6_1_adapter_bf16` 和 `config/model_serving_profiles.example.json`。如果需要自己维护 profile 文件，也可以直接运行：
+The launcher defaults to `e6_1_adapter_bf16` and `config/model_serving_profiles.example.json`. To maintain a separate profile file, run the service module directly:
 
 ```powershell
 python -m model_serving.main `
@@ -107,7 +89,7 @@ python -m model_serving.main `
   --workers 1
 ```
 
-**Q4_K_M：一键启动内部 llama.cpp 和 wrapper：**
+**Q4_K_M: start llama.cpp and the wrapper together:**
 
 ```powershell
 $env:LOCALRAG_MODEL_API_TOKEN = "your-local-service-token"
@@ -119,13 +101,13 @@ $env:LOCALRAG_MODEL_API_TOKEN = "your-local-service-token"
   -Port 8002
 ```
 
-`launch_llama.ps1` 会在 `127.0.0.1:18002` 启动 `llama-server.exe`，等待 `/v1/models` 出现 `localrag-qwen3-4b-e6.1` 后，再在 `127.0.0.1:8002` 启动本项目 wrapper；llama.cpp 的 stdout/stderr 会写入 `results/model_serving/llama/`。脚本要求 manifest 中记录的 llama.cpp 版本已经安装到 `tools/llama.cpp/<version>/bin/llama-server.exe`。安装脚本需要官方地址和 SHA-256，参数说明见：
+`launch_llama.ps1` starts `llama-server.exe` on `127.0.0.1:18002`, waits until `/v1/models` exposes `localrag-qwen3-4b-e6.1`, and then starts the repository wrapper on `127.0.0.1:8002`. llama.cpp stdout and stderr are written to `results/model_serving/llama-cpp/`. The launcher expects the llama.cpp version recorded in the manifest at `tools/llama.cpp/<version>/bin/llama-server.exe`. The installer requires an official download URL and SHA-256 value; inspect its parameters with:
 
 ```powershell
 Get-Help .\model_deployment\install_llama_cpp.ps1 -Full
 ```
 
-如果要拆开启动、单独排查内部服务，可以先运行与脚本相同的 `llama-server` 参数，再在另一个终端启动 wrapper：
+For troubleshooting, the internal server and the wrapper can be started separately. First run `llama-server` with the same arguments as the launcher:
 
 ```powershell
 $env:LLAMA_ARG_CHAT_TEMPLATE_KWARGS = '{"enable_thinking":false}'
@@ -141,6 +123,8 @@ $env:LLAMA_ARG_CHAT_TEMPLATE_KWARGS = '{"enable_thinking":false}'
   --temp 0
 ```
 
+Then start the wrapper in another terminal:
+
 ```powershell
 python -m model_serving.main `
   --profiles config/model_serving_profiles.json `
@@ -151,7 +135,7 @@ python -m model_serving.main `
   --llama-base-url http://127.0.0.1:18002/v1
 ```
 
-服务启动后，在终端 B 检查状态：
+Check the service from terminal B:
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8002/health
@@ -163,163 +147,156 @@ Invoke-RestMethod `
   http://127.0.0.1:8002/v1/models
 ```
 
-三个接口依次回答“进程是否活着、模型是否 warmup 完成、服务暴露了哪个固定模型”。`/ready` 未通过时不要启动 UI；常见原因是权重路径、manifest 或内部 llama.cpp 地址不匹配。
+These endpoints answer three different questions: is the process alive, has model warm-up completed, and which fixed model identity is being served. Do not start the UI until `/ready` succeeds. Common causes of a readiness failure are an incorrect weight path, a manifest mismatch, or an incorrect internal llama.cpp URL.
 
-然后在终端 C 设置运行时配置并启动 UI：
+Finally, point the local endpoint of every role that should use this service to port 8002, then start the UI from terminal C:
 
 ```powershell
-$env:LOCALRAG_RUNTIME_CONFIG = "config/runtime_v1_6_local_service.json"
-$env:LOCALRAG_MODEL_API_TOKEN = "your-local-service-token"
-# 可选：将 model_route_mode 改为 "local"，或在 UI 侧边栏切换
+$env:LOCALRAG_CLOUD_API_KEY = [Environment]::GetEnvironmentVariable("LOCALRAG_CLOUD_API_KEY", "User")
+$env:LOCALRAG_MODEL_API_TOKEN = [Environment]::GetEnvironmentVariable("LOCALRAG_MODEL_API_TOKEN", "User")
 streamlit run app_qa.py --server.fileWatcherType none
 ```
 
-本地 Gateway 默认地址为 `http://127.0.0.1:8002/v1`。启用 `local_model_gateway` 后，`local` 和 `auto` 模式会先尝试该服务；`cloud` 模式不构造本地 Gateway。长上下文压缩不是全局强制开启：`conversation_summary_enabled` 为 `true` 且运行时配置可用时才启用；默认 `runtime_models.json` 没有本地 Gateway，`auto` 模式下显示未启用是预期行为。
+Set each role's `route` independently. RAG and summary apply the Gateway's error classification and first-token boundary before using the cloud endpoint configured for that role. A locally routed Planner uses OpenAI-compatible tool calls and falls back to its cloud model when the local invocation raises an exception.
 
-### 3. 启动问答服务
+### 3. Start the question-answering UI
 
 ```bash
 streamlit run app_qa.py
 ```
 
-默认读取 `config/active_corpus.json`，加载 100-source / 7339-chunk Chroma store。active corpus profile 同时记录来源数、片段数和 corpus/registry 指纹。大型 Chroma 数据不随 Git 分发；新环境需要先生成 store，或通过环境变量选择已有目录：
+By default, the app loads the profile in `config/active_corpus.json`. The repository contains the cleaned 100-document corpus, while the Chroma index is built locally. Create it with `quickstart/windows/03-prepare-data.ps1`; the evaluated corpus produces 7,339 chunks. The active corpus profile records source count, chunk count, and corpus/registry fingerprints. To use another existing index:
 
 ```powershell
 $env:LOCALRAG_PERSIST_DIRECTORY = "path\to\chroma_store"
 streamlit run app_qa.py
 ```
 
-UI 会检查 active corpus profile、最近一次 Agent Gate 的 corpus/代码身份和最近三轮评测的稳定性 Gate。任一身份不一致、artifact 损坏或出现递归上限错误时，Gate 均显示为未通过。
+The UI checks the active corpus profile, the corpus and code identity from the most recent Agent Gate, and the stability Gate from the latest three evaluation runs. Any identity mismatch, damaged artifact, or recursion-limit error leaves the Gate marked as failed.
 
-### 4. 上传文档入库
+### 4. Ingest documents
 
 ```bash
 streamlit run app_file_uploader.py
 ```
 
-上传入口采用显式发布的两阶段流程：上传后先做文本规范化、元数据生成和分块，结果写入 `results/ingestion_staging/` 并展示预览；点击“发布到正式知识库”后，才会写入 Chroma、`source_registry.json` 和 `config/active_corpus.json`。发布后的 BM25 是内存快照：如果问答服务在独立进程中运行，需要刷新/重建 `RagService` 才能检索到新文档。
+The upload entry point uses an explicit two-stage workflow. After upload, the document is normalized, metadata is generated, and chunks are produced into `results/ingestion_staging/` for preview. Only after the user clicks “Publish to production knowledge base” are Chroma, `source_registry.json`, and `config/active_corpus.json` updated. The published BM25 index is an in-memory snapshot; if the QA service runs in a separate process, refresh or rebuild `RagService` before querying the new document.
 
-评测是可选步骤。默认发布不调用评测；只有调用 `IngestionWorkflow.publish(..., evaluate=True, evaluator=...)` 并注入 evaluator callback 时才执行。即使跳过评测，发布仍会更新 active corpus profile；运行时 Gate 在没有匹配评测产物时会诚实地保持未通过。
+Evaluation is optional. A normal publish does not run evaluation. Evaluation starts only when the caller invokes `IngestionWorkflow.publish(..., evaluate=True, evaluator=...)` with an evaluator callback. Skipping evaluation still updates the active corpus profile; if no matching evaluation artifact exists, the runtime Gate remains honestly marked as failed.
 
-## 项目结构
+## Project layout
 
 ```
 LocalRAG/
-├── app_qa.py                  # 问答入口（Streamlit）
-├── app_file_uploader.py       # 文件上传入库入口
+├── app_qa.py                  # Streamlit question-answering entry point
+├── app_file_uploader.py       # Document upload and ingestion entry point
 ├── agent/
-│   ├── react_agent.py         # Session-aware Agent 入口
-│   ├── observability.py       # 工具轨迹、来源、记忆与 gate 可观察性
-│   ├── context/               # 上下文预算、摘要压缩、持久化与恢复
-│   ├── memory/                # Agent 会话检索记忆与持久化任务记忆
-│   ├── research/              # 研究 run、恢复控制、证据绑定与 UI 适配
-│   └── tools/                 # RAG、来源研究与任务记忆工具
+│   ├── react_agent.py         # Session-aware Agent entry point
+│   ├── observability.py       # Tool traces, sources, memory, and Gate visibility
+│   ├── context/               # Context budgets, compression, persistence, and recovery
+│   ├── memory/                # Agent retrieval memory and persistent task memory
+│   ├── research/              # Research runs, recovery controls, evidence binding, and UI adapters
+│   └── tools/                 # RAG, source-research, and task-memory tools
 ├── core/
-│   ├── rag.py                 # RAG 服务核心
-│   ├── knowledge_base.py      # 知识库入库与 chunk 写入
-│   ├── ingestion_workflow.py  # staging、预览、显式发布与可选评测
-│   ├── chunking.py            # 分块策略（baseline / doc_type_aware / semantic）
-│   ├── bm25_retriever.py      # BM25 稀疏召回
-│   ├── retrieval_pipeline.py  # Dense + BM25 → RRF → Reranker 主链路
-│   ├── hybrid_retriever.py    # 历史加权 Hybrid 对照实现
-│   └── reranker.py            # Cross-Encoder Reranker
+│   ├── rag.py                 # Core RAG service
+│   ├── knowledge_base.py      # Knowledge-base ingestion and chunk writes
+│   ├── ingestion_workflow.py  # Staging, preview, explicit publish, and optional evaluation
+│   ├── chunking.py            # Chunking strategies (baseline / doc_type_aware / semantic)
+│   ├── bm25_retriever.py      # Sparse BM25 retrieval
+│   ├── retrieval_pipeline.py  # Dense + BM25 → RRF → reranker pipeline
+│   ├── hybrid_retriever.py    # Historical weighted-hybrid implementation
+│   └── reranker.py            # Cross-Encoder reranker
 ├── config/
-│   ├── runtime_models.json    # 运行时配置（不提交）
-│   ├── runtime_keys.py        # 配置加载器
-│   └── settings.py            # 全局设置
-├── eval/                      # 评测脚本
-│   └── release_gate.py        # 最近三轮正式 Agent Gate 稳定性检查
-├── model_gateway/              # 本地模型 gateway、熔断、fallback 与适配器
-├── model_serving/              # Transformers / llama.cpp 服务端与队列指标
-├── model_deployment/           # 模型合并、量化、manifest 与启动脚本
+│   ├── runtime_models.json    # Local runtime configuration (not committed)
+│   ├── runtime_keys.py        # Configuration loader
+│   └── settings.py            # Global settings
+├── eval/                      # Evaluation scripts
+│   └── release_gate.py        # Stability check for the latest three Agent Gates
+├── model_gateway/              # Local model gateway, circuit breaker, fallback, and adapters
+├── model_serving/              # Transformers / llama.cpp server, queue, and metrics
+├── model_deployment/           # Model merge, quantization, manifests, and launch scripts
 ├── data/
-│   ├── evaluation/            # 清洗后的评测/训练数据集
-│   └── sources/               # 知识源文档（100 篇：10 Apollo + 81 论文/报告 + 9 标准）
-├── results/                   # 评测结果
-├── scripts/                   # 工具脚本
-├── test/                      # 单元测试与评测脚本
-├── release_note.md            # v1.1–v1.7 与 main 累计发布记录
-└── requirements.txt           # 应用与本地模型服务的统一依赖入口
+│   ├── evaluation/            # Clean evaluation and training datasets
+│   └── sources/               # Knowledge sources (100 documents: 10 Apollo, 81 papers/reports, 9 standards)
+├── results/                   # Evaluation results
+├── scripts/                   # Utility scripts
+├── test/                      # Unit tests and evaluation tests
+├── release_note.md            # Cumulative release notes for v1.1–v1.7 and main
+└── requirements.txt           # Shared application and local-serving dependencies
 ```
 
-## 面试展示与证据
+## Evaluation
 
-如果需要快速展示项目，不建议只打开功能页面。先看 [RAG_md 小仓的面试证据索引](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/interview-evidence.md)，里面按“项目定位 → 一次请求 → 结果数据 → 日志和测试 → 已知边界”整理了现有报告、JSON 产物、smoke 日志和可直接使用的训练曲线。
-
-工程目录、评测脚本和结果产物的对照见 [仓库运行指南](https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/repo_guide.md)。
-
-## 评测
-
-### 运行评测
+### Run the evaluation suite
 
 ```bash
-# Baseline 评测（使用 chunking_eval 生成的当前 store）
+# Baseline evaluation (use a store produced by chunking_eval)
 python eval/eval_ragas.py \
   --dataset data/evaluation/gold/eval_set.json \
   --store-dir results/chunking_eval/stores/<run_id>/baseline \
   --predictions-out results/ragas_eval/eval_set-current/predictions.json \
   --metrics-out results/ragas_eval/eval_set-current/metrics.json
 
-# 分块策略对比（baseline / doc_type_aware / semantic）
+# Compare chunking strategies (baseline / doc_type_aware / semantic)
 python eval/eval_chunking.py \
   --dataset data/evaluation/gold/eval_set.json
 
-# 纯检索评测（以 semantic store 为例）
+# Retrieval-only evaluation (using a semantic store as an example)
 python eval/eval_retrieval_only.py \
   --dataset data/evaluation/gold/eval_set.json \
   --store-dir results/chunking_eval/stores/<run_id>/semantic
 
-# Hybrid Retrieval 对比
+# Hybrid retrieval comparison
 python eval/eval_hybrid.py \
   --dataset data/evaluation/gold/eval_set.json \
   --store-dir results/chunking_eval/stores/<run_id>/semantic \
   --alpha 0.5
 
-# Reranker 效果评估
+# Reranker evaluation
 python eval/eval_reranker.py \
   --dataset data/evaluation/gold/eval_set.json \
   --store-dir results/chunking_eval/stores/<run_id>/semantic \
   --alpha 0.5
 
-# Formal Judge 流水线汇总
+# Formal judge pipeline
 python eval/eval_judge_formal_run.py \
   --dataset data/evaluation/gold/eval_set.json
 
-# Agent 正式 Gate（默认使用 active corpus）
+# Agent release Gate (uses the active corpus by default)
 python eval/eval_agent.py
 
-# 检查最近三轮 Agent Gate 的稳定性
+# Check the stability of the latest three Agent Gates
 python eval/release_gate.py
 
-# 本地模型服务质量与可靠性评测
+# Local model quality and service reliability evaluation
 python eval/eval_model_quality.py
 python eval/eval_service_reliability.py
 
-# 长会话压缩评测
+# Long-context compression evaluation
 python eval/eval_long_context.py
 ```
 
-### 微调数据与行为评测
+### Fine-tuning data and behavior evaluation
 
 ```bash
-# 将 203 条训练样本导出为 Qwen/TRL 常用 chat JSONL
+# Export 203 training examples to chat JSONL for Qwen / TRL
 python scripts/prepare_sft_dataset.py \
   --input data/evaluation/train/train_set.json \
   --train-output data/finetuning/sft_train.jsonl \
   --validation-output data/finetuning/sft_validation.jsonl \
   --validation-count 20
 
-# 对 baseline / 微调后 predictions 做离线行为对比
+# Compare baseline and fine-tuned predictions offline
 python eval/eval_finetune_behavior.py \
   --baseline-predictions results/baseline_eval/<run_id>/predictions.json \
   --predictions results/finetuned_eval/<run_id>/predictions.json
 ```
 
-### 检索评测结果与口径（100 题，BGE-M3，100 篇文档）
+### Retrieval metrics and reporting conventions (100 questions, BGE-M3, 100 documents)
 
-下表是 v1.2/v1.3 的分块与 Cross-Encoder 消融结果，使用历史 semantic/doc-type-aware 检索评测入口；它用于比较分块和精排收益，不等同于 v1.7 的在线默认主链路。
+The table below reports the v1.2/v1.3 chunking and Cross-Encoder ablation study. It uses the historical semantic/doc-type-aware evaluation entry points and is not the v1.7 online default path.
 
-| 分块策略 | Reranker | Hit@5 | MRR | Hit@1 | Hit@3 |
+| Chunking strategy | Reranker | Hit@5 | MRR | Hit@1 | Hit@3 |
 |---------|:--------:|:-----:|:---:|:-----:|:-----:|
 | baseline | No | 0.920 | 0.874 | 0.840 | 0.910 |
 | baseline | Yes | 0.930 | 0.889 | 0.860 | 0.920 |
@@ -328,34 +305,34 @@ python eval/eval_finetune_behavior.py \
 | semantic | No | 0.930 | 0.798 | 0.710 | 0.870 |
 | **semantic** | **Yes** | **0.940** | **0.893** | **0.860** | 0.930 |
 
-该组实验中，doc_type_aware + reranker 与 semantic + reranker 的 Hit@5 均为 0.94；semantic + reranker 的 MRR 最高，为 0.893。
+In this experiment, `doc_type_aware + reranker` and `semantic + reranker` both reached 0.94 Hit@5. `semantic + reranker` achieved the highest MRR at 0.893.
 
-Reranker 的收益主要体现在排序质量：semantic 的 MRR 从 0.798 提升到 0.893，Hit@1 从 0.71 提升到 0.86。v1.7 默认链路固定为 Dense + BM25 → RRF → Cross-Encoder → Top5；加权融合 `HybridRetriever` 作为历史对照保留，失败时降级到 Dense + reranker、Dense-only。
+The reranker primarily improves ranking quality: for the semantic strategy, MRR rose from 0.798 to 0.893 and Hit@1 from 0.71 to 0.86. The v1.7 default path is fixed as Dense + BM25 → RRF → Cross-Encoder → Top5. The weighted `HybridRetriever` remains as a historical comparison, with fallback to Dense + reranker and then Dense-only when needed.
 
-v1.7 最终默认链路在同一 100 题活动评测集、当前 doc-type-aware 活动语料上完成 retrieval-only 回归：Dense Top20 + BM25 Top20 → RRF → Cross-Encoder → Top5，Hit@1=0.85、Hit@3=0.97、Hit@5=0.97、MRR=0.9067，100/100 进入 `rrf_rerank` 且无 fallback；该结果不调用生成模型。由于分块索引、融合方法和评测入口同时发生变化，不能将 0.94→0.97 归因于 RRF 单项收益。
+The v1.7 default path was evaluated on the same 100-question active evaluation set and the current `doc_type_aware` corpus: Dense Top20 + BM25 Top20 → RRF → Cross-Encoder → Top5, with Hit@1=0.85, Hit@3=0.97, Hit@5=0.97, and MRR=0.9067. All 100 questions used `rrf_rerank` with no fallback; the result does not call a generation model. Because the chunking index, fusion method, and evaluation entry point changed together, the improvement from 0.94 to 0.97 must not be attributed to RRF alone.
 
-RAGAS 端到端对照中，hybrid + reranker 的 Context Precision/Recall 为 0.847/0.937；该指标评估生成上下文质量，与 retrieval-only 的 Hit@k/MRR 分属不同评测层。
+In the end-to-end RAGAS comparison, hybrid retrieval plus reranking achieved Context Precision/Recall of 0.847/0.937. These metrics evaluate generated-context quality and belong to a different evaluation layer from retrieval-only Hit@k and MRR.
 
-### 微调、模型服务与长上下文
+### Fine-tuning, model serving, and long context
 
-- 基于 LLaMA-Factory 对 Qwen3-4B 开展 4-bit QLoRA 微调，完成 LoRA 权重合并、Transformers 与 llama.cpp 双路径推理验证，并通过生成行为评测和训练退出检查确认微调目标。
-- 基于 FastAPI 搭建 OpenAI-compatible 流式推理服务，支持请求排队、超时取消、API 鉴权和 Prometheus 指标；完成 BF16、GGUF F16 与 Q4_K_M 部署 profile 验证。
-- 引入结构化滚动摘要和摘要 revision，长会话评测中的上下文 Token 中位数降低 73.5%。
+- Qwen3-4B was fine-tuned with 4-bit QLoRA through LLaMA-Factory. The workflow covers LoRA merge, Transformers and llama.cpp inference paths, generation-behavior evaluation, and a training exit check.
+- A FastAPI OpenAI-compatible streaming service provides request queuing, timeout cancellation, API authentication, and Prometheus metrics. The deployment profiles cover BF16, GGUF F16, and Q4_K_M.
+- Structured rolling summaries and summary revisions reduce the median context-token count by 73.5% in the long-context evaluation.
 
-Baseline 端到端评测使用当前 baseline store（`results/chunking_eval/stores/eval_set-20260522-071034/baseline`）重跑后，`answered_ratio=1.00`、`context_hit_ratio=1.00`、`evidence_source_hit_ratio=0.97`。
+The baseline end-to-end evaluation was rerun with the current baseline store (`results/chunking_eval/stores/eval_set-20260522-071034/baseline`) and reported `answered_ratio=1.00`, `context_hit_ratio=1.00`, and `evidence_source_hit_ratio=0.97`.
 
-v1.6 本地模型服务与长会话验证：模型服务质量 gate、性能 benchmark、Task 8 UI 端到端验证和 Task 9 双轮压缩探针均通过；Task 9 的摘要 revision 从 `1` 正确递增到 `2`。
+The v1.6 local-serving and long-context validation passed the model-quality Gate, serving benchmark, Task 8 UI end-to-end validation, and the two-round Task 9 compression probe. Task 9 also verified that the summary revision advanced from `1` to `2`.
 
-## 版本
+## Versions
 
-| 版本 | 核心能力 |
+| Version | Core capability |
 |------|---------|
-| v1.0 | Gold Set、baseline runner 和 judge 骨架 |
-| v1.1 | 文档采集、chunk metadata 和 formal judge |
-| v1.2 | Hybrid retrieval、reranker 和 semantic chunking |
-| v1.3 | 100 篇语料、100 题评测集、Qwen3-4B 微调实验 |
-| v1.4.2 | 会话记忆、任务记忆、来源工具和 Agent Gate |
-| v1.5 | 执行预算、证据绑定、暂停恢复和 checkpoint |
-| v1.6 | 本地模型服务、Gateway fallback 和会话压缩 |
-| v1.7 | Dense + BM25 → RRF → Cross-Encoder、统一 provenance 和工具错误合同 |
-| main | 文档上传 staging、预览、显式 publish 和可选评测回调 |
+| v1.0 | Gold Set, baseline runner, and judge skeleton |
+| v1.1 | Document collection, chunk metadata, and formal judge |
+| v1.2 | Hybrid retrieval, reranker, and semantic chunking |
+| v1.3 | 100-document corpus, 100-question evaluation set, and Qwen3-4B fine-tuning experiments |
+| v1.4.2 | Conversation memory, task memory, source tools, and Agent Gate |
+| v1.5 | Execution budgets, evidence binding, pause/resume, and checkpoints |
+| v1.6 | Local model serving, Gateway fallback, and conversation compression |
+| v1.7 | Dense + BM25 → RRF → Cross-Encoder, unified provenance, and tool-error contracts |
+| main | Document-upload staging, preview, explicit publish, and optional evaluation callback |

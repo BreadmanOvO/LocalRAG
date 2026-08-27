@@ -1,8 +1,66 @@
 {
-  "provider": "modelscope",
-  "api_key": "your-api-key",
-  "base_url": "https://api-inference.modelscope.cn/v1",
-  "chat_model_name": "Qwen/Qwen3-8B",
-  "embedding_model_name": "local-hash-embedding",
-  "model_route_mode": "auto"
+  "contract_version": "localrag-runtime-v2",
+  "roles": {
+    "planner": {
+      "route": "cloud",
+      "cloud": {
+        "provider": "sensenova",
+        "base_url": "https://token.sensenova.cn/v1",
+        "model": "sensenova-6.7-flash-lite",
+        "api_key_env": "LOCALRAG_CLOUD_API_KEY"
+      },
+      "local": {
+        "base_url": "http://127.0.0.1:8001/v1",
+        "model": "localrag-qwen3-4b-e6.1",
+        "api_token_env": "LOCALRAG_MODEL_API_TOKEN",
+        "tool_calling_verified": true,
+        "connect_timeout_seconds": 2.0,
+        "read_timeout_seconds": 120.0,
+        "circuit_failure_threshold": 3,
+        "circuit_reset_seconds": 30.0
+      }
+    },
+    "rag": {
+      "route": "local",
+      "cloud": {
+        "provider": "sensenova",
+        "base_url": "https://token.sensenova.cn/v1",
+        "model": "sensenova-6.7-flash-lite",
+        "api_key_env": "LOCALRAG_CLOUD_API_KEY"
+      },
+      "local": {
+        "base_url": "http://127.0.0.1:8001/v1",
+        "model": "localrag-qwen3-4b-e6.1",
+        "api_token_env": "LOCALRAG_MODEL_API_TOKEN",
+        "tool_calling_verified": false,
+        "connect_timeout_seconds": 2.0,
+        "read_timeout_seconds": 120.0,
+        "circuit_failure_threshold": 3,
+        "circuit_reset_seconds": 30.0
+      }
+    },
+    "summary": {
+      "route": "local",
+      "cloud": {
+        "provider": "sensenova",
+        "base_url": "https://token.sensenova.cn/v1",
+        "model": "sensenova-6.7-flash-lite",
+        "api_key_env": "LOCALRAG_CLOUD_API_KEY"
+      },
+      "local": {
+        "base_url": "http://127.0.0.1:8001/v1",
+        "model": "localrag-qwen3-4b-e6.1",
+        "api_token_env": "LOCALRAG_MODEL_API_TOKEN",
+        "tool_calling_verified": false,
+        "connect_timeout_seconds": 2.0,
+        "read_timeout_seconds": 120.0,
+        "circuit_failure_threshold": 3,
+        "circuit_reset_seconds": 30.0
+      }
+    }
+  },
+  "embedding": {
+    "provider": "local_sentence_transformer",
+    "model": "models/bge-m3"
+  }
 }

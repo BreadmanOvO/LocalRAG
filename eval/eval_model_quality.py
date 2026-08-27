@@ -65,6 +65,7 @@ class QualityProfile:
     name: str
     repo_root: Path
     manifest_path: Path
+    model_id: str = MODEL_ID
     endpoint: str | None = None
     model_path: Path | None = None
     api_token: str | None = None
@@ -183,7 +184,7 @@ def _endpoint_generator(profile: QualityProfile) -> Callable[[list[dict[str, str
         model_rows = models.json()["data"]
     except (ValueError, KeyError, TypeError):
         raise ModelQualityError("quality endpoint model identity is invalid") from None
-    if [row.get("id") for row in model_rows] != [MODEL_ID]:
+    if [row.get("id") for row in model_rows] != [profile.model_id]:
         raise ModelQualityError("quality endpoint model identity does not match")
 
     def generate(messages: list[dict[str, str]], case_id: str) -> str:
@@ -191,7 +192,7 @@ def _endpoint_generator(profile: QualityProfile) -> Callable[[list[dict[str, str
             "chat/completions",
             headers={"X-Request-ID": f"quality-{profile.name}-{case_id}"},
             json={
-                "model": MODEL_ID,
+                "model": profile.model_id,
                 "messages": messages,
                 "temperature": 0,
                 "max_tokens": MAX_TOKENS,
@@ -279,7 +280,13 @@ def run_quality_profile(
     dataset_path: Path,
     out_dir: Path,
 ) -> dict[str, Any]:
-    if not isinstance(profile, QualityProfile) or profile.name not in PROFILE_NAMES:
+    if (
+        not isinstance(profile, QualityProfile)
+        or not isinstance(profile.name, str)
+        or not profile.name.strip()
+        or not isinstance(profile.model_id, str)
+        or not profile.model_id.strip()
+    ):
         raise ModelQualityError("quality profile is invalid")
     repo_root = Path(profile.repo_root).resolve()
     manifest_path = profile.manifest_path
@@ -473,7 +480,8 @@ def _latest_runs(root: Path) -> dict[str, Mapping[str, Any]]:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Evaluate LocalRAG model conversion quality.")
     parser.add_argument("--mode", choices=("deterministic",))
-    parser.add_argument("--profile", choices=PROFILE_NAMES)
+    parser.add_argument("--profile")
+    parser.add_argument("--model-id", default=MODEL_ID)
     parser.add_argument("--endpoint")
     parser.add_argument("--model-path", type=Path)
     parser.add_argument("--model-manifest", type=Path)
@@ -502,6 +510,7 @@ def main() -> dict[str, Any]:
             name=args.profile,
             repo_root=REPO_ROOT,
             manifest_path=args.model_manifest,
+            model_id=args.model_id,
             endpoint=args.endpoint,
             model_path=args.model_path,
             api_token=os.environ.get(args.api_token_env),

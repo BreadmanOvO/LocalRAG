@@ -163,10 +163,12 @@ class ModelGatewayViewTests(unittest.TestCase):
         self.assertNotIn("prompt", render_source)
         self.assertNotIn("answer", render_source)
         self.assertIn("disabled_by_route", render_source)
-        self.assertIn("Planner / RAG 生成使用云端", render_source)
-        self.assertIn('"model_route_mode"', source)
+        self.assertIn("Planner 和摘要分别记录自己的路由", render_source)
+        self.assertIn('f"model_route_{role}"', source)
+        self.assertIn("for role in MODEL_ROLES", source)
         self.assertIn('list(MODEL_ROUTE_MODES)', source)
-        self.assertIn('model_route_mode=selected_route_mode', source)
+        self.assertIn('model_routes=selected_model_routes', source)
+        self.assertIn('update_model_routes(selected_model_routes)', source)
 
 
 class ModelGatewayProbeTests(unittest.TestCase):

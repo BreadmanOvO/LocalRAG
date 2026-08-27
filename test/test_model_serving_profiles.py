@@ -98,21 +98,22 @@ class ModelServingProfileTests(unittest.TestCase):
             ):
                 load_profiles(self.profile_path, repo_root=self.repo_root)
 
-    def test_profile_set_is_fixed(self):
-        for mutation in ("missing", "extra"):
-            payload = _profile_payload()
-            if mutation == "missing":
-                del payload["profiles"]["e6_1_q4_k_m"]
-            else:
-                payload["profiles"]["unexpected"] = copy.deepcopy(
-                    payload["profiles"]["e6_1_q4_k_m"]
-                )
-            self._write(payload)
+    def test_profile_set_can_add_or_remove_deployment_profiles(self):
+        payload = _profile_payload()
+        del payload["profiles"]["e6_1_q4_k_m"]
+        custom = copy.deepcopy(payload["profiles"]["e6_1_adapter_bf16"])
+        custom["model_id"] = "localrag-custom"
+        custom["adapter_path"] = "saves/custom-adapter"
+        custom["manifest_path"] = "model_deployment/manifests/custom.json"
+        payload["profiles"]["custom_adapter"] = custom
+        self._write(payload)
 
-            with self.subTest(mutation=mutation), self.assertRaises(
-                ProfileValidationError
-            ):
-                load_profiles(self.profile_path, repo_root=self.repo_root)
+        profiles = load_profiles(self.profile_path, repo_root=self.repo_root)
+
+        self.assertEqual(
+            ("custom_adapter", "e6_1_adapter_bf16"), profiles.names()
+        )
+        self.assertEqual("localrag-custom", profiles.require("custom_adapter").model_id)
 
     def test_paths_must_be_repo_relative_and_cannot_escape(self):
         invalid_paths = ("../outside", str((self.repo_root / "absolute").resolve()))
@@ -130,7 +131,7 @@ class ModelServingProfileTests(unittest.TestCase):
 
     def test_context_thinking_and_backend_identity_fail_closed(self):
         mutations = {
-            "context": ("e6_1_adapter_bf16", "context_limit", 40961),
+            "context": ("e6_1_adapter_bf16", "context_limit", 131073),
             "thinking": ("e6_1_q4_k_m", "enable_thinking", True),
             "dtype": ("e6_1_adapter_bf16", "dtype", "float16"),
             "quantization": ("e6_1_q4_k_m", "quantization", "Q4_0"),

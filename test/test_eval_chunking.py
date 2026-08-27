@@ -900,10 +900,8 @@ class ChunkingEvaluationContractTests(unittest.TestCase):
         readme_text = (repo_root / "README.md").read_text(encoding="utf-8")
         guide_text = repo_guide.read_text(encoding="utf-8")
 
-        self.assertIn(
-            "https://github.com/BreadmanOvO/RAG_md/blob/v1.7/docs/repo_guide.md",
-            readme_text,
-        )
+        self.assertNotIn("RAG_md", readme_text)
+        self.assertIn("quickstart/windows/README.md", readme_text)
         self.assertIn("eval_chunking.py", readme_text)
         self.assertIn("eval_judge_formal_run.py", readme_text)
         self.assertIn("runtime_models.json", readme_text)

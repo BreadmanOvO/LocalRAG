@@ -9,7 +9,6 @@ from typing import Literal, Mapping, cast
 
 
 PROFILE_CONTRACT_VERSION = "localrag-model-profile-v1"
-_PROFILE_NAMES = frozenset({"e6_1_adapter_bf16", "e6_1_q4_k_m"})
 _TOP_LEVEL_FIELDS = frozenset({"contract_version", "profiles"})
 _PROFILE_FIELDS = frozenset(
     {
@@ -26,31 +25,12 @@ _PROFILE_FIELDS = frozenset(
         "manifest_path",
     }
 )
-_MODEL_ID = "localrag-qwen3-4b-e6.1"
 _APPROVED_JUNCTION_ROOTS = (
-    "models/Qwen3-4B",
-    "saves/Qwen3-4B-Thinking/lora/localrag_sft_e6_1_qlora_webui",
+    "models",
+    "saves",
+    "artifacts",
+    "model_deployment/manifests",
 )
-_BF16_EXPECTED = {
-    "backend": "transformers",
-    "base_model_path": "models/Qwen3-4B",
-    "adapter_path": (
-        "saves/Qwen3-4B-Thinking/lora/localrag_sft_e6_1_qlora_webui"
-    ),
-    "artifact_path": None,
-    "dtype": "bfloat16",
-    "quantization": "none",
-    "manifest_path": "model_deployment/manifests/e6_1_input_manifest.json",
-}
-_Q4_EXPECTED = {
-    "backend": "llama_cpp",
-    "base_model_path": None,
-    "adapter_path": None,
-    "artifact_path": "artifacts/models/qwen3-4b-e6.1-q4_k_m.gguf",
-    "dtype": "float16",
-    "quantization": "Q4_K_M",
-    "manifest_path": "model_deployment/manifests/e6_1_q4_k_m_manifest.json",
-}
 
 
 class ProfileValidationError(ValueError):
@@ -152,8 +132,6 @@ def _parse_profile(
 ) -> ModelServingProfile:
     raw = _exact_mapping(value, _PROFILE_FIELDS, f"profiles.{name}")
     model_id = _text(raw["model_id"], f"profiles.{name}.model_id")
-    if model_id != _MODEL_ID:
-        raise ProfileValidationError(f"profiles.{name}.model_id is not the E6.1 identity")
 
     context_limit = _positive_int(
         raw["context_limit"], f"profiles.{name}.context_limit"
@@ -161,8 +139,8 @@ def _parse_profile(
     max_new_tokens = _positive_int(
         raw["max_new_tokens"], f"profiles.{name}.max_new_tokens"
     )
-    if context_limit > 40960 or max_new_tokens >= context_limit:
-        raise ProfileValidationError(f"profiles.{name} exceeds the fixed context contract")
+    if context_limit > 131072 or max_new_tokens >= context_limit:
+        raise ProfileValidationError(f"profiles.{name} exceeds the context contract")
     if raw["enable_thinking"] is not False:
         raise ProfileValidationError(f"profiles.{name}.enable_thinking must be false")
 
@@ -197,13 +175,31 @@ def _parse_profile(
             allow_none=False,
         ),
     }
-    expected = _BF16_EXPECTED if name == "e6_1_adapter_bf16" else _Q4_EXPECTED
-    if parsed != expected:
-        raise ProfileValidationError(f"profiles.{name} does not match the fixed identity")
-    if name == "e6_1_q4_k_m" and not str(parsed["artifact_path"]).endswith(
-        ".gguf"
-    ):
-        raise ProfileValidationError("Q4 artifact must be a GGUF file")
+    backend = parsed["backend"]
+    if backend == "transformers":
+        if (
+            parsed["base_model_path"] is None
+            or parsed["adapter_path"] is None
+            or parsed["artifact_path"] is not None
+            or parsed["dtype"] != "bfloat16"
+            or parsed["quantization"] != "none"
+        ):
+            raise ProfileValidationError(
+                f"profiles.{name} is not a valid Transformers adapter profile"
+            )
+    elif backend == "llama_cpp":
+        if (
+            parsed["base_model_path"] is not None
+            or parsed["adapter_path"] is not None
+            or not str(parsed["artifact_path"]).endswith(".gguf")
+            or parsed["dtype"] != "float16"
+            or parsed["quantization"] != "Q4_K_M"
+        ):
+            raise ProfileValidationError(
+                f"profiles.{name} is not a valid llama.cpp Q4_K_M profile"
+            )
+    else:
+        raise ProfileValidationError(f"profiles.{name}.backend is unsupported")
 
     return ModelServingProfile(
         name=name,
@@ -232,11 +228,13 @@ def load_profiles(path: Path, *, repo_root: Path) -> ModelServingProfiles:
     if top["contract_version"] != PROFILE_CONTRACT_VERSION:
         raise ProfileValidationError("profile contract version is invalid")
     raw_profiles = top["profiles"]
-    if not isinstance(raw_profiles, dict) or set(raw_profiles) != _PROFILE_NAMES:
-        raise ProfileValidationError("profile set must contain the fixed release profiles")
+    if not isinstance(raw_profiles, dict) or not raw_profiles:
+        raise ProfileValidationError("profile set must be a non-empty object")
+    if any(not isinstance(name, str) or not name.strip() for name in raw_profiles):
+        raise ProfileValidationError("profile names must be non-empty strings")
     return ModelServingProfiles(
         {
             name: _parse_profile(name, raw_profiles[name], repo_root=repo_root)
-            for name in sorted(_PROFILE_NAMES)
+            for name in sorted(raw_profiles)
         }
     )

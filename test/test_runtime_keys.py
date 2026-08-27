@@ -4,10 +4,122 @@ import unittest
 import unittest.mock
 from pathlib import Path
 
-from config.runtime_keys import RuntimeProviderConfig, load_runtime_config
+from config.runtime_keys import (
+    RuntimeProviderConfig,
+    load_runtime_config,
+    update_model_routes,
+)
 
 
 class RuntimeKeysTests(unittest.TestCase):
+    @staticmethod
+    def _v2_payload() -> dict:
+        def role(route: str) -> dict:
+            return {
+                "route": route,
+                "cloud": {
+                    "provider": "sensenova",
+                    "base_url": "https://example.com/v1",
+                    "model": "cloud-chat",
+                    "api_key_env": "CLOUD_KEY",
+                },
+                "local": {
+                    "base_url": "http://127.0.0.1:8001/v1",
+                    "model": "local-model",
+                    "api_token_env": "LOCAL_TOKEN",
+                    "tool_calling_verified": False,
+                },
+            }
+
+        return {
+            "contract_version": "localrag-runtime-v2",
+            "roles": {
+                "planner": role("cloud"),
+                "rag": role("local"),
+                "summary": role("local"),
+            },
+            "embedding": {
+                "provider": "local_sentence_transformer",
+                "model": "models/bge-m3",
+            },
+        }
+
+    def test_v2_config_loads_independent_role_routes_and_env_secrets(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "runtime_models.json"
+            path.write_text(json.dumps(self._v2_payload()), encoding="utf-8")
+            config = load_runtime_config(
+                path,
+                environ={"CLOUD_KEY": "cloud-secret", "LOCAL_TOKEN": "local-secret"},
+            )
+
+        self.assertEqual("cloud", config.role("planner").route)
+        self.assertEqual("local", config.role("rag").route)
+        self.assertEqual("local", config.role("summary").route)
+        self.assertEqual("cloud-secret", config.role("rag").cloud.api_key)
+        self.assertEqual("local-secret", config.role("summary").local.api_token)
+        self.assertEqual("models/bge-m3", config.embedding.model)
+
+    def test_v2_route_update_is_atomic_and_preserves_endpoints(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "runtime_models.json"
+            payload = self._v2_payload()
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            environment = {"CLOUD_KEY": "cloud", "LOCAL_TOKEN": "local"}
+
+            updated = update_model_routes(
+                {"planner": "local", "rag": "cloud"},
+                path,
+                environ=environment,
+            )
+            loaded = load_runtime_config(path, environ=environment)
+            raw = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(path, updated)
+        self.assertEqual("local", loaded.role("planner").route)
+        self.assertEqual("cloud", loaded.role("rag").route)
+        self.assertEqual("local", loaded.role("summary").route)
+        self.assertEqual(
+            payload["roles"]["planner"]["cloud"],
+            raw["roles"]["planner"]["cloud"],
+        )
+        self.assertNotIn("cloud", raw["roles"]["planner"]["cloud"].get("api_key_env", ""))
+
+    def test_v2_cloud_only_config_does_not_require_local_token(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "runtime_models.json"
+            payload = self._v2_payload()
+            for role in payload["roles"].values():
+                role["route"] = "cloud"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+
+            config = load_runtime_config(
+                path,
+                environ={"CLOUD_KEY": "cloud-secret"},
+            )
+
+        self.assertEqual("cloud", config.role("planner").route)
+        self.assertEqual("cloud", config.role("rag").route)
+        self.assertEqual("cloud", config.role("summary").route)
+        self.assertEqual("", config.role("rag").local.api_token)
+
+    def test_switching_cloud_route_to_local_requires_local_token(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "runtime_models.json"
+            payload = self._v2_payload()
+            for role in payload["roles"].values():
+                role["route"] = "cloud"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+
+            with self.assertRaisesRegex(
+                RuntimeError, r"Missing local model API token for rag environment variable: LOCAL_TOKEN"
+            ):
+                update_model_routes(
+                    {"rag": "local"},
+                    path,
+                    environ={"CLOUD_KEY": "cloud-secret"},
+                )
+
     def test_successfully_parses_unified_runtime_config(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / "runtime_models.json"

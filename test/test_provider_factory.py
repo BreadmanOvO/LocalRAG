@@ -3,7 +3,14 @@ import tempfile
 from pathlib import Path
 from unittest import mock
 
-from config.runtime_keys import LocalModelGatewayConfig, RuntimeProviderConfig
+from config.runtime_keys import (
+    CloudModelConfig,
+    EmbeddingModelConfig,
+    LocalModelGatewayConfig,
+    ModelRoleConfig,
+    RuntimeProviderConfig,
+)
+from model_gateway.fallback_chat_model import LocalFirstChatModel
 
 
 class ProviderFactoryTests(unittest.TestCase):
@@ -170,6 +177,55 @@ class ProviderFactoryTests(unittest.TestCase):
         self.assertIsNot(rag, gateway)
         self.assertIsNot(summary, gateway)
         self.assertEqual(2, cloud.call_count)
+
+    def test_v2_planner_local_route_builds_tool_capable_cloud_fallback(self):
+        from config import provider_factory
+
+        cloud = CloudModelConfig(
+            provider="sensenova",
+            api_key="cloud-secret",
+            base_url="https://example.invalid/v1",
+            model="cloud-planner",
+        )
+        local = LocalModelGatewayConfig(
+            base_url="http://127.0.0.1:8001/v1",
+            model="local-planner",
+            api_token="local-secret",
+        )
+        roles = {
+            role: ModelRoleConfig(
+                route="local" if role == "planner" else "cloud",
+                cloud=cloud,
+                local=local,
+            )
+            for role in ("planner", "rag", "summary")
+        }
+        runtime = RuntimeProviderConfig(
+            provider="sensenova",
+            api_key="cloud-secret",
+            base_url=cloud.base_url,
+            chat_model_name=cloud.model,
+            embedding_model_name="models/bge-m3",
+            roles=roles,
+            embedding=EmbeddingModelConfig(
+                provider="local_sentence_transformer",
+                model="models/bge-m3",
+            ),
+        )
+
+        with mock.patch.object(provider_factory, "ChatOpenAI") as chat_model:
+            chat_model.side_effect = lambda **kwargs: mock.Mock(**{"bind_tools.return_value": mock.Mock()})
+            result = provider_factory.build_agent_chat_model(runtime, temperature=0.0)
+
+        self.assertIsInstance(result, LocalFirstChatModel)
+        self.assertEqual(2, chat_model.call_count)
+        local_call = next(
+            call.kwargs
+            for call in chat_model.call_args_list
+            if call.kwargs["base_url"] == local.base_url
+        )
+        self.assertEqual("agent_planning", local_call["extra_body"]["purpose"])
+        self.assertEqual("local-secret", local_call["api_key"])
 
 
 if __name__ == "__main__":

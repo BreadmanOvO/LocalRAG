@@ -138,5 +138,25 @@
       "query": "input",
       "response": "output"
     }
+  },
+  "localrag_sft_full": {
+    "file_name": "../datasets/localrag_sft_full.jsonl",
+    "formatting": "alpaca",
+    "ranking": false,
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output"
+    }
+  },
+  "localrag_sft_full_validation": {
+    "file_name": "../datasets/localrag_sft_full_validation.jsonl",
+    "formatting": "alpaca",
+    "ranking": false,
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output"
+    }
   }
 }

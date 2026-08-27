@@ -18,7 +18,6 @@ from transformers import (
 
 from model_deployment.manifest import (
     ManifestMismatchError,
-    validate_fixed_model_identity,
     validate_manifest,
 )
 
@@ -180,7 +179,7 @@ class TransformersGenerationBackend:
             or profile.artifact_path is not None
             or profile.enable_thinking
         ):
-            raise BackendIdentityError("profile is not the E6.1 BF16 adapter identity")
+            raise BackendIdentityError("profile is not a BF16 Transformers adapter identity")
 
         self.profile = profile
         self.repo_root = Path(repo_root).resolve()
@@ -206,9 +205,18 @@ class TransformersGenerationBackend:
 
     def _load_verified_model(self) -> None:
         validate_manifest(self.repo_root, self.expected_manifest)
-        identity = validate_fixed_model_identity(self.repo_root)
         metadata = self.expected_manifest.get("metadata")
-        if not isinstance(metadata, Mapping) or metadata.get("model_identity") != identity:
+        identity = metadata.get("model_identity") if isinstance(metadata, Mapping) else None
+        if (
+            not isinstance(identity, Mapping)
+            or identity.get("model_id") != self.profile.model_id
+            or identity.get("architecture") != "Qwen3ForCausalLM"
+            or identity.get("context_limit") != self.profile.context_limit
+            or identity.get("base_model_path") != self.profile.base_model_path
+            or identity.get("adapter_path") != self.profile.adapter_path
+            or identity.get("dtype", "bfloat16") != "bfloat16"
+            or identity.get("quantization", "none") != "none"
+        ):
             raise ManifestMismatchError("manifest model identity does not match local inputs")
 
         base_path = (self.repo_root / str(self.profile.base_model_path)).resolve()
@@ -278,30 +286,50 @@ class TransformersGenerationBackend:
             0 <= request.temperature <= 2
         ):
             raise BackendRequestError("temperature is invalid")
-        if request.purpose not in {"rag_generation", "conversation_summary"}:
+        if request.purpose not in {
+            "agent_planning",
+            "rag_generation",
+            "conversation_summary",
+        }:
             raise BackendRequestError("request purpose is invalid")
         if not request.messages or not all(
             isinstance(message, BackendMessage) for message in request.messages
         ):
             raise BackendRequestError("messages are invalid")
-        messages = [
-            {"role": message.role, "content": message.content}
-            for message in request.messages
-        ]
+        messages = []
+        for message in request.messages:
+            value: dict[str, Any] = {
+                "role": message.role,
+                "content": message.content,
+            }
+            if message.name is not None:
+                value["name"] = message.name
+            if message.tool_call_id is not None:
+                value["tool_call_id"] = message.tool_call_id
+            if message.tool_calls:
+                value["tool_calls"] = [dict(call) for call in message.tool_calls]
+            messages.append(value)
         if any(
-            message["role"] not in {"system", "user", "assistant"}
+            message["role"] not in {"system", "user", "assistant", "tool"}
             or not isinstance(message["content"], str)
-            or not message["content"]
+            or (
+                not message["content"]
+                and not (
+                    message["role"] == "assistant" and message.get("tool_calls")
+                )
+            )
             for message in messages
         ):
             raise BackendRequestError("messages are invalid")
         try:
-            prompt = self._tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True,
-                enable_thinking=False,
-            )
+            template_options: dict[str, Any] = {
+                "tokenize": False,
+                "add_generation_prompt": True,
+                "enable_thinking": False,
+            }
+            if request.tools:
+                template_options["tools"] = [dict(tool) for tool in request.tools]
+            prompt = self._tokenizer.apply_chat_template(messages, **template_options)
             encoded = self._tokenizer(
                 prompt,
                 return_tensors="pt",

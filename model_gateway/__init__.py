@@ -13,6 +13,7 @@ from .gateway import (
     RoutedStream,
 )
 from .langchain_adapter import LocalGatewayChatModel
+from .fallback_chat_model import LocalFirstChatModel
 from .metrics import GatewayMetrics
 from .models import (
     GatewayBadRequestError,
@@ -59,6 +60,7 @@ __all__ = [
     "CircuitState",
     "LocalModelGateway",
     "LocalGatewayChatModel",
+    "LocalFirstChatModel",
     "ModelPurpose",
     "OpenAICompatibleClient",
     "RoutedResponse",

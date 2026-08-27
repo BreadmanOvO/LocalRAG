@@ -10,7 +10,12 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.runnables import Runnable
 
 from config.model_paths import get_bge_m3_path
-from config.runtime_keys import RuntimeProviderConfig
+from config.runtime_keys import (
+    CloudModelConfig,
+    LocalModelGatewayConfig,
+    RuntimeProviderConfig,
+)
+from model_gateway.fallback_chat_model import LocalFirstChatModel
 
 OPENAI_COMPATIBLE_PROVIDERS = {"bailian", "modelscope", "sensenova", "local_embedding", "local_sentence_transformer"}
 DEFAULT_CHAT_TIMEOUT_SECONDS = 60
@@ -177,7 +182,7 @@ class LocalHashEmbeddings:
         return [value / norm for value in vector]
 
 
-def build_agent_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
+def _build_flat_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
     if runtime_config.provider == "local_transformers":
         return LocalTransformersChatModel(
             runtime_config.chat_model_name,
@@ -203,6 +208,72 @@ def build_agent_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
     return ChatOpenAI(**options)
 
 
+def _build_cloud_role_model(
+    config: CloudModelConfig,
+    **overrides,
+):
+    if config.provider not in OPENAI_COMPATIBLE_PROVIDERS:
+        raise ValueError(f"Unsupported runtime provider: {config.provider}")
+    options: dict[str, Any] = {
+        "model": config.model,
+        "api_key": config.api_key,
+        "base_url": config.base_url,
+        "timeout": DEFAULT_CHAT_TIMEOUT_SECONDS,
+        "max_retries": DEFAULT_CHAT_MAX_RETRIES,
+    }
+    if config.provider in {
+        "local_embedding",
+        "modelscope",
+        "local_sentence_transformer",
+    } and config.model.startswith("Qwen/Qwen3"):
+        options["extra_body"] = {"enable_thinking": False}
+    options.update(overrides)
+    return ChatOpenAI(**options)
+
+
+def _build_local_openai_model(
+    config: LocalModelGatewayConfig,
+    *,
+    purpose: str,
+    **overrides,
+):
+    options: dict[str, Any] = {
+        "model": config.model,
+        "api_key": config.api_token or "local",
+        "base_url": config.base_url,
+        "timeout": config.read_timeout_seconds,
+        "max_retries": 0,
+        "extra_body": {"purpose": purpose},
+    }
+    options.update(overrides)
+    return ChatOpenAI(**options)
+
+
+def build_cloud_chat_model(
+    runtime_config: RuntimeProviderConfig,
+    role: str,
+    **overrides,
+):
+    if runtime_config.roles is None:
+        return _build_flat_chat_model(runtime_config, **overrides)
+    return _build_cloud_role_model(runtime_config.role(role).cloud, **overrides)
+
+
+def build_agent_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
+    if runtime_config.roles is None:
+        return _build_flat_chat_model(runtime_config, **overrides)
+    planner = runtime_config.role("planner")
+    cloud = _build_cloud_role_model(planner.cloud, **overrides)
+    if planner.route == "cloud":
+        return cloud
+    local = _build_local_openai_model(
+        planner.local,
+        purpose="agent_planning",
+        **overrides,
+    )
+    return LocalFirstChatModel(primary=local, fallback=cloud, role="planner")
+
+
 def build_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
     return build_agent_chat_model(runtime_config, **overrides)
 
@@ -212,6 +283,10 @@ def build_rag_chat_model(
     gateway=None,
     **overrides,
 ):
+    if runtime_config.roles is not None:
+        if runtime_config.role("rag").route == "local" and gateway is not None:
+            return gateway
+        return build_cloud_chat_model(runtime_config, "rag", **overrides)
     local_config = getattr(runtime_config, "local_model_gateway", None)
     if (
         getattr(runtime_config, "model_route_mode", "auto") != "cloud"
@@ -229,6 +304,10 @@ def build_summary_chat_model(
     gateway=None,
     **overrides,
 ):
+    if runtime_config.roles is not None:
+        if runtime_config.role("summary").route == "local" and gateway is not None:
+            return gateway
+        return build_cloud_chat_model(runtime_config, "summary", **overrides)
     local_config = getattr(runtime_config, "local_model_gateway", None)
     if (
         getattr(runtime_config, "model_route_mode", "auto") != "cloud"
@@ -242,27 +321,33 @@ def build_summary_chat_model(
 
 
 def build_embedding_model(runtime_config: RuntimeProviderConfig):
-    if runtime_config.provider == "bailian":
+    embedding = runtime_config.embedding
+    provider = embedding.provider if embedding is not None else runtime_config.provider
+    model = embedding.model if embedding is not None else runtime_config.embedding_model_name
+    api_key = embedding.api_key if embedding is not None else runtime_config.api_key
+    base_url = embedding.base_url if embedding is not None else runtime_config.base_url
+
+    if provider == "bailian":
         return DashScopeEmbeddings(
-            model=runtime_config.embedding_model_name,
-            dashscope_api_key=runtime_config.api_key,
+            model=model,
+            dashscope_api_key=api_key,
         )
 
-    if runtime_config.provider == "modelscope":
+    if provider == "modelscope":
         return OpenAIEmbeddings(
-            model=runtime_config.embedding_model_name,
-            api_key=runtime_config.api_key,
-            base_url=runtime_config.base_url,
+            model=model,
+            api_key=api_key,
+            base_url=base_url,
             model_kwargs={"encoding_format": "float"},
             max_retries=5,
             retry_min_seconds=2,
             retry_max_seconds=30,
         )
 
-    if runtime_config.provider == "local_embedding":
+    if provider == "local_embedding":
         return LocalHashEmbeddings()
 
-    if runtime_config.provider in ("local_sentence_transformer", "local_transformers", "sensenova"):
-        return LocalSentenceTransformerEmbeddings(model_name=runtime_config.embedding_model_name)
+    if provider in ("local_sentence_transformer", "local_transformers", "sensenova"):
+        return LocalSentenceTransformerEmbeddings(model_name=model)
 
-    raise ValueError(f"Unsupported runtime provider: {runtime_config.provider}")
+    raise ValueError(f"Unsupported runtime provider: {provider}")

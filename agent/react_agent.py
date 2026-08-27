@@ -1,5 +1,6 @@
 import logging
 import time
+from collections.abc import Mapping
 from dataclasses import replace
 from functools import partial
 
@@ -34,8 +35,12 @@ from agent.tools import (
     build_update_task_memory_tool,
     clarify_question,
 )
-from config.runtime_keys import load_runtime_config, normalize_model_route_mode
-from config.provider_factory import build_agent_chat_model, build_summary_chat_model
+from config.runtime_keys import MODEL_ROLES, load_runtime_config, normalize_model_route_mode
+from config.provider_factory import (
+    build_agent_chat_model,
+    build_rag_chat_model,
+    build_summary_chat_model,
+)
 from core.chat_history import get_history
 from core.source_evidence import SourceEvidenceService
 from model_gateway import (
@@ -172,6 +177,7 @@ class ReactAgent:
         recursion_limit: int | None = None,
         context_middleware: ConversationContextMiddleware | None = None,
         model_route_mode: str | None = None,
+        model_routes: Mapping[str, str] | None = None,
     ):
         self.session_id = validate_session_id(session_id)
         self.task_id = validate_task_id(task_id or session_id)
@@ -203,8 +209,11 @@ class ReactAgent:
             raise ValueError("context_middleware session_id must match session_id")
         self.context_disabled_reason = ""
         self.local_model_gateway = None
+        self.local_model_gateways: dict[str, object] = {}
         self.local_model_gateway_status = "not_configured"
+        self.local_model_gateway_statuses: dict[str, str] = {}
         self.model_route_mode = normalize_model_route_mode(model_route_mode or "auto")
+        self.model_routes: dict[str, str] = {}
         self.summary_client = None
         self.evidence_service = evidence_service or SourceEvidenceService()
         self.task_memory_store.ensure_task(self.task_id)
@@ -219,13 +228,53 @@ class ReactAgent:
                 self.context_disabled_reason = "runtime_config_unavailable"
 
         if runtime_config is not None:
-            configured_route_mode = normalize_model_route_mode(
-                model_route_mode
-                if model_route_mode is not None
-                else getattr(runtime_config, "model_route_mode", "auto")
-            )
-            self.model_route_mode = configured_route_mode
-            if configured_route_mode != getattr(runtime_config, "model_route_mode", "auto"):
+            if getattr(runtime_config, "roles", None) is not None:
+                configured_routes = {
+                    role: runtime_config.role(role).route for role in MODEL_ROLES
+                }
+                if model_routes is not None:
+                    unknown = set(model_routes) - set(MODEL_ROLES)
+                    if unknown:
+                        raise ValueError(
+                            "unknown model role: " + ", ".join(sorted(unknown))
+                        )
+                    for role, route in model_routes.items():
+                        normalized = normalize_model_route_mode(route)
+                        if normalized == "auto":
+                            raise ValueError("model routes must be local or cloud")
+                        configured_routes[role] = normalized
+                updated_roles = {
+                    role: replace(
+                        runtime_config.role(role),
+                        route=configured_routes[role],
+                    )
+                    for role in MODEL_ROLES
+                }
+                runtime_config = replace(
+                    runtime_config,
+                    roles=updated_roles,
+                    model_route_mode=configured_routes["rag"],
+                    local_model_gateway=updated_roles["rag"].local,
+                )
+                self.model_routes = configured_routes
+                self.model_route_mode = configured_routes["rag"]
+            else:
+                configured_route_mode = normalize_model_route_mode(
+                    model_route_mode
+                    if model_route_mode is not None
+                    else getattr(runtime_config, "model_route_mode", "auto")
+                )
+                self.model_route_mode = configured_route_mode
+                self.model_routes = {
+                    "planner": "cloud",
+                    "rag": "local" if configured_route_mode == "auto" else configured_route_mode,
+                    "summary": "local" if configured_route_mode == "auto" else configured_route_mode,
+                }
+            if (
+                getattr(runtime_config, "roles", None) is None
+                and configured_route_mode
+                != getattr(runtime_config, "model_route_mode", "auto")
+            ):
                 if hasattr(runtime_config, "__dataclass_fields__"):
                     runtime_config = replace(
                         runtime_config,
@@ -241,11 +290,32 @@ class ReactAgent:
             chat_model = build_agent_chat_model(runtime_config, temperature=0.7)
         self.chat_model = chat_model
 
-        self.local_model_gateway = self._build_local_model_gateway(runtime_config)
+        if getattr(runtime_config, "roles", None) is not None:
+            gateway_by_config: dict[object, object] = {}
+            for role in ("rag", "summary"):
+                role_config = runtime_config.role(role)
+                gateway = gateway_by_config.get(role_config.local)
+                if gateway is not None and role_config.route == "local":
+                    self.local_model_gateway_statuses[role] = "configured"
+                else:
+                    gateway = self._build_local_model_gateway(runtime_config, role=role)
+                    if gateway is not None:
+                        gateway_by_config[role_config.local] = gateway
+                if gateway is not None:
+                    self.local_model_gateways[role] = gateway
+            self.local_model_gateway = self.local_model_gateways.get("rag")
+            self.local_model_gateway_status = self.local_model_gateway_statuses.get(
+                "rag", "not_configured"
+            )
+        else:
+            self.local_model_gateway = self._build_local_model_gateway(runtime_config)
+            if self.local_model_gateway is not None:
+                self.local_model_gateways["rag"] = self.local_model_gateway
+                self.local_model_gateways["summary"] = self.local_model_gateway
         rag_service_factory = None
         if (
             rag_service is None
-            and self.local_model_gateway is not None
+            and self.local_model_gateways.get("rag") is not None
             and self._local_rag_enabled(runtime_config)
         ):
             rag_service_factory = partial(
@@ -302,6 +372,8 @@ class ReactAgent:
         )
 
     def _local_rag_enabled(self, runtime_config) -> bool:
+        if getattr(runtime_config, "roles", None) is not None:
+            return runtime_config.role("rag").route == "local"
         local_config = getattr(runtime_config, "local_model_gateway", None)
         return bool(
             self.model_route_mode != "cloud"
@@ -310,18 +382,27 @@ class ReactAgent:
             and getattr(local_config, "rag_generation_enabled", False)
         )
 
-    def _build_local_model_gateway(self, runtime_config):
+    def _build_local_model_gateway(self, runtime_config, *, role: str | None = None):
         if runtime_config is None:
             self.local_model_gateway_status = "not_configured"
             return None
-        if getattr(self, "model_route_mode", "auto") == "cloud":
+        if role is not None and getattr(runtime_config, "roles", None) is not None:
+            role_config = runtime_config.role(role)
+            local_config = role_config.local
+            if role_config.route == "cloud":
+                self.local_model_gateway_statuses[role] = "disabled_by_route"
+                return None
+        else:
+            local_config = getattr(runtime_config, "local_model_gateway", None)
+        if role is None and getattr(self, "model_route_mode", "auto") == "cloud":
             self.local_model_gateway_status = "disabled_by_route"
             return None
-        local_config = getattr(runtime_config, "local_model_gateway", None)
         if local_config is None:
             self.local_model_gateway_status = "not_configured"
+            if role is not None:
+                self.local_model_gateway_statuses[role] = "not_configured"
             return None
-        if not (
+        if role is None and not (
             getattr(local_config, "rag_generation_enabled", False)
             or getattr(local_config, "conversation_summary_enabled", False)
         ):
@@ -342,10 +423,16 @@ class ReactAgent:
                     reset_seconds=local_config.circuit_reset_seconds,
                 ),
             )
-            self.local_model_gateway_status = "configured"
+            if role is not None:
+                self.local_model_gateway_statuses[role] = "configured"
+            else:
+                self.local_model_gateway_status = "configured"
             return gateway
         except Exception:
-            self.local_model_gateway_status = "unhealthy"
+            if role is not None:
+                self.local_model_gateway_statuses[role] = "unhealthy"
+            else:
+                self.local_model_gateway_status = "unhealthy"
             logger.exception("Local model gateway setup failed")
             return None
 
@@ -353,13 +440,17 @@ class ReactAgent:
         from core.rag import RagService
         from model_gateway.langchain_adapter import LocalGatewayChatModel
 
-        if self.local_model_gateway is None:
+        gateway = self.local_model_gateways.get("rag", self.local_model_gateway)
+        if gateway is None:
             raise RuntimeError("local model gateway is unavailable")
-        fallback_model = build_agent_chat_model(runtime_config)
+        if getattr(runtime_config, "roles", None) is not None:
+            fallback_model = build_rag_chat_model(runtime_config)
+        else:
+            fallback_model = build_agent_chat_model(runtime_config)
         return RagService(
             runtime_config=runtime_config,
             gateway=LocalGatewayChatModel(
-                self.local_model_gateway,
+                gateway,
                 fallback_model,
             ),
         )
@@ -367,6 +458,26 @@ class ReactAgent:
     def _build_context_middleware(self, runtime_config):
         if runtime_config is None:
             return None
+        if getattr(runtime_config, "roles", None) is not None:
+            if runtime_config.role("summary").route == "cloud":
+                return self._build_cloud_context_middleware(runtime_config)
+            summary_gateway = self.local_model_gateways.get("summary")
+            if summary_gateway is None:
+                return self._build_cloud_context_middleware(runtime_config)
+            try:
+                from model_gateway.summary_adapter import LocalGatewaySummaryClient
+
+                summary_client = LocalGatewaySummaryClient(
+                    summary_gateway,
+                    build_summary_chat_model(runtime_config, temperature=0.0),
+                    summary_validator=parse_and_validate_summary,
+                    task_id=self.task_id,
+                )
+                return self._create_context_middleware(summary_client)
+            except Exception:
+                self.context_disabled_reason = "context_setup_failed"
+                logger.exception("Conversation context middleware setup failed")
+                return None
         local_config = getattr(runtime_config, "local_model_gateway", None)
         if local_config is None or not local_config.conversation_summary_enabled:
             if local_config is None and self.model_route_mode in {"local", "cloud"}:
@@ -389,17 +500,7 @@ class ReactAgent:
                 summary_validator=parse_and_validate_summary,
                 task_id=self.task_id,
             )
-            store = ConversationContextStore()
-            compressor = ConversationCompressor(store, summary_client)
-            middleware = ConversationContextMiddleware(
-                session_id=self.session_id,
-                compressor=compressor,
-                store=store,
-                history=get_history(self.session_id),
-                protected_source_ids=self._protected_source_ids,
-            )
-            self.summary_client = summary_client
-            return middleware
+            return self._create_context_middleware(summary_client)
         except Exception:
             self.context_disabled_reason = "context_setup_failed"
             logger.exception("Conversation context middleware setup failed")
@@ -412,22 +513,26 @@ class ReactAgent:
             summary_client = CloudSummaryClient(
                 build_summary_chat_model(runtime_config, temperature=0.0),
             )
-            store = ConversationContextStore()
-            compressor = ConversationCompressor(store, summary_client)
-            middleware = ConversationContextMiddleware(
-                session_id=self.session_id,
-                compressor=compressor,
-                store=store,
-                history=get_history(self.session_id),
-                protected_source_ids=self._protected_source_ids,
-            )
-            self.summary_client = summary_client
+            middleware = self._create_context_middleware(summary_client)
             self.context_disabled_reason = ""
             return middleware
         except Exception:
             self.context_disabled_reason = "context_setup_failed"
             logger.exception("Cloud conversation context middleware setup failed")
             return None
+
+    def _create_context_middleware(self, summary_client):
+        store = ConversationContextStore()
+        compressor = ConversationCompressor(store, summary_client)
+        middleware = ConversationContextMiddleware(
+            session_id=self.session_id,
+            compressor=compressor,
+            store=store,
+            history=get_history(self.session_id),
+            protected_source_ids=self._protected_source_ids,
+        )
+        self.summary_client = summary_client
+        return middleware
 
     def _protected_source_ids(self) -> tuple[str, ...]:
         try:

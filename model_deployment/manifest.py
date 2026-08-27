@@ -49,6 +49,30 @@ _ARTIFACT_PROFILES = {
         "input_kind": "model-gguf-f16",
     },
 }
+_MODEL_FILE_NAMES = frozenset(
+    {
+        "config.json",
+        "generation_config.json",
+        "model.safetensors.index.json",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "special_tokens_map.json",
+        "added_tokens.json",
+        "vocab.json",
+        "merges.txt",
+        "chat_template.jinja",
+    }
+)
+_ADAPTER_FILE_NAMES = frozenset(
+    {
+        "adapter_model.safetensors",
+        "adapter_config.json",
+        "chat_template.jinja",
+        "tokenizer_config.json",
+        "special_tokens_map.json",
+        "added_tokens.json",
+    }
+)
 
 
 class ManifestMismatchError(ValueError):
@@ -87,19 +111,7 @@ def _portable_relative_path(repo_root: Path, value: object, field_name: str) -> 
     try:
         resolved.relative_to(repo_root)
     except ValueError:
-        portable = path.as_posix()
-        approved = False
-        for anchor in (BASE_MODEL_PATH, ADAPTER_PATH):
-            if portable == anchor or portable.startswith(f"{anchor}/"):
-                anchor_path = (repo_root / anchor).resolve()
-                try:
-                    resolved.relative_to(anchor_path)
-                except ValueError:
-                    continue
-                approved = True
-                break
-        if not approved:
-            raise ManifestMismatchError(f"{field_name} escapes the repository") from None
+        raise ManifestMismatchError(f"{field_name} escapes the repository") from None
     return path.as_posix(), resolved
 
 
@@ -289,6 +301,104 @@ def validate_fixed_model_identity(repo_root: Path) -> dict[str, Any]:
     }
 
 
+def _model_directory(repo_root: Path, value: Path, field: str, prefix: str) -> tuple[str, Path]:
+    path = Path(value)
+    if path.is_absolute() or PureWindowsPath(str(value)).is_absolute():
+        raise ManifestMismatchError(f"{field} must be repository-relative")
+    portable = path.as_posix().rstrip("/")
+    if not portable.startswith(prefix + "/"):
+        raise ManifestMismatchError(f"{field} must be inside {prefix}")
+    lexical = Path(os.path.abspath(repo_root / path))
+    try:
+        lexical.relative_to(repo_root / prefix)
+    except ValueError:
+        raise ManifestMismatchError(f"{field} escapes {prefix}") from None
+    resolved = (repo_root / path).resolve()
+    try:
+        resolved.relative_to(repo_root / prefix)
+    except ValueError:
+        raise ManifestMismatchError(f"{field} escapes {prefix}") from None
+    if not resolved.is_dir():
+        raise ManifestMismatchError(f"{field} directory is missing")
+    return portable, resolved
+
+
+def build_model_input_manifest(
+    *,
+    repo_root: Path,
+    base_model: Path,
+    adapter: Path,
+    model_id: str,
+) -> dict[str, Any]:
+    repo_root = Path(repo_root).resolve()
+    if not isinstance(model_id, str) or not model_id.strip():
+        raise ManifestMismatchError("model_id must be a non-empty string")
+    base_portable, base_path = _model_directory(
+        repo_root, base_model, "base model", "models"
+    )
+    adapter_portable, adapter_path = _model_directory(
+        repo_root, adapter, "adapter", "saves"
+    )
+    model_config = _read_json_object(base_path / "config.json", "model config")
+    adapter_config = _read_json_object(
+        adapter_path / "adapter_config.json", "adapter config"
+    )
+    if model_config.get("architectures") != ["Qwen3ForCausalLM"]:
+        raise ManifestMismatchError("model architecture is not Qwen3ForCausalLM")
+    context_limit = model_config.get("max_position_embeddings")
+    if type(context_limit) is not int or context_limit <= 0:
+        raise ManifestMismatchError("model context limit is invalid")
+    if adapter_config.get("peft_type") != "LORA":
+        raise ManifestMismatchError("adapter type is not LoRA")
+    if not (adapter_path / "chat_template.jinja").is_file():
+        raise ManifestMismatchError("adapter chat template is missing")
+
+    base_files = [
+        path
+        for path in base_path.iterdir()
+        if path.is_file()
+        and (path.name in _MODEL_FILE_NAMES or path.name.endswith(".safetensors"))
+    ]
+    adapter_files = [
+        path
+        for path in adapter_path.iterdir()
+        if path.is_file() and path.name in _ADAPTER_FILE_NAMES
+    ]
+    if not any(path.name.endswith(".safetensors") for path in base_files):
+        raise ManifestMismatchError("base model weights are missing")
+    if not (adapter_path / "adapter_model.safetensors").is_file():
+        raise ManifestMismatchError("adapter weights are missing")
+    relative_files = [
+        path.relative_to(base_path).as_posix() for path in base_files
+    ]
+    relative_paths = [Path(base_portable) / path for path in relative_files]
+    relative_paths.extend(
+        Path(adapter_portable) / path.relative_to(adapter_path)
+        for path in adapter_files
+    )
+    manifest = build_manifest(repo_root, relative_paths, kind="model-input")
+    targets = adapter_config.get("target_modules")
+    manifest["metadata"] = {
+        "model_identity": {
+            "model_id": model_id.strip(),
+            "architecture": "Qwen3ForCausalLM",
+            "context_limit": context_limit,
+            "base_model_path": base_portable,
+            "adapter_path": adapter_portable,
+            "dtype": "bfloat16",
+            "quantization": "none",
+            "adapter": {
+                "type": "LORA",
+                "r": adapter_config.get("r"),
+                "alpha": adapter_config.get("lora_alpha"),
+                "dropout": adapter_config.get("lora_dropout"),
+                "target_modules": sorted(targets) if isinstance(targets, list) else [],
+            },
+        }
+    }
+    return manifest
+
+
 def build_derived_artifact_manifest(
     *,
     repo_root: Path,
@@ -371,6 +481,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--input-manifest", type=Path)
     parser.add_argument("--tool-version")
     parser.add_argument("--elapsed-seconds", type=float)
+    parser.add_argument("--base-model", type=Path)
+    parser.add_argument("--adapter", type=Path)
+    parser.add_argument("--model-id")
     return parser
 
 
@@ -396,6 +509,19 @@ def main() -> None:
                 tool_version=args.tool_version,
                 elapsed_seconds=args.elapsed_seconds,
             )
+        elif any(
+            value is not None for value in (args.base_model, args.adapter, args.model_id)
+        ):
+            if any(
+                value is None for value in (args.base_model, args.adapter, args.model_id)
+            ):
+                raise ManifestMismatchError("model input arguments are incomplete")
+            manifest = build_model_input_manifest(
+                repo_root=repo_root,
+                base_model=args.base_model,
+                adapter=args.adapter,
+                model_id=args.model_id,
+            )
         else:
             identity = validate_fixed_model_identity(repo_root)
             manifest = build_manifest(
@@ -413,7 +539,12 @@ def main() -> None:
 
     manifest = load_manifest(args.verify)
     validate_manifest(repo_root, manifest)
-    if manifest.get("kind") == "model-input":
+    if manifest.get("kind") == "model-input" and (
+        manifest.get("metadata", {}).get("model_identity", {}).get("base_model_path")
+        == BASE_MODEL_PATH
+        and manifest.get("metadata", {}).get("model_identity", {}).get("adapter_path")
+        == ADAPTER_PATH
+    ):
         identity = validate_fixed_model_identity(repo_root)
         metadata = manifest.get("metadata")
         if not isinstance(metadata, Mapping) or metadata.get("model_identity") != identity:

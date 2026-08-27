@@ -70,6 +70,7 @@ class _LlamaCppGenerationHandle(GenerationHandle):
         input_tokens = 0
         output_tokens = 0
         finish_reason: str | None = None
+        streamed_tool_calls: dict[int, dict[str, str]] = {}
         try:
             with self._client.stream(
                 "POST",
@@ -129,6 +130,28 @@ class _LlamaCppGenerationHandle(GenerationHandle):
                     if isinstance(text, str) and text:
                         yielded = True
                         yield GenerationChunk(text=text)
+                    raw_tool_calls = (
+                        delta.get("tool_calls") if isinstance(delta, Mapping) else None
+                    )
+                    if isinstance(raw_tool_calls, list):
+                        for default_index, raw_call in enumerate(raw_tool_calls):
+                            if not isinstance(raw_call, Mapping):
+                                continue
+                            index = raw_call.get("index", default_index)
+                            if type(index) is not int or index < 0:
+                                continue
+                            function = raw_call.get("function")
+                            if not isinstance(function, Mapping):
+                                continue
+                            value = streamed_tool_calls.setdefault(
+                                index, {"name": "", "arguments": ""}
+                            )
+                            name = function.get("name")
+                            arguments = function.get("arguments")
+                            if isinstance(name, str):
+                                value["name"] += name
+                            if isinstance(arguments, str):
+                                value["arguments"] += arguments
                     reason = choice.get("finish_reason")
                     if isinstance(reason, str):
                         finish_reason = reason
@@ -144,6 +167,22 @@ class _LlamaCppGenerationHandle(GenerationHandle):
             self._response = None
         if self._cancel_event.is_set():
             finish_reason = "cancelled"
+        if streamed_tool_calls and not self._cancel_event.is_set():
+            for value in streamed_tool_calls.values():
+                if not value["name"] or not value["arguments"]:
+                    raise BackendGenerationError(
+                        "llama.cpp returned an incomplete tool call",
+                        started=yielded,
+                    )
+                tool_text = (
+                    '<tool_call>\n{"name": '
+                    + json.dumps(value["name"], ensure_ascii=False)
+                    + ', "arguments": '
+                    + value["arguments"]
+                    + "}\n</tool_call>"
+                )
+                yielded = True
+                yield GenerationChunk(text=tool_text)
         if finish_reason is None:
             finish_reason = "stop"
         yield GenerationChunk(
@@ -233,31 +272,53 @@ class LlamaCppGenerationBackend:
             0 <= request.temperature <= 2
         ):
             raise BackendRequestError("temperature is invalid")
-        if request.purpose not in {"rag_generation", "conversation_summary"}:
+        if request.purpose not in {
+            "agent_planning",
+            "rag_generation",
+            "conversation_summary",
+        }:
             raise BackendRequestError("request purpose is invalid")
         if not request.messages or any(
-            message.role not in {"system", "user", "assistant"}
+            message.role not in {"system", "user", "assistant", "tool"}
             or not isinstance(message.content, str)
-            or not message.content
+            or (
+                not message.content
+                and not (message.role == "assistant" and message.tool_calls)
+            )
             for message in request.messages
         ):
             raise BackendRequestError("messages are invalid")
 
     def start(self, request: GenerationRequest) -> GenerationHandle:
         self._validate_request(request)
+        messages = []
+        for message in request.messages:
+            value: dict[str, object] = {
+                "role": message.role,
+                "content": message.content,
+            }
+            if message.name is not None:
+                value["name"] = message.name
+            if message.tool_call_id is not None:
+                value["tool_call_id"] = message.tool_call_id
+            if message.tool_calls:
+                value["tool_calls"] = [dict(call) for call in message.tool_calls]
+            messages.append(value)
+        payload: dict[str, object] = {
+            "model": request.model,
+            "messages": messages,
+            "temperature": request.temperature,
+            "max_tokens": request.max_tokens,
+            "stream": True,
+            "stream_options": {"include_usage": True},
+        }
+        if request.tools:
+            payload["tools"] = [dict(tool) for tool in request.tools]
+        if request.tool_choice is not None:
+            payload["tool_choice"] = request.tool_choice
         return _LlamaCppGenerationHandle(
             client=self._client,
-            payload={
-                "model": request.model,
-                "messages": [
-                    {"role": message.role, "content": message.content}
-                    for message in request.messages
-                ],
-                "temperature": request.temperature,
-                "max_tokens": request.max_tokens,
-                "stream": True,
-                "stream_options": {"include_usage": True},
-            },
+            payload=payload,
         )
 
     def warmup(self) -> None:

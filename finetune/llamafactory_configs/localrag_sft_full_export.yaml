@@ -1,0 +1,10 @@
+model_name_or_path: models/Qwen3-4B
+adapter_name_or_path: saves/Qwen3-4B-Thinking/lora/localrag_sft_full_qlora
+template: qwen3
+finetuning_type: lora
+trust_remote_code: true
+
+export_dir: artifacts/models/localrag-sft-full-merged
+export_size: 4
+export_device: cpu
+export_legacy_format: false
