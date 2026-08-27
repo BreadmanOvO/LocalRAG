@@ -6,7 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
 
-from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.outputs import ChatGeneration, ChatResult
 from pydantic import Field
@@ -1216,6 +1216,92 @@ class ReactAgentSessionTests(unittest.TestCase):
 
         self.assertEqual("tool_timeout", events[0].error_code)
         self.assertEqual("dense_rerank", events[0].details["retrieval_strategy"])
+
+    def test_failed_rag_search_stops_before_an_unsupported_answer(self):
+        fake_graph = mock.Mock()
+        fake_graph.stream.return_value = iter(
+            [
+                {
+                    "tools": {
+                        "messages": [
+                            ToolMessage(
+                                name="rag_search",
+                                tool_call_id="call-1",
+                                status="error",
+                                content="[error_code=rag_search_failed] safe failure",
+                            )
+                        ]
+                    }
+                },
+                {
+                    "model": {
+                        "messages": [
+                            AIMessage(content="unsupported answer", tool_calls=[])
+                        ]
+                    }
+                },
+            ]
+        )
+        agent = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+        agent.session_id = "session-a"
+        agent.agent_graph = fake_graph
+
+        events = list(agent.execute_events("question"))
+
+        self.assertEqual(
+            ["tool_completed", "error"],
+            [event.kind for event in events],
+        )
+        self.assertEqual("rag_search_failed", events[-1].error_code)
+        self.assertEqual(
+            react_agent.RAG_SEARCH_UNAVAILABLE_MESSAGE,
+            events[-1].content,
+        )
+        self.assertNotIn("unsupported answer", str([event.to_dict() for event in events]))
+
+    def test_execute_with_a_failed_rag_search_hides_later_model_content(self):
+        fake_graph = mock.Mock()
+        fake_graph.invoke.return_value = {
+            "messages": [
+                ToolMessage(
+                    name="rag_search",
+                    tool_call_id="call-1",
+                    status="error",
+                    content="[error_code=tool_timeout] safe failure",
+                ),
+                AIMessage(content="unsupported answer"),
+            ],
+        }
+        agent = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+        agent.session_id = "session-a"
+        agent.agent_graph = fake_graph
+
+        answer = agent.execute("question")
+
+        self.assertEqual(react_agent.RAG_SEARCH_UNAVAILABLE_MESSAGE, answer)
+        self.assertNotIn("unsupported answer", answer)
+
+    def test_execute_does_not_reuse_a_prior_turn_rag_failure(self):
+        fake_graph = mock.Mock()
+        fake_graph.invoke.return_value = {
+            "messages": [
+                HumanMessage(content="old question"),
+                ToolMessage(
+                    name="rag_search",
+                    tool_call_id="old-call",
+                    status="error",
+                    content="[error_code=rag_search_failed] safe failure",
+                ),
+                AIMessage(content="old failure message"),
+                HumanMessage(content="new question"),
+                AIMessage(content="current answer"),
+            ],
+        }
+        agent = react_agent.ReactAgent.__new__(react_agent.ReactAgent)
+        agent.session_id = "session-a"
+        agent.agent_graph = fake_graph
+
+        self.assertEqual("current answer", agent.execute("new question"))
 
     def test_execute_stream_marks_graph_recursion_without_exposing_exception(self):
         fake_graph = mock.Mock()

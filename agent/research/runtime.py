@@ -63,6 +63,11 @@ class _AttemptState:
     def record(self, event: AgentEvent) -> None:
         if event.kind == "tool_completed":
             self.observations.extend(event.observations)
+            if (
+                event.tool_name == "rag_search"
+                and event.status in {"error", "failed"}
+            ):
+                self.error_code = event.error_code or "rag_search_failed"
             if event.tool_name == "rag_search" and event.status not in {
                 "error",
                 "failed",

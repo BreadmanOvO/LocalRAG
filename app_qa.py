@@ -939,10 +939,15 @@ if prompt:
             research_plan = research_runtime.create_run(prompt)
         except (ResearchControlError, ResearchRevisionConflictError, ResearchStateError) as exc:
             error_code = getattr(exc, "error_code", "research_control_failed")
+            content = (
+                "当前研究任务尚未结束，请在研究执行区域继续或取消当前任务后再提问。"
+                if error_code == "research_run_active"
+                else "研究任务创建失败，请检查运行状态后重试。"
+            )
             st.session_state["message"].append(
                 {
                     "role": "assistant",
-                    "content": "研究任务创建失败，请检查运行状态后重试。",
+                    "content": content,
                     "error": True,
                     "error_code": error_code,
                 }

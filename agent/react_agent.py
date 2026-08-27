@@ -23,7 +23,7 @@ from agent.execution import (
 )
 from agent.memory import SessionRetrievalMemory, TaskMemoryPolicy, TaskMemoryStore
 from agent.observability import AgentEvent
-from agent.tools.failures import extract_tool_error_code
+from agent.tools.failures import ToolFailure, extract_tool_error_code
 from agent.tools import (
     build_rag_search_tool,
     build_compare_sources_tool,
@@ -53,10 +53,15 @@ from utils.session import validate_session_id, validate_task_id
 
 
 DEFAULT_AGENT_RECURSION_LIMIT = DEFAULT_AGENT_EXECUTION_BUDGET.recursion_limit
+RAG_SEARCH_UNAVAILABLE_MESSAGE = (
+    "知识库检索暂时不可用，无法基于当前知识库回答，请稍后重试。"
+)
 logger = logging.getLogger(__name__)
 
 
 def _execution_error_code(exc: Exception) -> str:
+    if isinstance(exc, ToolFailure):
+        return exc.error_code
     if isinstance(exc, ConversationCompressionError):
         return ConversationCompressionError.error_code
     if isinstance(exc, DuplicateToolCallError):
@@ -79,6 +84,20 @@ def _execution_error_code(exc: Exception) -> str:
     ):
         return "model_request_failed"
     return "agent_execution_failed"
+
+
+def _rag_search_failure_code(message) -> str:
+    """Return a stable code when a RAG tool result cannot support an answer."""
+    if (
+        getattr(message, "type", None) != "tool"
+        or getattr(message, "name", None) != "rag_search"
+    ):
+        return ""
+    status = str(getattr(message, "status", None) or "success")
+    error_code = extract_tool_error_code(getattr(message, "content", ""))
+    if status in {"error", "failed"} or error_code:
+        return error_code or "rag_search_failed"
+    return ""
 
 
 def load_agent_system_prompt() -> str:
@@ -640,6 +659,17 @@ class ReactAgent:
             config=self._graph_config(),
         )
         messages = result.get("messages", [])
+        latest_human_index = max(
+            (
+                index
+                for index, message in enumerate(messages)
+                if getattr(message, "type", None) == "human"
+            ),
+            default=-1,
+        )
+        current_messages = messages[latest_human_index + 1 :]
+        if any(_rag_search_failure_code(message) for message in current_messages):
+            return RAG_SEARCH_UNAVAILABLE_MESSAGE
         if messages:
             for msg in reversed(messages):
                 if hasattr(msg, "content") and msg.type == "ai":
@@ -673,6 +703,19 @@ class ReactAgent:
                         continue
                     for msg in node_output.get("messages") or []:
                         yield from _events_from_message(msg, started_at)
+                        error_code = _rag_search_failure_code(msg)
+                        if error_code:
+                            # A planner must never turn a failed retrieval into an
+                            # unsupported answer.  Stop consuming the graph before
+                            # it can issue another model call with an error ToolMessage.
+                            yield AgentEvent(
+                                kind="error",
+                                content=RAG_SEARCH_UNAVAILABLE_MESSAGE,
+                                status="error",
+                                error_code=error_code,
+                                elapsed_ms=_elapsed_ms(started_at),
+                            )
+                            return
         except Exception as exc:
             error_code = _execution_error_code(exc)
             if error_code in {

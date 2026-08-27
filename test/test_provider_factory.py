@@ -66,7 +66,7 @@ class ProviderFactoryTests(unittest.TestCase):
             api_key="test-key",
             base_url="https://example.invalid/v1",
             timeout=60,
-            max_retries=0,
+            max_retries=1,
             temperature=0.7,
         )
 

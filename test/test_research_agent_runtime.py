@@ -197,6 +197,35 @@ class ResearchAgentRuntimeTests(unittest.TestCase):
         self.assertEqual(2, completed.run.model_call_count)
         self.assertEqual(2, completed.steps[0].attempt_count)
 
+    def test_failed_rag_search_never_commits_a_later_unsupported_answer(self):
+        events = (
+            AgentEvent(kind="model_completed", status="completed"),
+            AgentEvent(kind="tool_started", tool_name="rag_search"),
+            AgentEvent(
+                kind="tool_completed",
+                tool_name="rag_search",
+                status="error",
+                error_code="rag_search_failed",
+            ),
+            AgentEvent(kind="answer_delta", content="Unsupported answer"),
+        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            runtime, _ = self._runtime(
+                self._path(temp_dir),
+                FakeResearchAgent([events]),
+            )
+            plan = runtime.create_run("Retrieve before answering")
+
+            output = list(runtime.execute_events(plan.run.run_id))
+            restored = runtime.get_latest_plan()
+
+        self.assertEqual(list(events), output)
+        self.assertEqual("blocked", restored.run.status)
+        self.assertEqual("rag_search_failed", restored.run.stop_reason)
+        self.assertEqual("blocked", restored.steps[0].status)
+        self.assertEqual((), restored.evidence_refs)
+        self.assertEqual((), restored.findings)
+
     def test_pause_after_model_event_preserves_partial_usage(self):
         events = (
             AgentEvent(kind="model_completed", status="completed"),

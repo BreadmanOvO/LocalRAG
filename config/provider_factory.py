@@ -19,7 +19,9 @@ from model_gateway.fallback_chat_model import LocalFirstChatModel
 
 OPENAI_COMPATIBLE_PROVIDERS = {"bailian", "modelscope", "sensenova", "local_embedding", "local_sentence_transformer"}
 DEFAULT_CHAT_TIMEOUT_SECONDS = 60
-DEFAULT_CHAT_MAX_RETRIES = 0
+# A single retry absorbs transient provider/network failures without masking
+# persistent configuration or authentication errors.
+DEFAULT_CHAT_MAX_RETRIES = 1
 
 
 def _resolve_torch_dtype(torch_module: Any, dtype_name: str):
