@@ -8,7 +8,7 @@ LocalRAG is an Agentic RAG system for autonomous-driving perception research. It
 
 ## How it works
 
-For each question, `ReactAgent` runs a Planner loop in which the configured chat model either calls a tool or answers directly. `rag_search` performs retrieval and RAG generation inside the tool, then returns the generated answer, sources, and trace as a `ToolMessage`. Control returns to the Planner, which can call another tool or produce the final response. Research runs, conversation summaries, and task memory are persisted separately, so a refreshed page can resume an existing task.
+For each question, `ReactAgent` runs a Planner loop in which the configured chat model either calls a tool or answers directly. `rag_search` performs retrieval and RAG generation inside the tool, then delivers its cited answer directly as the terminal action for that turn. Source and memory tools return their `ToolMessage` results to the Planner, which can continue the workflow or produce a final response. Research runs, conversation summaries, and task memory are persisted separately, so a refreshed page can resume an existing task.
 
 ```mermaid
 flowchart LR
@@ -18,8 +18,8 @@ flowchart LR
     T -->|rag_search| R[rag_search]
     R --> D["Dense + BM25<br/>RRF → Rerank"]
     D --> G["Evidence-grounded generation<br/>local Gateway or cloud"]
-    G --> M["Tool result<br/>content + optional artifact"]
-    T -->|source or memory tool| M
+    G --> O["Cited response"]
+    T -->|source or memory tool| M["Tool result<br/>content + optional artifact"]
     M --> P
     C["Conversation history<br/>rolling summary"] -. before each model call .-> P
 ```

@@ -8,7 +8,7 @@ LocalRAG 是一个面向自动驾驶感知算法资料的 Agentic RAG 系统。�
 
 ## 工作原理
 
-一次问答由 `ReactAgent` 驱动 Planner 循环：运行时配置的聊天模型决定调用工具还是直接回答。`rag_search` 在工具内部完成检索和 RAG 生成，再把生成结果、来源和 trace 作为 `ToolMessage` 返回给 Planner。Planner 拿到工具结果后继续判断：可以再调用其他工具，也可以整理最终回答。研究任务、会话摘要和任务记忆独立持久化，页面刷新后仍可继续。
+一次问答由 `ReactAgent` 驱动 Planner 循环：运行时配置的聊天模型决定调用工具还是直接回答。`rag_search` 在工具内部完成检索和 RAG 生成，并以带引用答案作为本轮终止结果直接交付。来源与记忆工具才会把 `ToolMessage` 结果返回给 Planner，由 Planner 继续编排或整理最终回答。研究任务、会话摘要和任务记忆独立持久化，页面刷新后仍可继续。
 
 ```mermaid
 flowchart LR
@@ -18,8 +18,8 @@ flowchart LR
     T -->|rag_search| R[rag_search]
     R --> D["Dense + BM25<br/>RRF → Rerank"]
     D --> G["基于证据生成<br/>本地 Gateway 或云端"]
-    G --> M["工具结果<br/>content + 可选 artifact"]
-    T -->|来源或记忆工具| M
+    G --> O["带引用回答"]
+    T -->|来源或记忆工具| M["工具结果<br/>content + 可选 artifact"]
     M --> P
     C["会话历史<br/>滚动摘要"] -.每次模型调用前.-> P
 ```

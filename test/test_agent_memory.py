@@ -82,6 +82,75 @@ class TerminalRagChatModel(BaseChatModel):
         )
 
 
+class MultiTurnFollowUpChatModel(BaseChatModel):
+    calls: list[list] = Field(default_factory=list)
+
+    @property
+    def _llm_type(self) -> str:
+        return "multi-turn-research-chat-model"
+
+    def bind_tools(self, tools, **kwargs):
+        return self
+
+    def _generate(self, messages, stop=None, run_manager=None, **kwargs) -> ChatResult:
+        self.calls.append(list(messages))
+        latest_human_index = max(
+            index
+            for index, message in enumerate(messages)
+            if isinstance(message, HumanMessage)
+        )
+        query = str(messages[latest_human_index].content)
+        has_current_tool_result = any(
+            isinstance(message, ToolMessage)
+            for message in messages[latest_human_index + 1 :]
+        )
+        tool_calls = {
+            "介绍 BEVFormer": ("rag_search", {"query": "BEVFormer"}),
+            "来自哪些来源": ("show_sources", {}),
+            "检查 paper-001": (
+                "inspect_source",
+                {"source_id": "paper-001", "max_chunks": 2},
+            ),
+            "扩展 paper-001": (
+                "expand_context",
+                {
+                    "source_id": "paper-001",
+                    "chunk_order": 0,
+                    "before": 0,
+                    "after": 1,
+                },
+            ),
+        }
+        for phrase, (tool_name, arguments) in tool_calls.items():
+            if phrase in query:
+                if has_current_tool_result:
+                    return ChatResult(
+                        generations=[
+                            ChatGeneration(
+                                message=AIMessage(content=f"{tool_name} 已完成")
+                            )
+                        ]
+                    )
+                return ChatResult(
+                    generations=[
+                        ChatGeneration(
+                            message=AIMessage(
+                                content="",
+                                tool_calls=[
+                                    {
+                                        "name": tool_name,
+                                        "args": arguments,
+                                        "id": f"multi-turn-call-{len(self.calls)}",
+                                        "type": "tool_call",
+                                    }
+                                ],
+                            )
+                        )
+                    ]
+                )
+        raise AssertionError(f"unexpected query: {query}")
+
+
 class SessionIdValidationTests(unittest.TestCase):
     def test_validate_session_id_accepts_project_session_formats(self):
         self.assertEqual("eval-session-sample-1", validate_session_id(" eval-session-sample-1 "))
@@ -1158,6 +1227,88 @@ class ReactAgentSessionTests(unittest.TestCase):
             [event.kind for event in events],
         )
         self.assertEqual("Grounded BEVFormer answer [paper-001]", events[-1].content)
+
+    def test_real_agent_graph_supports_follow_up_source_workflows(self):
+        chat_model = MultiTurnFollowUpChatModel()
+        rag_service = mock.Mock()
+        rag_service.answer_with_retrieval.return_value = {
+            "answer": "BEVFormer 使用时空 Transformer [paper-001]",
+            "retrieved_rows": [
+                {
+                    "source_id": "paper-001",
+                    "locator": "page=1",
+                    "chunk_order": 0,
+                    "chunk_strategy": "semantic",
+                    "content": "BEVFormer source excerpt",
+                }
+            ],
+        }
+        evidence_service = mock.Mock()
+        evidence_service.inspect_source.return_value = {
+            "found": True,
+            "source_id": "paper-001",
+            "source": {"title": "BEVFormer", "version": "paper"},
+            "chunk_count": 1,
+            "chunks": [
+                {
+                    "locator": "page=1",
+                    "chunk_order": 0,
+                    "chunk_strategy": "semantic",
+                    "content": "BEVFormer source excerpt",
+                }
+            ],
+        }
+        evidence_service.expand_context.return_value = {
+            "found": True,
+            "source_id": "paper-001",
+            "target_chunk_order": 0,
+            "chunks": [
+                {
+                    "locator": "page=1",
+                    "chunk_order": 0,
+                    "chunk_strategy": "semantic",
+                    "content": "BEVFormer source excerpt",
+                }
+            ],
+        }
+        with mock.patch.object(
+            react_agent,
+            "load_runtime_config",
+            side_effect=RuntimeError("not needed for this test"),
+        ):
+            agent = react_agent.ReactAgent(
+                "session-multi-turn",
+                task_id="task-multi-turn",
+                task_memory_store=mock.Mock(),
+                chat_model=chat_model,
+                rag_service=rag_service,
+                evidence_service=evidence_service,
+            )
+
+        turns = (
+            ("介绍 BEVFormer", "rag_search", "BEVFormer 使用时空 Transformer [paper-001]"),
+            ("刚才的内容来自哪些来源", "show_sources", "show_sources 已完成"),
+            ("检查 paper-001", "inspect_source", "inspect_source 已完成"),
+            ("扩展 paper-001", "expand_context", "expand_context 已完成"),
+        )
+        for query, expected_tool, expected_answer in turns:
+            events = list(agent.execute_events(query))
+            self.assertEqual(
+                [expected_tool],
+                [event.tool_name for event in events if event.kind == "tool_started"],
+            )
+            self.assertFalse([event for event in events if event.kind == "error"])
+            self.assertEqual(expected_answer, events[-1].content)
+
+        self.assertEqual(7, len(chat_model.calls))
+        evidence_service.inspect_source.assert_called_once_with("paper-001", max_chunks=2)
+        evidence_service.expand_context.assert_called_once_with(
+            "paper-001",
+            0,
+            before=0,
+            after=1,
+            chunk_strategy="",
+        )
 
     def test_execute_events_returns_structured_public_trace(self):
         fake_graph = mock.Mock()

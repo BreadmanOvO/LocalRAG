@@ -17,9 +17,9 @@
 
 ### 验证
 
-- `python -m unittest test.test_agent_memory test.test_research_agent_runtime test.test_agent_execution test.test_task_memory -v` 通过（94 项）。
-- `python -m unittest discover -s test -q` 通过（646 项，跳过 1 项）。
-- 回归用例覆盖：检索成功或失败都不会消费后续 Planner 答案；即使异常事件序列包含后续文本，Research run 也不会生成 finding 或 evidence。
+- `python -m unittest test.test_agent_memory test.test_research_agent_runtime test.test_agent_execution test.test_task_memory -v` 通过（95 项）。
+- `python -m unittest discover -s test -q` 通过（647 项，跳过 1 项）。
+- 回归用例覆盖：检索成功或失败都不会消费后续 Planner 答案；同一会话可连续执行检索、来源查看、来源检查和上下文扩展；即使异常事件序列包含后续文本，Research run 也不会生成 finding 或 evidence。
 
 ## v1.1
 
