@@ -10,7 +10,7 @@ from config.runtime_keys import (
     ModelRoleConfig,
     RuntimeProviderConfig,
 )
-from model_gateway.fallback_chat_model import LocalFirstChatModel
+from model_gateway.fallback_chat_model import CloudFirstChatModel, LocalFirstChatModel
 
 
 class ProviderFactoryTests(unittest.TestCase):
@@ -226,6 +226,59 @@ class ProviderFactoryTests(unittest.TestCase):
         )
         self.assertEqual("agent_planning", local_call["extra_body"]["purpose"])
         self.assertEqual("local-secret", local_call["api_key"])
+
+    def test_v2_planner_cloud_route_with_verified_local_builds_cloud_first(self):
+        from config import provider_factory
+
+        cloud = CloudModelConfig(
+            provider="sensenova",
+            api_key="cloud-secret",
+            base_url="https://example.invalid/v1",
+            model="cloud-planner",
+        )
+        local = LocalModelGatewayConfig(
+            base_url="http://127.0.0.1:8001/v1",
+            model="local-planner",
+            api_token="local-secret",
+            tool_calling_verified=True,
+        )
+        roles = {
+            role: ModelRoleConfig(
+                route="cloud" if role == "planner" else "local",
+                cloud=cloud,
+                local=local,
+            )
+            for role in ("planner", "rag", "summary")
+        }
+        runtime = RuntimeProviderConfig(
+            provider="sensenova",
+            api_key="cloud-secret",
+            base_url=cloud.base_url,
+            chat_model_name=cloud.model,
+            embedding_model_name="models/bge-m3",
+            roles=roles,
+        )
+
+        with mock.patch.object(provider_factory, "ChatOpenAI") as chat_model:
+            chat_model.side_effect = lambda **kwargs: mock.Mock(
+                bind_tools=mock.Mock(return_value=mock.Mock()),
+                **kwargs,
+            )
+            result = provider_factory.build_agent_chat_model(runtime)
+
+        self.assertIsInstance(result, CloudFirstChatModel)
+        self.assertEqual(2, chat_model.call_count)
+        cloud_call = next(
+            call.kwargs
+            for call in chat_model.call_args_list
+            if call.kwargs["base_url"] == cloud.base_url
+        )
+        self.assertEqual(0, cloud_call["max_retries"])
+
+        tools = [{"type": "function", "function": {"name": "rag_search"}}]
+        bound = result.bind_tools(tools, tool_choice="auto")
+        self.assertIsInstance(bound, CloudFirstChatModel)
+        self.assertEqual(2, chat_model.call_count)
 
 
 if __name__ == "__main__":

@@ -891,10 +891,16 @@ class ReactAgentSessionTests(unittest.TestCase):
                 conversation_summary_enabled=True,
             ),
         )
+        rag_service = mock.Mock()
+        rag_service.answer_with_retrieval.return_value = {
+            "answer": "cloud answer",
+            "retrieved_rows": [],
+        }
         with (
             mock.patch.object(react_agent, "load_runtime_config", return_value=runtime_config),
             mock.patch.object(react_agent, "build_agent_chat_model", return_value=object()),
             mock.patch.object(react_agent, "LocalModelGateway") as gateway,
+            mock.patch("core.rag.RagService", return_value=rag_service) as rag_factory,
             mock.patch.object(react_agent, "create_agent", return_value=mock.Mock()),
             mock.patch.object(react_agent, "load_agent_system_prompt", return_value="system"),
         ):
@@ -904,7 +910,9 @@ class ReactAgentSessionTests(unittest.TestCase):
                 task_memory_store=mock.Mock(),
                 chat_model=object(),
             )
+            self.assertEqual("cloud answer", agent.tools[0].invoke({"query": "question"}))
         gateway.assert_not_called()
+        rag_factory.assert_called_once_with(runtime_config=runtime_config)
         self.assertEqual("cloud", agent.model_route_mode)
         self.assertEqual("disabled_by_route", agent.local_model_gateway_status)
 

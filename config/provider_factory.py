@@ -15,7 +15,7 @@ from config.runtime_keys import (
     LocalModelGatewayConfig,
     RuntimeProviderConfig,
 )
-from model_gateway.fallback_chat_model import LocalFirstChatModel
+from model_gateway.fallback_chat_model import CloudFirstChatModel, LocalFirstChatModel
 
 OPENAI_COMPATIBLE_PROVIDERS = {"bailian", "modelscope", "sensenova", "local_embedding", "local_sentence_transformer"}
 DEFAULT_CHAT_TIMEOUT_SECONDS = 60
@@ -265,8 +265,22 @@ def build_agent_chat_model(runtime_config: RuntimeProviderConfig, **overrides):
     if runtime_config.roles is None:
         return _build_flat_chat_model(runtime_config, **overrides)
     planner = runtime_config.role("planner")
-    cloud = _build_cloud_role_model(planner.cloud, **overrides)
+
+    # Planner calls are interactive and can immediately switch to the local
+    # endpoint on a transient cloud failure.  A retry inside ChatOpenAI would
+    # otherwise add another full timeout before our controlled fallback gets a
+    # chance to run (the old timeout=60/max_retries=1 path took ~120s).
+    planner_cloud_overrides = dict(overrides)
+    planner_cloud_overrides["max_retries"] = 0
+    cloud = _build_cloud_role_model(planner.cloud, **planner_cloud_overrides)
     if planner.route == "cloud":
+        if planner.local.tool_calling_verified:
+            local = _build_local_openai_model(
+                planner.local,
+                purpose="agent_planning",
+                **overrides,
+            )
+            return CloudFirstChatModel(primary=cloud, fallback=local, role="planner")
         return cloud
     local = _build_local_openai_model(
         planner.local,

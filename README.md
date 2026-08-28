@@ -46,7 +46,7 @@ Copy-Item config/runtime_models.example.json config/runtime_models.json
 [Environment]::SetEnvironmentVariable("LOCALRAG_MODEL_API_TOKEN", "your-local-token", "User")
 ```
 
-Secrets are resolved only from the environment variable names stored in JSON. For a locally routed Planner, an invocation error falls back to that role's cloud model. RAG generation and summary use the Gateway's typed fallback rules; a streaming request can switch to cloud only before the local service emits output. The three roles may share one endpoint and model, or use separate ports. Sharing a service does not mix conversations because every request carries its own messages; requests only share the model queue.
+Secrets are resolved only from the environment variable names stored in JSON. A locally routed Planner falls back to its cloud model when the local invocation fails; a cloud-routed Planner with verified local tool calling likewise falls back to the local endpoint for transient timeout or connection failures. RAG generation and summary use the Gateway's typed fallback rules; a streaming request can switch to cloud only before the local service emits output. The three roles may share one endpoint and model, or use separate ports. Sharing a service does not mix conversations because every request carries its own messages; requests only share the model queue.
 
 The Streamlit sidebar changes the three `route` values and writes them back to the active runtime JSON. Endpoint and model names remain JSON-managed. Route controls are disabled while a research run is active.
 

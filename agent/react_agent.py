@@ -344,15 +344,12 @@ class ReactAgent:
                 self.local_model_gateways["rag"] = self.local_model_gateway
                 self.local_model_gateways["summary"] = self.local_model_gateway
         rag_service_factory = None
-        if (
-            rag_service is None
-            and self.local_model_gateways.get("rag") is not None
-            and self._local_rag_enabled(runtime_config)
-        ):
-            rag_service_factory = partial(
-                self._build_local_rag_service,
-                runtime_config,
-            )
+        if rag_service is None and runtime_config is not None:
+            # Keep the lazily-created RAG service on the same per-role routes
+            # as this Agent instance.  Falling back to RagService() here would
+            # reload runtime_models.json and silently discard a sidebar route
+            # change that has not yet been reflected in that file.
+            rag_service_factory = partial(self._build_rag_service, runtime_config)
 
         self.tools = [
             build_rag_search_tool(
@@ -466,6 +463,16 @@ class ReactAgent:
                 self.local_model_gateway_status = "unhealthy"
             logger.exception("Local model gateway setup failed")
             return None
+
+    def _build_rag_service(self, runtime_config):
+        from core.rag import RagService
+
+        if not (
+            self._local_rag_enabled(runtime_config)
+            and self.local_model_gateways.get("rag") is not None
+        ):
+            return RagService(runtime_config=runtime_config)
+        return self._build_local_rag_service(runtime_config)
 
     def _build_local_rag_service(self, runtime_config):
         from core.rag import RagService
@@ -603,6 +610,33 @@ class ReactAgent:
 
     def get_retrieval_snapshot(self):
         return self.retrieval_memory.recall(self.session_id)
+
+    def _source_request_fallback(self, query: str) -> str:
+        """Return the latest source list when a fallback Planner loops tools.
+
+        A transient cloud failure can move a turn to the local Planner.  If
+        that model repeats a source tool until the hard tool-call limit is
+        reached, the already-completed source result is still a valid answer
+        for source-oriented questions.  Keep this narrow so ordinary turns
+        continue to surface the execution error.
+        """
+        if not any(token in query.lower() for token in ("来源", "source", "引用", "证据")):
+            return ""
+        snapshot = self.get_retrieval_snapshot()
+        if snapshot is None or not getattr(snapshot, "documents", ()):
+            return ""
+        show_sources = next(
+            (tool for tool in self.tools if getattr(tool, "name", "") == "show_sources"),
+            None,
+        )
+        if show_sources is None:
+            return ""
+        try:
+            result = show_sources.invoke({})
+        except Exception:
+            logger.exception("Source fallback failed after Planner tool limit")
+            return ""
+        return result.strip() if isinstance(result, str) else str(result).strip()
 
     def _execution_progress_token(self) -> dict:
         task_memory = self.get_task_memory()
@@ -746,6 +780,20 @@ class ReactAgent:
                             return
         except Exception as exc:
             error_code = _execution_error_code(exc)
+            if error_code in {
+                "tool_call_limit_exceeded",
+                "no_progress_limit",
+                "duplicate_tool_call",
+            }:
+                fallback_answer = self._source_request_fallback(query)
+                if fallback_answer:
+                    yield AgentEvent(
+                        kind="answer_delta",
+                        content=fallback_answer,
+                        status="streaming",
+                        elapsed_ms=_elapsed_ms(started_at),
+                    )
+                    return
             if error_code in {
                 "duplicate_tool_call",
                 "no_progress_limit",

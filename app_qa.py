@@ -643,7 +643,24 @@ def _ensure_user_message(goal: str) -> None:
 
 
 def _execute_research_run(runtime: ResearchAgentRuntime, run_id: str) -> None:
-    agent = runtime.agent
+    _execute_agent_events(
+        runtime.agent,
+        runtime.execute_events(run_id),
+        research_run_id=run_id,
+    )
+
+
+def _execute_direct_agent_turn(agent: ReactAgent, prompt: str) -> None:
+    """Keep ordinary Q&A available when recoverable research is unavailable."""
+    _execute_agent_events(agent, agent.execute_events(prompt))
+
+
+def _execute_agent_events(
+    agent: ReactAgent,
+    events,
+    *,
+    research_run_id: str | None = None,
+) -> None:
     before_memory = agent.get_task_memory()
     trace = []
     answer_parts = []
@@ -655,7 +672,7 @@ def _execute_research_run(runtime: ResearchAgentRuntime, run_id: str) -> None:
     with st.chat_message("assistant"):
         run_status = st.status("Agent 执行中", expanded=True)
         answer_placeholder = st.empty()
-        for event in runtime.execute_events(run_id):
+        for event in events:
             max_elapsed_ms = max(max_elapsed_ms, event.elapsed_ms or 0)
             if event.kind == "tool_started":
                 trace.append(event.to_dict())
@@ -709,7 +726,7 @@ def _execute_research_run(runtime: ResearchAgentRuntime, run_id: str) -> None:
             "elapsed_ms": max_elapsed_ms,
             "error": has_error,
             "error_code": error_code,
-            "research_run_id": run_id,
+            "research_run_id": research_run_id,
         }
         st.session_state["message"].append(assistant_message)
         _render_assistant_details(assistant_message)
@@ -925,7 +942,7 @@ if research_run_to_execute:
 
 prompt = st.chat_input(
     "输入研究问题",
-    disabled=research_active or research_runtime is None,
+    disabled=research_active,
 )
 if prompt:
     with st.chat_message("user"):
@@ -933,14 +950,7 @@ if prompt:
     st.session_state["message"].append({"role": "user", "content": prompt})
 
     if research_runtime is None:
-        st.session_state["message"].append(
-            {
-                "role": "assistant",
-                "content": "研究任务创建失败，请检查运行状态后重试。",
-                "error": True,
-                "error_code": research_identity_error or "research_runtime_unavailable",
-            }
-        )
+        _execute_direct_agent_turn(agent, prompt)
     else:
         try:
             research_plan = research_runtime.create_run(prompt)
