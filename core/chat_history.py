@@ -30,6 +30,16 @@ def get_history(session_id: str) -> "FileChatMessageHistory":
     return FileChatMessageHistory(session_id, get_abs_path("chat_history"))
 
 
+def get_rag_history_session_id(session_id: str) -> str:
+    """Return the private RAG history namespace for one Agent session.
+
+    The Agent graph persists AI tool calls and ToolMessages in its own history.
+    RAG generation accepts only conversational messages, so it must never reuse
+    that graph transcript as its `RunnableWithMessageHistory` input.
+    """
+    return f"rag-{validate_session_id(session_id)}"
+
+
 def message_identity(message: BaseMessage) -> str:
     message_id = getattr(message, "id", None)
     if message_id is not None:

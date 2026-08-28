@@ -41,7 +41,7 @@ from config.runtime_keys import (
     load_runtime_config,
     update_model_routes,
 )
-from core.chat_history import get_history
+from core.chat_history import get_history, get_rag_history_session_id
 from utils.session import validate_task_id
 
 
@@ -96,6 +96,7 @@ def _clear_session_artifacts(session_id: str) -> None:
     try:
         ConversationContextStore().clear_session(session_id)
         get_history(session_id).clear()
+        get_history(get_rag_history_session_id(session_id)).clear()
     except Exception:
         logger.exception("Failed to clear conversation session")
 

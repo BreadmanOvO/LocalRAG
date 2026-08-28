@@ -29,6 +29,7 @@ from config.runtime_keys import (
 from core.chat_history import (
     ChatHistoryCorruptionError,
     FileChatMessageHistory,
+    get_rag_history_session_id,
     message_identity,
 )
 from utils.session import validate_session_id, validate_task_id
@@ -166,6 +167,11 @@ class SessionIdValidationTests(unittest.TestCase):
         self.assertEqual("task.v1-4", validate_task_id(" task.v1-4 "))
         with self.assertRaises(ValueError):
             validate_task_id("../task")
+
+    def test_rag_history_session_id_uses_a_private_valid_namespace(self):
+        self.assertEqual("rag-session-a", get_rag_history_session_id("session-a"))
+        with self.assertRaises(ValueError):
+            get_rag_history_session_id("../session")
 
 
 class FileChatMessageHistoryTests(unittest.TestCase):
@@ -475,7 +481,7 @@ class SessionRetrievalMemoryTests(unittest.TestCase):
         self.assertEqual("grounded answer", rag_tool.invoke({"query": "MFA latency"}))
         rag_service.answer_with_retrieval.assert_called_once_with(
             "MFA latency",
-            session_id="session-a",
+            session_id="rag-session-a",
         )
         self.assertIn("paper-030", source_tool_a.invoke({}))
         self.assertIn("page=2", source_tool_a.invoke({}))

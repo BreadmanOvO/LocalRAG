@@ -13,6 +13,7 @@ from agent.tools.failures import (
     render_tool_error,
     render_tool_validation_error,
 )
+from core.chat_history import get_rag_history_session_id
 from utils.session import validate_session_id, validate_task_id
 
 if TYPE_CHECKING:
@@ -57,7 +58,10 @@ def build_rag_search_tool(
 
                     service = RagService()
 
-            result = service.answer_with_retrieval(query, session_id=bound_session_id)
+            result = service.answer_with_retrieval(
+                query,
+                session_id=get_rag_history_session_id(bound_session_id),
+            )
         except Exception as exc:
             raise build_tool_failure(
                 "知识库检索",
