@@ -12,6 +12,17 @@ from .identity import (
     new_identifier,
     validate_identifier,
 )
+from .execution import (
+    Claim,
+    EffectKind,
+    EffectState,
+    EvaluationPolicy,
+    Handoff,
+    Result,
+    ResultStatus,
+    RunEvent,
+    ToolManifest,
+)
 
 __all__ = [
     "IDENTIFIER_KINDS",
@@ -24,4 +35,13 @@ __all__ = [
     "RunIdentity",
     "new_identifier",
     "validate_identifier",
+    "Claim",
+    "EffectKind",
+    "EffectState",
+    "EvaluationPolicy",
+    "Handoff",
+    "Result",
+    "ResultStatus",
+    "RunEvent",
+    "ToolManifest",
 ]

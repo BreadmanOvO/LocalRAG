@@ -1,0 +1,21 @@
+{
+  "day": "D04",
+  "status": "contract_draft",
+  "schema_module": "agent_platform.contracts.execution",
+  "contracts": [
+    "ToolManifest",
+    "Result",
+    "RunEvent",
+    "Handoff",
+    "Claim",
+    "EvaluationPolicy"
+  ],
+  "invariants": [
+    "side_effect 工具必须声明幂等支持或 reconcile 支持",
+    "unknown effect 不能伪装为 succeeded",
+    "RunEvent 的 room_sequence 用于房间提交顺序，run_sequence 仅用于运行内定位",
+    "Handoff 领取与 Result 提交是结构化对象，不等同于聊天文字",
+    "supported Claim 必须引用 evidence_ids",
+    "上传发布只强制完整性校验，质量评测保持可选；系统 release gate 仍单独要求评测"
+  ]
+}
