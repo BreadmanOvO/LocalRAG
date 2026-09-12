@@ -1,0 +1,10 @@
+{
+  "day": "D11",
+  "status": "accepted",
+  "component": "agent_platform.api",
+  "scope": ["room and message API", "task follow-up", "run control CAS", "event reads", "explicit not-ready asset/artifact states"],
+  "persistence": "in-memory adapter over D06-D10 contracts; PostgreSQL and production worker integration remain planned",
+  "test_command": "pytest -q test/test_day11_api.py",
+  "result": "4 passed",
+  "known_limits": ["no TypeScript client yet", "SSE is a bounded snapshot stream", "no model or tool workers", "asset and artifact APIs are not ready"]
+}
