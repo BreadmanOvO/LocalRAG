@@ -1,0 +1,31 @@
+{
+  "day": "D03",
+  "status": "contract_draft",
+  "schema_module": "agent_platform.contracts.identity",
+  "identifiers": [
+    "space_id",
+    "room_id",
+    "task_id",
+    "turn_id",
+    "message_id",
+    "run_id",
+    "plan_id",
+    "step_id",
+    "attempt_id",
+    "operation_id",
+    "event_id"
+  ],
+  "versions": {
+    "plan_revision": "计划内容版本，从 1 开始",
+    "control_epoch": "执行控制版本，从 0 开始",
+    "room_sequence": "房间内已提交事件顺序；事件从 1 开始，游标可为 0",
+    "row_version": "数据库 CAS 版本，留待 D05 schema 定义"
+  },
+  "invariants": [
+    "直办与协作使用同一 room_id",
+    "终态追问创建新 run_id，并通过 source_run_id 关联旧 run",
+    "attempt 固定 plan_revision 与 control_epoch",
+    "同一逻辑工具重试保持 operation_id，产生新 attempt_id",
+    "plan_revision、control_epoch 与数据库 row_version 不复用"
+  ]
+}
