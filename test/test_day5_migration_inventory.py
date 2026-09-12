@@ -52,7 +52,7 @@ class Day5MigrationInventoryTests(unittest.TestCase):
             "spaces", "rooms", "tasks", "messages", "plans", "runs",
             "steps", "attempts", "persona_snapshots", "room_memberships",
             "task_memory_items", "legacy_message_staging", "message_revisions",
-            "legacy_id_map", "import_audit",
+            "run_events", "legacy_id_map", "import_audit",
         ):
             self.assertIn(f"CREATE TABLE IF NOT EXISTS {table}", sql)
         for field in ("row_version", "control_epoch", "plan_revision", "room_sequence", "fencing_token"):

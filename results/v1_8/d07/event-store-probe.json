@@ -1,0 +1,15 @@
+{
+  "day": "D07",
+  "status": "accepted",
+  "component": "agent_platform.runtime.event_store",
+  "scope": [
+    "append-only RunEvent envelope",
+    "gap-free room_sequence",
+    "cursor read-after",
+    "commit-before-publish",
+    "snapshot and side-effect-free replay"
+  ],
+  "persistence": "in-memory contract probe; PostgreSQL EventStore adapter remains planned",
+  "test_command": "pytest -q test/test_day7_event_store.py",
+  "result": "4 passed"
+}

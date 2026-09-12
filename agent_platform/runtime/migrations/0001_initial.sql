@@ -145,6 +145,24 @@ CREATE TABLE IF NOT EXISTS attempts (
     UNIQUE (step_id, attempt_id)
 );
 
+CREATE TABLE IF NOT EXISTS run_events (
+    event_id TEXT PRIMARY KEY,
+    room_id TEXT NOT NULL REFERENCES rooms(room_id) ON DELETE CASCADE,
+    task_id TEXT REFERENCES tasks(task_id),
+    run_id TEXT REFERENCES runs(run_id),
+    step_id TEXT REFERENCES steps(step_id),
+    attempt_id TEXT REFERENCES attempts(attempt_id),
+    event_type TEXT NOT NULL,
+    room_sequence BIGINT NOT NULL CHECK (room_sequence > 0),
+    run_sequence BIGINT NOT NULL DEFAULT 0 CHECK (run_sequence >= 0),
+    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+    caused_by JSONB NOT NULL DEFAULT '[]'::jsonb,
+    consumes JSONB NOT NULL DEFAULT '[]'::jsonb,
+    produces JSONB NOT NULL DEFAULT '[]'::jsonb,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (room_id, room_sequence)
+);
+
 CREATE TABLE IF NOT EXISTS persona_snapshots (
     binding_id TEXT PRIMARY KEY,
     space_id TEXT NOT NULL REFERENCES spaces(space_id),
