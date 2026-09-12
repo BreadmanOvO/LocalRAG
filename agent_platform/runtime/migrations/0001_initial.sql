@@ -139,7 +139,10 @@ CREATE TABLE IF NOT EXISTS attempts (
     plan_revision INTEGER NOT NULL CHECK (plan_revision > 0),
     control_epoch BIGINT NOT NULL CHECK (control_epoch >= 0),
     fencing_token BIGINT NOT NULL CHECK (fencing_token >= 0),
-    status TEXT NOT NULL CHECK (status IN ('leased', 'running', 'succeeded', 'failed', 'expired', 'cancelled')),
+    worker_id TEXT NOT NULL DEFAULT '',
+    lease_expires_at TIMESTAMPTZ,
+    operation_id TEXT,
+    status TEXT NOT NULL CHECK (status IN ('leased', 'running', 'succeeded', 'failed', 'expired', 'cancelled', 'late_audit', 'rejected')),
     started_at TIMESTAMPTZ,
     finished_at TIMESTAMPTZ,
     UNIQUE (step_id, attempt_id)

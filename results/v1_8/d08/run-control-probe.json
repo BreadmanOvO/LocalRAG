@@ -1,0 +1,15 @@
+{
+  "day": "D08",
+  "status": "accepted",
+  "component": "agent_platform.runtime.control",
+  "scope": [
+    "worker lease acquisition and renewal",
+    "monotonic fencing_token",
+    "attempt binding to plan_revision and control_epoch",
+    "row_version and control_epoch CAS",
+    "pause/cancel and late result audit"
+  ],
+  "persistence": "in-memory contract probe; PostgreSQL worker adapter remains planned",
+  "test_command": "pytest -q test/test_day8_run_control.py",
+  "result": "4 passed"
+}
