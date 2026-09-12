@@ -1,0 +1,23 @@
+{
+  "day": "D13",
+  "status": "accepted",
+  "scope": [
+    "assistant first message atomically creates room and message",
+    "idempotent replay does not create duplicate message",
+    "room list and member list API",
+    "React room/message/member/artifact workbench components"
+  ],
+  "commands": [
+    "D:\\Programs\\Anaconda\\python.exe -m pytest -q test/test_day11_api.py test/test_day13_assistant_workbench.py",
+    "cd frontend && npm run build"
+  ],
+  "results": {
+    "pytest": "8 passed",
+    "frontend_build": "pass"
+  },
+  "boundaries": [
+    "in-memory repository only",
+    "SSE reconnect and pagination are D14",
+    "production persistence, authentication, workers and model execution are not implemented"
+  ]
+}

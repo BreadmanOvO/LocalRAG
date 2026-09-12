@@ -62,5 +62,27 @@ input:focus { border-color: #87dcb8; box-shadow: 0 0 0 3px rgba(135, 220, 184, .
 .room-header { margin-bottom: 28px; }
 .room-header h1 { font-size: clamp(28px, 4vw, 40px); }
 .room-header .subtitle { display: flex; gap: 8px; align-items: center; }
+.room-list { margin-top: 28px; min-height: 0; overflow: auto; }
+.list-heading { display: flex; justify-content: space-between; align-items: center; color: #aab4ce; font-size: 12px; margin: 0 10px 10px; }
+.room-list-item { display: flex; gap: 10px; align-items: center; color: #9da8c2; text-decoration: none; padding: 9px 10px; border-radius: 9px; }
+.room-list-item:hover, .room-list-item.active { color: #f7f9ff; background: #1c2641; }
+.room-avatar, .member-avatar { display: grid; place-items: center; flex: 0 0 auto; width: 28px; height: 28px; border-radius: 9px; color: #0b1724; background: #9bebc8; font-size: 12px; font-weight: 700; }
+.room-list-item b, .member-row b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px; font-size: 12px; }
+.room-list-item small, .member-row small { display: block; color: #75819f; font-size: 10px; margin-top: 2px; }
+.room-page { max-width: 1320px; }
+.side-stack { display: grid; align-content: start; gap: 20px; min-width: 0; }
+.member-card { min-width: 0; }
+.member-row { display: flex; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid #293451; }
+.member-row:last-child { border-bottom: 0; }
+.message-composer { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; margin-top: 22px; }
+.composer-textarea, textarea { width: 100%; resize: vertical; min-height: 76px; border: 1px solid #374361; background: #10182e; color: #f2f5ff; border-radius: 8px; padding: 12px 13px; outline: none; font: inherit; line-height: 1.5; }
+textarea:focus { border-color: #87dcb8; box-shadow: 0 0 0 3px rgba(135, 220, 184, .12); }
+.message-composer .error-text { grid-column: 1 / -1; margin: 0; }
+.artifact-card { min-height: 130px; }
+.role-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
+.role-card h2 { margin-bottom: 14px; }
+.failure-card { margin-top: 18px; border: 1px solid #6b3647; background: rgba(84, 31, 49, .35); border-radius: 10px; padding: 13px 15px; }
+.failure-card p { color: #f6c3cc; margin: 7px 0; }
+.failure-card small { color: #bf8795; font-size: 11px; }
 
 @media (max-width: 760px) { .app-shell { display: block; } .sidebar { width: 100%; height: auto; border-right: 0; border-bottom: 1px solid #27304a; padding: 16px; } .sidebar .eyebrow { display: none; } .nav-list { display: flex; margin-top: 14px; } .sidebar-footer { display: none; } .page { padding: 38px 20px 55px; } .page-header { margin-bottom: 28px; } .hero-grid, .room-grid { grid-template-columns: 1fr; } .panel { padding: 20px; } }

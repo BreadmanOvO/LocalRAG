@@ -1,6 +1,63 @@
 {
   "components": {
     "schemas": {
+      "AssistantMessageRequest": {
+        "properties": {
+          "content": {
+            "minLength": 1,
+            "title": "Content",
+            "type": "string"
+          },
+          "room_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room Id"
+          },
+          "space_id": {
+            "minLength": 1,
+            "title": "Space Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "space_id",
+          "content"
+        ],
+        "title": "AssistantMessageRequest",
+        "type": "object"
+      },
+      "AssistantMessageResponse": {
+        "properties": {
+          "created": {
+            "title": "Created",
+            "type": "boolean"
+          },
+          "message": {
+            "$ref": "#/components/schemas/MessageResponse"
+          },
+          "room": {
+            "$ref": "#/components/schemas/RoomResponse"
+          }
+        },
+        "required": [
+          "room",
+          "message",
+          "created"
+        ],
+        "title": "AssistantMessageResponse",
+        "type": "object"
+      },
       "CommandRequest": {
         "properties": {
           "action": {
@@ -318,6 +375,76 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "MemberListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MemberResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "MemberListResponse",
+        "type": "object"
+      },
+      "MemberResponse": {
+        "properties": {
+          "agent_id": {
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "joined_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Joined At"
+          },
+          "left_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Left At"
+          },
+          "membership_id": {
+            "title": "Membership Id",
+            "type": "string"
+          },
+          "room_id": {
+            "title": "Room Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "membership_id",
+          "room_id",
+          "agent_id",
+          "status",
+          "joined_at",
+          "left_at"
+        ],
+        "title": "MemberResponse",
+        "type": "object"
+      },
       "MessageCreateRequest": {
         "properties": {
           "content": {
@@ -362,6 +489,11 @@
             },
             "title": "Items",
             "type": "array"
+          },
+          "next": {
+            "default": 0,
+            "title": "Next",
+            "type": "integer"
           }
         },
         "required": [
@@ -444,6 +576,289 @@
         "title": "MessageResponse",
         "type": "object"
       },
+      "PersonaBindingResponse": {
+        "properties": {
+          "binding_id": {
+            "title": "Binding Id",
+            "type": "string"
+          },
+          "capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Capabilities",
+            "type": "array"
+          },
+          "persona_id": {
+            "title": "Persona Id",
+            "type": "string"
+          },
+          "persona_version": {
+            "title": "Persona Version",
+            "type": "integer"
+          },
+          "role_id": {
+            "title": "Role Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "binding_id",
+          "persona_id",
+          "role_id",
+          "persona_version",
+          "capabilities"
+        ],
+        "title": "PersonaBindingResponse",
+        "type": "object"
+      },
+      "PersonaCreateRequest": {
+        "properties": {
+          "display_name": {
+            "minLength": 1,
+            "title": "Display Name",
+            "type": "string"
+          },
+          "persona_id": {
+            "minLength": 1,
+            "title": "Persona Id",
+            "type": "string"
+          },
+          "role_id": {
+            "minLength": 1,
+            "title": "Role Id",
+            "type": "string"
+          },
+          "system_prompt": {
+            "minLength": 1,
+            "title": "System Prompt",
+            "type": "string"
+          },
+          "tone": {
+            "default": "professional",
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "persona_id",
+          "role_id",
+          "display_name",
+          "system_prompt"
+        ],
+        "title": "PersonaCreateRequest",
+        "type": "object"
+      },
+      "PersonaResponse": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "persona_id": {
+            "title": "Persona Id",
+            "type": "string"
+          },
+          "role_id": {
+            "title": "Role Id",
+            "type": "string"
+          },
+          "system_prompt": {
+            "title": "System Prompt",
+            "type": "string"
+          },
+          "tone": {
+            "title": "Tone",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "persona_id",
+          "role_id",
+          "version",
+          "display_name",
+          "system_prompt",
+          "tone"
+        ],
+        "title": "PersonaResponse",
+        "type": "object"
+      },
+      "PlanCompileRequest": {
+        "properties": {
+          "architecture": {
+            "default": "direct",
+            "enum": [
+              "direct",
+              "hierarchical",
+              "graph"
+            ],
+            "title": "Architecture",
+            "type": "string"
+          },
+          "budget_units": {
+            "default": 100,
+            "minimum": 1.0,
+            "title": "Budget Units",
+            "type": "integer"
+          },
+          "goal": {
+            "minLength": 1,
+            "title": "Goal",
+            "type": "string"
+          },
+          "max_agents": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Max Agents",
+            "type": "integer"
+          },
+          "mode": {
+            "default": "auto",
+            "enum": [
+              "auto",
+              "direct",
+              "delegate"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "required_capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Required Capabilities",
+            "type": "array"
+          },
+          "requires_decomposition": {
+            "default": false,
+            "title": "Requires Decomposition",
+            "type": "boolean"
+          },
+          "task_id": {
+            "minLength": 1,
+            "title": "Task Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "task_id",
+          "goal"
+        ],
+        "title": "PlanCompileRequest",
+        "type": "object"
+      },
+      "PlanCompileResponse": {
+        "properties": {
+          "architecture": {
+            "title": "Architecture",
+            "type": "string"
+          },
+          "budget_units": {
+            "title": "Budget Units",
+            "type": "integer"
+          },
+          "members": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Members",
+            "type": "array"
+          },
+          "mode": {
+            "enum": [
+              "direct",
+              "delegate"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "plan_id": {
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "steps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "task_id": {
+            "title": "Task Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan_id",
+          "task_id",
+          "mode",
+          "architecture",
+          "members",
+          "steps",
+          "budget_units"
+        ],
+        "title": "PlanCompileResponse",
+        "type": "object"
+      },
+      "RoleListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RoleResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RoleListResponse",
+        "type": "object"
+      },
+      "RoleResponse": {
+        "properties": {
+          "capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Capabilities",
+            "type": "array"
+          },
+          "department": {
+            "title": "Department",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "responsibilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Responsibilities",
+            "type": "array"
+          },
+          "role_id": {
+            "title": "Role Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role_id",
+          "name",
+          "department",
+          "responsibilities",
+          "capabilities"
+        ],
+        "title": "RoleResponse",
+        "type": "object"
+      },
       "RoomCreateRequest": {
         "properties": {
           "room_id": {
@@ -472,6 +887,22 @@
           "space_id"
         ],
         "title": "RoomCreateRequest",
+        "type": "object"
+      },
+      "RoomListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RoomResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RoomListResponse",
         "type": "object"
       },
       "RoomResponse": {
@@ -787,6 +1218,63 @@
         "summary": "Get Asset"
       }
     },
+    "/assistant/messages": {
+      "post": {
+        "description": "Persist the first assistant message and room in one repository boundary.",
+        "operationId": "assistant_message_assistant_messages_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssistantMessageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantMessageResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Assistant Message"
+      }
+    },
     "/commands/{command_id}": {
       "post": {
         "operationId": "execute_command_commands__command_id__post",
@@ -854,7 +1342,224 @@
         "summary": "Health"
       }
     },
+    "/persona-bindings": {
+      "post": {
+        "operationId": "bind_persona_persona_bindings_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "persona_id",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "title": "Persona Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonaBindingResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Bind Persona"
+      }
+    },
+    "/persona-profiles": {
+      "post": {
+        "operationId": "save_persona_persona_profiles_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonaCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonaResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save Persona"
+      }
+    },
+    "/persona-profiles/{persona_id}": {
+      "get": {
+        "operationId": "get_persona_persona_profiles__persona_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "persona_id",
+            "required": true,
+            "schema": {
+              "title": "Persona Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonaResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Persona"
+      }
+    },
+    "/plans/compile": {
+      "post": {
+        "operationId": "compile_plan_plans_compile_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanCompileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanCompileResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Compile Plan"
+      }
+    },
+    "/roles": {
+      "get": {
+        "operationId": "list_roles_roles_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Roles"
+      }
+    },
     "/rooms": {
+      "get": {
+        "operationId": "list_rooms_rooms_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "space_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Space Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Rooms"
+      },
       "post": {
         "operationId": "create_room_rooms_post",
         "parameters": [
@@ -1059,6 +1764,93 @@
         "summary": "Stream Events"
       }
     },
+    "/rooms/{room_id}/events/{event_id}": {
+      "get": {
+        "operationId": "get_event_rooms__room_id__events__event_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "title": "Room Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "title": "Event Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Event"
+      }
+    },
+    "/rooms/{room_id}/members": {
+      "get": {
+        "operationId": "list_members_rooms__room_id__members_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "title": "Room Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Members"
+      }
+    },
     "/rooms/{room_id}/messages": {
       "get": {
         "operationId": "list_messages_rooms__room_id__messages_get",
@@ -1070,6 +1862,29 @@
             "schema": {
               "title": "Room Id",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "after",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "After",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 1000,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
             }
           }
         ],

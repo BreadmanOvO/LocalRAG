@@ -1,0 +1,8 @@
+{
+  "day": "D15",
+  "status": "accepted",
+  "scope": ["company role catalog", "versioned persona profiles", "immutable binding snapshot", "capability boundary"],
+  "commands": ["D:\\Programs\\Anaconda\\python.exe -m pytest -q test/test_day15_personas.py", "cd frontend && npm run build"],
+  "results": {"pytest": "3 passed", "frontend_build": "pass"},
+  "boundaries": ["registry is in-memory", "bindings snapshot role capabilities and persona version", "authorization enforcement and persistent company settings remain future work"]
+}

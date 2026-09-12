@@ -1,0 +1,8 @@
+{
+  "day": "D14",
+  "status": "accepted",
+  "scope": ["cursor-based message pagination", "SSE after-cursor replay", "frontend reconnect hook", "offline outbox"],
+  "commands": ["D:\\Programs\\Anaconda\\python.exe -m pytest -q test/test_day14_event_recovery.py", "cd frontend && npm run build"],
+  "results": {"pytest": "2 passed", "frontend_build": "pass"},
+  "boundaries": ["outbox is browser localStorage", "SSE endpoint is an in-memory streaming adapter", "cross-process durable delivery remains a P1/P4 gate"]
+}

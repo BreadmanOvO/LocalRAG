@@ -14,6 +14,13 @@ class RoomCreateRequest(BaseModel):
     room_id: str | None = None
 
 
+class AssistantMessageRequest(BaseModel):
+    space_id: str = Field(min_length=1)
+    content: str = Field(min_length=1)
+    title: str = ""
+    room_id: str | None = None
+
+
 class MessageCreateRequest(BaseModel):
     content: str = Field(min_length=1)
     role: Literal["user", "assistant", "system", "tool"] = "user"
@@ -68,6 +75,80 @@ class RoomResponse(BaseModel):
     row_version: int
 
 
+class RoomListResponse(BaseModel):
+    items: list[RoomResponse]
+
+
+class MemberResponse(BaseModel):
+    membership_id: str
+    room_id: str
+    agent_id: str
+    status: str
+    joined_at: datetime | None
+    left_at: datetime | None
+
+
+class MemberListResponse(BaseModel):
+    items: list[MemberResponse]
+
+class RoleResponse(BaseModel):
+    role_id: str
+    name: str
+    department: str
+    responsibilities: list[str]
+    capabilities: list[str]
+
+class RoleListResponse(BaseModel):
+    items: list[RoleResponse]
+
+class PersonaCreateRequest(BaseModel):
+    persona_id: str = Field(min_length=1)
+    role_id: str = Field(min_length=1)
+    display_name: str = Field(min_length=1)
+    system_prompt: str = Field(min_length=1)
+    tone: str = "professional"
+
+class PersonaResponse(BaseModel):
+    persona_id: str
+    role_id: str
+    version: int
+    display_name: str
+    system_prompt: str
+    tone: str
+
+class PersonaBindingResponse(BaseModel):
+    binding_id: str
+    persona_id: str
+    role_id: str
+    persona_version: int
+    capabilities: list[str]
+
+class PlanCompileRequest(BaseModel):
+    task_id: str = Field(min_length=1)
+    goal: str = Field(min_length=1)
+    mode: Literal["auto", "direct", "delegate"] = "auto"
+    architecture: Literal["direct", "hierarchical", "graph"] = "direct"
+    requires_decomposition: bool = False
+    required_capabilities: list[str] = Field(default_factory=list)
+    max_agents: int = Field(default=1, ge=1)
+    budget_units: int = Field(default=100, ge=1)
+
+class PlanCompileResponse(BaseModel):
+    plan_id: str
+    task_id: str
+    mode: Literal["direct", "delegate"]
+    architecture: str
+    members: list[str]
+    steps: list[str]
+    budget_units: int
+
+
+class AssistantMessageResponse(BaseModel):
+    room: RoomResponse
+    message: "MessageResponse"
+    created: bool
+
+
 class MessageResponse(BaseModel):
     message_id: str
     room_id: str
@@ -82,6 +163,7 @@ class MessageResponse(BaseModel):
 
 class MessageListResponse(BaseModel):
     items: list[MessageResponse]
+    next: int = 0
 
 
 class EventIdentityResponse(BaseModel):
@@ -140,3 +222,6 @@ class CommandResponse(BaseModel):
     command_id: str
     status: Literal["accepted"]
     run: RunResponse
+
+
+AssistantMessageResponse.model_rebuild()

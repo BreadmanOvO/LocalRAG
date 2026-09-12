@@ -1,0 +1,1 @@
+{"day":"D26","status":"accepted","scope":["MCP tool registry","schema declaration","space scope validation"],"commands":["D:\\Programs\\Anaconda\\python.exe -m pytest -q test/test_day26_mcp_registry.py","cd frontend && npm run build"],"results":{"pytest":"1 passed","frontend_build":"pass"},"boundaries":["stdio registry only","no network MCP","no second execution engine"]}

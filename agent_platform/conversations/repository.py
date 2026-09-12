@@ -101,6 +101,41 @@ class ConversationRepository:
             self._rooms[identifier] = room
             return room
 
+    def create_room_with_message(
+        self,
+        space_id: str,
+        title: str,
+        content: str,
+        *,
+        room_id: str | None = None,
+        idempotency_key: str | None = None,
+    ) -> tuple[Room, Message]:
+        """Atomically create a room and persist its first user message.
+
+        The method is intentionally small and in-memory.  A SQL adapter must
+        preserve the same all-or-nothing boundary in one transaction.
+        """
+        with self._lock:
+            room = self.create_room(space_id, title, room_id=room_id)
+            try:
+                message = self.save_message(
+                    room.room_id,
+                    content,
+                    role="user",
+                    idempotency_key=idempotency_key,
+                )
+            except Exception:
+                self._rooms.pop(room.room_id, None)
+                raise
+            return self._rooms[room.room_id], message
+
+    def list_rooms(self, space_id: str | None = None) -> tuple[Room, ...]:
+        """Return rooms in stable id order, optionally scoped to one space."""
+        normalized = validate_identifier(space_id, "space") if space_id else None
+        with self._lock:
+            rooms = (room for room in self._rooms.values() if normalized is None or room.space_id == normalized)
+            return tuple(sorted(rooms, key=lambda room: room.room_id))
+
     def get_room(self, room_id: str) -> Room:
         room_id = validate_identifier(room_id, "room")
         with self._lock:
@@ -193,11 +228,16 @@ class ConversationRepository:
             self._messages[message_id] = updated
             return updated
 
-    def list_messages(self, room_id: str) -> tuple[Message, ...]:
+    def list_messages(self, room_id: str, *, after: int = 0, limit: int | None = None) -> tuple[Message, ...]:
         room_id = validate_identifier(room_id, "room")
+        if after < 0:
+            raise ValueError("after must be non-negative")
+        if limit is not None and limit < 1:
+            raise ValueError("limit must be positive")
         with self._lock:
             self.get_room(room_id)
-            return tuple(sorted((m for m in self._messages.values() if m.room_id == room_id), key=lambda m: m.room_sequence))
+            messages = sorted((m for m in self._messages.values() if m.room_id == room_id and m.room_sequence > after), key=lambda m: m.room_sequence)
+            return tuple(messages[:limit] if limit is not None else messages)
 
     def join_member(self, room_id: str, agent_id: str) -> Membership:
         room_id = validate_identifier(room_id, "room")

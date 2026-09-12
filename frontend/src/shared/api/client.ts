@@ -1,5 +1,12 @@
 import createClient from "openapi-fetch";
-import type { paths } from "./schema";
+import type { components, paths } from "./schema";
+
+export type Room = components["schemas"]["RoomResponse"];
+export type Message = components["schemas"]["MessageResponse"];
+export type Event = components["schemas"]["EventResponse"];
+export type Member = components["schemas"]["MemberResponse"];
+export type Role = components["schemas"]["RoleResponse"];
+export type Persona = components["schemas"]["PersonaResponse"];
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
 const client = createClient<paths>({ baseUrl: API_BASE });
@@ -18,12 +25,35 @@ export const api = {
     const { data, error } = await client.GET("/health");
     return unwrap(data, error);
   },
+  roles: async () => {
+    const { data, error } = await client.GET("/roles");
+    return unwrap(data, error);
+  },
+  persona: async (personaId: string) => {
+    const { data, error } = await client.GET("/persona-profiles/{persona_id}", { params: { path: { persona_id: personaId } } });
+    return unwrap(data, error);
+  },
   room: async (roomId: string) => {
     const { data, error } = await client.GET("/rooms/{room_id}", { params: { path: { room_id: roomId } } });
     return unwrap(data, error);
   },
-  messages: async (roomId: string) => {
-    const { data, error } = await client.GET("/rooms/{room_id}/messages", { params: { path: { room_id: roomId } } });
+  rooms: async (spaceId?: string) => {
+    const { data, error } = await client.GET("/rooms", { params: { query: spaceId ? { space_id: spaceId } : {} } });
+    return unwrap(data, error);
+  },
+  messages: async (roomId: string, after = 0, limit = 100) => {
+    const { data, error } = await client.GET("/rooms/{room_id}/messages", { params: { path: { room_id: roomId }, query: { after, limit } } });
+    return unwrap(data, error);
+  },
+  members: async (roomId: string) => {
+    const { data, error } = await client.GET("/rooms/{room_id}/members", { params: { path: { room_id: roomId } } });
+    return unwrap(data, error);
+  },
+  createMessage: async (roomId: string, content: string) => {
+    const { data, error } = await client.POST("/rooms/{room_id}/messages", {
+      params: { path: { room_id: roomId }, header: { "Idempotency-Key": `message-${crypto.randomUUID()}` } },
+      body: { content, role: "user" },
+    });
     return unwrap(data, error);
   },
   events: async (roomId: string, after = 0) => {
@@ -34,6 +64,13 @@ export const api = {
     const { data, error } = await client.POST("/rooms", {
       params: { header: { "Idempotency-Key": `workspace-${crypto.randomUUID()}` } },
       body: { space_id: spaceId, title },
+    });
+    return unwrap(data, error);
+  },
+  assistantMessage: async (spaceId: string, content: string, title?: string) => {
+    const { data, error } = await client.POST("/assistant/messages", {
+      params: { header: { "Idempotency-Key": `assistant-${crypto.randomUUID()}` } },
+      body: { space_id: spaceId, content, title: title ?? "" },
     });
     return unwrap(data, error);
   },

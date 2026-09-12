@@ -6,10 +6,11 @@ import { api } from "../shared/api/client";
 export function WorkspacePage() {
   const navigate = useNavigate();
   const [spaceId, setSpaceId] = useState("space-demo");
-  const [title, setTitle] = useState("新的研究任务");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const health = useQuery({ queryKey: ["health"], queryFn: api.health });
-  const create = useMutation({ mutationFn: () => api.createRoom(spaceId, title), onSuccess: (room) => navigate(`/rooms/${room.room_id}`) });
-  const submit = (event: FormEvent) => { event.preventDefault(); create.mutate(); };
+  const create = useMutation({ mutationFn: () => api.assistantMessage(spaceId, content, title), onSuccess: (result) => navigate(`/rooms/${result.room.room_id}`) });
+  const submit = (event: FormEvent) => { event.preventDefault(); if (content.trim()) create.mutate(); };
 
   return (
     <section className="page workspace-page">
@@ -22,8 +23,9 @@ export function WorkspacePage() {
           <div className="panel-heading"><div><p className="eyebrow">新建房间</p><h2>从一个目标开始</h2></div><span className="panel-icon">✦</span></div>
           <form onSubmit={submit} className="room-form">
             <label>空间标识<input value={spaceId} onChange={(e) => setSpaceId(e.target.value)} required /></label>
-            <label>任务标题<input value={title} onChange={(e) => setTitle(e.target.value)} required /></label>
-            <button className="primary-button" disabled={create.isPending}>{create.isPending ? "正在创建…" : "进入工作房间 →"}</button>
+            <label>任务标题（可选）<input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="不填则从目标自动生成" /></label>
+            <label>告诉总助理你的目标<textarea className="composer-textarea" value={content} onChange={(e) => setContent(e.target.value)} placeholder="例如：比较两篇方案并指出证据缺口" required rows={5} /></label>
+            <button className="primary-button" disabled={create.isPending || !content.trim()}>{create.isPending ? "正在保存…" : "开始任务 →"}</button>
             {create.isError && <p className="error-text">{create.error.message}</p>}
           </form>
         </article>

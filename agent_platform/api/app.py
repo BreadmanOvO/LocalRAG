@@ -21,11 +21,14 @@ from agent_platform.contracts.identity import RoomEventCursor, new_identifier, v
 from agent_platform.conversations.repository import ConflictError, ConversationRepository, NotFoundError, RepositoryError
 from agent_platform.runtime.control import ControlConflictError, ControlError, RunController, RunNotClaimableError
 from agent_platform.runtime.event_store import EventConflictError, EventStore
+from agent_platform.personas import PersonaProfile, default_registry
+from agent_platform.routing import ArchitectureSpec, PlanCompiler, TaskProfile
 
 from .schemas import (
-    CommandRequest, CommandResponse, ErrorEnvelope, EventListResponse,
+    AssistantMessageRequest, AssistantMessageResponse, CommandRequest, CommandResponse, ErrorEnvelope, EventListResponse, EventResponse,
     FollowupRequest, FollowupResponse, HealthResponse, MessageCreateRequest,
-    MessageListResponse, MessageResponse, RoomCreateRequest, RoomResponse,
+    MemberListResponse, MessageListResponse, MessageResponse, RoomCreateRequest, RoomListResponse, RoomResponse,
+    PersonaCreateRequest, PersonaResponse, PersonaBindingResponse, RoleListResponse, PlanCompileRequest, PlanCompileResponse,
     RunCreateRequest, RunResponse, TaskCreateRequest, TaskResponse,
 )
 
@@ -65,11 +68,14 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
     events = events or EventStore()
     runs = runs or RunController()
     tasks: dict[str, _Task] = {}
+    personas = default_registry()
+    planner = PlanCompiler()
     room_keys: dict[str, tuple[str, str]] = {}
+    assistant_keys: dict[str, tuple[str, str, str]] = {}
     commands: dict[str, dict[str, Any]] = {}
 
     app = FastAPI(title="LocalRAG Agent Platform API", version="1.8.0")
-    app.state.repository, app.state.events, app.state.runs, app.state.tasks = repository, events, runs, tasks
+    app.state.repository, app.state.events, app.state.runs, app.state.tasks, app.state.personas, app.state.planner = repository, events, runs, tasks, personas, planner
 
     @app.exception_handler(ApiDomainError)
     async def _handle_domain(request: Request, exc: ApiDomainError) -> JSONResponse:
@@ -95,6 +101,45 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
     async def health() -> dict[str, str]:
         return {"status": "ok", "contract": "v1.8-inmemory"}
 
+    @app.get("/roles", response_model=RoleListResponse)
+    async def list_roles() -> Any:
+        return {"items": [_dump(item) for item in personas.list_roles()]}
+
+    @app.get("/persona-profiles/{persona_id}", response_model=PersonaResponse)
+    async def get_persona(persona_id: str) -> Any:
+        try:
+            return _dump(personas.latest(persona_id))
+        except KeyError as exc:
+            raise ApiDomainError("not_found", "persona not found", status=404) from exc
+
+    @app.post("/persona-profiles", status_code=201, response_model=PersonaResponse)
+    async def save_persona(body: PersonaCreateRequest) -> Any:
+        try:
+            profile = personas.latest(body.persona_id)
+            version = profile.version + 1
+        except KeyError:
+            version = 1
+        try:
+            saved = personas.save_profile(PersonaProfile(body.persona_id, body.role_id, version, body.display_name, body.system_prompt, body.tone))
+        except ValueError as exc:
+            raise ApiDomainError("invalid_request", str(exc), status=400) from exc
+        return _dump(saved)
+
+    @app.post("/persona-bindings", status_code=201, response_model=PersonaBindingResponse)
+    async def bind_persona(persona_id: str = Query(..., min_length=1)) -> Any:
+        try:
+            return _dump(personas.bind(persona_id))
+        except KeyError as exc:
+            raise ApiDomainError("not_found", "persona not found", status=404) from exc
+
+    @app.post("/plans/compile", response_model=PlanCompileResponse)
+    async def compile_plan(body: PlanCompileRequest) -> Any:
+        try:
+            plan = planner.compile(TaskProfile(body.task_id, body.goal, body.requires_decomposition, tuple(body.required_capabilities), body.budget_units), ArchitectureSpec(body.architecture, body.max_agents, body.architecture == "graph"), mode=body.mode, available_capabilities={"rag", "analysis", "review", "chat", "route"})
+        except ValueError as exc:
+            raise ApiDomainError("plan_rejected", str(exc), status=422) from exc
+        return _dump(plan)
+
     @app.post("/rooms", status_code=201, response_model=RoomResponse)
     async def create_room(body: RoomCreateRequest, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> Any:
         if idempotency_key and idempotency_key in room_keys:
@@ -107,6 +152,33 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
             room_keys[idempotency_key] = (body.space_id, room.room_id)
         return _dump(room)
 
+    @app.get("/rooms", response_model=RoomListResponse)
+    async def list_rooms(space_id: str | None = None) -> Any:
+        return {"items": [_dump(room) for room in repository.list_rooms(space_id)]}
+
+    @app.post("/assistant/messages", status_code=201, response_model=AssistantMessageResponse)
+    async def assistant_message(
+        body: AssistantMessageRequest,
+        idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
+    ) -> Any:
+        """Persist the first assistant message and room in one repository boundary."""
+        if idempotency_key and idempotency_key in assistant_keys:
+            old_space, room_id, old_content = assistant_keys[idempotency_key]
+            if old_space != body.space_id or old_content != body.content.strip():
+                raise ApiDomainError("idempotency_conflict", "idempotency key payload differs", status=409)
+            room = repository.get_room(room_id)
+            messages = repository.list_messages(room_id)
+            return {"room": _dump(room), "message": _dump(messages[0]), "created": False}
+        if body.room_id:
+            room = repository.get_room(body.room_id)
+            message = repository.save_message(room.room_id, body.content, role="user", idempotency_key=idempotency_key)
+            return {"room": _dump(room), "message": _dump(message), "created": False}
+        title = body.title.strip() or body.content.strip().splitlines()[0][:80]
+        room, message = repository.create_room_with_message(body.space_id, title, body.content, idempotency_key=idempotency_key)
+        if idempotency_key:
+            assistant_keys[idempotency_key] = (body.space_id, room.room_id, body.content.strip())
+        return {"room": _dump(room), "message": _dump(message), "created": True}
+
     @app.get("/rooms/{room_id}", response_model=RoomResponse)
     async def get_room(room_id: str) -> Any:
         return _dump(repository.get_room(room_id))
@@ -116,8 +188,15 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
         return _dump(repository.save_message(room_id, body.content, role=body.role, message_id=body.message_id, idempotency_key=idempotency_key))
 
     @app.get("/rooms/{room_id}/messages", response_model=MessageListResponse)
-    async def list_messages(room_id: str) -> Any:
-        return {"items": [_dump(item) for item in repository.list_messages(room_id)]}
+    async def list_messages(room_id: str, after: int = Query(default=0, ge=0), limit: int = Query(default=100, ge=1, le=1000)) -> Any:
+        items = repository.list_messages(room_id, after=after, limit=limit)
+        next_cursor = items[-1].room_sequence if items else after
+        return {"items": [_dump(item) for item in items], "next": next_cursor}
+
+    @app.get("/rooms/{room_id}/members", response_model=MemberListResponse)
+    async def list_members(room_id: str) -> Any:
+        return {"items": [_dump(item) for item in repository.list_members(room_id)]}
+
 
     @app.get("/rooms/{room_id}/events", response_model=EventListResponse)
     async def list_events(room_id: str, after: int = Query(default=0, ge=0), limit: int = Query(default=100, ge=1, le=1000)) -> Any:
@@ -129,6 +208,14 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
         snapshot = events.read_after(RoomEventCursor(validate_identifier(room_id, "room"), after))
         body = "".join(f"data: {json.dumps(_dump(item), ensure_ascii=False, separators=(',', ':'))}\n\n" for item in snapshot)
         return StreamingResponse(iter([body]), media_type="text/event-stream")
+
+    @app.get("/rooms/{room_id}/events/{event_id}", response_model=EventResponse)
+    async def get_event(room_id: str, event_id: str) -> Any:
+        validate_identifier(room_id, "room")
+        for item in events.read_after(RoomEventCursor(validate_identifier(room_id, "room"), 0), limit=1000):
+            if item.identity.event_id == event_id:
+                return _dump(item)
+        raise ApiDomainError("not_found", "event not found", status=404)
 
     @app.post("/tasks", status_code=201, response_model=TaskResponse)
     async def create_task(body: TaskCreateRequest) -> Any:

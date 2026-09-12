@@ -38,6 +38,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/assistant/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Assistant Message
+         * @description Persist the first assistant message and room in one repository boundary.
+         */
+        post: operations["assistant_message_assistant_messages_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/commands/{command_id}": {
         parameters: {
             query?: never;
@@ -72,7 +92,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/rooms": {
+    "/persona-bindings": {
         parameters: {
             query?: never;
             header?: never;
@@ -80,6 +100,92 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
+        put?: never;
+        /** Bind Persona */
+        post: operations["bind_persona_persona_bindings_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/persona-profiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Save Persona */
+        post: operations["save_persona_persona_profiles_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/persona-profiles/{persona_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Persona */
+        get: operations["get_persona_persona_profiles__persona_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/plans/compile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Compile Plan */
+        post: operations["compile_plan_plans_compile_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/roles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Roles */
+        get: operations["list_roles_roles_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rooms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Rooms */
+        get: operations["list_rooms_rooms_get"];
         put?: never;
         /** Create Room */
         post: operations["create_room_rooms_post"];
@@ -132,6 +238,40 @@ export interface paths {
         };
         /** Stream Events */
         get: operations["stream_events_rooms__room_id__events_stream_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rooms/{room_id}/events/{event_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Event */
+        get: operations["get_event_rooms__room_id__events__event_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rooms/{room_id}/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Members */
+        get: operations["list_members_rooms__room_id__members_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -264,6 +404,27 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AssistantMessageRequest */
+        AssistantMessageRequest: {
+            /** Content */
+            content: string;
+            /** Room Id */
+            room_id?: string | null;
+            /** Space Id */
+            space_id: string;
+            /**
+             * Title
+             * @default
+             */
+            title: string;
+        };
+        /** AssistantMessageResponse */
+        AssistantMessageResponse: {
+            /** Created */
+            created: boolean;
+            message: components["schemas"]["MessageResponse"];
+            room: components["schemas"]["RoomResponse"];
+        };
         /** CommandRequest */
         CommandRequest: {
             /**
@@ -370,6 +531,26 @@ export interface components {
             /** Status */
             status: string;
         };
+        /** MemberListResponse */
+        MemberListResponse: {
+            /** Items */
+            items: components["schemas"]["MemberResponse"][];
+        };
+        /** MemberResponse */
+        MemberResponse: {
+            /** Agent Id */
+            agent_id: string;
+            /** Joined At */
+            joined_at: string | null;
+            /** Left At */
+            left_at: string | null;
+            /** Membership Id */
+            membership_id: string;
+            /** Room Id */
+            room_id: string;
+            /** Status */
+            status: string;
+        };
         /** MessageCreateRequest */
         MessageCreateRequest: {
             /** Content */
@@ -387,6 +568,11 @@ export interface components {
         MessageListResponse: {
             /** Items */
             items: components["schemas"]["MessageResponse"][];
+            /**
+             * Next
+             * @default 0
+             */
+            next: number;
         };
         /** MessageResponse */
         MessageResponse: {
@@ -412,6 +598,124 @@ export interface components {
             /** Status */
             status: string;
         };
+        /** PersonaBindingResponse */
+        PersonaBindingResponse: {
+            /** Binding Id */
+            binding_id: string;
+            /** Capabilities */
+            capabilities: string[];
+            /** Persona Id */
+            persona_id: string;
+            /** Persona Version */
+            persona_version: number;
+            /** Role Id */
+            role_id: string;
+        };
+        /** PersonaCreateRequest */
+        PersonaCreateRequest: {
+            /** Display Name */
+            display_name: string;
+            /** Persona Id */
+            persona_id: string;
+            /** Role Id */
+            role_id: string;
+            /** System Prompt */
+            system_prompt: string;
+            /**
+             * Tone
+             * @default professional
+             */
+            tone: string;
+        };
+        /** PersonaResponse */
+        PersonaResponse: {
+            /** Display Name */
+            display_name: string;
+            /** Persona Id */
+            persona_id: string;
+            /** Role Id */
+            role_id: string;
+            /** System Prompt */
+            system_prompt: string;
+            /** Tone */
+            tone: string;
+            /** Version */
+            version: number;
+        };
+        /** PlanCompileRequest */
+        PlanCompileRequest: {
+            /**
+             * Architecture
+             * @default direct
+             * @enum {string}
+             */
+            architecture: "direct" | "hierarchical" | "graph";
+            /**
+             * Budget Units
+             * @default 100
+             */
+            budget_units: number;
+            /** Goal */
+            goal: string;
+            /**
+             * Max Agents
+             * @default 1
+             */
+            max_agents: number;
+            /**
+             * Mode
+             * @default auto
+             * @enum {string}
+             */
+            mode: "auto" | "direct" | "delegate";
+            /** Required Capabilities */
+            required_capabilities?: string[];
+            /**
+             * Requires Decomposition
+             * @default false
+             */
+            requires_decomposition: boolean;
+            /** Task Id */
+            task_id: string;
+        };
+        /** PlanCompileResponse */
+        PlanCompileResponse: {
+            /** Architecture */
+            architecture: string;
+            /** Budget Units */
+            budget_units: number;
+            /** Members */
+            members: string[];
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "direct" | "delegate";
+            /** Plan Id */
+            plan_id: string;
+            /** Steps */
+            steps: string[];
+            /** Task Id */
+            task_id: string;
+        };
+        /** RoleListResponse */
+        RoleListResponse: {
+            /** Items */
+            items: components["schemas"]["RoleResponse"][];
+        };
+        /** RoleResponse */
+        RoleResponse: {
+            /** Capabilities */
+            capabilities: string[];
+            /** Department */
+            department: string;
+            /** Name */
+            name: string;
+            /** Responsibilities */
+            responsibilities: string[];
+            /** Role Id */
+            role_id: string;
+        };
         /** RoomCreateRequest */
         RoomCreateRequest: {
             /** Room Id */
@@ -423,6 +727,11 @@ export interface components {
              * @default
              */
             title: string;
+        };
+        /** RoomListResponse */
+        RoomListResponse: {
+            /** Items */
+            items: components["schemas"]["RoomResponse"][];
         };
         /** RoomResponse */
         RoomResponse: {
@@ -577,6 +886,41 @@ export interface operations {
             };
         };
     };
+    assistant_message_assistant_messages_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssistantMessageRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssistantMessageResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     execute_command_commands__command_id__post: {
         parameters: {
             query?: never;
@@ -628,6 +972,185 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    bind_persona_persona_bindings_post: {
+        parameters: {
+            query: {
+                persona_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonaBindingResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    save_persona_persona_profiles_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PersonaCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonaResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_persona_persona_profiles__persona_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                persona_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonaResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    compile_plan_plans_compile_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanCompileRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanCompileResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_roles_roles_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoleListResponse"];
+                };
+            };
+        };
+    };
+    list_rooms_rooms_get: {
+        parameters: {
+            query?: {
+                space_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -765,9 +1288,75 @@ export interface operations {
             };
         };
     };
-    list_messages_rooms__room_id__messages_get: {
+    get_event_rooms__room_id__events__event_id__get: {
         parameters: {
             query?: never;
+            header?: never;
+            path: {
+                room_id: string;
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_members_rooms__room_id__members_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                room_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemberListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_messages_rooms__room_id__messages_get: {
+        parameters: {
+            query?: {
+                after?: number;
+                limit?: number;
+            };
             header?: never;
             path: {
                 room_id: string;
