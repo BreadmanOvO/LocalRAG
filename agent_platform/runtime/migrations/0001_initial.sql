@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS messages (
     turn_id TEXT NOT NULL,
     role TEXT NOT NULL CHECK (role IN ('user', 'assistant', 'system', 'tool')),
     content TEXT NOT NULL,
-    status TEXT NOT NULL CHECK (status IN ('saved', 'queued', 'applied', 'rejected')),
+    status TEXT NOT NULL CHECK (status IN ('saved', 'queued', 'applied', 'rejected', 'tombstoned')),
     content_sha256 TEXT NOT NULL,
     room_sequence BIGINT NOT NULL CHECK (room_sequence > 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

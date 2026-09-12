@@ -1,0 +1,15 @@
+{
+  "day": "D06",
+  "status": "accepted",
+  "component": "agent_platform.conversations.repository",
+  "scope": [
+    "atomic room sequence allocation",
+    "message idempotency",
+    "room lifecycle",
+    "membership join and leave",
+    "message tombstone"
+  ],
+  "persistence": "in-memory contract probe; PostgreSQL adapter remains planned",
+  "test_command": "pytest -q test/test_day6_conversation_repository.py",
+  "result": "4 passed"
+}
