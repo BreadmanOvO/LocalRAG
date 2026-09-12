@@ -1,6 +1,7 @@
 {
   "day": "D03",
-  "status": "contract_draft",
+  "status": "accepted",
+  "acceptance_scope": "身份与版本合同测试通过；不代表数据库迁移或旧数据导入已完成",
   "schema_module": "agent_platform.contracts.identity",
   "identifiers": [
     "space_id",

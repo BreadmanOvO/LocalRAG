@@ -1,6 +1,7 @@
 {
   "day": "D02",
-  "status": "observed",
+  "status": "accepted",
+  "acceptance_scope": "确定性历史故障分类探针通过；不代表历史问题已修复",
   "generated_by": "eval.day2_failure_probes.run_d02_probes",
   "scope": "历史问题的确定性边界复现，不代表修复完成",
   "probes": [

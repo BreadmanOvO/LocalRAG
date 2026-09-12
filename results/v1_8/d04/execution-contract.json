@@ -1,6 +1,7 @@
 {
   "day": "D04",
-  "status": "contract_draft",
+  "status": "accepted",
+  "acceptance_scope": "执行合同与失败关闭校验通过；不代表 Runtime 执行器已实现",
   "schema_module": "agent_platform.contracts.execution",
   "contracts": [
     "ToolManifest",
