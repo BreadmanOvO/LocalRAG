@@ -1,0 +1,20 @@
+{
+  "day": "D10",
+  "status": "accepted",
+  "component": "agent_platform.runtime.recovery",
+  "scope": [
+    "checkpoint version pinning and read-only resume",
+    "run archive and read-only history boundary",
+    "checksummed backup and restore",
+    "deletion tombstone precedence",
+    "persona binding snapshots"
+  ],
+  "persistence": "in-memory contract probe; PostgreSQL recovery, backup storage, and process restart remain planned",
+  "test_command": "pytest -q test/test_day10_recovery.py",
+  "result": "3 passed",
+  "known_limits": [
+    "does not prove cross-process checkpoint locking",
+    "does not execute a real backup or restore against PostgreSQL/object storage",
+    "does not restore model/provider process state"
+  ]
+}

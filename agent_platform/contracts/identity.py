@@ -25,6 +25,11 @@ IdentifierKind = Literal[
     "attempt",
     "operation",
     "event",
+    "checkpoint",
+    "backup",
+    "archive",
+    "binding",
+    "deletion",
 ]
 
 IDENTIFIER_KINDS: tuple[IdentifierKind, ...] = (
@@ -39,6 +44,11 @@ IDENTIFIER_KINDS: tuple[IdentifierKind, ...] = (
     "attempt",
     "operation",
     "event",
+    "checkpoint",
+    "backup",
+    "archive",
+    "binding",
+    "deletion",
 )
 
 _IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")

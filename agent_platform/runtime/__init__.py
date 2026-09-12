@@ -25,6 +25,21 @@ from .budget import (
     OperationStore,
     Reservation,
 )
+from .recovery import (
+    ArchivedRunError,
+    ArchiveRecord,
+    BackupBundle,
+    BackupIntegrityError,
+    Checkpoint,
+    CheckpointConflictError,
+    DeletionConflictError,
+    DeletionTombstone,
+    PersonaSnapshot,
+    PersonaSnapshotConflictError,
+    RecoveryError,
+    RecoveryService,
+    RestoreReport,
+)
 
 __all__ = [
     "EventConflictError",
@@ -50,6 +65,19 @@ __all__ = [
     "OperationRecord",
     "OperationStore",
     "Reservation",
+    "ArchivedRunError",
+    "ArchiveRecord",
+    "BackupBundle",
+    "BackupIntegrityError",
+    "Checkpoint",
+    "CheckpointConflictError",
+    "DeletionConflictError",
+    "DeletionTombstone",
+    "PersonaSnapshot",
+    "PersonaSnapshotConflictError",
+    "RecoveryError",
+    "RecoveryService",
+    "RestoreReport",
     "build_inventory",
     "inventory_sqlite",
 ]
