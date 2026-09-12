@@ -1,4 +1,4 @@
--- v1.8 D05 PostgreSQL baseline.
+-- v1.8 D05-D09 PostgreSQL baseline.
 -- IDs remain text so legacy mappings and prefixed Runtime IDs can coexist.
 -- This migration creates storage only; it does not import or execute old data.
 
@@ -164,6 +164,50 @@ CREATE TABLE IF NOT EXISTS run_events (
     produces JSONB NOT NULL DEFAULT '[]'::jsonb,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE (room_id, room_sequence)
+);
+
+CREATE TABLE IF NOT EXISTS budget_accounts (
+    scope_id TEXT PRIMARY KEY,
+    budget_limit NUMERIC(20, 6) NOT NULL CHECK (budget_limit >= 0),
+    reserved NUMERIC(20, 6) NOT NULL DEFAULT 0 CHECK (reserved >= 0),
+    consumed NUMERIC(20, 6) NOT NULL DEFAULT 0 CHECK (consumed >= 0),
+    row_version BIGINT NOT NULL DEFAULT 1 CHECK (row_version > 0)
+);
+
+CREATE TABLE IF NOT EXISTS budget_reservations (
+    reservation_id TEXT PRIMARY KEY,
+    scope_id TEXT NOT NULL REFERENCES budget_accounts(scope_id),
+    operation_id TEXT NOT NULL,
+    amount NUMERIC(20, 6) NOT NULL CHECK (amount >= 0),
+    request_hash TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('reserved', 'consumed', 'released', 'unknown')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (operation_id)
+);
+
+CREATE TABLE IF NOT EXISTS budget_consumption (
+    consumption_id TEXT PRIMARY KEY,
+    reservation_id TEXT NOT NULL REFERENCES budget_reservations(reservation_id),
+    operation_id TEXT NOT NULL,
+    amount NUMERIC(20, 6) NOT NULL CHECK (amount >= 0),
+    provider_call_id TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS tool_operations (
+    operation_id TEXT PRIMARY KEY,
+    request_hash TEXT NOT NULL,
+    effect_kind TEXT NOT NULL,
+    idempotency_support BOOLEAN NOT NULL,
+    reconcile_support BOOLEAN NOT NULL,
+    reservation_id TEXT NOT NULL REFERENCES budget_reservations(reservation_id),
+    attempt_count INTEGER NOT NULL DEFAULT 1 CHECK (attempt_count > 0),
+    status TEXT NOT NULL CHECK (status IN ('pending', 'completed', 'failed', 'unknown', 'reconciled')),
+    effect_state TEXT NOT NULL CHECK (effect_state IN ('none', 'not_applied', 'applied', 'unknown')),
+    result_json JSONB,
+    row_version BIGINT NOT NULL DEFAULT 1 CHECK (row_version > 0),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS persona_snapshots (

@@ -1,0 +1,15 @@
+{
+  "day": "D09",
+  "status": "accepted",
+  "component": "agent_platform.runtime.budget",
+  "scope": [
+    "budget reservation",
+    "provider-call consumption de-duplication",
+    "operation_id request-hash idempotency",
+    "unknown side-effect hold",
+    "manual reconciliation before retry"
+  ],
+  "persistence": "in-memory contract probe; PostgreSQL ledger adapter remains planned",
+  "test_command": "pytest -q test/test_day9_budget_operations.py",
+  "result": "3 passed"
+}

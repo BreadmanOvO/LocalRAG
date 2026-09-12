@@ -13,6 +13,18 @@ from .control import (
     RunNotClaimableError,
     WorkerLease,
 )
+from .budget import (
+    BudgetAccount,
+    BudgetError,
+    BudgetExceededError,
+    BudgetLedger,
+    Consumption,
+    NeedsReconciliationError,
+    OperationConflictError,
+    OperationRecord,
+    OperationStore,
+    Reservation,
+)
 
 __all__ = [
     "EventConflictError",
@@ -28,6 +40,16 @@ __all__ = [
     "RunController",
     "RunNotClaimableError",
     "WorkerLease",
+    "BudgetAccount",
+    "BudgetError",
+    "BudgetExceededError",
+    "BudgetLedger",
+    "Consumption",
+    "NeedsReconciliationError",
+    "OperationConflictError",
+    "OperationRecord",
+    "OperationStore",
+    "Reservation",
     "build_inventory",
     "inventory_sqlite",
 ]
