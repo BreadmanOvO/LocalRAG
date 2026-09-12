@@ -81,3 +81,6 @@ __all__ = [
     "build_inventory",
     "inventory_sqlite",
 ]
+from .backup_io import read_backup, write_backup
+
+__all__ += ["read_backup", "write_backup"]

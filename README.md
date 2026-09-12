@@ -6,7 +6,7 @@
 
 LocalRAG is an Agentic RAG system for autonomous-driving perception research. It combines hybrid retrieval, source verification, task memory, and resumable research workflows in a Streamlit application. The system supports cloud models, a local model gateway, and long-context compression.
 
-The current implementation is the v1.7 Agentic RAG baseline. The main repository's v1.8 plan moves the user experience to a persistent assistant with a React + TypeScript workspace, Python Runtime, company-style role presets, and traceable multi-agent collaboration; the plan and day-by-day schedule are collected in [RAG_md/docs/v1.8/](RAG_md/docs/v1.8/) and are not presented as already released features. The v1.8 code boundary is documented in [`agent_platform/README.md`](agent_platform/README.md); its packages are placeholders until their scheduled Day is accepted.
+The current implementation is the v1.7 Agentic RAG baseline. The v1.8 work adds a persistent assistant workspace, a Python Runtime, company-style role presets, and traceable multi-agent collaboration. The v1.8 code boundary is documented in [`agent_platform/README.md`](agent_platform/README.md); unfinished capabilities remain explicitly marked in the development records.
 
 ## How it works
 
@@ -223,7 +223,6 @@ LocalRAG/
 ├── results/                   # Evaluation results
 ├── scripts/                   # Utility scripts
 ├── test/                      # Unit tests and evaluation tests
-├── release_note.md            # Cumulative release notes for v1.1–v1.7 and main
 └── requirements.txt           # Shared application and local-serving dependencies
 ```
 

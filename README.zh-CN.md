@@ -6,7 +6,7 @@
 
 LocalRAG 是一个面向自动驾驶感知算法资料的 Agentic RAG 系统。它将混合检索、来源核验、任务记忆和可恢复研究流程组合在一个 Streamlit 应用中，并支持云端模型、本地模型服务和长会话压缩。
 
-当前实现以 v1.7 Agentic RAG 为基线。主仓 v1.8 的升级方案会把用户体验改为可持久化的统一助理：前端采用 React + TypeScript，Python 负责 Runtime，加入公司式角色预设和可追溯的多 Agent 协作。完整方案和按 Day 拆分的开发计划集中在 [RAG_md/docs/v1.8/](RAG_md/docs/v1.8/)；这里的 v1.8 内容是规划，不代表已经发布。v1.8 的代码边界见 [`agent_platform/README.md`](agent_platform/README.md)，各子包在对应 Day 验收前都只是占位。
+当前实现以 v1.7 Agentic RAG 为基线。v1.8 增加可持久化的统一助理工作台、Python Runtime、公司式角色预设和可追溯的多 Agent 协作。v1.8 的代码边界见 [`agent_platform/README.md`](agent_platform/README.md)，尚未完成的能力会在开发记录中明确标注。
 
 ## 工作原理
 
@@ -221,7 +221,6 @@ LocalRAG/
 ├── results/                   # 评测结果
 ├── scripts/                   # 工具脚本
 ├── test/                      # 单元测试与评测脚本
-├── release_note.md            # v1.1–v1.7 与 main 累计发布记录
 └── requirements.txt           # 应用与本地模型服务的统一依赖入口
 ```
 
