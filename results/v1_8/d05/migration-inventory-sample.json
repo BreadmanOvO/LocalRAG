@@ -1,0 +1,28 @@
+{
+  "day": "D05",
+  "status": "contract_draft",
+  "migration": "agent_platform/runtime/migrations/0001_initial.sql",
+  "inventory_tool": "agent_platform.runtime.import_inventory",
+  "source_policy": {
+    "read_only": true,
+    "generate_missing_history": false,
+    "legacy_verified_becomes_human_confirmed": false
+  },
+  "required_tables": [
+    "spaces",
+    "rooms",
+    "tasks",
+    "messages",
+    "plans",
+    "runs",
+    "steps",
+    "attempts",
+    "task_memory_items",
+    "message_revisions",
+    "legacy_message_staging",
+    "persona_snapshots",
+    "room_memberships",
+    "legacy_id_map",
+    "import_audit"
+  ]
+}
