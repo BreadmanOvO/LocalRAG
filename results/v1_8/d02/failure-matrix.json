@@ -1,0 +1,38 @@
+{
+  "day": "D02",
+  "status": "observed",
+  "generated_by": "eval.day2_failure_probes.run_d02_probes",
+  "scope": "历史问题的确定性边界复现，不代表修复完成",
+  "probes": [
+    {
+      "probe": "model_request_failed",
+      "trigger": "TimeoutError 或 ConnectionError",
+      "expected_code": "model_request_failed",
+      "current_impact": "模型请求失败时只能返回结构化失败"
+    },
+    {
+      "probe": "research_run_active",
+      "trigger": "活动运行期间创建不同目标",
+      "expected_code": "research_run_active",
+      "current_impact": "阻止并发写入同一任务状态"
+    },
+    {
+      "probe": "tool_call_limit_exceeded",
+      "trigger": "工具调用次数超过 run limit",
+      "expected_code": "tool_call_limit_exceeded",
+      "current_impact": "终止工具循环并保留失败分类"
+    },
+    {
+      "probe": "compression_followup",
+      "trigger": "压缩一次后再次准备同一会话视图",
+      "expected_state": "compressed -> not_needed，保留摘要和最近消息",
+      "current_impact": "验证压缩后追问的持久化边界"
+    },
+    {
+      "probe": "empty_task_memory",
+      "trigger": "新任务读取任务记忆",
+      "expected_state": "合法空快照",
+      "current_impact": "UI 不应将空记忆误报为服务错误"
+    }
+  ]
+}
