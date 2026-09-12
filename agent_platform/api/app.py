@@ -22,7 +22,12 @@ from agent_platform.conversations.repository import ConflictError, ConversationR
 from agent_platform.runtime.control import ControlConflictError, ControlError, RunController, RunNotClaimableError
 from agent_platform.runtime.event_store import EventConflictError, EventStore
 
-from .schemas import CommandRequest, ErrorEnvelope, FollowupRequest, MessageCreateRequest, RoomCreateRequest, RunCreateRequest, TaskCreateRequest
+from .schemas import (
+    CommandRequest, CommandResponse, ErrorEnvelope, EventListResponse,
+    FollowupRequest, FollowupResponse, HealthResponse, MessageCreateRequest,
+    MessageListResponse, MessageResponse, RoomCreateRequest, RoomResponse,
+    RunCreateRequest, RunResponse, TaskCreateRequest, TaskResponse,
+)
 
 
 @dataclass
@@ -86,11 +91,11 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
             raise exc
         return _error(request, ApiDomainError(code, str(exc), status=status))
 
-    @app.get("/health")
+    @app.get("/health", response_model=HealthResponse)
     async def health() -> dict[str, str]:
         return {"status": "ok", "contract": "v1.8-inmemory"}
 
-    @app.post("/rooms", status_code=201)
+    @app.post("/rooms", status_code=201, response_model=RoomResponse)
     async def create_room(body: RoomCreateRequest, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> Any:
         if idempotency_key and idempotency_key in room_keys:
             old_space, room_id = room_keys[idempotency_key]
@@ -102,19 +107,19 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
             room_keys[idempotency_key] = (body.space_id, room.room_id)
         return _dump(room)
 
-    @app.get("/rooms/{room_id}")
+    @app.get("/rooms/{room_id}", response_model=RoomResponse)
     async def get_room(room_id: str) -> Any:
         return _dump(repository.get_room(room_id))
 
-    @app.post("/rooms/{room_id}/messages", status_code=201)
+    @app.post("/rooms/{room_id}/messages", status_code=201, response_model=MessageResponse)
     async def create_message(room_id: str, body: MessageCreateRequest, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> Any:
         return _dump(repository.save_message(room_id, body.content, role=body.role, message_id=body.message_id, idempotency_key=idempotency_key))
 
-    @app.get("/rooms/{room_id}/messages")
+    @app.get("/rooms/{room_id}/messages", response_model=MessageListResponse)
     async def list_messages(room_id: str) -> Any:
         return {"items": [_dump(item) for item in repository.list_messages(room_id)]}
 
-    @app.get("/rooms/{room_id}/events")
+    @app.get("/rooms/{room_id}/events", response_model=EventListResponse)
     async def list_events(room_id: str, after: int = Query(default=0, ge=0), limit: int = Query(default=100, ge=1, le=1000)) -> Any:
         cursor = RoomEventCursor(validate_identifier(room_id, "room"), after)
         return {"items": [_dump(item) for item in events.read_after(cursor, limit=limit)], "next": events.snapshot(room_id).cursor.room_sequence}
@@ -125,7 +130,7 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
         body = "".join(f"data: {json.dumps(_dump(item), ensure_ascii=False, separators=(',', ':'))}\n\n" for item in snapshot)
         return StreamingResponse(iter([body]), media_type="text/event-stream")
 
-    @app.post("/tasks", status_code=201)
+    @app.post("/tasks", status_code=201, response_model=TaskResponse)
     async def create_task(body: TaskCreateRequest) -> Any:
         repository.get_room(body.room_id)
         task_id = validate_identifier(body.task_id, "task") if body.task_id else new_identifier("task")
@@ -135,7 +140,7 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
         tasks[task_id] = task
         return _dump(task)
 
-    @app.get("/tasks/{task_id}")
+    @app.get("/tasks/{task_id}", response_model=TaskResponse)
     async def get_task(task_id: str) -> Any:
         task = tasks.get(validate_identifier(task_id, "task"))
         if task is None:
@@ -152,15 +157,15 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
         task.version += 1
         return {"task": _dump(task), "message": _dump(message), "status": "accepted", "run_id": task.active_run_id}
 
-    @app.post("/tasks/{task_id}/followups")
+    @app.post("/tasks/{task_id}/followups", response_model=FollowupResponse)
     async def create_followup(task_id: str, body: FollowupRequest, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> Any:
         return await _followup(task_id, body, idempotency_key)
 
-    @app.post("/tasks/{task_id}/messages")
+    @app.post("/tasks/{task_id}/messages", response_model=FollowupResponse)
     async def create_task_message(task_id: str, body: FollowupRequest, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> Any:
         return await _followup(task_id, body, idempotency_key)
 
-    @app.post("/runs", status_code=201)
+    @app.post("/runs", status_code=201, response_model=RunResponse)
     async def create_run(body: RunCreateRequest) -> Any:
         run_id = validate_identifier(body.run_id, "run") if body.run_id else new_identifier("run")
         state = runs.register_run(run_id, plan_revision=body.plan_revision, status=body.status)
@@ -171,14 +176,14 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
             task.active_run_id = state.run_id
         return _dump(state)
 
-    @app.get("/runs/{run_id}")
+    @app.get("/runs/{run_id}", response_model=RunResponse)
     async def get_run(run_id: str) -> Any:
         try:
             return _dump(runs.get_run(run_id))
         except ControlError as exc:
             raise ApiDomainError("not_found", str(exc), status=404) from exc
 
-    @app.post("/commands/{command_id}")
+    @app.post("/commands/{command_id}", response_model=CommandResponse)
     async def execute_command(command_id: str, body: CommandRequest) -> Any:
         command_id = validate_identifier(command_id, "operation")
         if command_id in commands:

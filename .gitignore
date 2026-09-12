@@ -1,5 +1,10 @@
 # Python cache / bytecode
 __pycache__/
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
 *.py[cod]
 *$py.class
 

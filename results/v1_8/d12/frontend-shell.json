@@ -1,0 +1,20 @@
+{
+  "day": "D12",
+  "status": "accepted",
+  "component": "frontend",
+  "scope": [
+    "React + TypeScript + Vite application shell",
+    "workspace, room, and assets routes",
+    "TanStack Query server-state cache",
+    "responsive dark workspace layout",
+    "OpenAPI export and generated TypeScript schema"
+  ],
+  "test_command": ["npm run build (cwd: frontend)", "npm run dev -- --host 127.0.0.1 + GET /, /workspace, /rooms/room-demo, /assets"],
+  "result": "vite production build passed; 83 modules transformed; all four dev-server routes returned HTTP 200",
+  "known_limits": [
+    "message send and live SSE UI are deferred to D13-D14",
+    "no production authentication or persistence wiring",
+    "assets page is an explicit placeholder until D23-D24",
+    "API proxy assumes FastAPI is running on port 8000"
+  ]
+}

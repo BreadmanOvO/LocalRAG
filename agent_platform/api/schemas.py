@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
@@ -51,3 +52,91 @@ class ErrorEnvelope(BaseModel):
     request_id: str
     control_epoch: int | None = None
     row_version: int | None = None
+
+
+class HealthResponse(BaseModel):
+    status: str
+    contract: str
+
+
+class RoomResponse(BaseModel):
+    space_id: str
+    room_id: str
+    title: str
+    status: Literal["active", "archived", "deleted"]
+    room_sequence: int
+    row_version: int
+
+
+class MessageResponse(BaseModel):
+    message_id: str
+    room_id: str
+    content: str
+    role: Literal["user", "assistant", "system", "tool"]
+    status: str
+    room_sequence: int
+    idempotency_key: str | None
+    content_sha256: str
+    created_at: datetime | None
+
+
+class MessageListResponse(BaseModel):
+    items: list[MessageResponse]
+
+
+class EventIdentityResponse(BaseModel):
+    room_id: str
+    event_id: str
+    room_sequence: int
+
+
+class EventResponse(BaseModel):
+    identity: EventIdentityResponse
+    event_type: str
+    room_id: str
+    task_id: str | None
+    run_id: str | None
+    step_id: str | None
+    attempt_id: str | None
+    run_sequence: int
+    caused_by: list[str]
+    consumes: list[str]
+    produces: list[str]
+    usage: dict[str, int]
+    payload: dict[str, Any]
+    timestamp: str
+
+
+class EventListResponse(BaseModel):
+    items: list[EventResponse]
+    next: int
+
+
+class TaskResponse(BaseModel):
+    task_id: str
+    room_id: str
+    title: str
+    status: str
+    version: int
+    active_run_id: str | None
+
+
+class FollowupResponse(BaseModel):
+    task: TaskResponse
+    message: MessageResponse
+    status: Literal["accepted"]
+    run_id: str | None
+
+
+class RunResponse(BaseModel):
+    run_id: str
+    plan_revision: int
+    status: str
+    control_epoch: int
+    row_version: int
+
+
+class CommandResponse(BaseModel):
+    command_id: str
+    status: Literal["accepted"]
+    run: RunResponse
