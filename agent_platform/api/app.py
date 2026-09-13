@@ -25,6 +25,7 @@ from agent_platform.conversations.repository import ConflictError, ConversationR
 from agent_platform.conversations.sql_repository import SqlAlchemyConversationRepository
 from agent_platform.runtime.control import ControlConflictError, ControlError, RunController, RunNotClaimableError
 from agent_platform.runtime.event_store import EventConflictError, EventStore
+from agent_platform.runtime.sql_event_store import SqlAlchemyEventStore
 from agent_platform.personas import PersonaProfile, default_registry
 from agent_platform.routing import ArchitectureSpec, PlanCompiler, TaskProfile
 from agent_platform.runtime.multi_agent import CloudTeamRuntime
@@ -67,11 +68,13 @@ def _error(request: Request, exc: ApiDomainError) -> JSONResponse:
     return JSONResponse(status_code=exc.status, content=payload.model_dump())
 
 
-def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRepository | None = None, events: EventStore | None = None, runs: RunController | None = None, team_runtime: CloudTeamRuntime | None = None, database_url: str | None = None) -> FastAPI:
+def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRepository | None = None, events: EventStore | SqlAlchemyEventStore | None = None, runs: RunController | None = None, team_runtime: CloudTeamRuntime | None = None, database_url: str | None = None) -> FastAPI:
     """Create an API app with injectable in-memory stores for tests and demos."""
     if repository is None and (database_url or os.environ.get("LOCALRAG_DATABASE_URL")):
         repository = SqlAlchemyConversationRepository.from_url(database_url or os.environ["LOCALRAG_DATABASE_URL"])
     repository = repository or ConversationRepository()
+    if events is None and isinstance(repository, SqlAlchemyConversationRepository):
+        events = SqlAlchemyEventStore(repository.engine, create_schema=repository.engine.dialect.name == "sqlite")
     events = events or EventStore()
     runs = runs or RunController()
     tasks: dict[str, _Task] = {}
