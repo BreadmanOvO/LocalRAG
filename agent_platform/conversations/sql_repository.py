@@ -98,13 +98,22 @@ class SqlAlchemyConversationRepository:
         return self.get_room(room_id)
 
     def create_room_with_message(self, space_id: str, title: str, content: str, *, room_id: str | None = None, idempotency_key: str | None = None) -> tuple[Room, Message]:
-        room = self.create_room(space_id, title, room_id=room_id)
+        space_id = validate_identifier(space_id, "space")
+        if not isinstance(content, str) or not content.strip():
+            raise ValueError("content must not be empty")
+        room_id = validate_identifier(room_id, "room") if room_id else new_identifier("room")
+        message_id = new_identifier("message")
+        now = _now()
         try:
-            return self.get_room(room.room_id), self.save_message(room.room_id, content, role="user", idempotency_key=idempotency_key)
-        except Exception:
-            # A failed first write leaves an empty room available for explicit
-            # retry; callers can safely retry with the same idempotency key.
-            raise
+            with self.engine.begin() as conn:
+                if conn.execute(select(self.spaces.c.space_id).where(self.spaces.c.space_id == space_id)).first() is None:
+                    conn.execute(insert(self.spaces).values(space_id=space_id, name=space_id))
+                conn.execute(insert(self.rooms).values(room_id=room_id, space_id=space_id, status="active", title=title.strip(), room_sequence=0, row_version=1, created_at=now, updated_at=now))
+                conn.execute(insert(self.messages).values(message_id=message_id, room_id=room_id, task_id=None, turn_id=f"turn-{message_id}", content=content.strip(), role="user", status="saved", room_sequence=1, idempotency_key=idempotency_key, content_sha256=sha256(content.strip().encode()).hexdigest(), created_at=now))
+                conn.execute(update(self.rooms).where(self.rooms.c.room_id == room_id).values(room_sequence=1, row_version=2, updated_at=now))
+        except IntegrityError as exc:
+            raise ConflictError("room or initial message already exists") from exc
+        return self.get_room(room_id), self._message({"message_id": message_id, "room_id": room_id, "content": content.strip(), "role": "user", "status": "saved", "room_sequence": 1, "idempotency_key": idempotency_key, "content_sha256": sha256(content.strip().encode()).hexdigest(), "created_at": now})
 
     def get_room(self, room_id: str) -> Room:
         room_id = validate_identifier(room_id, "room")

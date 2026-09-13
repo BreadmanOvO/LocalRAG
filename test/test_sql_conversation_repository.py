@@ -10,6 +10,15 @@ from agent_platform.api import create_app
 
 
 class SqlConversationRepositoryTests(unittest.TestCase):
+    def test_room_and_first_message_share_one_transaction(self) -> None:
+        repo = SqlAlchemyConversationRepository.from_url("sqlite://")
+        with self.assertRaises(ValueError):
+            repo.create_room_with_message("space-demo", "empty", " ")
+        self.assertEqual((), repo.list_rooms())
+        room, message = repo.create_room_with_message("space-demo", "initial", "hello")
+        self.assertEqual(1, room.room_sequence)
+        self.assertEqual(room.room_id, message.room_id)
+
     def test_sqlite_round_trip_and_idempotency(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             repo = SqlAlchemyConversationRepository.from_url(f"sqlite:///{Path(directory) / 'runtime.db'}")
