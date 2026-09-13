@@ -14,6 +14,7 @@ import os
 import base64
 import binascii
 import asyncio
+from threading import RLock
 from typing import Any
 from uuid import uuid4
 
@@ -32,7 +33,7 @@ from agent_platform.runtime.sql_event_store import SqlAlchemyEventStore
 from agent_platform.worker import TeamWorker
 from agent_platform.personas import PersonaProfile, default_registry
 from agent_platform.routing import ArchitectureSpec, PlanCompiler, TaskProfile, TaskRouter
-from agent_platform.runtime.multi_agent import CloudTeamRuntime, ModelRoutingError
+from agent_platform.runtime.multi_agent import CloudTeamRuntime, ModelRoutingError, TeamModelSnapshot
 from agent_platform.capability_packs import LocalObjectStore
 from agent_platform.integrations.model_config_store import ModelConfigError, ModelConfigStore
 from .auth import AuthConfigError, BearerAuthenticator, Principal, env_auth_required
@@ -94,6 +95,9 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
     assistant_keys: dict[str, tuple[str, str, str]] = {}
     commands: dict[str, dict[str, Any]] = {}
     active_team_rooms: set[str] = set()
+    room_model_snapshots: dict[str, TeamModelSnapshot] = {}
+    room_runtimes: dict[str, CloudTeamRuntime] = {}
+    room_model_snapshot_lock = RLock()
     team_worker = TeamWorker(max_workers=max(1, int(os.environ.get("LOCALRAG_WORKER_CONCURRENCY", "2"))))
     auth_required = env_auth_required() if auth_required is None else auth_required
     if os.environ.get("LOCALRAG_ENV", "").strip().lower() in {"prod", "production"}:
@@ -154,9 +158,15 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         runtime = app.state.team_runtime
         if runtime is None:
             try:
+                # Prefer the latest configuration. If it is temporarily
+                # invalid, an already formed room may continue on its own
+                # frozen runtime; new rooms still report the configuration
+                # error instead of silently using stale settings.
                 runtime = CloudTeamRuntime.from_config()
             except (RuntimeError, OSError) as exc:
-                raise ApiDomainError("capability_not_ready", str(exc), status=503) from exc
+                runtime = room_runtimes.get(room.room_id)
+                if runtime is None:
+                    raise ApiDomainError("capability_not_ready", str(exc), status=503) from exc
             app.state.team_runtime = runtime
         return runtime
 
@@ -435,8 +445,6 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         task = tasks.get(task_id)
         if task is not None and task.room_id != room.room_id:
             raise ApiDomainError("conflict", "task belongs to another room", status=409)
-        if room.room_id in active_team_rooms:
-            raise ApiDomainError("run_active", "room already has an active team run", status=409)
         runtime = app.state.team_runtime
         if runtime is None:
             try:
@@ -446,44 +454,52 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         decision = task_router.route(body.goal, requested_architecture=body.architecture, max_agents=body.max_agents)
         if decision.architecture in {"graph", "heterogeneous"}:
             raise ApiDomainError("capability_not_ready", f"当前策略尚未接入真实执行器：{decision.architecture}", status=503, details={"route_reason": decision.reason, "required_capabilities": list(decision.required_capabilities)})
-        runtime.validate(body.goal, decision.architecture, decision.max_agents)
-        try:
-            model_snapshot = runtime.freeze_model_bindings(
-                architecture=decision.architecture,
-                max_agents=decision.max_agents,
-                goal=body.goal,
-                required_capabilities=decision.required_capabilities,
+        with room_model_snapshot_lock:
+            if room.room_id in active_team_rooms:
+                raise ApiDomainError("run_active", "room already has an active team run", status=409)
+            try:
+                # The first team run fixes each participating Agent's model for
+                # this room. Later runs can add roles, but never re-route a role
+                # that has already participated in the room.
+                model_snapshot = runtime.freeze_model_bindings(
+                    architecture=decision.architecture,
+                    max_agents=decision.max_agents,
+                    goal=body.goal,
+                    required_capabilities=decision.required_capabilities,
+                    existing_snapshot=room_model_snapshots.get(room.room_id),
+                )
+                room_model_snapshots[room.room_id] = model_snapshot
+            except ModelRoutingError as exc:
+                raise ApiDomainError(
+                    "model_routing_failed",
+                    str(exc),
+                    status=422,
+                    details=exc.public_details(),
+                ) from exc
+            history = repository.list_messages(room.room_id)
+            context = "\n".join(f"{message.role}: {message.content}" for message in history[-20:])[-16000:]
+            if task is None:
+                task = _Task(task_id, room.room_id, body.goal.strip())
+                tasks[task_id] = task
+            run_id = new_identifier("run")
+            runs.register_run(run_id, plan_revision=1, status="running")
+            task.active_run_id = run_id
+            user_message = repository.save_message(room.room_id, body.goal, role="user", idempotency_key=f"team-goal-{run_id}")
+            _record_message_event(user_message)
+            events.append(
+                room.room_id,
+                "run_started",
+                run_id=run_id,
+                task_id=task_id,
+                payload={
+                    "requested_architecture": body.architecture,
+                    "architecture": decision.architecture,
+                    "route_reason": decision.reason,
+                    "model_snapshot": model_snapshot.public(),
+                },
             )
-        except ModelRoutingError as exc:
-            raise ApiDomainError(
-                "model_routing_failed",
-                str(exc),
-                status=422,
-                details=exc.public_details(),
-            ) from exc
-        history = repository.list_messages(room.room_id)
-        context = "\n".join(f"{message.role}: {message.content}" for message in history[-20:])[-16000:]
-        if task is None:
-            task = _Task(task_id, room.room_id, body.goal.strip())
-            tasks[task_id] = task
-        run_id = new_identifier("run")
-        runs.register_run(run_id, plan_revision=1, status="running")
-        task.active_run_id = run_id
-        user_message = repository.save_message(room.room_id, body.goal, role="user", idempotency_key=f"team-goal-{run_id}")
-        _record_message_event(user_message)
-        events.append(
-            room.room_id,
-            "run_started",
-            run_id=run_id,
-            task_id=task_id,
-            payload={
-                "requested_architecture": body.architecture,
-                "architecture": decision.architecture,
-                "route_reason": decision.reason,
-                "model_snapshot": model_snapshot.public(),
-            },
-        )
-        active_team_rooms.add(room.room_id)
+            active_team_rooms.add(room.room_id)
+            room_runtimes[room.room_id] = runtime
 
         def record_turn(turn: Any) -> None:
             if runs.get_run(run_id).status != "running":

@@ -8,6 +8,32 @@
             "title": "Agent Id",
             "type": "string"
           },
+          "auto_capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Auto Capabilities",
+            "type": "array"
+          },
+          "auto_modalities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Auto Modalities",
+            "type": "array"
+          },
+          "auto_scenarios": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Auto Scenarios",
+            "type": "array"
+          },
+          "auto_tier": {
+            "default": "",
+            "title": "Auto Tier",
+            "type": "string"
+          },
           "capabilities": {
             "items": {
               "type": "string"
@@ -31,6 +57,15 @@
             },
             "title": "Modalities",
             "type": "array"
+          },
+          "model_binding_mode": {
+            "default": "fixed",
+            "enum": [
+              "fixed",
+              "auto"
+            ],
+            "title": "Model Binding Mode",
+            "type": "string"
           },
           "model_profile": {
             "default": "",
@@ -65,6 +100,31 @@
             "title": "Agent Id",
             "type": "string"
           },
+          "auto_capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Auto Capabilities",
+            "type": "array"
+          },
+          "auto_modalities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Auto Modalities",
+            "type": "array"
+          },
+          "auto_scenarios": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Auto Scenarios",
+            "type": "array"
+          },
+          "auto_tier": {
+            "title": "Auto Tier",
+            "type": "string"
+          },
           "capabilities": {
             "items": {
               "type": "string"
@@ -86,6 +146,14 @@
             },
             "title": "Modalities",
             "type": "array"
+          },
+          "model_binding_mode": {
+            "enum": [
+              "fixed",
+              "auto"
+            ],
+            "title": "Model Binding Mode",
+            "type": "string"
           },
           "model_profile": {
             "title": "Model Profile",
@@ -119,10 +187,15 @@
           "agent_id",
           "display_name",
           "responsibility",
+          "model_binding_mode",
           "model_profile",
           "tier",
           "capabilities",
           "modalities",
+          "auto_tier",
+          "auto_capabilities",
+          "auto_modalities",
+          "auto_scenarios",
           "system_prompt",
           "enabled",
           "ready",
@@ -815,6 +888,31 @@
             "title": "Agent Id",
             "type": "string"
           },
+          "auto_capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Auto Capabilities",
+            "type": "array"
+          },
+          "auto_modalities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Auto Modalities",
+            "type": "array"
+          },
+          "auto_scenarios": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Auto Scenarios",
+            "type": "array"
+          },
+          "auto_tier": {
+            "title": "Auto Tier",
+            "type": "string"
+          },
           "capabilities": {
             "items": {
               "type": "string"
@@ -841,6 +939,14 @@
             "title": "Model",
             "type": "string"
           },
+          "model_binding_mode": {
+            "enum": [
+              "fixed",
+              "auto"
+            ],
+            "title": "Model Binding Mode",
+            "type": "string"
+          },
           "model_profile": {
             "title": "Model Profile",
             "type": "string"
@@ -863,12 +969,17 @@
           "display_name",
           "responsibility",
           "tier",
+          "model_binding_mode",
           "model_profile",
           "provider",
           "model",
           "capabilities",
           "modalities",
-          "max_concurrency"
+          "max_concurrency",
+          "auto_tier",
+          "auto_capabilities",
+          "auto_modalities",
+          "auto_scenarios"
         ],
         "title": "ModelAgentSetting",
         "type": "object"
@@ -1345,8 +1456,28 @@
             "title": "Content",
             "type": "string"
           },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "model_profile": {
+            "title": "Model Profile",
+            "type": "string"
+          },
           "responsibility": {
             "title": "Responsibility",
+            "type": "string"
+          },
+          "selection_mode": {
+            "enum": [
+              "fixed",
+              "auto"
+            ],
+            "title": "Selection Mode",
+            "type": "string"
+          },
+          "selection_reason": {
+            "title": "Selection Reason",
             "type": "string"
           },
           "sequence": {
@@ -1358,7 +1489,11 @@
           "agent_id",
           "responsibility",
           "content",
-          "sequence"
+          "sequence",
+          "model",
+          "model_profile",
+          "selection_mode",
+          "selection_reason"
         ],
         "title": "MultiAgentTurnResponse",
         "type": "object"

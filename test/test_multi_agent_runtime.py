@@ -346,6 +346,101 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         self.assertEqual(["selected-model", "selected-model", "selected-model"], calls)
         self.assertEqual(["selected-model"] * 3, [turn.model for turn in result.turns])
 
+    def test_room_snapshot_reuses_auto_model_across_followup_runs(self) -> None:
+        auto = CloudAgentSpec(
+            "chairperson", "总助理", "汇总", "", "", "", "", "",
+            model_binding_mode="auto", auto_tier="strong",
+        )
+        selected = _profile("selected", "selected-model", tier="strong", max_concurrency=8)
+        replacement = _profile("replacement", "replacement-model", tier="strong", max_concurrency=1)
+        runtime = CloudTeamRuntime(
+            {"chairperson": auto},
+            profiles={"selected": selected, "replacement": replacement},
+            invoker=lambda spec, messages: spec.model,
+        )
+        client = TestClient(create_app(team_runtime=runtime))
+        room_id = client.post("/rooms", json={"space_id": "space-demo"}).json()["room_id"]
+
+        first = client.post(
+            f"/rooms/{room_id}/multi-agent/execute",
+            json={"goal": "先做文字分析", "architecture": "direct"},
+        )
+        self.assertEqual(200, first.status_code, first.text)
+        self.assertEqual("selected-model", first.json()["turns"][0]["model"])
+
+        # Simulate a settings reload or profile removal after the room was
+        # formed.  The room still owns the original, immutable binding.
+        with runtime._configuration_lock:
+            runtime._profiles.pop("selected")
+        second = client.post(
+            f"/rooms/{room_id}/multi-agent/execute",
+            json={"goal": "继续文字分析", "architecture": "direct"},
+        )
+        self.assertEqual(200, second.status_code, second.text)
+        self.assertEqual("selected-model", second.json()["turns"][0]["model"])
+        events = client.get(f"/rooms/{room_id}/events").json()["items"]
+        run_started = [event for event in events if event["event_type"] == "run_started"]
+        self.assertEqual(2, len(run_started))
+        self.assertEqual("selected-model", run_started[-1]["payload"]["model_snapshot"][0]["model"])
+
+    def test_room_snapshot_rejects_new_auto_modality_without_switching_model(self) -> None:
+        auto = CloudAgentSpec(
+            "chairperson", "总助理", "汇总", "", "", "", "", "",
+            model_binding_mode="auto", auto_tier="strong",
+        )
+        text_profile = _profile("text", "text-model", tier="strong", modalities=("text",))
+        runtime = CloudTeamRuntime(
+            {"chairperson": auto},
+            profiles={"text": text_profile},
+            invoker=lambda spec, messages: spec.model,
+        )
+        client = TestClient(create_app(team_runtime=runtime))
+        room_id = client.post("/rooms", json={"space_id": "space-demo"}).json()["room_id"]
+        first = client.post(
+            f"/rooms/{room_id}/multi-agent/execute",
+            json={"goal": "先做文字分析", "architecture": "direct"},
+        )
+        self.assertEqual(200, first.status_code, first.text)
+        second = client.post(
+            f"/rooms/{room_id}/multi-agent/execute",
+            json={"goal": "继续识别图片", "architecture": "direct"},
+        )
+        self.assertEqual(422, second.status_code, second.text)
+        self.assertEqual("model_routing_failed", second.json()["code"])
+        self.assertIn("请新建房间", second.json()["message"])
+        self.assertEqual(1, len([event for event in client.get(f"/rooms/{room_id}/events").json()["items"] if event["event_type"] == "run_started"]))
+
+    def test_followup_respects_max_agents_with_room_snapshot_members(self) -> None:
+        agents = {
+            agent_id: CloudAgentSpec(
+                agent_id, agent_id, responsibility,
+                "sensenova", "https://token.sensenova.cn/v1", f"{agent_id}-model", "KEY", "secret",
+            )
+            for agent_id, responsibility in (
+                ("chairperson", "汇总"), ("researcher", "研究"), ("reviewer", "审查"),
+            )
+        }
+        calls: list[str] = []
+        runtime = CloudTeamRuntime(
+            agents,
+            invoker=lambda spec, messages: (calls.append(spec.agent_id) or spec.model),
+        )
+        client = TestClient(create_app(team_runtime=runtime))
+        room_id = client.post("/rooms", json={"space_id": "space-demo"}).json()["room_id"]
+        first = client.post(
+            f"/rooms/{room_id}/multi-agent/execute",
+            json={"goal": "完整协作", "architecture": "hierarchical", "max_agents": 3},
+        )
+        self.assertEqual(200, first.status_code, first.text)
+        calls.clear()
+        second = client.post(
+            f"/rooms/{room_id}/multi-agent/execute",
+            json={"goal": "只安排一名成员", "architecture": "hierarchical", "max_agents": 2},
+        )
+        self.assertEqual(200, second.status_code, second.text)
+        self.assertEqual(["chairperson", "researcher", "chairperson"], calls)
+        self.assertEqual(["chairperson-model", "researcher-model", "chairperson-model"], [turn["model"] for turn in second.json()["turns"]])
+
     def test_api_persists_team_messages_and_events(self) -> None:
         def invoke(spec, messages):
             return f"answer from {spec.agent_id}"

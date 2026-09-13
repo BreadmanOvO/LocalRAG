@@ -180,12 +180,17 @@ class ModelAgentSetting(BaseModel):
     display_name: str
     responsibility: str
     tier: str
+    model_binding_mode: Literal["fixed", "auto"]
     model_profile: str
     provider: str
     model: str
     capabilities: list[str]
     modalities: list[str]
     max_concurrency: int
+    auto_tier: str
+    auto_capabilities: list[str]
+    auto_modalities: list[str]
+    auto_scenarios: list[str]
 
 
 class ModelChoice(BaseModel):

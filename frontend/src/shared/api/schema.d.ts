@@ -546,6 +546,17 @@ export interface components {
         AgentConfigRequest: {
             /** Agent Id */
             agent_id: string;
+            /** Auto Capabilities */
+            auto_capabilities?: string[];
+            /** Auto Modalities */
+            auto_modalities?: string[];
+            /** Auto Scenarios */
+            auto_scenarios?: string[];
+            /**
+             * Auto Tier
+             * @default
+             */
+            auto_tier: string;
             /** Capabilities */
             capabilities?: string[];
             /**
@@ -560,6 +571,12 @@ export interface components {
             enabled: boolean;
             /** Modalities */
             modalities?: string[];
+            /**
+             * Model Binding Mode
+             * @default fixed
+             * @enum {string}
+             */
+            model_binding_mode: "fixed" | "auto";
             /**
              * Model Profile
              * @default
@@ -585,6 +602,14 @@ export interface components {
         AgentConfigResponse: {
             /** Agent Id */
             agent_id: string;
+            /** Auto Capabilities */
+            auto_capabilities: string[];
+            /** Auto Modalities */
+            auto_modalities: string[];
+            /** Auto Scenarios */
+            auto_scenarios: string[];
+            /** Auto Tier */
+            auto_tier: string;
             /** Capabilities */
             capabilities: string[];
             /** Display Name */
@@ -593,6 +618,11 @@ export interface components {
             enabled: boolean;
             /** Modalities */
             modalities: string[];
+            /**
+             * Model Binding Mode
+             * @enum {string}
+             */
+            model_binding_mode: "fixed" | "auto";
             /** Model Profile */
             model_profile: string;
             /** Readiness Issues */
@@ -853,6 +883,14 @@ export interface components {
         ModelAgentSetting: {
             /** Agent Id */
             agent_id: string;
+            /** Auto Capabilities */
+            auto_capabilities: string[];
+            /** Auto Modalities */
+            auto_modalities: string[];
+            /** Auto Scenarios */
+            auto_scenarios: string[];
+            /** Auto Tier */
+            auto_tier: string;
             /** Capabilities */
             capabilities: string[];
             /** Display Name */
@@ -863,6 +901,11 @@ export interface components {
             modalities: string[];
             /** Model */
             model: string;
+            /**
+             * Model Binding Mode
+             * @enum {string}
+             */
+            model_binding_mode: "fixed" | "auto";
             /** Model Profile */
             model_profile: string;
             /** Provider */
@@ -1082,8 +1125,19 @@ export interface components {
             agent_id: string;
             /** Content */
             content: string;
+            /** Model */
+            model: string;
+            /** Model Profile */
+            model_profile: string;
             /** Responsibility */
             responsibility: string;
+            /**
+             * Selection Mode
+             * @enum {string}
+             */
+            selection_mode: "fixed" | "auto";
+            /** Selection Reason */
+            selection_reason: string;
             /** Sequence */
             sequence: number;
         };

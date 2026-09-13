@@ -120,7 +120,7 @@ const emptyAgents: Agent[] = [];
 type SettingsTab = "personas" | "models" | "appearance";
 
 function agentForm(agent: Agent): AgentForm {
-  const mode = agent.model_binding_mode === "auto" || !agent.model_profile ? "auto" : "fixed";
+  const mode = agent.model_binding_mode ?? (agent.model_profile ? "fixed" : "auto");
   return {
     agent_id: agent.agent_id,
     display_name: agent.display_name,
@@ -357,7 +357,7 @@ export function CompanyPage() {
       </section>
 
       <section className="settings-section agent-binding-section">
-        <div className="section-heading"><div><p className="eyebrow">模型绑定</p><h2>Agent 模型</h2></div><span className="muted">一次任务开始后，已选模型保持不变。</span></div>
+        <div className="section-heading"><div><p className="eyebrow">模型绑定</p><h2>Agent 模型</h2></div><span className="muted">一次房间组建后，已选模型保持不变。</span></div>
         {catalog.isError && <p className="error-text" role="alert">无法读取模型目录：{catalog.error.message}</p>}
         {bindingAgents.length === 0 && !catalog.isLoading && <p className="empty-state">还没有可配置的 Agent。请先在模型设置中完成可用模型配置。</p>}
         {bindingAgents.length > 0 && <div className="batch-binding" aria-label="批量模型绑定">
