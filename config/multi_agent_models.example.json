@@ -1,13 +1,50 @@
 {
   "contract_version": "agent-platform-cloud-v1",
-  "agents": {
-    "chairperson": {
-      "display_name": "总助理",
-      "responsibility": "拆解目标、协调成员并汇总最终答复",
+  "model_profiles": {
+    "sensenova-fast": {
       "provider": "sensenova",
       "base_url": "https://token.sensenova.cn/v1",
       "model": "sensenova-6.8-flash-lite",
       "api_key_env": "LOCALRAG_CLOUD_API_KEY",
+      "capabilities": ["chat", "summarization"],
+      "modalities": ["text"],
+      "max_concurrency": 8
+    },
+    "sensenova-strong": {
+      "provider": "sensenova",
+      "base_url": "https://token.sensenova.cn/v1",
+      "model": "glm-5.2",
+      "api_key_env": "LOCALRAG_CLOUD_API_KEY",
+      "capabilities": ["planning", "reasoning", "review"],
+      "modalities": ["text"],
+      "max_concurrency": 4
+    },
+    "modelscope-research": {
+      "provider": "modelscope",
+      "base_url": "https://api-inference.modelscope.cn/v1",
+      "model": "Qwen/Qwen3-8B",
+      "api_key_env": "MODELSCOPE_API_KEY",
+      "capabilities": ["research", "rag"],
+      "modalities": ["text", "table"],
+      "max_concurrency": 4
+    },
+    "sensenova-vision": {
+      "provider": "sensenova",
+      "base_url": "https://token.sensenova.cn/v1",
+      "model": "your-vision-model",
+      "api_key_env": "LOCALRAG_CLOUD_API_KEY",
+      "capabilities": ["ocr", "visual_grounding"],
+      "modalities": ["text", "image", "pdf", "table"],
+      "max_concurrency": 2,
+      "enabled": false
+    }
+  },
+  "agents": {
+    "chairperson": {
+      "display_name": "总助理",
+      "responsibility": "拆解目标、协调成员并汇总最终答复",
+      "model_profile": "sensenova-strong",
+      "tier": "lead",
       "capabilities": ["planning", "summarization", "tool_calling"],
       "system_prompt": "你是研究公司的总助理。只依据共享记录作答，明确事实、证据和缺口。",
       "enabled": true
@@ -15,10 +52,8 @@
     "researcher": {
       "display_name": "研究员",
       "responsibility": "独立检索、整理事实并提出可核验结论",
-      "provider": "modelscope",
-      "base_url": "https://api-inference.modelscope.cn/v1",
-      "model": "Qwen/Qwen3-8B",
-      "api_key_env": "MODELSCOPE_API_KEY",
+      "model_profile": "modelscope-research",
+      "tier": "specialist",
       "capabilities": ["research", "rag"],
       "system_prompt": "你是严谨的研究员。区分原文事实、推断和待核验问题。",
       "enabled": true
@@ -26,10 +61,8 @@
     "reviewer": {
       "display_name": "审查员",
       "responsibility": "寻找反例、核对证据并指出风险",
-      "provider": "sensenova",
-      "base_url": "https://token.sensenova.cn/v1",
-      "model": "glm-5.2",
-      "api_key_env": "LOCALRAG_CLOUD_API_KEY",
+      "model_profile": "sensenova-strong",
+      "tier": "critic",
       "capabilities": ["review", "adversarial"],
       "system_prompt": "你是独立审查员。优先指出证据不足、不可比和潜在错误。",
       "enabled": true

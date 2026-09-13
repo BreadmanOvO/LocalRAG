@@ -661,6 +661,174 @@
         "title": "MessageResponse",
         "type": "object"
       },
+      "ModelAgentSetting": {
+        "properties": {
+          "agent_id": {
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Capabilities",
+            "type": "array"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "max_concurrency": {
+            "title": "Max Concurrency",
+            "type": "integer"
+          },
+          "modalities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Modalities",
+            "type": "array"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "model_profile": {
+            "title": "Model Profile",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "responsibility": {
+            "title": "Responsibility",
+            "type": "string"
+          },
+          "tier": {
+            "title": "Tier",
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent_id",
+          "display_name",
+          "responsibility",
+          "tier",
+          "model_profile",
+          "provider",
+          "model",
+          "capabilities",
+          "modalities",
+          "max_concurrency"
+        ],
+        "title": "ModelAgentSetting",
+        "type": "object"
+      },
+      "ModelBindingUpdateRequest": {
+        "properties": {
+          "source_agent_id": {
+            "minLength": 1,
+            "title": "Source Agent Id",
+            "type": "string"
+          },
+          "tier": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tier"
+          }
+        },
+        "required": [
+          "source_agent_id"
+        ],
+        "title": "ModelBindingUpdateRequest",
+        "type": "object"
+      },
+      "ModelChoice": {
+        "properties": {
+          "base_url": {
+            "title": "Base Url",
+            "type": "string"
+          },
+          "capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Capabilities",
+            "type": "array"
+          },
+          "max_concurrency": {
+            "title": "Max Concurrency",
+            "type": "integer"
+          },
+          "modalities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Modalities",
+            "type": "array"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "model_profile": {
+            "title": "Model Profile",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "source_agent_id": {
+            "title": "Source Agent Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_agent_id",
+          "model_profile",
+          "provider",
+          "base_url",
+          "model",
+          "capabilities",
+          "modalities",
+          "max_concurrency"
+        ],
+        "title": "ModelChoice",
+        "type": "object"
+      },
+      "ModelSettingsResponse": {
+        "properties": {
+          "agents": {
+            "items": {
+              "$ref": "#/components/schemas/ModelAgentSetting"
+            },
+            "title": "Agents",
+            "type": "array"
+          },
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/ModelChoice"
+            },
+            "title": "Models",
+            "type": "array"
+          }
+        },
+        "required": [
+          "agents",
+          "models"
+        ],
+        "title": "ModelSettingsResponse",
+        "type": "object"
+      },
       "MultiAgentExecuteRequest": {
         "properties": {
           "architecture": {
@@ -2381,6 +2549,73 @@
           }
         },
         "summary": "Get Run"
+      }
+    },
+    "/settings/models": {
+      "get": {
+        "operationId": "model_settings_settings_models_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelSettingsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Model Settings"
+      }
+    },
+    "/settings/models/{agent_id}": {
+      "put": {
+        "operationId": "update_model_setting_settings_models__agent_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "agent_id",
+            "required": true,
+            "schema": {
+              "title": "Agent Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelBindingUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelSettingsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Model Setting"
       }
     },
     "/tasks": {

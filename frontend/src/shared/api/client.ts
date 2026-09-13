@@ -8,6 +8,7 @@ export type Member = components["schemas"]["MemberResponse"];
 export type Role = components["schemas"]["RoleResponse"];
 export type Persona = components["schemas"]["PersonaResponse"];
 export type MultiAgentExecution = components["schemas"]["MultiAgentExecuteResponse"];
+export type ModelSettings = components["schemas"]["ModelSettingsResponse"];
 
 export const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
 const client = createClient<paths>({ baseUrl: API_BASE });
@@ -72,6 +73,17 @@ export const api = {
     const { data, error } = await client.POST("/assistant/messages", {
       params: { header: { "Idempotency-Key": `assistant-${crypto.randomUUID()}` } },
       body: { space_id: spaceId, content, title: title ?? "" },
+    });
+    return unwrap(data, error);
+  },
+  modelSettings: async () => {
+    const { data, error } = await client.GET("/settings/models");
+    return unwrap(data, error);
+  },
+  updateModelBinding: async (agentId: string, sourceAgentId: string, tier?: string) => {
+    const { data, error } = await client.PUT("/settings/models/{agent_id}", {
+      params: { path: { agent_id: agentId } },
+      body: { source_agent_id: sourceAgentId, tier: tier ?? null },
     });
     return unwrap(data, error);
   },

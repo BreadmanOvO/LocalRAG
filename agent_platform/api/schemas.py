@@ -165,6 +165,40 @@ class MultiAgentExecuteResponse(BaseModel):
     final: str
     turns: list[MultiAgentTurnResponse]
 
+
+class ModelBindingUpdateRequest(BaseModel):
+    source_agent_id: str = Field(min_length=1)
+    tier: str | None = Field(default=None, min_length=1)
+
+
+class ModelAgentSetting(BaseModel):
+    agent_id: str
+    display_name: str
+    responsibility: str
+    tier: str
+    model_profile: str
+    provider: str
+    model: str
+    capabilities: list[str]
+    modalities: list[str]
+    max_concurrency: int
+
+
+class ModelChoice(BaseModel):
+    source_agent_id: str
+    model_profile: str
+    provider: str
+    base_url: str
+    model: str
+    capabilities: list[str]
+    modalities: list[str]
+    max_concurrency: int
+
+
+class ModelSettingsResponse(BaseModel):
+    agents: list[ModelAgentSetting]
+    models: list[ModelChoice]
+
 class AssetUploadRequest(BaseModel):
     space_id: str = "default"
     filename: str = Field(min_length=1)

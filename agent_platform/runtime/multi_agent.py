@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Callable, Mapping, Sequence
 
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -58,6 +59,60 @@ class CloudTeamRuntime:
             return self.agents[fallback]
         return next(iter(self.agents.values()))
 
+    def model_settings(self) -> dict[str, list[dict[str, object]]]:
+        """Return redacted role bindings and selectable model choices."""
+        choices: dict[tuple[str, str, str], dict[str, object]] = {}
+        for spec in self.agents.values():
+            key = (spec.provider, spec.base_url, spec.model)
+            choices.setdefault(key, {
+                "source_agent_id": spec.agent_id,
+                "model_profile": spec.model_profile,
+                "provider": spec.provider,
+                "base_url": spec.base_url,
+                "model": spec.model,
+                "capabilities": list(spec.capabilities),
+                "modalities": list(spec.modalities),
+                "max_concurrency": spec.max_concurrency,
+            })
+        bindings = [{
+            "agent_id": spec.agent_id,
+            "display_name": spec.display_name,
+            "responsibility": spec.responsibility,
+            "tier": spec.tier,
+            "model_profile": spec.model_profile,
+            "provider": spec.provider,
+            "model": spec.model,
+            "capabilities": list(spec.capabilities),
+            "modalities": list(spec.modalities),
+            "max_concurrency": spec.max_concurrency,
+        } for spec in self.agents.values()]
+        return {"agents": bindings, "models": list(choices.values())}
+
+    def update_model_binding(self, agent_id: str, *, source_agent_id: str, tier: str | None = None) -> dict[str, object]:
+        """Rebind one role to an existing model choice for future runs only."""
+        current = self.agents.get(agent_id)
+        source = self.agents.get(source_agent_id)
+        if current is None or source is None:
+            raise KeyError("unknown agent binding")
+        updated = replace(
+            current,
+            provider=source.provider,
+            base_url=source.base_url,
+            model=source.model,
+            api_key_env=source.api_key_env,
+            api_key=source.api_key,
+            capabilities=source.capabilities,
+            model_profile=source.model_profile,
+            modalities=source.modalities,
+            max_concurrency=source.max_concurrency,
+            tier=(tier.strip() if isinstance(tier, str) and tier.strip() else current.tier),
+        )
+        self.agents[agent_id] = updated
+        if self._clients:
+            self._clients[agent_id] = CloudAgentClient(updated)
+        settings = self.model_settings()["agents"]
+        return next(item for item in settings if item["agent_id"] == agent_id)
+
     def _turn(self, spec: CloudAgentSpec, prompt: str, sequence: int) -> AgentTurn:
         messages = []
         if spec.system_prompt:
@@ -67,6 +122,26 @@ class CloudTeamRuntime:
         if not isinstance(content, str) or not content.strip():
             raise RuntimeError(f"Cloud agent returned an empty response: {spec.agent_id}")
         return AgentTurn(spec.agent_id, spec.responsibility, prompt, content, sequence)
+
+    def _parallel_turns(self, requests: Sequence[tuple[CloudAgentSpec, str, int]]) -> list[AgentTurn]:
+        """Run independent agents concurrently with isolated message lists.
+
+        Each role owns a separate ``CloudAgentClient`` and receives only its
+        own system prompt plus task prompt.  Sharing a provider/model profile
+        therefore reuses infrastructure without sharing a conversation.
+        """
+        if not requests:
+            return []
+        # ``max_concurrency`` is a deployment hint for a provider profile; the
+        # independent role calls themselves must still be submitted together.
+        workers = len(requests)
+        results: dict[int, AgentTurn] = {}
+        with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="localrag-agent") as pool:
+            futures = {pool.submit(self._turn, spec, prompt, sequence): sequence for spec, prompt, sequence in requests}
+            for future in as_completed(futures):
+                turn = future.result()
+                results[turn.sequence] = turn
+        return [results[sequence] for _, _, sequence in sorted(requests, key=lambda item: item[2])]
 
     def validate(self, goal: str, architecture: str, max_agents: int) -> None:
         if not isinstance(goal, str) or not goal.strip():
@@ -101,9 +176,13 @@ class CloudTeamRuntime:
         if architecture == "direct":
             record(chair, f"直接完成任务：{normalized_goal}\n只输出给用户的最终答复。")
         elif architecture == "swarm":
-            record(researcher, f"独立探索任务：{normalized_goal}\n列出事实、证据缺口和建议。")
+            independent = [(researcher, f"独立探索任务：{normalized_goal}\n列出事实、证据缺口和建议。", 1)]
             if reviewer:
-                record(reviewer, f"独立审查任务：{normalized_goal}\n提出可能的反例、风险和需要核验的点。")
+                independent.append((reviewer, f"独立审查任务：{normalized_goal}\n提出可能的反例、风险和需要核验的点。", 2))
+            for turn in self._parallel_turns(independent):
+                turns.append(turn)
+                if on_turn:
+                    on_turn(turn)
             shared = "\n\n".join(f"[{turn.agent_id}]\n{turn.content}" for turn in turns)
             record(chair, f"汇总共享记录。\n目标：{normalized_goal}\n共享记录：\n{shared}\n给出有证据边界的最终结论。")
         elif architecture == "adversarial":

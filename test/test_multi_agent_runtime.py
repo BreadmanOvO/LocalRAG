@@ -5,6 +5,7 @@ import os
 import tempfile
 import unittest
 import time
+import threading
 from unittest.mock import Mock, patch
 from langchain_core.messages import AIMessage
 from pathlib import Path
@@ -35,6 +36,19 @@ class CloudConfigTests(unittest.TestCase):
             agents = load_cloud_agents(path, environ={})
             self.assertFalse(agents["researcher"].enabled)
             self.assertEqual("", agents["researcher"].api_key)
+
+    def test_loader_accepts_inline_key_and_model_profiles(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "multi.json"
+            path.write_text(json.dumps({
+                "contract_version": "agent-platform-cloud-v1",
+                "model_profiles": {"strong-text": {"provider": "sensenova", "base_url": "https://token.sensenova.cn/v1", "model": "strong", "api_key_env": "UNSET", "api_key": "inline-secret", "capabilities": ["reasoning"], "modalities": ["text"], "max_concurrency": 4}},
+                "agents": {"chairperson": {"display_name": "总助理", "responsibility": "汇总", "model_profile": "strong-text", "tier": "lead", "system_prompt": "brief"}},
+            }), encoding="utf-8")
+            agents = load_cloud_agents(path, environ={})
+            self.assertEqual("inline-secret", agents["chairperson"].api_key)
+            self.assertEqual("strong-text", agents["chairperson"].model_profile)
+            self.assertEqual("lead", agents["chairperson"].tier)
 
 
 class CloudTeamRuntimeTests(unittest.TestCase):
@@ -82,6 +96,32 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         self.assertEqual(["researcher", "reviewer", "chairperson"], [turn.agent_id for turn in result.turns])
         self.assertIn("researcher result", calls[-1][1])
         self.assertIn("reviewer result", calls[-1][1])
+
+    def test_swarm_runs_independent_agents_concurrently_with_isolated_prompts(self) -> None:
+        barrier = threading.Barrier(2)
+        prompts: dict[str, str] = {}
+
+        def invoke(spec, messages):
+            prompts[spec.agent_id] = str(messages[-1].content)
+            if spec.agent_id in {"researcher", "reviewer"}:
+                barrier.wait(timeout=2)
+            return f"{spec.agent_id} result"
+
+        runtime = CloudTeamRuntime({"chairperson": _spec("chairperson", "汇总"), "researcher": _spec("researcher", "研究"), "reviewer": _spec("reviewer", "审查")}, invoker=invoke)
+        result = runtime.execute("并发独立探索", architecture="swarm", max_agents=3)
+        self.assertEqual(["researcher", "reviewer", "chairperson"], [turn.agent_id for turn in result.turns])
+        self.assertNotEqual(prompts["researcher"], prompts["reviewer"])
+
+    def test_model_settings_rebind_only_future_runtime_calls(self) -> None:
+        runtime = CloudTeamRuntime({"chairperson": _spec("chairperson", "汇总"), "reviewer": _spec("reviewer", "审查")}, invoker=lambda spec, messages: "ok")
+        client = TestClient(create_app(team_runtime=runtime))
+        settings = client.get("/settings/models")
+        self.assertEqual(200, settings.status_code)
+        updated = client.put("/settings/models/chairperson", json={"source_agent_id": "reviewer", "tier": "strong"})
+        self.assertEqual(200, updated.status_code, updated.text)
+        chair = next(item for item in updated.json()["agents"] if item["agent_id"] == "chairperson")
+        self.assertEqual("strong", chair["tier"])
+        self.assertEqual("sensenova-6.7-flash-lite", chair["model"])
 
     def test_api_persists_team_messages_and_events(self) -> None:
         def invoke(spec, messages):

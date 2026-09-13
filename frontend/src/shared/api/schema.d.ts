@@ -366,6 +366,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/settings/models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Model Settings */
+        get: operations["model_settings_settings_models_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/settings/models/{agent_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Model Setting */
+        put: operations["update_model_setting_settings_models__agent_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/tasks": {
         parameters: {
             query?: never;
@@ -670,6 +704,62 @@ export interface components {
             room_sequence: number;
             /** Status */
             status: string;
+        };
+        /** ModelAgentSetting */
+        ModelAgentSetting: {
+            /** Agent Id */
+            agent_id: string;
+            /** Capabilities */
+            capabilities: string[];
+            /** Display Name */
+            display_name: string;
+            /** Max Concurrency */
+            max_concurrency: number;
+            /** Modalities */
+            modalities: string[];
+            /** Model */
+            model: string;
+            /** Model Profile */
+            model_profile: string;
+            /** Provider */
+            provider: string;
+            /** Responsibility */
+            responsibility: string;
+            /** Tier */
+            tier: string;
+        };
+        /** ModelBindingUpdateRequest */
+        ModelBindingUpdateRequest: {
+            /** Source Agent Id */
+            source_agent_id: string;
+            /** Tier */
+            tier?: string | null;
+        };
+        /** ModelChoice */
+        ModelChoice: {
+            /** Base Url */
+            base_url: string;
+            /** Capabilities */
+            capabilities: string[];
+            /** Max Concurrency */
+            max_concurrency: number;
+            /** Modalities */
+            modalities: string[];
+            /** Model */
+            model: string;
+            /** Model Profile */
+            model_profile: string;
+            /** Provider */
+            provider: string;
+            /** Source Agent Id */
+            source_agent_id: string;
+        };
+        /** ModelSettingsResponse */
+        ModelSettingsResponse: {
+            /** Agents */
+            agents: components["schemas"]["ModelAgentSetting"][];
+            /** Models */
+            models: components["schemas"]["ModelChoice"][];
         };
         /** MultiAgentExecuteRequest */
         MultiAgentExecuteRequest: {
@@ -1675,6 +1765,61 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RunResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    model_settings_settings_models_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelSettingsResponse"];
+                };
+            };
+        };
+    };
+    update_model_setting_settings_models__agent_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModelBindingUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelSettingsResponse"];
                 };
             };
             /** @description Validation Error */

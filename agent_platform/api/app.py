@@ -42,7 +42,7 @@ from .schemas import (
     MemberListResponse, MessageListResponse, MessageResponse, RoomCreateRequest, RoomListResponse, RoomResponse,
     PersonaCreateRequest, PersonaResponse, PersonaBindingResponse, RoleListResponse, PlanCompileRequest, PlanCompileResponse,
     RunCreateRequest, RunResponse, TaskCreateRequest, TaskResponse, MultiAgentExecuteRequest, MultiAgentExecuteResponse,
-    AssetUploadRequest, AssetUploadResponse,
+    AssetUploadRequest, AssetUploadResponse, ModelBindingUpdateRequest, ModelSettingsResponse,
 )
 
 
@@ -148,6 +148,16 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         _require_space(request, room.space_id)
         return room
 
+    def _runtime_for_settings() -> CloudTeamRuntime:
+        runtime = app.state.team_runtime
+        if runtime is None:
+            try:
+                runtime = CloudTeamRuntime.from_config()
+            except (RuntimeError, OSError) as exc:
+                raise ApiDomainError("capability_not_ready", str(exc), status=503) from exc
+            app.state.team_runtime = runtime
+        return runtime
+
     @app.exception_handler(ApiDomainError)
     async def _handle_domain(request: Request, exc: ApiDomainError) -> JSONResponse:
         return _error(request, exc)
@@ -171,6 +181,19 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
     @app.get("/health", response_model=HealthResponse)
     async def health() -> dict[str, str]:
         return {"status": "ok", "contract": "v1.8-inmemory"}
+
+    @app.get("/settings/models", response_model=ModelSettingsResponse)
+    async def model_settings() -> Any:
+        return _runtime_for_settings().model_settings()
+
+    @app.put("/settings/models/{agent_id}", response_model=ModelSettingsResponse)
+    async def update_model_setting(agent_id: str, body: ModelBindingUpdateRequest) -> Any:
+        runtime = _runtime_for_settings()
+        try:
+            runtime.update_model_binding(agent_id, source_agent_id=body.source_agent_id, tier=body.tier)
+        except KeyError as exc:
+            raise ApiDomainError("not_found", "agent or model choice not found", status=404) from exc
+        return runtime.model_settings()
 
     @app.get("/roles", response_model=RoleListResponse)
     async def list_roles() -> Any:
