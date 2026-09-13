@@ -2,8 +2,8 @@
 
 ## Source of truth
 
-- Status: Draft — v1.8 目标设计，尚未实现
-- Last refreshed: 2026-09-12
+- Status: Active — v1.8 product UI and model-routing contract
+- Last refreshed: 2026-09-13
 - Primary product surfaces: 公司式助理工作台、项目群聊、任务追溯、资产库与公司设置
 - Scope: 主仓 v1.8，与 main 按验收批次同步；小仓文档使用 main。总体方案及角色目录见 [v1.8 升级方案](RAG_md/docs/v1.8/agent-platform-upgrade-plan.md)，执行排程见 [完整开发计划](RAG_md/docs/v1.8/development-plan.md)。
 - Protocol: 身份、执行中追问、交接与恢复以 [Runtime 协议草案](RAG_md/docs/v1.8/runtime-contracts.md) 为准；本文件定义这些状态如何呈现。
@@ -20,6 +20,7 @@
 
 - Goals: 用户像董事长一样交代目标，总助理独办或组织项目组；成员在群内交接、共享证据并回报，最终由总助理汇总。
 - Goals: 群聊同时承担持续沟通、任务进度和故障追溯；未手动删除的聊天室可保存、重开和继续追问。
+- Goals: 每个 Agent 可固定绑定模型或使用自动路由；一次房间组建后冻结解析结果，执行中不切换模型，时间线展示实际模型。
 - Goals: 前端独立重做为 React + TypeScript，Python 保留 Agent 框架、算法、调度、记忆、检索和计算逻辑。
 - Non-goals: 让用户每次选择五种架构；角色全部常驻；前端复制执行器；通过聊天文本自动判断任务完成。
 - Success signals: 无需理解架构即可下达任务；能找到负责人、交付物和问题节点；刷新或重启恢复已确认消息，打开历史不触发执行。具体质量和性能门槛以升级计划第 9 节为准。
@@ -27,7 +28,7 @@
 ## Personas and jobs
 
 - Primary personas: 用户是董事长／任务发起人，总助理是唯一常驻对接角色。平台开发者可展开执行详情，但不是默认界面的唯一受众。
-- User jobs: 下达目标；补充资料；查看成员与进展；质疑结论；定位失败；暂停／继续；取回产物；重开历史项目。
+- User jobs: 下达目标；补充资料；查看成员与进展；质疑结论；定位失败；暂停／继续；取回产物；重开历史项目；查看每次 Agent 发言实际使用的模型。
 - 公司预设：董事长办公室、战略研究、产品、研发架构、数据知识、设计体验、质量风险、市场内容、财务运营、法务合规。具体角色、风格和交付边界以升级计划第 0.5 节为唯一目录。
 - 初始化：公司名、总助理名字与风格、启用部门、工具接入。支持修改预设并另存，允许跳过非必填项。
 - 角色配置：界面区分“人设风格”“工作职责”“本次模型与权限”；能力未配置时解释缺口。预设属于角色库，不增加独立业务模式。
@@ -72,6 +73,7 @@
 | 组件 | 行为与数据依据 |
 |---|---|
 | `CompanySetup / RoleLibrary` | 初始化公司与总助理，启用部门，编辑人设和能力；旧运行使用固定角色快照 |
+| `AgentModelBindingCard` | 为单个 Agent 选择固定模型或自动路由约束；批量修改只影响后续 run |
 | `AssistantComposer` | 单一输入框、附件、暂停；活动任务中仍可保存追问，并显示关联任务及处理状态；auto/direct/delegate 语义以协议为准 |
 | `RoomList / RoomHeader` | 搜索历史、未读、归档与重开；顶部显示目标、成员和状态 |
 | `MemberCard` | 部门、职责、当前工作、模型能力与参与历史；空闲不伪装成执行中 |
@@ -129,7 +131,7 @@
 
 ## Implementation constraints
 
-- Framework: React + TypeScript + Vite、React Router、TanStack Query、Tailwind CSS + shadcn/ui；React Flow 展示依赖。v1.8 不再以 Streamlit 为新前端基础。
+- Framework: React + TypeScript + Vite、React Router、TanStack Query；React Flow 展示依赖。v1.8 不再以 Streamlit 为新前端基础。
 - Frontend organization: `src/app` 负责路由和 Provider，`pages` 装配页面，`features` 实现发送／重试等用户动作，`entities` 展示房间／消息／任务，`shared` 放 UI、主题和生成客户端。先按实际功能建目录，不空建全部抽象。
 - Backend: FastAPI + Python Runtime／worker，PostgreSQL 持久状态，现有索引与资产存储；LLM 调用、路由、图调度、知识权限和沙箱算法都在 Python。
 - Transport: HTTP 命令查询＋SSE 已提交事件；OpenAPI 生成 TypeScript 客户端，事件有独立版本化 schema。SSE room_sequence 断点重连、event_id 去重，流式增量先持久化后推送；快照和游标具有一致性边界，前端不猜缺失的事件。
