@@ -361,6 +361,8 @@ class JudgeFormalRunTests(unittest.TestCase):
                     check=True,
                     capture_output=True,
                     text=True,
+                    encoding='utf-8',
+                    errors='replace',
                 )
             parts = shlex.split(command)
             self.assertEqual(['cd', str(formal_runner.REPO_ROOT), '&&', expected_interpreter, '-c'], parts[:5])

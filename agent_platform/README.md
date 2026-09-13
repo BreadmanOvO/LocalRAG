@@ -49,4 +49,6 @@ D01 只提交目录和依赖边界。目录下的 `__init__.py` 是可导入的�
 
 ## 当前状态
 
-`contracts/identity.py` 已在 D03 提供可执行的身份与版本合同草案；它不读写数据库，也不启动 Runtime。其余子包仍是 `planned` 边界占位。直到对应 Day 节点通过，不应从旧入口导入占位包，也不应把目录或 schema 存在描述为 v1.8 功能已实现。
+截至 D33，以下切片已有可执行代码和测试：FastAPI 房间/消息 API、React 工作台、游标/SSE snapshot、角色与人设注册、直办/委派计划编译、分层/图策略、Blackboard/对抗式合同、异构能力和多模态元数据、MCP/沙箱策略、回放/评测/发布检查。可以运行 `python scripts/smoke_agent_platform.py` 验证统一入口演示链路。
+
+这些切片仍主要是内存或浏览器级实现。生产 PostgreSQL、跨进程 worker/SSE、真实多 Agent 群聊、OCR/VLM、MCP server、对象存储和生产鉴权尚未完成；目录和 schema 的存在不能单独视为生产能力已实现。

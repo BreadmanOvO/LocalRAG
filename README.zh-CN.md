@@ -6,7 +6,7 @@
 
 LocalRAG 是一个面向自动驾驶感知算法资料的 Agentic RAG 系统。它将混合检索、来源核验、任务记忆和可恢复研究流程组合在一个 Streamlit 应用中，并支持云端模型、本地模型服务和长会话压缩。
 
-当前实现以 v1.7 Agentic RAG 为基线。v1.8 增加可持久化的统一助理工作台、Python Runtime、公司式角色预设和可追溯的多 Agent 协作。v1.8 的代码边界见 [`agent_platform/README.md`](agent_platform/README.md)，尚未完成的能力会在开发记录中明确标注。
+当前实现以 v1.7 Agentic RAG 为基线。v1.8 增加统一助理工作台合同、Python Runtime 边界、公司式角色预设和可追溯的多 Agent 协作。v1.8 的代码边界见 [`agent_platform/README.md`](agent_platform/README.md)，尚未完成的能力会在开发记录中明确标注。
 
 ## 工作原理
 
@@ -30,10 +30,14 @@ flowchart LR
 
 ### 1. 准备 Windows 环境
 
-本地流程使用 PowerShell、Python 3.11/3.12、NVIDIA GPU 和仓库根目录下的 `.venv`：
+本地流程使用 PowerShell、Python 3.11/3.12、NVIDIA GPU 和仓库根目录下的 `.venv`。如果使用 Conda，已验证 `D:\Programs\Anaconda` 的 `base` 环境包含完整依赖；也可以通过 `LOCALRAG_PYTHON` 指定解释器：
 
 ```powershell
 .\quickstart\windows\01-check-environment.ps1 -InstallDependencies
+```
+
+```powershell
+$env:LOCALRAG_PYTHON = "D:\Programs\Anaconda\python.exe"
 ```
 
 从下载 Qwen3-4B、重建默认语料，到 203 条数据准备、4-bit QLoRA、模型导出、服务启动和评测，完整命令见 [Windows 本地运行指南](quickstart/windows/README.md)。
@@ -164,6 +168,17 @@ streamlit run app_qa.py --server.fileWatcherType none
 ```bash
 streamlit run app_qa.py
 ```
+
+### v1.8 统一助理合同演示
+
+v1.8 提供可运行的 FastAPI + React 合同演示，可验证建房、幂等消息、`message_saved` 事件投影、角色读取和直办/委派计划编译，不依赖模型服务：
+
+```powershell
+python scripts/smoke_agent_platform.py
+python scripts/run_agent_platform.ps1
+```
+
+另开终端执行 `cd frontend; npm run dev`，访问 `http://127.0.0.1:5173`。该演示不代表生产 PostgreSQL、持久 worker/SSE 或真实多 Agent 执行；旧 Streamlit 入口仍是 v1.7 RAG 路径。
 
 默认读取 `config/active_corpus.json`。仓库已提交清洗后的 100 篇语料，Chroma 索引需要在本机执行 `quickstart/windows/03-prepare-data.ps1` 生成；已评测语料会产生 7339 个 chunk。active corpus profile 同时记录来源数、片段数和 corpus/registry 指纹。也可以通过环境变量选择已有目录：
 

@@ -8,7 +8,7 @@ export type Member = components["schemas"]["MemberResponse"];
 export type Role = components["schemas"]["RoleResponse"];
 export type Persona = components["schemas"]["PersonaResponse"];
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
+export const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
 const client = createClient<paths>({ baseUrl: API_BASE });
 
 function unwrap<T>(data: T | undefined, error: unknown): T {

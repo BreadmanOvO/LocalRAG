@@ -1,0 +1,7 @@
+{
+  "scope": "v1.8 local demo contract",
+  "command": "python scripts/smoke_agent_platform.py",
+  "status": "pass",
+  "checks": ["backend startup", "health", "assistant room creation", "idempotent replay", "plan compilation", "roles", "message history", "message event projection"],
+  "boundary": "does not execute model providers or claim production persistence"
+}

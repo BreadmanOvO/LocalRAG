@@ -6,7 +6,7 @@
 
 LocalRAG is an Agentic RAG system for autonomous-driving perception research. It combines hybrid retrieval, source verification, task memory, and resumable research workflows in a Streamlit application. The system supports cloud models, a local model gateway, and long-context compression.
 
-The current implementation is the v1.7 Agentic RAG baseline. The v1.8 work adds a persistent assistant workspace, a Python Runtime, company-style role presets, and traceable multi-agent collaboration. The v1.8 code boundary is documented in [`agent_platform/README.md`](agent_platform/README.md); unfinished capabilities remain explicitly marked in the development records.
+The current implementation is the v1.7 Agentic RAG baseline. The v1.8 work adds a unified assistant workspace contract, a Python Runtime boundary, company-style role presets, and traceable multi-agent collaboration. The v1.8 code boundary is documented in [`agent_platform/README.md`](agent_platform/README.md); unfinished capabilities remain explicitly marked in the development records.
 
 ## How it works
 
@@ -30,10 +30,14 @@ flowchart LR
 
 ### 1. Prepare the Windows environment
 
-The supported local path uses PowerShell, Python 3.11/3.12, an NVIDIA GPU, and a repository-level `.venv`:
+The supported local path uses PowerShell, Python 3.11/3.12, an NVIDIA GPU, and a repository-level `.venv`. If you use Conda, the validated full-dependency environment is `D:\Programs\Anaconda` (`base`); set `LOCALRAG_PYTHON` when the interpreter is not on `PATH`:
 
 ```powershell
 .\quickstart\windows\01-check-environment.ps1 -InstallDependencies
+```
+
+```powershell
+$env:LOCALRAG_PYTHON = "D:\Programs\Anaconda\python.exe"
 ```
 
 The complete sequence for downloading Qwen3-4B, building the default corpus, preparing all 203 fine-tuning records, running 4-bit QLoRA, exporting the model, starting the service, and evaluating it is documented in [quickstart/windows/README.md](quickstart/windows/README.md).
@@ -166,6 +170,17 @@ Set each role's `route` independently. RAG and summary apply the Gateway's error
 ```bash
 streamlit run app_qa.py
 ```
+
+### v1.8 assistant contract demo
+
+The v1.8 slice has a runnable FastAPI + React contract demo. It exercises room creation, idempotent messages, `message_saved` event projection, role lookup, and direct/delegated plan compilation without requiring a model provider:
+
+```powershell
+python scripts/smoke_agent_platform.py
+python scripts/run_agent_platform.ps1
+```
+
+In another terminal, start the React workspace with `cd frontend; npm run dev` and open `http://127.0.0.1:5173`. This demo does not claim production PostgreSQL, durable workers/SSE, or real multi-agent execution; the legacy Streamlit entry remains the v1.7 RAG path.
 
 By default, the app loads the profile in `config/active_corpus.json`. The repository contains the cleaned 100-document corpus, while the Chroma index is built locally. Create it with `quickstart/windows/03-prepare-data.ps1`; the evaluated corpus produces 7,339 chunks. The active corpus profile records source count, chunk count, and corpus/registry fingerprints. To use another existing index:
 

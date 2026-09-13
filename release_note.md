@@ -227,3 +227,24 @@ v1.7 优先恢复活动语料库，并验收“提问 → 检索 → 研究步�
 ### 验证
 
 - `python -m unittest test.test_ingestion_workflow -v` 通过，覆盖文本规范化、预览、显式发布、重复发布和可选评测回调。
+
+## v1.8：统一助理合同演示
+
+2026-09-13 · `v1.8`
+
+### 变更
+
+- 增加 `agent_platform/` Python Runtime 边界、FastAPI API、React 工作台、房间消息与事件合同。
+- 增加统一入口的直办/委派计划编译、公司角色预设、Blackboard/对抗式协作协议、能力注册、沙箱和 MCP schema 合同。
+- 增加本地部署脚本、JSON 备份/还原校验、Vite 代理和 Conda/Python 解释器探测。
+- 保留 v1.7 Streamlit Agentic RAG 作为实际模型检索入口；上传资料的评测仍由用户显式选择。
+
+### 验证
+
+- `D:\Programs\Anaconda\python.exe scripts/smoke_agent_platform.py` 通过：FastAPI 启动、健康检查、统一助理建房、幂等重放、角色读取、计划编译、消息读取和 `message_saved` 事件投影。
+- `D:\Programs\Anaconda\python.exe -m pytest -q`：`735 passed, 1 skipped`。
+- `cd frontend; npm run build` 通过；启动 FastAPI 后，Vite `/api/health` 和 `/api/roles` 代理返回 `200`。
+
+### 当前边界
+
+本版本已达到可演示的本地合同状态（`go-contract`）。PostgreSQL 跨进程持久化、真实 worker/SSE、多 Agent 群聊执行、OCR/VLM、MCP server、对象存储和生产鉴权仍需真实环境验收，不能据此宣称生产发布完成。详细核对见 `RAG_md/docs/v1.8/evidence/upgrade-readiness-audit.md`。

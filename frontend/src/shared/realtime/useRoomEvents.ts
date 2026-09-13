@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Event } from "../api/client";
+import { API_BASE } from "../api/client";
 
 type RoomEventState = { events: Event[]; cursor: number; connected: boolean };
 
@@ -13,7 +14,8 @@ export function useRoomEvents(roomId: string, initialCursor = 0): RoomEventState
     let stopped = false;
     const connect = () => {
       if (stopped) return;
-      source = new EventSource(`/api/rooms/${encodeURIComponent(roomId)}/events/stream?after=${cursor.current}`);
+      const base = API_BASE.replace(/\/$/, "");
+      source = new EventSource(`${base}/rooms/${encodeURIComponent(roomId)}/events/stream?after=${cursor.current}`);
       source.onopen = () => setState((current) => ({ ...current, connected: true }));
       source.onmessage = (message) => {
         try {

@@ -74,6 +74,15 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
     assistant_keys: dict[str, tuple[str, str, str]] = {}
     commands: dict[str, dict[str, Any]] = {}
 
+    def _record_message_event(message: Any) -> None:
+        """Project each saved message into the room event stream exactly once."""
+        events.append(
+            message.room_id,
+            "message_saved",
+            event_id=f"event-message-{message.message_id}",
+            payload={"message_id": message.message_id, "role": message.role},
+        )
+
     app = FastAPI(title="LocalRAG Agent Platform API", version="1.8.0")
     app.state.repository, app.state.events, app.state.runs, app.state.tasks, app.state.personas, app.state.planner = repository, events, runs, tasks, personas, planner
 
@@ -168,13 +177,17 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
                 raise ApiDomainError("idempotency_conflict", "idempotency key payload differs", status=409)
             room = repository.get_room(room_id)
             messages = repository.list_messages(room_id)
+            if messages:
+                _record_message_event(messages[0])
             return {"room": _dump(room), "message": _dump(messages[0]), "created": False}
         if body.room_id:
             room = repository.get_room(body.room_id)
             message = repository.save_message(room.room_id, body.content, role="user", idempotency_key=idempotency_key)
+            _record_message_event(message)
             return {"room": _dump(room), "message": _dump(message), "created": False}
         title = body.title.strip() or body.content.strip().splitlines()[0][:80]
         room, message = repository.create_room_with_message(body.space_id, title, body.content, idempotency_key=idempotency_key)
+        _record_message_event(message)
         if idempotency_key:
             assistant_keys[idempotency_key] = (body.space_id, room.room_id, body.content.strip())
         return {"room": _dump(room), "message": _dump(message), "created": True}
@@ -185,7 +198,9 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
 
     @app.post("/rooms/{room_id}/messages", status_code=201, response_model=MessageResponse)
     async def create_message(room_id: str, body: MessageCreateRequest, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> Any:
-        return _dump(repository.save_message(room_id, body.content, role=body.role, message_id=body.message_id, idempotency_key=idempotency_key))
+        message = repository.save_message(room_id, body.content, role=body.role, message_id=body.message_id, idempotency_key=idempotency_key)
+        _record_message_event(message)
+        return _dump(message)
 
     @app.get("/rooms/{room_id}/messages", response_model=MessageListResponse)
     async def list_messages(room_id: str, after: int = Query(default=0, ge=0), limit: int = Query(default=100, ge=1, le=1000)) -> Any:
@@ -241,6 +256,7 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
         if body.expected_task_version is not None and body.expected_task_version != task.version:
             raise ApiDomainError("version_conflict", "task version is stale", status=409, details={"row_version": task.version})
         message = repository.save_message(task.room_id, body.content, role="user", idempotency_key=idempotency_key)
+        _record_message_event(message)
         task.version += 1
         return {"task": _dump(task), "message": _dump(message), "status": "accepted", "run_id": task.active_run_id}
 
