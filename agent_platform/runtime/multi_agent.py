@@ -22,6 +22,62 @@ from agent_platform.integrations.multi_agent_config import (
 ARCHITECTURES = {"direct", "hierarchical", "swarm", "adversarial"}
 
 
+@dataclass(frozen=True)
+class TaskModelRequirements:
+    """Requirements inferred from this run's goal, not from a role card."""
+
+    capabilities: tuple[str, ...] = ()
+    modalities: tuple[str, ...] = ()
+    scenarios: tuple[str, ...] = ()
+
+
+def _merged_values(*values: Sequence[str]) -> tuple[str, ...]:
+    """Merge case-insensitively while retaining the first useful UI label."""
+    merged: list[str] = []
+    seen: set[str] = set()
+    for group in values:
+        for raw_value in group:
+            value = str(raw_value or "").strip()
+            normalized = value.casefold()
+            if value and normalized not in seen:
+                seen.add(normalized)
+                merged.append(value)
+    return tuple(merged)
+
+
+def infer_task_model_requirements(
+    goal: str,
+    *,
+    required_capabilities: Sequence[str] = (),
+) -> TaskModelRequirements:
+    """Extract deterministic modality signals and merge router requirements.
+
+    This intentionally does not guess a model. It only turns explicit input
+    formats into hard requirements so automatic routing can fail safely.
+    """
+    normalized = str(goal or "").casefold()
+    capabilities = list(required_capabilities)
+    modalities: list[str] = []
+    scenarios: list[str] = []
+    if any(token in normalized for token in ("图片", "图像", "截图", "image", "photo", "视觉")):
+        capabilities.append("vision")
+        modalities.append("image")
+        scenarios.append("image-understanding")
+    if any(token in normalized for token in ("表格", "table", "spreadsheet", "excel", "xlsx", "csv")):
+        capabilities.append("table")
+        modalities.append("table")
+        scenarios.append("table-analysis")
+    if any(token in normalized for token in ("pdf", "文档")):
+        capabilities.append("document")
+        modalities.append("pdf")
+        scenarios.append("document-reading")
+    return TaskModelRequirements(
+        capabilities=_merged_values(capabilities),
+        modalities=_merged_values(modalities),
+        scenarios=_merged_values(scenarios),
+    )
+
+
 class ModelRoutingError(RuntimeError):
     """A safe-to-return error when an automatic model choice is impossible."""
 
@@ -202,12 +258,15 @@ class CloudTeamRuntime:
         return bool(profile.enabled and profile.provider and profile.base_url and profile.model and profile.api_key)
 
     @staticmethod
-    def _requirements_for(spec: CloudAgentSpec) -> dict[str, object]:
+    def _requirements_for(
+        spec: CloudAgentSpec,
+        task_requirements: TaskModelRequirements,
+    ) -> dict[str, object]:
         return {
             "tier": spec.auto_tier,
-            "capabilities": list(spec.auto_capabilities),
-            "modalities": list(spec.auto_modalities),
-            "scenarios": list(spec.auto_scenarios),
+            "capabilities": list(_merged_values(spec.auto_capabilities, task_requirements.capabilities)),
+            "modalities": list(_merged_values(spec.auto_modalities, task_requirements.modalities)),
+            "scenarios": list(_merged_values(spec.auto_scenarios, task_requirements.scenarios)),
         }
 
     @staticmethod
@@ -238,6 +297,7 @@ class CloudTeamRuntime:
         self,
         spec: CloudAgentSpec,
         profiles: Mapping[str, CloudModelProfile],
+        task_requirements: TaskModelRequirements,
     ) -> AgentModelBinding:
         if spec.model_binding_mode == "fixed":
             if spec.model_profile:
@@ -263,7 +323,7 @@ class CloudTeamRuntime:
                 spec=selected,
             )
 
-        requirements = self._requirements_for(spec)
+        requirements = self._requirements_for(spec, task_requirements)
         candidates = [
             profile
             for profile in profiles.values()
@@ -298,7 +358,7 @@ class CloudTeamRuntime:
         if len(candidates) > 5:
             ranked_candidates += f" > 其余 {len(candidates) - 5} 个候选"
         reason = (
-            f"自动路由：{len(candidates)} 个候选，条件 {condition}；"
+            f"自动路由：{len(candidates)} 个候选，最终合并条件 {condition}；"
             f"候选排序：{ranked_candidates}；"
             f"选择第 1 名 {selected_profile.display_name}（{selected_profile.model}）"
         )
@@ -317,6 +377,8 @@ class CloudTeamRuntime:
         *,
         architecture: str = "hierarchical",
         max_agents: int = 3,
+        goal: str = "",
+        required_capabilities: Sequence[str] = (),
     ) -> TeamModelSnapshot:
         """Resolve only participating Agents and retain their models for this run."""
         self.validate("model binding snapshot", architecture, max_agents)
@@ -324,7 +386,16 @@ class CloudTeamRuntime:
             run_agents = dict(self.agents)
             profiles = dict(self._profiles)
         agent_ids = self._execution_agent_ids(run_agents, architecture=architecture, max_agents=max_agents)
-        return TeamModelSnapshot(tuple(self._route_agent(run_agents[agent_id], profiles) for agent_id in agent_ids))
+        task_requirements = infer_task_model_requirements(
+            goal,
+            required_capabilities=required_capabilities,
+        )
+        return TeamModelSnapshot(
+            tuple(
+                self._route_agent(run_agents[agent_id], profiles, task_requirements)
+                for agent_id in agent_ids
+            )
+        )
 
     def model_settings(self) -> dict[str, list[dict[str, object]]]:
         """Return redacted role bindings and selectable model choices."""
@@ -443,11 +514,17 @@ class CloudTeamRuntime:
         architecture: str = "hierarchical",
         max_agents: int = 3,
         context: str = "",
+        required_capabilities: Sequence[str] = (),
         on_turn: Callable[[AgentTurn], None] | None = None,
         model_snapshot: TeamModelSnapshot | None = None,
     ) -> TeamRunResult:
         self.validate(goal, architecture, max_agents)
-        snapshot = model_snapshot or self.freeze_model_bindings(architecture=architecture, max_agents=max_agents)
+        snapshot = model_snapshot or self.freeze_model_bindings(
+            architecture=architecture,
+            max_agents=max_agents,
+            goal=goal,
+            required_capabilities=required_capabilities,
+        )
         run_bindings = snapshot.by_agent_id()
         run_agents = {agent_id: binding.spec for agent_id, binding in run_bindings.items()}
         normalized_goal = goal.strip()

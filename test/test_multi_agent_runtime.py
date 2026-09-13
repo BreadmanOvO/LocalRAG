@@ -84,8 +84,8 @@ class CloudConfigTests(unittest.TestCase):
                     "vision": {
                         "provider": "sensenova", "base_url": "https://token.sensenova.cn/v1",
                         "model": "vision-model", "api_key": "inline-secret", "tier": "strong",
-                        "capabilities": ["reasoning"], "modalities": ["text", "image"],
-                        "scenarios": ["research"], "max_concurrency": 8,
+                        "capabilities": ["reasoning", "vision"], "modalities": ["text", "image"],
+                        "scenarios": ["research", "image-understanding"], "max_concurrency": 8,
                     },
                 },
                 "agents": {
@@ -206,10 +206,10 @@ class CloudTeamRuntimeTests(unittest.TestCase):
             auto_scenarios=("research",),
         )
         profiles = {
-            "standard": _profile("standard", "standard-model", tier="standard", modalities=("text", "image"), max_concurrency=16),
-            "strong-slow": _profile("strong-slow", "strong-slow-model", modalities=("text", "image"), max_concurrency=2),
-            "strong-fast": _profile("strong-fast", "strong-fast-model", modalities=("text", "image"), max_concurrency=8),
-            "premium": _profile("premium", "premium-model", tier="premium", modalities=("text", "image"), max_concurrency=32),
+            "standard": _profile("standard", "standard-model", tier="standard", capabilities=("reasoning", "vision"), modalities=("text", "image"), scenarios=("research", "image-understanding"), max_concurrency=16),
+            "strong-slow": _profile("strong-slow", "strong-slow-model", capabilities=("reasoning", "vision"), modalities=("text", "image"), scenarios=("research", "image-understanding"), max_concurrency=2),
+            "strong-fast": _profile("strong-fast", "strong-fast-model", capabilities=("reasoning", "vision"), modalities=("text", "image"), scenarios=("research", "image-understanding"), max_concurrency=8),
+            "premium": _profile("premium", "premium-model", tier="premium", capabilities=("reasoning", "vision"), modalities=("text", "image"), scenarios=("research", "image-understanding"), max_concurrency=32),
         }
         runtime = CloudTeamRuntime({"chairperson": auto}, profiles=profiles, invoker=lambda spec, messages: spec.model)
         result = runtime.execute("分析图像", architecture="direct")
@@ -217,6 +217,9 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         self.assertEqual("strong-fast-model", turn.model)
         self.assertEqual("strong-fast", turn.model_profile)
         self.assertEqual("auto", turn.selection_mode)
+        self.assertIn("最终合并条件", turn.selection_reason)
+        self.assertIn("capabilities=reasoning,vision", turn.selection_reason)
+        self.assertIn("modalities=image", turn.selection_reason)
         self.assertIn("候选排序：1.strong-fast", turn.selection_reason)
         self.assertIn("并发=8", turn.selection_reason)
 
@@ -231,6 +234,34 @@ class CloudTeamRuntimeTests(unittest.TestCase):
             runtime.execute("检查图片", architecture="direct")
         invoke.assert_not_called()
 
+    def test_auto_routing_merges_role_and_task_requirements(self) -> None:
+        auto = CloudAgentSpec(
+            "chairperson", "总助理", "汇总", "", "", "", "", "",
+            model_binding_mode="auto",
+            auto_capabilities=("reasoning",),
+            auto_modalities=("text",),
+            auto_scenarios=("research",),
+        )
+        all_formats = _profile(
+            "all-formats",
+            "all-formats-model",
+            capabilities=("reasoning", "review", "vision", "table", "document"),
+            modalities=("text", "image", "table", "pdf"),
+            scenarios=("research", "image-understanding", "table-analysis", "document-reading"),
+        )
+        runtime = CloudTeamRuntime({"chairperson": auto}, profiles={"all-formats": all_formats}, invoker=lambda spec, messages: spec.model)
+        snapshot = runtime.freeze_model_bindings(
+            architecture="direct",
+            max_agents=1,
+            goal="审查图片里的表格和 PDF 文档",
+            required_capabilities=("review",),
+        )
+        binding = snapshot.bindings[0]
+        self.assertEqual("all-formats", binding.model_profile)
+        self.assertIn("capabilities=reasoning,review,vision,table,document", binding.selection_reason)
+        self.assertIn("modalities=text,image,table,pdf", binding.selection_reason)
+        self.assertIn("scenarios=research,image-understanding,table-analysis,document-reading", binding.selection_reason)
+
     def test_api_returns_explainable_auto_routing_failure_before_creating_a_run(self) -> None:
         auto = CloudAgentSpec(
             "chairperson", "总助理", "汇总", "", "", "", "", "",
@@ -244,6 +275,26 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         self.assertEqual("model_routing_failed", response.json()["code"])
         self.assertEqual("chairperson", response.json()["details"]["agent_id"])
         self.assertEqual([], client.get(f"/rooms/{room_id}/messages").json()["items"])
+
+    def test_api_merges_task_router_capability_into_auto_routing_reason(self) -> None:
+        agents = {
+            agent_id: CloudAgentSpec(
+                agent_id, agent_id, responsibility, "", "", "", "", "",
+                model_binding_mode="auto",
+            )
+            for agent_id, responsibility in (("chairperson", "汇总"), ("researcher", "研究"), ("reviewer", "审查"))
+        }
+        runtime = CloudTeamRuntime(
+            agents,
+            profiles={"review": _profile("review", "review-model", capabilities=("review",))},
+            invoker=lambda spec, messages: "ok",
+        )
+        client = TestClient(create_app(team_runtime=runtime))
+        room_id = client.post("/rooms", json={"space_id": "space-demo"}).json()["room_id"]
+        response = client.post(f"/rooms/{room_id}/multi-agent/execute", json={"goal": "请审查方案并指出风险", "architecture": "auto", "max_agents": 3})
+        self.assertEqual(200, response.status_code, response.text)
+        self.assertEqual("adversarial", response.json()["architecture"])
+        self.assertIn("capabilities=review", response.json()["turns"][0]["selection_reason"])
 
     def test_auto_run_snapshot_is_immune_to_profile_change_after_first_turn(self) -> None:
         auto_agents = {

@@ -451,6 +451,8 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
             model_snapshot = runtime.freeze_model_bindings(
                 architecture=decision.architecture,
                 max_agents=decision.max_agents,
+                goal=body.goal,
+                required_capabilities=decision.required_capabilities,
             )
         except ModelRoutingError as exc:
             raise ApiDomainError(
