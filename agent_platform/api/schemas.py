@@ -144,7 +144,7 @@ class PlanCompileResponse(BaseModel):
 
 class MultiAgentExecuteRequest(BaseModel):
     goal: str = Field(min_length=1)
-    architecture: Literal["direct", "hierarchical", "swarm", "adversarial", "heterogeneous", "graph"] = "hierarchical"
+    architecture: Literal["auto", "direct", "hierarchical", "swarm", "adversarial", "heterogeneous", "graph"] = "auto"
     max_agents: int = Field(default=3, ge=1, le=8)
     task_id: str | None = None
 
@@ -159,6 +159,7 @@ class MultiAgentExecuteResponse(BaseModel):
     task_id: str
     run_id: str
     architecture: str
+    route_reason: str = ""
     status: Literal["completed", "failed"]
     final: str
     turns: list[MultiAgentTurnResponse]

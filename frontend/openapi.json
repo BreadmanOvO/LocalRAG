@@ -579,8 +579,9 @@
       "MultiAgentExecuteRequest": {
         "properties": {
           "architecture": {
-            "default": "hierarchical",
+            "default": "auto",
             "enum": [
+              "auto",
               "direct",
               "hierarchical",
               "swarm",
@@ -633,6 +634,11 @@
           },
           "room_id": {
             "title": "Room Id",
+            "type": "string"
+          },
+          "route_reason": {
+            "default": "",
+            "title": "Route Reason",
             "type": "string"
           },
           "run_id": {

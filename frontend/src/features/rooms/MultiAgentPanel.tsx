@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, type MultiAgentExecution } from "../../shared/api/client";
 
 const architectures = [
+  ["auto", "自动判断"],
   ["hierarchical", "分层协作"],
   ["swarm", "共享汇总（实验）"],
   ["adversarial", "对抗审查"],

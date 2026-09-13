@@ -619,10 +619,10 @@ export interface components {
         MultiAgentExecuteRequest: {
             /**
              * Architecture
-             * @default hierarchical
+             * @default auto
              * @enum {string}
              */
-            architecture: "direct" | "hierarchical" | "swarm" | "adversarial" | "heterogeneous" | "graph";
+            architecture: "auto" | "direct" | "hierarchical" | "swarm" | "adversarial" | "heterogeneous" | "graph";
             /** Goal */
             goal: string;
             /**
@@ -641,6 +641,11 @@ export interface components {
             final: string;
             /** Room Id */
             room_id: string;
+            /**
+             * Route Reason
+             * @default
+             */
+            route_reason: string;
             /** Run Id */
             run_id: string;
             /**

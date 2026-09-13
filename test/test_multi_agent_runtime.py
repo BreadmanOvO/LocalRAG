@@ -56,7 +56,7 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         client = TestClient(create_app(team_runtime=runtime))
         room_id = client.post("/rooms", json={"space_id": "space-demo"}).json()["room_id"]
         client.post(f"/rooms/{room_id}/messages", json={"content": "前置约束只讨论摄像头"})
-        response = client.post(f"/rooms/{room_id}/multi-agent/execute", json={"goal": "继续介绍"})
+        response = client.post(f"/rooms/{room_id}/multi-agent/execute", json={"goal": "继续介绍", "architecture": "hierarchical"})
         self.assertEqual(502, response.status_code)
         self.assertNotIn("private key", response.text)
         self.assertIn("前置约束只讨论摄像头", calls[0])
