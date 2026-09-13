@@ -49,6 +49,6 @@ D01 只提交目录和依赖边界。目录下的 `__init__.py` 是可导入的�
 
 ## 当前状态
 
-截至 D33，以下切片已有可执行代码和测试：FastAPI 房间/消息 API、React 工作台、游标/SSE snapshot、角色与人设注册、直办/委派计划编译、分层/图策略、Blackboard/对抗式合同、异构能力和多模态元数据、MCP/沙箱策略、回放/评测/发布检查。可以运行 `python scripts/smoke_agent_platform.py` 验证统一入口演示链路。
+截至 D34，以下切片已有可执行代码和测试：FastAPI 房间/消息 API、React 工作台、游标/SSE snapshot、角色与人设注册、直办/委派计划编译、分层/图策略、Blackboard/对抗式合同、异构能力和多模态元数据、MCP/沙箱策略、回放/评测/发布检查，以及云端多 Agent Runtime 的六类有界策略和群聊事件投影。可以运行 `python scripts/smoke_agent_platform.py` 验证统一入口演示链路；配置云模型后可从房间页启动团队任务。
 
-这些切片仍主要是内存或浏览器级实现。生产 PostgreSQL、跨进程 worker/SSE、真实多 Agent 群聊、OCR/VLM、MCP server、对象存储和生产鉴权尚未完成；目录和 schema 的存在不能单独视为生产能力已实现。
+这些切片仍主要是内存或浏览器级实现；D34 的云模型执行是同步切片，D35 开始提供 SQLAlchemy PostgreSQL conversation adapter（通过 `LOCALRAG_DATABASE_URL` 选择）。跨进程 worker/SSE、OCR/VLM、MCP server、对象存储和生产鉴权尚未完成；目录和 schema 的存在不能单独视为生产能力已实现。

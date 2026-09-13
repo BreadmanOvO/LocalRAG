@@ -79,4 +79,5 @@ results/model_benchmark/
 .env.*
 *.local
 runtime_models.json
+config/multi_agent_models.json
 key.json

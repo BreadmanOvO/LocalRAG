@@ -220,6 +220,15 @@ class RunController:
     def cancel(self, run_id: str, *, expected_row_version: int, expected_control_epoch: int) -> RunControlState:
         return self._control(run_id, expected_row_version, expected_control_epoch, "cancelled")
 
+    def finish(self, run_id: str, *, status: Literal["completed", "failed"], expected_row_version: int) -> RunControlState:
+        with self._lock:
+            state = self._checked(run_id, expected_row_version)
+            if state.status in {"completed", "failed", "cancelled"}:
+                return state
+            updated = replace(state, status=status, row_version=state.row_version + 1)
+            self._runs[state.run_id] = updated
+            return updated
+
     def claim_attempt(
         self,
         run_id: str,

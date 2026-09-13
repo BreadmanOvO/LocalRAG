@@ -178,7 +178,7 @@ python scripts/smoke_agent_platform.py
 python scripts/run_agent_platform.ps1
 ```
 
-另开终端执行 `cd frontend; npm run dev`，访问 `http://127.0.0.1:5173`。该演示不代表生产 PostgreSQL、持久 worker/SSE 或真实多 Agent 执行；旧 Streamlit 入口仍是 v1.7 RAG 路径。
+另开终端执行 `cd frontend; npm run dev`，访问 `http://127.0.0.1:5173`。配置模型和环境变量后，房间页还可以启动有界的云端多 Agent 执行；生产 PostgreSQL、持久 worker/SSE 和跨进程恢复仍需单独验收。旧 Streamlit 入口仍是 v1.7 RAG 路径。
 
 默认读取 `config/active_corpus.json`。仓库已提交清洗后的 100 篇语料，Chroma 索引需要在本机执行 `quickstart/windows/03-prepare-data.ps1` 生成；已评测语料会产生 7339 个 chunk。active corpus profile 同时记录来源数、片段数和 corpus/registry 指纹。也可以通过环境变量选择已有目录：
 

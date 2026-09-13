@@ -298,6 +298,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/rooms/{room_id}/multi-agent/execute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Execute Multi Agent */
+        post: operations["execute_multi_agent_rooms__room_id__multi_agent_execute_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/runs": {
         parameters: {
             query?: never;
@@ -597,6 +614,55 @@ export interface components {
             room_sequence: number;
             /** Status */
             status: string;
+        };
+        /** MultiAgentExecuteRequest */
+        MultiAgentExecuteRequest: {
+            /**
+             * Architecture
+             * @default hierarchical
+             * @enum {string}
+             */
+            architecture: "direct" | "hierarchical" | "swarm" | "adversarial" | "heterogeneous" | "graph";
+            /** Goal */
+            goal: string;
+            /**
+             * Max Agents
+             * @default 3
+             */
+            max_agents: number;
+            /** Task Id */
+            task_id?: string | null;
+        };
+        /** MultiAgentExecuteResponse */
+        MultiAgentExecuteResponse: {
+            /** Architecture */
+            architecture: string;
+            /** Final */
+            final: string;
+            /** Room Id */
+            room_id: string;
+            /** Run Id */
+            run_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "completed" | "failed";
+            /** Task Id */
+            task_id: string;
+            /** Turns */
+            turns: components["schemas"]["MultiAgentTurnResponse"][];
+        };
+        /** MultiAgentTurnResponse */
+        MultiAgentTurnResponse: {
+            /** Agent Id */
+            agent_id: string;
+            /** Content */
+            content: string;
+            /** Responsibility */
+            responsibility: string;
+            /** Sequence */
+            sequence: number;
         };
         /** PersonaBindingResponse */
         PersonaBindingResponse: {
@@ -1409,6 +1475,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MessageResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    execute_multi_agent_rooms__room_id__multi_agent_execute_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                room_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MultiAgentExecuteRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiAgentExecuteResponse"];
                 };
             };
             /** @description Validation Error */

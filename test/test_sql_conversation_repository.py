@@ -1,0 +1,47 @@
+from __future__ import annotations
+
+import tempfile
+import unittest
+from pathlib import Path
+
+from agent_platform.conversations import ConflictError, SqlAlchemyConversationRepository
+from fastapi.testclient import TestClient
+from agent_platform.api import create_app
+
+
+class SqlConversationRepositoryTests(unittest.TestCase):
+    def test_sqlite_round_trip_and_idempotency(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = SqlAlchemyConversationRepository.from_url(f"sqlite:///{Path(directory) / 'runtime.db'}")
+            room = repo.create_room("space-demo", "研究")
+            first = repo.save_message(room.room_id, "hello", idempotency_key="k1")
+            replay = repo.save_message(room.room_id, "hello", idempotency_key="k1")
+            self.assertEqual(first.message_id, replay.message_id)
+            self.assertEqual(1, repo.get_room(room.room_id).room_sequence)
+            self.assertEqual("hello", repo.list_messages(room.room_id)[0].content)
+
+            with self.assertRaises(ConflictError):
+                repo.save_message(room.room_id, "different", idempotency_key="k1")
+            repo.close()
+
+    def test_member_is_persisted(self) -> None:
+        repo = SqlAlchemyConversationRepository.from_url("sqlite://")
+        room = repo.create_room("space-demo")
+        repo.join_member(room.room_id, "researcher")
+        self.assertEqual(["researcher"], [item.agent_id for item in repo.list_members(room.room_id)])
+
+    def test_api_can_select_sql_repository(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = SqlAlchemyConversationRepository.from_url(f"sqlite:///{Path(directory) / 'api.db'}")
+            client = TestClient(create_app(repository=repo))
+            response = client.post("/rooms", json={"space_id": "space-demo", "title": "sql"})
+            self.assertEqual(201, response.status_code)
+            room_id = response.json()["room_id"]
+            message = client.post(f"/rooms/{room_id}/messages", json={"content": "persisted"})
+            self.assertEqual(201, message.status_code)
+            self.assertEqual("persisted", repo.list_messages(room_id)[0].content)
+            repo.close()
+
+
+if __name__ == "__main__":
+    unittest.main()

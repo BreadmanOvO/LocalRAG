@@ -56,12 +56,17 @@ CREATE TABLE IF NOT EXISTS messages (
     turn_id TEXT NOT NULL,
     role TEXT NOT NULL CHECK (role IN ('user', 'assistant', 'system', 'tool')),
     content TEXT NOT NULL,
+    idempotency_key TEXT,
     status TEXT NOT NULL CHECK (status IN ('saved', 'queued', 'applied', 'rejected', 'tombstoned')),
     content_sha256 TEXT NOT NULL,
     room_sequence BIGINT NOT NULL CHECK (room_sequence > 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE (room_id, room_sequence)
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS messages_room_idempotency_key
+    ON messages(room_id, idempotency_key)
+    WHERE idempotency_key IS NOT NULL;
 
 -- Legacy file-backed messages may lack turn/sequence metadata. They are
 -- staged here for review instead of being assigned invented runtime IDs.

@@ -1,14 +1,16 @@
-"""FastAPI composition layer for the v1.8 in-memory contracts.
+"""FastAPI composition layer for the v1.8 Runtime contracts.
 
-The app adapts D06-D10 stores; it does not start model loops, workers, or
-PostgreSQL connections.  Persistence adapters can replace the injected
-stores without changing this wire contract.
+The default app uses deterministic in-memory stores for local demos. A
+SQLAlchemy conversation repository can be selected with ``database_url`` or
+``LOCALRAG_DATABASE_URL``; cloud multi-agent execution is injected as a
+runtime and remains bounded by the room event contract.
 """
 
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 import json
+import os
 from typing import Any
 from uuid import uuid4
 
@@ -19,17 +21,19 @@ from fastapi.responses import JSONResponse, StreamingResponse
 
 from agent_platform.contracts.identity import RoomEventCursor, new_identifier, validate_identifier
 from agent_platform.conversations.repository import ConflictError, ConversationRepository, NotFoundError, RepositoryError
+from agent_platform.conversations.sql_repository import SqlAlchemyConversationRepository
 from agent_platform.runtime.control import ControlConflictError, ControlError, RunController, RunNotClaimableError
 from agent_platform.runtime.event_store import EventConflictError, EventStore
 from agent_platform.personas import PersonaProfile, default_registry
 from agent_platform.routing import ArchitectureSpec, PlanCompiler, TaskProfile
+from agent_platform.runtime.multi_agent import CloudTeamRuntime
 
 from .schemas import (
     AssistantMessageRequest, AssistantMessageResponse, CommandRequest, CommandResponse, ErrorEnvelope, EventListResponse, EventResponse,
     FollowupRequest, FollowupResponse, HealthResponse, MessageCreateRequest,
     MemberListResponse, MessageListResponse, MessageResponse, RoomCreateRequest, RoomListResponse, RoomResponse,
     PersonaCreateRequest, PersonaResponse, PersonaBindingResponse, RoleListResponse, PlanCompileRequest, PlanCompileResponse,
-    RunCreateRequest, RunResponse, TaskCreateRequest, TaskResponse,
+    RunCreateRequest, RunResponse, TaskCreateRequest, TaskResponse, MultiAgentExecuteRequest, MultiAgentExecuteResponse,
 )
 
 
@@ -62,8 +66,10 @@ def _error(request: Request, exc: ApiDomainError) -> JSONResponse:
     return JSONResponse(status_code=exc.status, content=payload.model_dump())
 
 
-def create_app(*, repository: ConversationRepository | None = None, events: EventStore | None = None, runs: RunController | None = None) -> FastAPI:
+def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRepository | None = None, events: EventStore | None = None, runs: RunController | None = None, team_runtime: CloudTeamRuntime | None = None, database_url: str | None = None) -> FastAPI:
     """Create an API app with injectable in-memory stores for tests and demos."""
+    if repository is None and (database_url or os.environ.get("LOCALRAG_DATABASE_URL")):
+        repository = SqlAlchemyConversationRepository.from_url(database_url or os.environ["LOCALRAG_DATABASE_URL"])
     repository = repository or ConversationRepository()
     events = events or EventStore()
     runs = runs or RunController()
@@ -84,7 +90,7 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
         )
 
     app = FastAPI(title="LocalRAG Agent Platform API", version="1.8.0")
-    app.state.repository, app.state.events, app.state.runs, app.state.tasks, app.state.personas, app.state.planner = repository, events, runs, tasks, personas, planner
+    app.state.repository, app.state.events, app.state.runs, app.state.tasks, app.state.personas, app.state.planner, app.state.team_runtime = repository, events, runs, tasks, personas, planner, team_runtime
 
     @app.exception_handler(ApiDomainError)
     async def _handle_domain(request: Request, exc: ApiDomainError) -> JSONResponse:
@@ -241,6 +247,40 @@ def create_app(*, repository: ConversationRepository | None = None, events: Even
         task = _Task(task_id, body.room_id, body.title.strip())
         tasks[task_id] = task
         return _dump(task)
+
+    @app.post("/rooms/{room_id}/multi-agent/execute", response_model=MultiAgentExecuteResponse)
+    async def execute_multi_agent(room_id: str, body: MultiAgentExecuteRequest) -> Any:
+        room = repository.get_room(room_id)
+        task_id = validate_identifier(body.task_id, "task") if body.task_id else new_identifier("task")
+        task = tasks.get(task_id)
+        if task is None:
+            task = _Task(task_id, room.room_id, body.goal.strip())
+            tasks[task_id] = task
+        runtime = app.state.team_runtime
+        if runtime is None:
+            try:
+                runtime = CloudTeamRuntime.from_config()
+            except (RuntimeError, OSError) as exc:
+                raise ApiDomainError("capability_not_ready", str(exc), status=503) from exc
+        run_id = new_identifier("run")
+        run = runs.register_run(run_id, plan_revision=1, status="running")
+        task.active_run_id = run_id
+        user_message = repository.save_message(room.room_id, body.goal, role="user", idempotency_key=f"team-goal-{run_id}")
+        _record_message_event(user_message)
+        events.append(room.room_id, "run_started", run_id=run_id, task_id=task_id, payload={"architecture": body.architecture})
+        try:
+            result = runtime.execute(body.goal, architecture=body.architecture, max_agents=body.max_agents)
+        except Exception as exc:
+            runs.finish(run_id, status="failed", expected_row_version=run.row_version)
+            events.append(room.room_id, "run_failed", run_id=run_id, task_id=task_id, payload={"error": type(exc).__name__})
+            raise ApiDomainError("multi_agent_failed", str(exc), status=502) from exc
+        for turn in result.turns:
+            message = repository.save_message(room.room_id, f"[{turn.agent_id}] {turn.content}", role="assistant")
+            _record_message_event(message)
+            events.append(room.room_id, "step_completed", task_id=task_id, run_id=run_id, step_id=f"step-{turn.sequence}", payload={"agent_id": turn.agent_id, "message_id": message.message_id})
+        runs.finish(run_id, status="completed", expected_row_version=run.row_version)
+        events.append(room.room_id, "run_completed", run_id=run_id, task_id=task_id, payload={"turn_count": len(result.turns)})
+        return {"room_id": room.room_id, "task_id": task_id, "run_id": run_id, "architecture": result.architecture, "status": result.status, "final": result.final, "turns": [{"agent_id": turn.agent_id, "responsibility": turn.responsibility, "content": turn.content, "sequence": turn.sequence} for turn in result.turns]}
 
     @app.get("/tasks/{task_id}", response_model=TaskResponse)
     async def get_task(task_id: str) -> Any:

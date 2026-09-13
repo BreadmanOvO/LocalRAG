@@ -576,6 +576,129 @@
         "title": "MessageResponse",
         "type": "object"
       },
+      "MultiAgentExecuteRequest": {
+        "properties": {
+          "architecture": {
+            "default": "hierarchical",
+            "enum": [
+              "direct",
+              "hierarchical",
+              "swarm",
+              "adversarial",
+              "heterogeneous",
+              "graph"
+            ],
+            "title": "Architecture",
+            "type": "string"
+          },
+          "goal": {
+            "minLength": 1,
+            "title": "Goal",
+            "type": "string"
+          },
+          "max_agents": {
+            "default": 3,
+            "maximum": 8.0,
+            "minimum": 1.0,
+            "title": "Max Agents",
+            "type": "integer"
+          },
+          "task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Id"
+          }
+        },
+        "required": [
+          "goal"
+        ],
+        "title": "MultiAgentExecuteRequest",
+        "type": "object"
+      },
+      "MultiAgentExecuteResponse": {
+        "properties": {
+          "architecture": {
+            "title": "Architecture",
+            "type": "string"
+          },
+          "final": {
+            "title": "Final",
+            "type": "string"
+          },
+          "room_id": {
+            "title": "Room Id",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "completed",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "task_id": {
+            "title": "Task Id",
+            "type": "string"
+          },
+          "turns": {
+            "items": {
+              "$ref": "#/components/schemas/MultiAgentTurnResponse"
+            },
+            "title": "Turns",
+            "type": "array"
+          }
+        },
+        "required": [
+          "room_id",
+          "task_id",
+          "run_id",
+          "architecture",
+          "status",
+          "final",
+          "turns"
+        ],
+        "title": "MultiAgentExecuteResponse",
+        "type": "object"
+      },
+      "MultiAgentTurnResponse": {
+        "properties": {
+          "agent_id": {
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "responsibility": {
+            "title": "Responsibility",
+            "type": "string"
+          },
+          "sequence": {
+            "title": "Sequence",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "agent_id",
+          "responsibility",
+          "content",
+          "sequence"
+        ],
+        "title": "MultiAgentTurnResponse",
+        "type": "object"
+      },
       "PersonaBindingResponse": {
         "properties": {
           "binding_id": {
@@ -1974,6 +2097,55 @@
           }
         },
         "summary": "Create Message"
+      }
+    },
+    "/rooms/{room_id}/multi-agent/execute": {
+      "post": {
+        "operationId": "execute_multi_agent_rooms__room_id__multi_agent_execute_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "title": "Room Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MultiAgentExecuteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiAgentExecuteResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Execute Multi Agent"
       }
     },
     "/runs": {

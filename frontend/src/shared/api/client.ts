@@ -7,6 +7,7 @@ export type Event = components["schemas"]["EventResponse"];
 export type Member = components["schemas"]["MemberResponse"];
 export type Role = components["schemas"]["RoleResponse"];
 export type Persona = components["schemas"]["PersonaResponse"];
+export type MultiAgentExecution = components["schemas"]["MultiAgentExecuteResponse"];
 
 export const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
 const client = createClient<paths>({ baseUrl: API_BASE });
@@ -71,6 +72,13 @@ export const api = {
     const { data, error } = await client.POST("/assistant/messages", {
       params: { header: { "Idempotency-Key": `assistant-${crypto.randomUUID()}` } },
       body: { space_id: spaceId, content, title: title ?? "" },
+    });
+    return unwrap(data, error);
+  },
+  executeMultiAgent: async (roomId: string, goal: string, architecture: components["schemas"]["MultiAgentExecuteRequest"]["architecture"] = "hierarchical", maxAgents = 3) => {
+    const { data, error } = await client.POST("/rooms/{room_id}/multi-agent/execute", {
+      params: { path: { room_id: roomId } },
+      body: { goal, architecture, max_agents: maxAgents },
     });
     return unwrap(data, error);
   },

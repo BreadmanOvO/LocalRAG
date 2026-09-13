@@ -142,6 +142,27 @@ class PlanCompileResponse(BaseModel):
     steps: list[str]
     budget_units: int
 
+class MultiAgentExecuteRequest(BaseModel):
+    goal: str = Field(min_length=1)
+    architecture: Literal["direct", "hierarchical", "swarm", "adversarial", "heterogeneous", "graph"] = "hierarchical"
+    max_agents: int = Field(default=3, ge=1, le=8)
+    task_id: str | None = None
+
+class MultiAgentTurnResponse(BaseModel):
+    agent_id: str
+    responsibility: str
+    content: str
+    sequence: int
+
+class MultiAgentExecuteResponse(BaseModel):
+    room_id: str
+    task_id: str
+    run_id: str
+    architecture: str
+    status: Literal["completed", "failed"]
+    final: str
+    turns: list[MultiAgentTurnResponse]
+
 
 class AssistantMessageResponse(BaseModel):
     room: RoomResponse

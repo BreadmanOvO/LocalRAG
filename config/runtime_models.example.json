@@ -6,7 +6,7 @@
       "cloud": {
         "provider": "sensenova",
         "base_url": "https://token.sensenova.cn/v1",
-        "model": "sensenova-6.7-flash-lite",
+        "model": "sensenova-6.8-flash-lite",
         "api_key_env": "LOCALRAG_CLOUD_API_KEY"
       },
       "local": {
@@ -25,7 +25,7 @@
       "cloud": {
         "provider": "sensenova",
         "base_url": "https://token.sensenova.cn/v1",
-        "model": "sensenova-6.7-flash-lite",
+        "model": "sensenova-6.8-flash-lite",
         "api_key_env": "LOCALRAG_CLOUD_API_KEY"
       },
       "local": {
@@ -44,7 +44,7 @@
       "cloud": {
         "provider": "sensenova",
         "base_url": "https://token.sensenova.cn/v1",
-        "model": "sensenova-6.7-flash-lite",
+        "model": "sensenova-6.8-flash-lite",
         "api_key_env": "LOCALRAG_CLOUD_API_KEY"
       },
       "local": {

@@ -40,6 +40,7 @@ from .recovery import (
     RecoveryService,
     RestoreReport,
 )
+from .multi_agent import AgentTurn, CloudTeamRuntime, TeamRunResult
 
 __all__ = [
     "EventConflictError",
@@ -80,6 +81,9 @@ __all__ = [
     "RestoreReport",
     "build_inventory",
     "inventory_sqlite",
+    "AgentTurn",
+    "CloudTeamRuntime",
+    "TeamRunResult",
 ]
 from .backup_io import read_backup, write_backup
 

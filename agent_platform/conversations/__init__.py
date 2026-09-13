@@ -10,6 +10,7 @@ from .repository import (
     Room,
     RoomClosedError,
 )
+from .sql_repository import SqlAlchemyConversationRepository
 
 __all__ = [
     "ConflictError",
@@ -19,4 +20,5 @@ __all__ = [
     "NotFoundError",
     "Room",
     "RoomClosedError",
+    "SqlAlchemyConversationRepository",
 ]
