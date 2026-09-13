@@ -24,6 +24,9 @@ class Day13AssistantWorkbenchTests(unittest.TestCase):
         self.assertEqual(payload["room"]["room_id"], payload["message"]["room_id"])
         self.assertEqual(1, payload["room"]["room_sequence"])
         self.assertEqual("user", payload["message"]["role"])
+        events = self.client.get(f"/rooms/{payload['room']['room_id']}/events").json()["items"]
+        self.assertEqual(["message_saved"], [item["event_type"] for item in events])
+        self.assertEqual(payload["message"]["message_id"], events[0]["payload"]["message_id"])
 
     def test_assistant_first_message_idempotent_replay(self) -> None:
         request = {"space_id": "space-demo", "content": "同一个问题"}
