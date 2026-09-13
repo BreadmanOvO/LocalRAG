@@ -4,6 +4,7 @@ import json
 import os
 import tempfile
 import unittest
+import time
 from unittest.mock import Mock, patch
 from langchain_core.messages import AIMessage
 from pathlib import Path
@@ -97,6 +98,20 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         events = client.get(f"/rooms/{room['room_id']}/events").json()["items"]
         self.assertEqual("run_started", events[1]["event_type"])
         self.assertEqual("run_completed", events[-1]["event_type"])
+
+    def test_background_execution_returns_run_id_and_persists_completion(self) -> None:
+        runtime = CloudTeamRuntime({"chairperson": _spec("chairperson", "汇总")}, invoker=lambda spec, messages: "done")
+        with TestClient(create_app(team_runtime=runtime)) as client:
+            room = client.post("/rooms", json={"space_id": "space-demo", "title": "async"}).json()
+            response = client.post(f"/rooms/{room['room_id']}/multi-agent/execute", json={"goal": "异步处理", "architecture": "direct", "background": True})
+            self.assertEqual(200, response.status_code, response.text)
+            self.assertEqual("queued", response.json()["status"])
+            run_id = response.json()["run_id"]
+            for _ in range(40):
+                if client.get(f"/runs/{run_id}").json()["status"] == "completed":
+                    break
+                time.sleep(0.02)
+            self.assertEqual("completed", client.get(f"/runs/{run_id}").json()["status"])
 
 
 if __name__ == "__main__":

@@ -5,13 +5,26 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any, Callable
 
-from sqlalchemy import Column, DateTime, Integer, JSON, MetaData, String, Table, Text, create_engine, insert, select
+from sqlalchemy import Column, DateTime, Integer, JSON, MetaData, String, Table, Text, create_engine, insert, select, update
+from sqlalchemy.dialects.postgresql import insert as postgres_insert
+from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import IntegrityError
+from threading import Lock
 
 from agent_platform.contracts.execution import EventType, RunEvent
 from agent_platform.contracts.identity import RoomEventCursor, RoomEventIdentity, new_identifier, validate_identifier
 from .event_store import EventConflictError, RoomSnapshot
+
+
+_ROOM_LOCKS: dict[tuple[int, str], Lock] = {}
+_ROOM_LOCKS_GUARD = Lock()
+
+
+def _room_lock(engine: Engine, room_id: str) -> Lock:
+    key = (id(engine), room_id)
+    with _ROOM_LOCKS_GUARD:
+        return _ROOM_LOCKS.setdefault(key, Lock())
 
 
 class SqlAlchemyEventStore:
@@ -35,6 +48,11 @@ class SqlAlchemyEventStore:
             Column("timestamp", Text, nullable=False),
             Column("created_at", DateTime(timezone=True), nullable=False),
         )
+        self.room_counters = Table(
+            "room_event_counters", self.metadata,
+            Column("room_id", String(255), primary_key=True),
+            Column("next_sequence", Integer, nullable=False),
+        )
         if create_schema and engine.dialect.name == "sqlite":
             self.metadata.create_all(engine)
 
@@ -48,19 +66,42 @@ class SqlAlchemyEventStore:
         identifier = validate_identifier(event_id, "event") if event_id else new_identifier("event")
         now = datetime.now(timezone.utc).isoformat()
         try:
-            with self.engine.begin() as conn:
+            # SQLite has no row-level SELECT FOR UPDATE.  The process-local
+            # lock keeps local multi-thread probes deterministic; PostgreSQL
+            # still relies on the counter row lock for cross-process fencing.
+            with _room_lock(self.engine, room_id):
+                with self.engine.begin() as conn:
                 # The production migration adds a room-row lock around this
                 # allocation; the compact adapter uses the event unique key.
-                existing = conn.execute(select(self.events).where(self.events.c.event_id == identifier)).mappings().first()
-                if existing is not None:
-                    if existing["room_id"] != room_id or existing["event_type"] != event_type:
-                        raise EventConflictError("event_id is already bound to another event")
-                    return self._event(existing)
-                current = conn.execute(select(self.events.c.room_sequence).where(self.events.c.room_id == room_id).order_by(self.events.c.room_sequence.desc()).limit(1)).scalar()
-                sequence = int(current or 0) + 1
-                conn.execute(insert(self.events).values(event_id=identifier, room_id=room_id, task_id=task_id, run_id=run_id, step_id=step_id, attempt_id=attempt_id, event_type=event_type, room_sequence=sequence, run_sequence=run_sequence, caused_by=list(caused_by), consumes=list(consumes), produces=list(produces), usage=usage or {}, payload=payload or {}, timestamp=now, created_at=datetime.now(timezone.utc)))
-                row = conn.execute(select(self.events).where(self.events.c.event_id == identifier)).mappings().one()
-                return self._event(row)
+                    existing = conn.execute(select(self.events).where(self.events.c.event_id == identifier)).mappings().first()
+                    if existing is not None:
+                        if existing["room_id"] != room_id or existing["event_type"] != event_type:
+                            raise EventConflictError("event_id is already bound to another event")
+                        return self._event(existing)
+                    # A dedicated counter row is locked in the same transaction.
+                # This avoids the read-max-then-insert race when two workers
+                # append to one room concurrently (PostgreSQL and SQLite).
+                    counter = conn.execute(select(self.room_counters).where(self.room_counters.c.room_id == room_id).with_for_update()).mappings().first()
+                    if counter is None:
+                        values = {"room_id": room_id, "next_sequence": 2}
+                        if conn.dialect.name == "postgresql":
+                            result = conn.execute(postgres_insert(self.room_counters).values(**values).on_conflict_do_nothing(index_elements=[self.room_counters.c.room_id]))
+                        elif conn.dialect.name == "sqlite":
+                            result = conn.execute(sqlite_insert(self.room_counters).values(**values).on_conflict_do_nothing(index_elements=[self.room_counters.c.room_id]))
+                        else:
+                            result = conn.execute(insert(self.room_counters).values(**values))
+                        if result.rowcount == 1:
+                            sequence = 1
+                        else:
+                            counter = conn.execute(select(self.room_counters).where(self.room_counters.c.room_id == room_id).with_for_update()).mappings().one()
+                            sequence = int(counter["next_sequence"])
+                            conn.execute(update(self.room_counters).where(self.room_counters.c.room_id == room_id).values(next_sequence=sequence + 1))
+                    else:
+                        sequence = int(counter["next_sequence"])
+                        conn.execute(update(self.room_counters).where(self.room_counters.c.room_id == room_id).values(next_sequence=sequence + 1))
+                    conn.execute(insert(self.events).values(event_id=identifier, room_id=room_id, task_id=task_id, run_id=run_id, step_id=step_id, attempt_id=attempt_id, event_type=event_type, room_sequence=sequence, run_sequence=run_sequence, caused_by=list(caused_by), consumes=list(consumes), produces=list(produces), usage=usage or {}, payload=payload or {}, timestamp=now, created_at=datetime.now(timezone.utc)))
+                    row = conn.execute(select(self.events).where(self.events.c.event_id == identifier)).mappings().one()
+                    return self._event(row)
         except IntegrityError as exc:
             raise EventConflictError("event sequence conflicted") from exc
 

@@ -84,8 +84,8 @@ class Day11ApiTests(unittest.TestCase):
         self.assertEqual(200, events.status_code)
         self.assertEqual(1, len(events.json()["items"]))
         asset = self.client.get("/assets/asset-demo")
-        self.assertEqual(501, asset.status_code)
-        self.assertEqual("capability_not_ready", asset.json()["code"])
+        self.assertEqual(404, asset.status_code)
+        self.assertEqual("not_found", asset.json()["code"])
 
 
 if __name__ == "__main__":

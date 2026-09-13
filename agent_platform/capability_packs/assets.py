@@ -17,7 +17,7 @@ class AssetRecord:
 class AssetParser:
     def parse(self, path: str, content: bytes) -> AssetRecord:
         suffix = Path(path).suffix.lower()
-        media_type = {".pdf": "application/pdf", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".csv": "text/csv", ".json": "application/json"}.get(suffix, "application/octet-stream")
+        media_type = {".txt": "text/plain", ".md": "text/markdown", ".pdf": "application/pdf", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".csv": "text/csv", ".json": "application/json"}.get(suffix, "application/octet-stream")
         if not content: raise ValueError("asset content must not be empty")
         digest = sha256(content).hexdigest()
         preview = None; confidence = None

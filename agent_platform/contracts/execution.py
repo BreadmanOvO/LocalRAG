@@ -21,6 +21,7 @@ ClaimStatus = Literal["unreviewed", "supported", "contradicted", "insufficient"]
 EventType = Literal[
     "message_saved",
     "run_started",
+    "run_queued",
     "step_started",
     "tool_started",
     "tool_completed",
@@ -175,7 +176,7 @@ class RunEvent(_Contract):
         if self.room_id != self.identity.room_id:
             raise ValueError("room_id must match event identity")
         if self.event_type not in {
-            "message_saved", "run_started", "step_started", "tool_started", "tool_completed",
+            "message_saved", "run_started", "run_queued", "step_started", "tool_started", "tool_completed",
             "handoff_created", "claim_recorded", "step_completed", "run_completed", "run_failed",
             "run_cancelled", "command_rejected",
         }:

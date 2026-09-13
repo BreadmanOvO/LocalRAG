@@ -147,6 +147,7 @@ class MultiAgentExecuteRequest(BaseModel):
     architecture: Literal["auto", "direct", "hierarchical", "swarm", "adversarial", "heterogeneous", "graph"] = "auto"
     max_agents: int = Field(default=3, ge=1, le=8)
     task_id: str | None = None
+    background: bool = False
 
 class MultiAgentTurnResponse(BaseModel):
     agent_id: str
@@ -160,9 +161,25 @@ class MultiAgentExecuteResponse(BaseModel):
     run_id: str
     architecture: str
     route_reason: str = ""
-    status: Literal["completed", "failed"]
+    status: Literal["queued", "running", "completed", "failed"]
     final: str
     turns: list[MultiAgentTurnResponse]
+
+class AssetUploadRequest(BaseModel):
+    space_id: str = "default"
+    filename: str = Field(min_length=1)
+    content_base64: str = Field(min_length=1)
+    evaluate: bool = False
+
+class AssetUploadResponse(BaseModel):
+    asset_id: str
+    media_type: str
+    content_hash: str
+    size_bytes: int
+    object_path: str
+    chunks: list[str]
+    evaluation_requested: bool
+    evaluation_status: Literal["not_requested", "requested"]
 
 
 class AssistantMessageResponse(BaseModel):

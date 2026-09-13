@@ -21,6 +21,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/assets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload Asset */
+        post: operations["upload_asset_assets_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/assets/{asset_id}": {
         parameters: {
             query?: never;
@@ -421,6 +438,45 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AssetUploadRequest */
+        AssetUploadRequest: {
+            /** Content Base64 */
+            content_base64: string;
+            /**
+             * Evaluate
+             * @default false
+             */
+            evaluate: boolean;
+            /** Filename */
+            filename: string;
+            /**
+             * Space Id
+             * @default default
+             */
+            space_id: string;
+        };
+        /** AssetUploadResponse */
+        AssetUploadResponse: {
+            /** Asset Id */
+            asset_id: string;
+            /** Chunks */
+            chunks: string[];
+            /** Content Hash */
+            content_hash: string;
+            /** Evaluation Requested */
+            evaluation_requested: boolean;
+            /**
+             * Evaluation Status
+             * @enum {string}
+             */
+            evaluation_status: "not_requested" | "requested";
+            /** Media Type */
+            media_type: string;
+            /** Object Path */
+            object_path: string;
+            /** Size Bytes */
+            size_bytes: number;
+        };
         /** AssistantMessageRequest */
         AssistantMessageRequest: {
             /** Content */
@@ -623,6 +679,11 @@ export interface components {
              * @enum {string}
              */
             architecture: "auto" | "direct" | "hierarchical" | "swarm" | "adversarial" | "heterogeneous" | "graph";
+            /**
+             * Background
+             * @default false
+             */
+            background: boolean;
             /** Goal */
             goal: string;
             /**
@@ -652,7 +713,7 @@ export interface components {
              * Status
              * @enum {string}
              */
-            status: "completed" | "failed";
+            status: "queued" | "running" | "completed" | "failed";
             /** Task Id */
             task_id: string;
             /** Turns */
@@ -913,6 +974,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_asset_assets_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssetUploadRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetUploadResponse"];
                 };
             };
             /** @description Validation Error */
@@ -1330,6 +1424,8 @@ export interface operations {
         parameters: {
             query?: {
                 after?: number;
+                follow?: boolean;
+                timeout?: number;
             };
             header?: never;
             path: {

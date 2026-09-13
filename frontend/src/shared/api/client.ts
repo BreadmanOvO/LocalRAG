@@ -78,7 +78,7 @@ export const api = {
   executeMultiAgent: async (roomId: string, goal: string, architecture: components["schemas"]["MultiAgentExecuteRequest"]["architecture"] = "hierarchical", maxAgents = 3) => {
     const { data, error } = await client.POST("/rooms/{room_id}/multi-agent/execute", {
       params: { path: { room_id: roomId } },
-      body: { goal, architecture, max_agents: maxAgents },
+      body: { goal, architecture, max_agents: maxAgents, background: false },
     });
     return unwrap(data, error);
   },

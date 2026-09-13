@@ -1,6 +1,91 @@
 {
   "components": {
     "schemas": {
+      "AssetUploadRequest": {
+        "properties": {
+          "content_base64": {
+            "minLength": 1,
+            "title": "Content Base64",
+            "type": "string"
+          },
+          "evaluate": {
+            "default": false,
+            "title": "Evaluate",
+            "type": "boolean"
+          },
+          "filename": {
+            "minLength": 1,
+            "title": "Filename",
+            "type": "string"
+          },
+          "space_id": {
+            "default": "default",
+            "title": "Space Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "filename",
+          "content_base64"
+        ],
+        "title": "AssetUploadRequest",
+        "type": "object"
+      },
+      "AssetUploadResponse": {
+        "properties": {
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "chunks": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Chunks",
+            "type": "array"
+          },
+          "content_hash": {
+            "title": "Content Hash",
+            "type": "string"
+          },
+          "evaluation_requested": {
+            "title": "Evaluation Requested",
+            "type": "boolean"
+          },
+          "evaluation_status": {
+            "enum": [
+              "not_requested",
+              "requested"
+            ],
+            "title": "Evaluation Status",
+            "type": "string"
+          },
+          "media_type": {
+            "title": "Media Type",
+            "type": "string"
+          },
+          "object_path": {
+            "title": "Object Path",
+            "type": "string"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "asset_id",
+          "media_type",
+          "content_hash",
+          "size_bytes",
+          "object_path",
+          "chunks",
+          "evaluation_requested",
+          "evaluation_status"
+        ],
+        "title": "AssetUploadResponse",
+        "type": "object"
+      },
       "AssistantMessageRequest": {
         "properties": {
           "content": {
@@ -592,6 +677,11 @@
             "title": "Architecture",
             "type": "string"
           },
+          "background": {
+            "default": false,
+            "title": "Background",
+            "type": "boolean"
+          },
           "goal": {
             "minLength": 1,
             "title": "Goal",
@@ -647,6 +737,8 @@
           },
           "status": {
             "enum": [
+              "queued",
+              "running",
               "completed",
               "failed"
             ],
@@ -1308,6 +1400,44 @@
         "summary": "Get Artifact"
       }
     },
+    "/assets": {
+      "post": {
+        "operationId": "upload_asset_assets_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetUploadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetUploadResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Asset"
+      }
+    },
     "/assets/{asset_id}": {
       "get": {
         "operationId": "get_asset_assets__asset_id__get",
@@ -1867,6 +1997,28 @@
               "minimum": 0,
               "title": "After",
               "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "follow",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Follow",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "timeout",
+            "required": false,
+            "schema": {
+              "default": 15.0,
+              "maximum": 60.0,
+              "minimum": 0.0,
+              "title": "Timeout",
+              "type": "number"
             }
           }
         ],

@@ -42,6 +42,8 @@ from .recovery import (
     RestoreReport,
 )
 from .multi_agent import AgentTurn, CloudTeamRuntime, TeamRunResult
+from .production_backup import BackupError, BackupManifest, backup_database, export_object_store, restore_database, restore_object_store
+from .reliability import ConcurrencyLevel, ReliabilityReport, run_concurrency_probe, run_long_session_probe
 
 __all__ = [
     "EventConflictError",
@@ -86,6 +88,16 @@ __all__ = [
     "AgentTurn",
     "CloudTeamRuntime",
     "TeamRunResult",
+    "BackupError",
+    "BackupManifest",
+    "backup_database",
+    "export_object_store",
+    "restore_database",
+    "restore_object_store",
+    "ConcurrencyLevel",
+    "ReliabilityReport",
+    "run_concurrency_probe",
+    "run_long_session_probe",
 ]
 from .backup_io import read_backup, write_backup
 
