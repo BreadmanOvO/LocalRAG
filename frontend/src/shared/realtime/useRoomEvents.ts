@@ -10,8 +10,11 @@ export function useRoomEvents(roomId: string, initialCursor = 0): RoomEventState
   const cursor = useRef(initialCursor);
   useEffect(() => {
     if (!roomId || typeof EventSource === "undefined") return;
+    cursor.current = 0;
+    setState({ events: [], cursor: 0, connected: false });
     let source: EventSource | undefined;
     let stopped = false;
+    let retryTimer: number | undefined;
     const connect = () => {
       if (stopped) return;
       const base = API_BASE.replace(/\/$/, "");
@@ -20,6 +23,7 @@ export function useRoomEvents(roomId: string, initialCursor = 0): RoomEventState
       source.onmessage = (message) => {
         try {
           const event = JSON.parse(message.data) as Event;
+          if (event.identity.room_id !== roomId || event.identity.room_sequence <= cursor.current) return;
           cursor.current = Math.max(cursor.current, event.identity.room_sequence);
           setState((current) => ({ ...current, connected: true, cursor: cursor.current, events: [...current.events, event] }));
         } catch {
@@ -29,11 +33,11 @@ export function useRoomEvents(roomId: string, initialCursor = 0): RoomEventState
       source.onerror = () => {
         source?.close();
         setState((current) => ({ ...current, connected: false }));
-        window.setTimeout(connect, 1000);
+        retryTimer = window.setTimeout(connect, 1000);
       };
     };
     connect();
-    return () => { stopped = true; source?.close(); };
+    return () => { stopped = true; source?.close(); window.clearTimeout(retryTimer); };
   }, [roomId]);
   return state;
 }

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 from urllib.parse import urlsplit
@@ -26,7 +26,7 @@ class CloudAgentSpec:
     base_url: str
     model: str
     api_key_env: str
-    api_key: str
+    api_key: str = field(repr=False)
     capabilities: tuple[str, ...] = ()
     system_prompt: str = ""
     enabled: bool = True
@@ -111,18 +111,7 @@ class CloudAgentClient:
         content = response.content if isinstance(response, AIMessage) else getattr(response, "content", response)
         if isinstance(content, list):
             content = "".join(item.get("text", "") if isinstance(item, dict) else str(item) for item in content)
-        text = str(content).strip()
-        # Some reasoning-first providers return the answer in a separate field
-        # when the completion budget is exhausted during the reasoning phase.
-        # Preserve that response so a transient provider format does not turn a
-        # successful agent turn into an opaque empty-response failure.
-        if not text:
-            extra = getattr(response, "additional_kwargs", {}) or {}
-            reasoning = extra.get("reasoning_content") or extra.get("reasoning")
-            if isinstance(reasoning, list):
-                reasoning = "".join(item.get("text", "") if isinstance(item, dict) else str(item) for item in reasoning)
-            if reasoning:
-                text = str(reasoning).strip()
+        text = content.strip() if isinstance(content, str) else ""
         if not text:
             raise RuntimeError(f"Cloud agent returned an empty response: {self.spec.agent_id}")
         return text

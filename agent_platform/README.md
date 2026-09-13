@@ -1,6 +1,6 @@
 # v1.8 Agent Platform 包边界
 
-这里是 v1.8 新增 Python Runtime 的唯一顶层包。当前只建立边界和依赖方向；v1.7 的 `agent/`、`core/`、`model_gateway/`、`model_serving/` 和 Streamlit 入口继续按现状运行，迁移通过适配器完成，不在 D01 直接改写。
+这里是 v1.8 新增 Python Runtime 的唯一顶层包。当前包含合同实现及执行适配增量；v1.7 的 `agent/`、`core/`、`model_gateway/`、`model_serving/` 和 Streamlit 入口继续按现状运行，迁移通过适配器完成，不在 D01 直接改写。
 
 ## 仓库中的位置
 
@@ -26,7 +26,7 @@ LocalRAG/
     └── worker/            # 后台领取与提交入口
 ```
 
-D01 只提交目录和依赖边界。目录下的 `__init__.py` 是可导入的空壳，不表示对应功能已经可用；功能代码按开发计划中对应 Day 节点逐步加入。
+D01 建立目录与依赖边界，后续功能按 Day 节点加入。目录存在不表示功能已验收，状态见下文。
 
 ## 目录职责
 
@@ -49,6 +49,6 @@ D01 只提交目录和依赖边界。目录下的 `__init__.py` 是可导入的�
 
 ## 当前状态
 
-截至 D34，以下切片已有可执行代码和测试：FastAPI 房间/消息 API、React 工作台、游标/SSE snapshot、角色与人设注册、直办/委派计划编译、分层/图策略、Blackboard/对抗式合同、异构能力和多模态元数据、MCP/沙箱策略、回放/评测/发布检查，以及云端多 Agent Runtime 的六类有界策略和群聊事件投影。可以运行 `python scripts/smoke_agent_platform.py` 验证统一入口演示链路；配置云模型后可从房间页启动团队任务。
+截至 D34，以下切片已有可执行代码和测试：FastAPI 房间/消息 API、React 工作台、游标/SSE snapshot、角色与人设注册、直办/委派计划编译、分层/图策略、Blackboard/对抗式合同、异构能力和多模态元数据、MCP/沙箱策略、回放/评测/发布检查，以及云模型客户端、顺序分层/共享汇总/对抗流程原型及群聊事件投影。可以运行 `python scripts/smoke_agent_platform.py` 验证统一入口演示链路；配置云模型后可从房间页启动团队任务。
 
 这些切片仍主要是内存或浏览器级实现；D34 的云模型执行是同步切片，D35 开始提供 SQLAlchemy PostgreSQL conversation adapter（通过 `LOCALRAG_DATABASE_URL` 选择）。跨进程 worker/SSE、OCR/VLM、MCP server、对象存储和生产鉴权尚未完成；目录和 schema 的存在不能单独视为生产能力已实现。

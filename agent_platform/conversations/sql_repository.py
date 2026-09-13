@@ -72,7 +72,7 @@ class SqlAlchemyConversationRepository:
             Column("joined_at", DateTime(timezone=True), nullable=False),
             Column("left_at", DateTime(timezone=True)),
         )
-        if create_schema:
+        if create_schema and engine.dialect.name == "sqlite":
             self.metadata.create_all(engine)
 
     @classmethod
@@ -149,6 +149,8 @@ class SqlAlchemyConversationRepository:
                 if idempotency_key:
                     existing = conn.execute(select(self.messages).where(self.messages.c.room_id == room_id, self.messages.c.idempotency_key == idempotency_key)).mappings().first()
                     if existing is not None:
+                        if existing["status"] == "tombstoned":
+                            raise ConflictError("idempotency key belongs to tombstoned message")
                         if existing["content"] != content.strip() or existing["role"] != role:
                             raise ConflictError("idempotency key payload differs")
                         return self._message(existing)
@@ -161,6 +163,8 @@ class SqlAlchemyConversationRepository:
             raise ConflictError("message already exists or room sequence conflicted") from exc
 
     def list_messages(self, room_id: str, *, after: int = 0, limit: int | None = None) -> tuple[Message, ...]:
+        if after < 0 or (limit is not None and limit < 1):
+            raise ValueError("invalid message page")
         self.get_room(room_id)
         statement = select(self.messages).where(self.messages.c.room_id == validate_identifier(room_id, "room"), self.messages.c.room_sequence > after).order_by(self.messages.c.room_sequence)
         if limit is not None:
@@ -176,9 +180,15 @@ class SqlAlchemyConversationRepository:
         return tuple(Membership(row["membership_id"], row["room_id"], row["agent_id"], row["status"], row["joined_at"], row["left_at"]) for row in rows)
 
     def join_member(self, room_id: str, agent_id: str) -> Membership:
-        self.get_room(room_id)
+        if not isinstance(agent_id, str) or not agent_id.strip():
+            raise ValueError("agent_id must not be empty")
         membership = Membership(f"membership-{uuid4().hex}", validate_identifier(room_id, "room"), agent_id.strip(), joined_at=_now())
         with self.engine.begin() as conn:
+            room = conn.execute(select(self.rooms).where(self.rooms.c.room_id == room_id).with_for_update()).mappings().first()
+            if room is None:
+                raise NotFoundError(room_id)
+            if room["status"] != "active":
+                raise RoomClosedError(f"room is {room['status']}")
             conn.execute(insert(self.memberships).values(membership_id=membership.membership_id, room_id=membership.room_id, agent_id=membership.agent_id, status="active", joined_at=membership.joined_at))
         return membership
 

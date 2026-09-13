@@ -4,10 +4,8 @@ import { api, type MultiAgentExecution } from "../../shared/api/client";
 
 const architectures = [
   ["hierarchical", "分层协作"],
-  ["swarm", "蜂群共享"],
+  ["swarm", "共享汇总（实验）"],
   ["adversarial", "对抗审查"],
-  ["heterogeneous", "异构分工"],
-  ["graph", "图依赖"],
   ["direct", "单 Agent"],
 ] as const;
 
@@ -21,8 +19,11 @@ export function MultiAgentPanel({ roomId }: { roomId: string }) {
     onSuccess: (value) => {
       setResult(value);
       setGoal("");
+    },
+    onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ["messages", roomId] });
       void queryClient.invalidateQueries({ queryKey: ["events", roomId] });
+      void queryClient.invalidateQueries({ queryKey: ["members", roomId] });
     },
   });
 
@@ -36,6 +37,6 @@ export function MultiAgentPanel({ roomId }: { roomId: string }) {
       <button type="button" className="primary-button" onClick={() => execute.mutate()} disabled={execute.isPending || !goal.trim()}>{execute.isPending ? "执行中…" : "启动团队"}</button>
     </div>
     {execute.isError && <p className="error-text">团队执行失败：{execute.error.message}</p>}
-    {result && <div className="multi-agent-result"><p><b>最终答复</b></p><p>{result.final}</p><small>{result.architecture} · {result.turns.length} 个 Agent · run {result.run_id}</small></div>}
+    {result && <div className="multi-agent-result"><p><b>最终答复</b></p><p>{result.final}</p><small>{result.architecture} · {result.turns.length} 次发言 · run {result.run_id}</small></div>}
   </article>;
 }

@@ -237,15 +237,15 @@ v1.7 优先恢复活动语料库，并验收“提问 → 检索 → 研究步�
 - 增加 `agent_platform/` Python Runtime 边界、FastAPI API、React 工作台、房间消息与事件合同。
 - 增加统一入口的直办/委派计划编译、公司角色预设、Blackboard/对抗式协作协议、能力注册、沙箱和 MCP schema 合同。
 - 增加本地部署脚本、JSON 备份/还原校验、Vite 代理和 Conda/Python 解释器探测。
-- 增加云端多 Agent Runtime 首个真实切片：支持六类有界协作策略、群聊消息与事件投影，以及房间页启动入口；模型配置文件与密钥环境变量分离。
+- 增加云模型客户端、顺序分层/共享汇总/对抗流程原型与房间页启动入口；模型配置与密钥分离，逐步保存输出并在失败时保留已完成发言。图与异构执行尚未接入。
 - 保留 v1.7 Streamlit Agentic RAG 作为实际模型检索入口；上传资料的评测仍由用户显式选择。
 
 ### 验证
 
 - `D:\Programs\Anaconda\python.exe scripts/smoke_agent_platform.py` 通过：FastAPI 启动、健康检查、统一助理建房、幂等重放、角色读取、计划编译、消息读取和 `message_saved` 事件投影。
-- `D:\Programs\Anaconda\python.exe -m pytest -q`：`738 passed, 1 skipped`。
+- `D:\Programs\Anaconda\python.exe -m pytest -q`：完整回归结果见 `RAG_md/docs/v1.8/evidence/upgrade-readiness-audit.md`。
 - `cd frontend; npm run build` 通过；启动 FastAPI 后，Vite `/api/health` 和 `/api/roles` 代理返回 `200`。
 
 ### 当前边界
 
-本版本已达到可演示的本地合同状态（`go-contract`），并包含可选的真实云模型同步多 Agent 执行切片。PostgreSQL 跨进程持久化、持久 worker/SSE、OCR/VLM、MCP server、对象存储和生产鉴权仍需真实环境验收，不能据此宣称生产发布完成。详细核对见 `RAG_md/docs/v1.8/evidence/d34-cloud-multi-agent.md` 与 `upgrade-readiness-audit.md`。
+本版本已达到可演示的本地合同状态（`go-contract`），并包含可选的云模型调用适配增量（真实端到端待验收）。PostgreSQL 跨进程持久化、持久 worker/SSE、OCR/VLM、MCP server、对象存储和生产鉴权仍需真实环境验收，不能据此宣称生产发布完成。这些项目已排入 v1.8 紧接模型配置的 D35–D42，验收与排程见 `RAG_md/docs/v1.8/development-plan.md`。

@@ -18,6 +18,7 @@ from fastapi import FastAPI, Header, Query, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, StreamingResponse
+from starlette.concurrency import run_in_threadpool
 
 from agent_platform.contracts.identity import RoomEventCursor, new_identifier, validate_identifier
 from agent_platform.conversations.repository import ConflictError, ConversationRepository, NotFoundError, RepositoryError
@@ -79,6 +80,7 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
     room_keys: dict[str, tuple[str, str]] = {}
     assistant_keys: dict[str, tuple[str, str, str]] = {}
     commands: dict[str, dict[str, Any]] = {}
+    active_team_rooms: set[str] = set()
 
     def _record_message_event(message: Any) -> None:
         """Project each saved message into the room event stream exactly once."""
@@ -251,35 +253,60 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
     @app.post("/rooms/{room_id}/multi-agent/execute", response_model=MultiAgentExecuteResponse)
     async def execute_multi_agent(room_id: str, body: MultiAgentExecuteRequest) -> Any:
         room = repository.get_room(room_id)
+        if room.status != "active":
+            raise ApiDomainError("conflict", "room is not active", status=409)
         task_id = validate_identifier(body.task_id, "task") if body.task_id else new_identifier("task")
         task = tasks.get(task_id)
-        if task is None:
-            task = _Task(task_id, room.room_id, body.goal.strip())
-            tasks[task_id] = task
+        if task is not None and task.room_id != room.room_id:
+            raise ApiDomainError("conflict", "task belongs to another room", status=409)
+        if room.room_id in active_team_rooms:
+            raise ApiDomainError("run_active", "room already has an active team run", status=409)
         runtime = app.state.team_runtime
         if runtime is None:
             try:
                 runtime = CloudTeamRuntime.from_config()
             except (RuntimeError, OSError) as exc:
                 raise ApiDomainError("capability_not_ready", str(exc), status=503) from exc
+        runtime.validate(body.goal, body.architecture, body.max_agents)
+        history = repository.list_messages(room.room_id)
+        context = "\n".join(f"{message.role}: {message.content}" for message in history[-20:])[-16000:]
+        if task is None:
+            task = _Task(task_id, room.room_id, body.goal.strip())
+            tasks[task_id] = task
         run_id = new_identifier("run")
-        run = runs.register_run(run_id, plan_revision=1, status="running")
+        runs.register_run(run_id, plan_revision=1, status="running")
         task.active_run_id = run_id
         user_message = repository.save_message(room.room_id, body.goal, role="user", idempotency_key=f"team-goal-{run_id}")
         _record_message_event(user_message)
         events.append(room.room_id, "run_started", run_id=run_id, task_id=task_id, payload={"architecture": body.architecture})
-        try:
-            result = runtime.execute(body.goal, architecture=body.architecture, max_agents=body.max_agents)
-        except Exception as exc:
-            runs.finish(run_id, status="failed", expected_row_version=run.row_version)
-            events.append(room.room_id, "run_failed", run_id=run_id, task_id=task_id, payload={"error": type(exc).__name__})
-            raise ApiDomainError("multi_agent_failed", str(exc), status=502) from exc
-        for turn in result.turns:
+        active_team_rooms.add(room.room_id)
+
+        def record_turn(turn: Any) -> None:
+            if runs.get_run(run_id).status != "running":
+                raise ControlConflictError("team run is no longer running")
+            existing = repository.list_members(room.room_id)
+            if not any(member.agent_id == turn.agent_id and member.status == "active" for member in existing):
+                repository.join_member(room.room_id, turn.agent_id)
             message = repository.save_message(room.room_id, f"[{turn.agent_id}] {turn.content}", role="assistant")
             _record_message_event(message)
-            events.append(room.room_id, "step_completed", task_id=task_id, run_id=run_id, step_id=f"step-{turn.sequence}", payload={"agent_id": turn.agent_id, "message_id": message.message_id})
-        runs.finish(run_id, status="completed", expected_row_version=run.row_version)
-        events.append(room.room_id, "run_completed", run_id=run_id, task_id=task_id, payload={"turn_count": len(result.turns)})
+            events.append(room.room_id, "step_completed", task_id=task_id, run_id=run_id, step_id=f"step-{run_id}-{turn.sequence}", payload={"agent_id": turn.agent_id, "message_id": message.message_id})
+
+        try:
+            result = await run_in_threadpool(runtime.execute, body.goal, architecture=body.architecture, max_agents=body.max_agents, context=context, on_turn=record_turn)
+            current = runs.get_run(run_id)
+            if current.status != "running":
+                raise ControlConflictError("team run is no longer running")
+            runs.finish(run_id, status="completed", expected_row_version=current.row_version)
+            events.append(room.room_id, "run_completed", run_id=run_id, task_id=task_id, payload={"turn_count": len(result.turns)})
+        except Exception as exc:
+            current = runs.get_run(run_id)
+            if current.status == "running":
+                runs.finish(run_id, status="failed", expected_row_version=current.row_version)
+            events.append(room.room_id, "run_failed", run_id=run_id, task_id=task_id, payload={"error": type(exc).__name__, "status": runs.get_run(run_id).status})
+            raise ApiDomainError("multi_agent_failed", "团队执行未完成，已保留完成步骤，请查看运行轨迹。", status=502) from exc
+        finally:
+            task.active_run_id = None
+            active_team_rooms.discard(room.room_id)
         return {"room_id": room.room_id, "task_id": task_id, "run_id": run_id, "architecture": result.architecture, "status": result.status, "final": result.final, "turns": [{"agent_id": turn.agent_id, "responsibility": turn.responsibility, "content": turn.content, "sequence": turn.sequence} for turn in result.turns]}
 
     @app.get("/tasks/{task_id}", response_model=TaskResponse)
