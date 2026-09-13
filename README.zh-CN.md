@@ -180,6 +180,8 @@ python scripts/run_agent_platform.ps1
 
 另开终端执行 `cd frontend; npm run dev`，访问 `http://127.0.0.1:5173`。配置模型和环境变量后，房间页还可以启动有界的云端多 Agent 执行；生产 PostgreSQL、持久 worker/SSE 和跨进程恢复仍需单独验收。旧 Streamlit 入口仍是 v1.7 RAG 路径。
 
+多 Agent 模型配置示例见 `config/multi_agent_models.example.json`。复制为本机的 `config/multi_agent_models.json` 后，为启用的 provider 设置对应环境变量（商汤使用 `LOCALRAG_CLOUD_API_KEY`，魔塔使用 `MODELSCOPE_API_KEY`）；密钥不会写入 JSON。需要使用 PostgreSQL conversation adapter 时设置 `LOCALRAG_DATABASE_URL=postgresql+psycopg://...`。
+
 默认读取 `config/active_corpus.json`。仓库已提交清洗后的 100 篇语料，Chroma 索引需要在本机执行 `quickstart/windows/03-prepare-data.ps1` 生成；已评测语料会产生 7339 个 chunk。active corpus profile 同时记录来源数、片段数和 corpus/registry 指纹。也可以通过环境变量选择已有目录：
 
 ```powershell

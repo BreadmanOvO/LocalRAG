@@ -182,6 +182,8 @@ python scripts/run_agent_platform.ps1
 
 In another terminal, start the React workspace with `cd frontend; npm run dev` and open `http://127.0.0.1:5173`. The room page can also start a bounded cloud multi-agent run when the local model configuration and provider key are available. Production PostgreSQL, durable workers/SSE, and cross-process recovery remain separate acceptance items; the legacy Streamlit entry remains the v1.7 RAG path.
 
+Copy `config/multi_agent_models.example.json` to the ignored local file `config/multi_agent_models.json`. Set provider keys through environment variables (`LOCALRAG_CLOUD_API_KEY` for SenseNova and `MODELSCOPE_API_KEY` for ModelScope); keys are never stored in JSON. Set `LOCALRAG_DATABASE_URL=postgresql+psycopg://...` to select the PostgreSQL conversation adapter.
+
 By default, the app loads the profile in `config/active_corpus.json`. The repository contains the cleaned 100-document corpus, while the Chroma index is built locally. Create it with `quickstart/windows/03-prepare-data.ps1`; the evaluated corpus produces 7,339 chunks. The active corpus profile records source count, chunk count, and corpus/registry fingerprints. To use another existing index:
 
 ```powershell
