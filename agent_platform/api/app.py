@@ -32,7 +32,7 @@ from agent_platform.runtime.sql_event_store import SqlAlchemyEventStore
 from agent_platform.worker import TeamWorker
 from agent_platform.personas import PersonaProfile, default_registry
 from agent_platform.routing import ArchitectureSpec, PlanCompiler, TaskProfile, TaskRouter
-from agent_platform.runtime.multi_agent import CloudTeamRuntime
+from agent_platform.runtime.multi_agent import CloudTeamRuntime, ModelRoutingError
 from agent_platform.capability_packs import LocalObjectStore
 from agent_platform.integrations.model_config_store import ModelConfigError, ModelConfigStore
 from .auth import AuthConfigError, BearerAuthenticator, Principal, env_auth_required
@@ -447,6 +447,18 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         if decision.architecture in {"graph", "heterogeneous"}:
             raise ApiDomainError("capability_not_ready", f"当前策略尚未接入真实执行器：{decision.architecture}", status=503, details={"route_reason": decision.reason, "required_capabilities": list(decision.required_capabilities)})
         runtime.validate(body.goal, decision.architecture, decision.max_agents)
+        try:
+            model_snapshot = runtime.freeze_model_bindings(
+                architecture=decision.architecture,
+                max_agents=decision.max_agents,
+            )
+        except ModelRoutingError as exc:
+            raise ApiDomainError(
+                "model_routing_failed",
+                str(exc),
+                status=422,
+                details=exc.public_details(),
+            ) from exc
         history = repository.list_messages(room.room_id)
         context = "\n".join(f"{message.role}: {message.content}" for message in history[-20:])[-16000:]
         if task is None:
@@ -457,7 +469,18 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         task.active_run_id = run_id
         user_message = repository.save_message(room.room_id, body.goal, role="user", idempotency_key=f"team-goal-{run_id}")
         _record_message_event(user_message)
-        events.append(room.room_id, "run_started", run_id=run_id, task_id=task_id, payload={"requested_architecture": body.architecture, "architecture": decision.architecture, "route_reason": decision.reason})
+        events.append(
+            room.room_id,
+            "run_started",
+            run_id=run_id,
+            task_id=task_id,
+            payload={
+                "requested_architecture": body.architecture,
+                "architecture": decision.architecture,
+                "route_reason": decision.reason,
+                "model_snapshot": model_snapshot.public(),
+            },
+        )
         active_team_rooms.add(room.room_id)
 
         def record_turn(turn: Any) -> None:
@@ -466,14 +489,29 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
             existing = repository.list_members(room.room_id)
             if not any(member.agent_id == turn.agent_id and member.status == "active" for member in existing):
                 repository.join_member(room.room_id, turn.agent_id)
-            message = repository.save_message(room.room_id, f"[{turn.agent_id}] {turn.content}", role="assistant")
+            message = repository.save_message(room.room_id, f"[{turn.agent_id} · {turn.model}] {turn.content}", role="assistant")
             _record_message_event(message)
-            events.append(room.room_id, "step_completed", task_id=task_id, run_id=run_id, step_id=f"step-{run_id}-{turn.sequence}", payload={"agent_id": turn.agent_id, "message_id": message.message_id})
+            events.append(
+                room.room_id,
+                "step_completed",
+                task_id=task_id,
+                run_id=run_id,
+                step_id=f"step-{run_id}-{turn.sequence}",
+                payload={
+                    "agent_id": turn.agent_id,
+                    "display_name": getattr(turn, "display_name", turn.agent_id),
+                    "message_id": message.message_id,
+                    "model": turn.model,
+                    "model_profile": turn.model_profile,
+                    "selection_mode": turn.selection_mode,
+                    "selection_reason": turn.selection_reason,
+                },
+            )
 
         if body.background:
             def execute_in_worker() -> None:
                 try:
-                    result = runtime.execute(body.goal, architecture=decision.architecture, max_agents=decision.max_agents, context=context, on_turn=record_turn)
+                    result = runtime.execute(body.goal, architecture=decision.architecture, max_agents=decision.max_agents, context=context, on_turn=record_turn, model_snapshot=model_snapshot)
                     current = runs.get_run(run_id)
                     if current.status == "running":
                         runs.finish(run_id, status="completed", expected_row_version=current.row_version)
@@ -492,7 +530,7 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
             return {"room_id": room.room_id, "task_id": task_id, "run_id": run_id, "architecture": decision.architecture, "route_reason": decision.reason, "status": "queued", "final": "", "turns": []}
 
         try:
-            result = await run_in_threadpool(runtime.execute, body.goal, architecture=decision.architecture, max_agents=decision.max_agents, context=context, on_turn=record_turn)
+            result = await run_in_threadpool(runtime.execute, body.goal, architecture=decision.architecture, max_agents=decision.max_agents, context=context, on_turn=record_turn, model_snapshot=model_snapshot)
             current = runs.get_run(run_id)
             if current.status != "running":
                 raise ControlConflictError("team run is no longer running")
@@ -507,7 +545,25 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         finally:
             task.active_run_id = None
             active_team_rooms.discard(room.room_id)
-        return {"room_id": room.room_id, "task_id": task_id, "run_id": run_id, "architecture": result.architecture, "route_reason": decision.reason, "status": result.status, "final": result.final, "turns": [{"agent_id": turn.agent_id, "responsibility": turn.responsibility, "content": turn.content, "sequence": turn.sequence} for turn in result.turns]}
+        return {
+            "room_id": room.room_id,
+            "task_id": task_id,
+            "run_id": run_id,
+            "architecture": result.architecture,
+            "route_reason": decision.reason,
+            "status": result.status,
+            "final": result.final,
+            "turns": [{
+                "agent_id": turn.agent_id,
+                "responsibility": turn.responsibility,
+                "content": turn.content,
+                "sequence": turn.sequence,
+                "model": turn.model,
+                "model_profile": turn.model_profile,
+                "selection_mode": turn.selection_mode,
+                "selection_reason": turn.selection_reason,
+            } for turn in result.turns],
+        }
 
     @app.get("/tasks/{task_id}", response_model=TaskResponse)
     async def get_task(request: Request, task_id: str) -> Any:

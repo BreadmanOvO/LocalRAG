@@ -34,6 +34,11 @@ class CloudAgentSpec:
     modalities: tuple[str, ...] = ("text",)
     max_concurrency: int = 4
     scenarios: tuple[str, ...] = ()
+    model_binding_mode: str = "fixed"
+    auto_tier: str = ""
+    auto_capabilities: tuple[str, ...] = ()
+    auto_modalities: tuple[str, ...] = ()
+    auto_scenarios: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -51,6 +56,60 @@ class CloudModelProfile:
     scenarios: tuple[str, ...] = ()
     tier: str = "standard"
     enabled: bool = True
+
+
+@dataclass(frozen=True)
+class CloudTeamConfig:
+    """Parsed local configuration without exposing credentials in public APIs."""
+
+    agents: dict[str, CloudAgentSpec]
+    profiles: dict[str, CloudModelProfile]
+
+
+_TIER_RANKS = {
+    "economy": 0,
+    "basic": 0,
+    "standard": 1,
+    "balanced": 1,
+    "strong": 2,
+    "advanced": 2,
+    "premium": 3,
+    "lead": 3,
+    "expert": 3,
+}
+
+
+def tier_rank(value: str) -> int | None:
+    """Return a comparable rank for known UI tiers, otherwise ``None``."""
+    return _TIER_RANKS.get(str(value or "").strip().casefold())
+
+
+def profile_matches_requirements(
+    profile: CloudModelProfile,
+    *,
+    tier: str = "",
+    capabilities: Sequence[str] = (),
+    modalities: Sequence[str] = (),
+    scenarios: Sequence[str] = (),
+) -> bool:
+    """Check the explicit auto-routing constraints without implicit fallback."""
+    required_tier = str(tier or "").strip()
+    if required_tier:
+        required_rank = tier_rank(required_tier)
+        candidate_rank = tier_rank(profile.tier)
+        if required_rank is None or candidate_rank is None:
+            if profile.tier.casefold() != required_tier.casefold():
+                return False
+        elif candidate_rank < required_rank:
+            return False
+    required_capabilities = {item.casefold() for item in capabilities}
+    required_modalities = {item.casefold() for item in modalities}
+    required_scenarios = {item.casefold() for item in scenarios}
+    return (
+        required_capabilities.issubset({item.casefold() for item in profile.capabilities})
+        and required_modalities.issubset({item.casefold() for item in profile.modalities})
+        and required_scenarios.issubset({item.casefold() for item in profile.scenarios})
+    )
 
 
 def _required_string(value: Any, field: str) -> str:
@@ -82,7 +141,7 @@ def _positive_int(value: Any, field_name: str, *, default: int = 4) -> int:
     return value
 
 
-def load_cloud_agents(path: Path | None = None, *, environ: Mapping[str, str] | None = None) -> dict[str, CloudAgentSpec]:
+def load_cloud_team_config(path: Path | None = None, *, environ: Mapping[str, str] | None = None) -> CloudTeamConfig:
     environment = os.environ if environ is None else environ
     config_path = Path(path or environment.get("LOCALRAG_MULTI_AGENT_CONFIG", DEFAULT_CONFIG))
     if not config_path.exists():
@@ -145,39 +204,49 @@ def load_cloud_agents(path: Path | None = None, *, environ: Mapping[str, str] | 
     for agent_id, value in agents.items():
         if not isinstance(agent_id, str) or not agent_id.strip() or not isinstance(value, dict):
             raise RuntimeError("Invalid multi-agent agent entry")
-        allowed = {"display_name", "responsibility", "provider", "base_url", "model", "model_profile", "api_key_env", "api_key", "capabilities", "modalities", "max_concurrency", "tier", "system_prompt", "enabled"}
+        allowed = {
+            "display_name", "responsibility", "provider", "base_url", "model", "model_profile",
+            "api_key_env", "api_key", "capabilities", "modalities", "max_concurrency", "tier",
+            "system_prompt", "enabled", "model_binding_mode", "auto_tier", "auto_capabilities",
+            "auto_modalities", "auto_scenarios",
+        }
         unknown = set(value) - allowed
         if unknown:
             raise RuntimeError(f"Unknown multi-agent fields for {agent_id}: {', '.join(sorted(unknown))}")
         normalized_id = agent_id.strip()
+        binding_mode = str(value.get("model_binding_mode", "fixed")).strip().lower() or "fixed"
+        if binding_mode not in {"fixed", "auto"}:
+            raise RuntimeError(f"Invalid model binding mode for agent {normalized_id}: {binding_mode}")
         profile_id = str(value.get("model_profile", "")).strip()
+        if binding_mode == "auto" and profile_id:
+            raise RuntimeError(f"Automatic model binding cannot set model_profile: {normalized_id}")
         profile = profiles.get(profile_id) if profile_id else None
         if profile_id and profile is None:
             raise RuntimeError(f"Unknown model profile for agent {normalized_id}: {profile_id}")
         enabled = value.get("enabled", True)
         if type(enabled) is not bool:
             raise RuntimeError(f"Invalid multi-agent field: agents.{normalized_id}.enabled")
-        if enabled and profile is not None and not profile.enabled:
+        if binding_mode == "fixed" and enabled and profile is not None and not profile.enabled:
             raise RuntimeError(f"Enabled agent is bound to a disabled model profile: {normalized_id}")
-        provider = str(value.get("provider", profile.provider if profile else "")).strip().lower()
-        base_url = str(value.get("base_url", profile.base_url if profile else "")).strip()
-        model = str(value.get("model", profile.model if profile else "")).strip()
+        provider = str(value.get("provider", profile.provider if profile else "")).strip().lower() if binding_mode == "fixed" else ""
+        base_url = str(value.get("base_url", profile.base_url if profile else "")).strip() if binding_mode == "fixed" else ""
+        model = str(value.get("model", profile.model if profile else "")).strip() if binding_mode == "fixed" else ""
         if base_url:
             base_url = _validate_url(base_url)
-        if enabled:
+        if enabled and binding_mode == "fixed":
             provider = _required_string(provider, f"agents.{normalized_id}.provider")
             base_url = _validate_url(_required_string(base_url, f"agents.{normalized_id}.base_url"))
             model = _required_string(model, f"agents.{normalized_id}.model")
         inline_api_key = value.get("api_key", "")
         if not isinstance(inline_api_key, str):
             raise RuntimeError(f"Invalid multi-agent field: agents.{normalized_id}.api_key")
-        raw_api_key_env = str(value.get("api_key_env", profile.api_key_env if profile else "")).strip()
+        raw_api_key_env = str(value.get("api_key_env", profile.api_key_env if profile else "")).strip() if binding_mode == "fixed" else ""
         api_key_env = raw_api_key_env
         # The ignored local config may contain an inline key for convenience.
         # The example config does not.  Environment variables remain the
         # preferred deployment path and win only when no inline key is set.
         api_key = inline_api_key.strip() or (profile.api_key if profile else "") or environment.get(api_key_env, "").strip()
-        if enabled and not api_key:
+        if enabled and binding_mode == "fixed" and not api_key:
             raise RuntimeError(f"Missing API key for enabled multi-agent: {normalized_id}")
         capabilities = _string_tuple(value.get("capabilities", list(profile.capabilities) if profile else []), f"agents.{normalized_id}.capabilities")
         modalities = _string_tuple(value.get("modalities", list(profile.modalities) if profile else ["text"]), f"agents.{normalized_id}.modalities", default=("text",))
@@ -198,8 +267,18 @@ def load_cloud_agents(path: Path | None = None, *, environ: Mapping[str, str] | 
             modalities=modalities,
             max_concurrency=_positive_int(value.get("max_concurrency", profile.max_concurrency if profile else 4), f"agents.{normalized_id}.max_concurrency"),
             scenarios=profile.scenarios if profile else (),
+            model_binding_mode=binding_mode,
+            auto_tier=str(value.get("auto_tier", "")).strip(),
+            auto_capabilities=_string_tuple(value.get("auto_capabilities"), f"agents.{normalized_id}.auto_capabilities"),
+            auto_modalities=_string_tuple(value.get("auto_modalities"), f"agents.{normalized_id}.auto_modalities"),
+            auto_scenarios=_string_tuple(value.get("auto_scenarios"), f"agents.{normalized_id}.auto_scenarios"),
         )
-    return result
+    return CloudTeamConfig(agents=result, profiles=profiles)
+
+
+def load_cloud_agents(path: Path | None = None, *, environ: Mapping[str, str] | None = None) -> dict[str, CloudAgentSpec]:
+    """Backwards-compatible agent-only loader used by existing integrations."""
+    return load_cloud_team_config(path, environ=environ).agents
 
 
 class CloudAgentClient:

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import tempfile
 import unittest
 import time
@@ -13,12 +12,38 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from agent_platform.api import create_app
-from agent_platform.integrations.multi_agent_config import CloudAgentClient, CloudAgentSpec, load_cloud_agents
-from agent_platform.runtime.multi_agent import CloudTeamRuntime
+from agent_platform.integrations.multi_agent_config import CloudAgentClient, CloudAgentSpec, CloudModelProfile, load_cloud_agents, load_cloud_team_config
+from agent_platform.runtime.multi_agent import CloudTeamRuntime, ModelRoutingError
 
 
 def _spec(agent_id: str, responsibility: str) -> CloudAgentSpec:
     return CloudAgentSpec(agent_id, agent_id, responsibility, "sensenova", "https://token.sensenova.cn/v1", "sensenova-6.7-flash-lite", "KEY", "secret")
+
+
+def _profile(
+    profile_id: str,
+    model: str,
+    *,
+    tier: str = "strong",
+    capabilities: tuple[str, ...] = ("reasoning",),
+    modalities: tuple[str, ...] = ("text",),
+    scenarios: tuple[str, ...] = ("research",),
+    max_concurrency: int = 4,
+) -> CloudModelProfile:
+    return CloudModelProfile(
+        profile_id=profile_id,
+        display_name=profile_id,
+        provider="sensenova",
+        base_url="https://token.sensenova.cn/v1",
+        model=model,
+        api_key_env="KEY",
+        api_key="secret",
+        tier=tier,
+        capabilities=capabilities,
+        modalities=modalities,
+        scenarios=scenarios,
+        max_concurrency=max_concurrency,
+    )
 
 
 class CloudConfigTests(unittest.TestCase):
@@ -49,6 +74,35 @@ class CloudConfigTests(unittest.TestCase):
             self.assertEqual("inline-secret", agents["chairperson"].api_key)
             self.assertEqual("strong-text", agents["chairperson"].model_profile)
             self.assertEqual("lead", agents["chairperson"].tier)
+
+    def test_loader_keeps_automatic_agent_unresolved_until_runtime_snapshot(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "multi.json"
+            path.write_text(json.dumps({
+                "contract_version": "agent-platform-cloud-v1",
+                "model_profiles": {
+                    "vision": {
+                        "provider": "sensenova", "base_url": "https://token.sensenova.cn/v1",
+                        "model": "vision-model", "api_key": "inline-secret", "tier": "strong",
+                        "capabilities": ["reasoning"], "modalities": ["text", "image"],
+                        "scenarios": ["research"], "max_concurrency": 8,
+                    },
+                },
+                "agents": {
+                    "chairperson": {
+                        "display_name": "总助理", "responsibility": "汇总", "model_binding_mode": "auto",
+                        "auto_tier": "strong", "auto_modalities": ["image"],
+                        "auto_capabilities": ["reasoning"], "auto_scenarios": ["research"],
+                    },
+                },
+            }), encoding="utf-8")
+            loaded = load_cloud_team_config(path, environ={})
+            self.assertEqual("auto", loaded.agents["chairperson"].model_binding_mode)
+            self.assertEqual("", loaded.agents["chairperson"].model)
+            runtime = CloudTeamRuntime(loaded.agents, profiles=loaded.profiles, invoker=lambda spec, messages: spec.model)
+            result = runtime.execute("理解图片", architecture="direct")
+            self.assertEqual("vision-model", result.turns[0].model)
+            self.assertEqual("vision", result.turns[0].model_profile)
 
 
 class CloudTeamRuntimeTests(unittest.TestCase):
@@ -142,6 +196,77 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         self.assertEqual("research-model", calls[1][1])
         self.assertEqual("research-model", result.turns[1].content)
 
+    def test_auto_routing_selects_closest_tier_then_higher_concurrency(self) -> None:
+        auto = CloudAgentSpec(
+            "chairperson", "总助理", "汇总", "", "", "", "", "",
+            model_binding_mode="auto",
+            auto_tier="strong",
+            auto_capabilities=("reasoning",),
+            auto_modalities=("image",),
+            auto_scenarios=("research",),
+        )
+        profiles = {
+            "standard": _profile("standard", "standard-model", tier="standard", modalities=("text", "image"), max_concurrency=16),
+            "strong-slow": _profile("strong-slow", "strong-slow-model", modalities=("text", "image"), max_concurrency=2),
+            "strong-fast": _profile("strong-fast", "strong-fast-model", modalities=("text", "image"), max_concurrency=8),
+            "premium": _profile("premium", "premium-model", tier="premium", modalities=("text", "image"), max_concurrency=32),
+        }
+        runtime = CloudTeamRuntime({"chairperson": auto}, profiles=profiles, invoker=lambda spec, messages: spec.model)
+        result = runtime.execute("分析图像", architecture="direct")
+        turn = result.turns[0]
+        self.assertEqual("strong-fast-model", turn.model)
+        self.assertEqual("strong-fast", turn.model_profile)
+        self.assertEqual("auto", turn.selection_mode)
+        self.assertIn("候选排序：1.strong-fast", turn.selection_reason)
+        self.assertIn("并发=8", turn.selection_reason)
+
+    def test_auto_routing_fails_before_provider_call_when_no_profile_matches(self) -> None:
+        auto = CloudAgentSpec(
+            "chairperson", "总助理", "汇总", "", "", "", "", "",
+            model_binding_mode="auto", auto_modalities=("image",), auto_scenarios=("vision-review",),
+        )
+        invoke = Mock(return_value="unexpected")
+        runtime = CloudTeamRuntime({"chairperson": auto}, profiles={"text": _profile("text", "text-model")}, invoker=invoke)
+        with self.assertRaisesRegex(ModelRoutingError, "没有符合自动路由条件"):
+            runtime.execute("检查图片", architecture="direct")
+        invoke.assert_not_called()
+
+    def test_api_returns_explainable_auto_routing_failure_before_creating_a_run(self) -> None:
+        auto = CloudAgentSpec(
+            "chairperson", "总助理", "汇总", "", "", "", "", "",
+            model_binding_mode="auto", auto_modalities=("image",),
+        )
+        runtime = CloudTeamRuntime({"chairperson": auto}, profiles={"text": _profile("text", "text-model")}, invoker=Mock(return_value="unexpected"))
+        client = TestClient(create_app(team_runtime=runtime))
+        room_id = client.post("/rooms", json={"space_id": "space-demo"}).json()["room_id"]
+        response = client.post(f"/rooms/{room_id}/multi-agent/execute", json={"goal": "识别图片", "architecture": "direct"})
+        self.assertEqual(422, response.status_code, response.text)
+        self.assertEqual("model_routing_failed", response.json()["code"])
+        self.assertEqual("chairperson", response.json()["details"]["agent_id"])
+        self.assertEqual([], client.get(f"/rooms/{room_id}/messages").json()["items"])
+
+    def test_auto_run_snapshot_is_immune_to_profile_change_after_first_turn(self) -> None:
+        auto_agents = {
+            agent_id: CloudAgentSpec(agent_id, agent_id, responsibility, "", "", "", "", "", model_binding_mode="auto", auto_tier="strong")
+            for agent_id, responsibility in (("chairperson", "汇总"), ("researcher", "研究"), ("reviewer", "审查"))
+        }
+        selected = _profile("selected", "selected-model", max_concurrency=8)
+        replacement = _profile("replacement", "replacement-model", tier="premium", max_concurrency=1)
+        runtime = CloudTeamRuntime(auto_agents, profiles={"selected": selected, "replacement": replacement})
+        calls: list[str] = []
+
+        def invoke(spec, messages):
+            calls.append(spec.model)
+            if len(calls) == 1:
+                with runtime._configuration_lock:
+                    runtime._profiles["selected"] = _profile("selected", "changed-model", max_concurrency=8)
+            return spec.model
+
+        runtime._invoker = invoke
+        result = runtime.execute("冻结自动路由", architecture="hierarchical", max_agents=3)
+        self.assertEqual(["selected-model", "selected-model", "selected-model"], calls)
+        self.assertEqual(["selected-model"] * 3, [turn.model for turn in result.turns])
+
     def test_api_persists_team_messages_and_events(self) -> None:
         def invoke(spec, messages):
             return f"answer from {spec.agent_id}"
@@ -154,8 +279,14 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         payload = response.json()
         self.assertEqual("completed", payload["status"])
         self.assertEqual(3, len(payload["turns"]))
+        self.assertEqual("sensenova-6.7-flash-lite", payload["turns"][0]["model"])
+        self.assertEqual("fixed", payload["turns"][0]["selection_mode"])
         events = client.get(f"/rooms/{room['room_id']}/events").json()["items"]
         self.assertEqual("run_started", events[1]["event_type"])
+        self.assertEqual("sensenova-6.7-flash-lite", events[1]["payload"]["model_snapshot"][0]["model"])
+        completed_steps = [event for event in events if event["event_type"] == "step_completed"]
+        self.assertEqual("sensenova-6.7-flash-lite", completed_steps[0]["payload"]["model"])
+        self.assertNotIn("secret", str(events))
         self.assertEqual("run_completed", events[-1]["event_type"])
 
     def test_background_execution_returns_run_id_and_persists_completion(self) -> None:

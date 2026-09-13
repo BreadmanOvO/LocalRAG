@@ -55,6 +55,52 @@ class ModelConfigStoreTests(unittest.TestCase):
             self.assertEqual(409, client.delete("/settings/model-profiles/vision").status_code)
             self.assertEqual(200, client.delete("/settings/agents/reviewer").status_code)
 
+    def test_auto_agent_persists_constraints_and_reports_no_silent_fallback(self) -> None:
+        with TemporaryDirectory() as directory:
+            store = ModelConfigStore(Path(directory) / "multi_agent_models.json")
+            store.upsert_profile({
+                "profile_id": "text", "display_name": "文本模型", "provider": "mock",
+                "base_url": "https://example.com/v1", "model": "text-model", "api_key": "secret",
+                "tier": "standard", "capabilities": ["chat"], "modalities": ["text"],
+                "scenarios": ["chat"], "enabled": True,
+            })
+            public = store.upsert_agent({
+                "agent_id": "reviewer", "display_name": "审查员", "responsibility": "图片审查",
+                "model_binding_mode": "auto", "model_profile": "", "enabled": True,
+                "auto_tier": "strong", "auto_capabilities": ["vision"],
+                "auto_modalities": ["image"], "auto_scenarios": ["vision-review"],
+            })
+            agent = public["agents"][0]
+            self.assertEqual("auto", agent["model_binding_mode"])
+            self.assertFalse(agent["ready"])
+            self.assertIn("没有符合自动路由条件的已就绪模型", agent["readiness_issues"])
+            raw_agent = store.load()["agents"]["reviewer"]
+            self.assertEqual(["image"], raw_agent["auto_modalities"])
+            with self.assertRaisesRegex(ModelConfigError, "cannot set model_profile"):
+                store.upsert_agent({
+                    "agent_id": "reviewer", "model_binding_mode": "auto", "model_profile": "text",
+                })
+
+    def test_auto_agent_becomes_ready_only_when_one_profile_matches_all_constraints(self) -> None:
+        with TemporaryDirectory() as directory:
+            store = ModelConfigStore(Path(directory) / "multi_agent_models.json")
+            store.upsert_profile({
+                "profile_id": "vision", "display_name": "视觉推理", "provider": "mock",
+                "base_url": "https://example.com/v1", "model": "vision-model", "api_key": "secret",
+                "tier": "strong", "capabilities": ["reasoning", "vision"],
+                "modalities": ["text", "image"], "scenarios": ["vision-review"],
+                "max_concurrency": 3, "enabled": True,
+            })
+            public = store.upsert_agent({
+                "agent_id": "reviewer", "display_name": "审查员", "responsibility": "图片审查",
+                "model_binding_mode": "auto", "enabled": True, "auto_tier": "strong",
+                "auto_capabilities": ["reasoning", "vision"], "auto_modalities": ["image"],
+                "auto_scenarios": ["vision-review"],
+            })
+            agent = public["agents"][0]
+            self.assertTrue(agent["ready"], agent["readiness_issues"])
+            self.assertEqual("", agent["model_profile"])
+
     def test_discovery_reads_saved_profile_key_without_returning_it(self) -> None:
         server = HTTPServer(("127.0.0.1", 0), _ModelsHandler)
         thread = threading.Thread(target=server.serve_forever, daemon=True)

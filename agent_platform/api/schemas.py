@@ -154,6 +154,10 @@ class MultiAgentTurnResponse(BaseModel):
     responsibility: str
     content: str
     sequence: int
+    model: str
+    model_profile: str
+    selection_mode: Literal["fixed", "auto"]
+    selection_reason: str
 
 class MultiAgentExecuteResponse(BaseModel):
     room_id: str
@@ -221,10 +225,15 @@ class AgentConfigRequest(BaseModel):
     agent_id: str = Field(min_length=1)
     display_name: str = ""
     responsibility: str = ""
+    model_binding_mode: Literal["fixed", "auto"] = "fixed"
     model_profile: str = ""
     tier: str = "standard"
     capabilities: list[str] = Field(default_factory=list)
     modalities: list[str] = Field(default_factory=lambda: ["text"])
+    auto_tier: str = ""
+    auto_capabilities: list[str] = Field(default_factory=list)
+    auto_modalities: list[str] = Field(default_factory=list)
+    auto_scenarios: list[str] = Field(default_factory=list)
     system_prompt: str = ""
     enabled: bool = False
 
@@ -251,10 +260,15 @@ class AgentConfigResponse(BaseModel):
     agent_id: str
     display_name: str
     responsibility: str
+    model_binding_mode: Literal["fixed", "auto"]
     model_profile: str
     tier: str
     capabilities: list[str]
     modalities: list[str]
+    auto_tier: str
+    auto_capabilities: list[str]
+    auto_modalities: list[str]
+    auto_scenarios: list[str]
     system_prompt: str
     enabled: bool
     ready: bool

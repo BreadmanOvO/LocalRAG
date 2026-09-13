@@ -18,7 +18,7 @@ from typing import Any, Mapping
 from urllib.parse import urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-from .multi_agent_config import DEFAULT_CONFIG
+from .multi_agent_config import CloudModelProfile, DEFAULT_CONFIG, profile_matches_requirements
 
 
 class ModelConfigError(ValueError):
@@ -109,10 +109,15 @@ class ModelConfigStore:
             item.pop("api_key", None)
             item.setdefault("display_name", agent_id)
             item.setdefault("responsibility", "")
+            item.setdefault("model_binding_mode", "fixed")
             item.setdefault("model_profile", "")
             item.setdefault("tier", "standard")
             item.setdefault("capabilities", [])
             item.setdefault("modalities", ["text"])
+            item.setdefault("auto_tier", "")
+            item.setdefault("auto_capabilities", [])
+            item.setdefault("auto_modalities", [])
+            item.setdefault("auto_scenarios", [])
             item.setdefault("system_prompt", "")
             item.setdefault("enabled", False)
             issues = self._agent_issues(item, raw["model_profiles"])
@@ -134,24 +139,70 @@ class ModelConfigStore:
         issues: list[str] = []
         if not item.get("enabled", False):
             issues.append("未启用")
+        binding_mode = str(item.get("model_binding_mode", "fixed")).strip().lower() or "fixed"
+        if binding_mode not in {"fixed", "auto"}:
+            issues.append("模型绑定方式无效")
+            return issues
         profile_id = str(item.get("model_profile", "")).strip()
         if not str(item.get("display_name", "")).strip():
             issues.append("未设置显示名称")
         if not str(item.get("responsibility", "")).strip():
             issues.append("未设置职责")
-        if not profile_id:
-            issues.append("未绑定模型")
-        elif profile_id not in profiles:
-            issues.append("绑定模型不存在")
-        else:
+        if binding_mode == "fixed":
+            if not profile_id:
+                issues.append("未绑定模型")
+            elif profile_id not in profiles:
+                issues.append("绑定模型不存在")
+            else:
+                profile = dict(profiles[profile_id])
+                env_name = str(profile.get("api_key_env", "")).strip()
+                profile["has_api_key"] = bool(profile.get("api_key") or (env_name and os.environ.get(env_name, "").strip()))
+                if ModelConfigStore._profile_issues(profile):
+                    issues.append("绑定模型尚未就绪")
+                if not profile.get("enabled", False):
+                    issues.append("绑定模型未启用")
+        elif profile_id:
+            issues.append("自动路由不能绑定固定模型")
+        elif not ModelConfigStore._matching_auto_profiles(item, profiles):
+            issues.append("没有符合自动路由条件的已就绪模型")
+        return issues
+
+    @staticmethod
+    def _matching_auto_profiles(item: Mapping[str, Any], profiles: Mapping[str, Any]) -> list[str]:
+        """Use the same explicit constraints as Runtime without reading keys."""
+        matches: list[str] = []
+        for profile_id, raw_profile in profiles.items():
+            if not isinstance(raw_profile, Mapping):
+                continue
             profile = dict(profiles[profile_id])
             env_name = str(profile.get("api_key_env", "")).strip()
             profile["has_api_key"] = bool(profile.get("api_key") or (env_name and os.environ.get(env_name, "").strip()))
-            if ModelConfigStore._profile_issues(profile):
-                issues.append("绑定模型尚未就绪")
-            if not profile.get("enabled", False):
-                issues.append("绑定模型未启用")
-        return issues
+            if not profile.get("enabled", False) or ModelConfigStore._profile_issues(profile):
+                continue
+            candidate = CloudModelProfile(
+                profile_id=str(profile_id),
+                display_name=str(profile.get("display_name", profile_id)),
+                provider=str(profile.get("provider", "")),
+                base_url=str(profile.get("base_url", "")),
+                model=str(profile.get("model", "")),
+                api_key_env=env_name,
+                api_key="",
+                capabilities=tuple(_list(profile.get("capabilities", []))),
+                modalities=tuple(_list(profile.get("modalities", ["text"])) or ["text"]),
+                scenarios=tuple(_list(profile.get("scenarios", []))),
+                tier=str(profile.get("tier", "standard")).strip() or "standard",
+                max_concurrency=int(profile.get("max_concurrency", 4)),
+                enabled=True,
+            )
+            if profile_matches_requirements(
+                candidate,
+                tier=str(item.get("auto_tier", "")).strip(),
+                capabilities=_list(item.get("auto_capabilities", [])),
+                modalities=_list(item.get("auto_modalities", [])),
+                scenarios=_list(item.get("auto_scenarios", [])),
+            ):
+                matches.append(str(profile_id))
+        return matches
 
     def upsert_profile(self, payload: Mapping[str, Any]) -> dict[str, Any]:
         profile_id = _id(str(payload.get("profile_id", "")), "profile_id")
@@ -182,7 +233,11 @@ class ModelConfigStore:
         raw = self.load()
         if profile_id not in raw["model_profiles"]:
             raise KeyError(profile_id)
-        if any(value.get("model_profile") == profile_id for value in raw["agents"].values()):
+        if any(
+            value.get("model_profile") == profile_id
+            and str(value.get("model_binding_mode", "fixed")).strip().lower() != "auto"
+            for value in raw["agents"].values()
+        ):
             raise ModelConfigError("model profile is still bound to an agent")
         del raw["model_profiles"][profile_id]
         self.save(raw)
@@ -192,16 +247,26 @@ class ModelConfigStore:
         agent_id = _id(str(payload.get("agent_id", "")), "agent_id")
         raw = self.load()
         current = raw["agents"].get(agent_id, {})
+        binding_mode = str(payload.get("model_binding_mode", current.get("model_binding_mode", "fixed"))).strip().lower() or "fixed"
+        if binding_mode not in {"fixed", "auto"}:
+            raise ModelConfigError("model_binding_mode must be fixed or auto")
         profile_id = str(payload.get("model_profile", current.get("model_profile", ""))).strip()
-        if profile_id and profile_id not in raw["model_profiles"]:
+        if binding_mode == "auto" and profile_id:
+            raise ModelConfigError("automatic model binding cannot set model_profile")
+        if binding_mode == "fixed" and profile_id and profile_id not in raw["model_profiles"]:
             raise ModelConfigError(f"unknown model profile: {profile_id}")
         raw["agents"][agent_id] = {
             "display_name": str(payload.get("display_name", current.get("display_name", agent_id))).strip() or agent_id,
             "responsibility": str(payload.get("responsibility", current.get("responsibility", ""))).strip(),
+            "model_binding_mode": binding_mode,
             "model_profile": profile_id,
             "tier": str(payload.get("tier", current.get("tier", "standard"))).strip() or "standard",
             "capabilities": _list(payload.get("capabilities", current.get("capabilities", []))),
             "modalities": _list(payload.get("modalities", current.get("modalities", ["text"]))) or ["text"],
+            "auto_tier": str(payload.get("auto_tier", current.get("auto_tier", ""))).strip(),
+            "auto_capabilities": _list(payload.get("auto_capabilities", current.get("auto_capabilities", []))),
+            "auto_modalities": _list(payload.get("auto_modalities", current.get("auto_modalities", []))),
+            "auto_scenarios": _list(payload.get("auto_scenarios", current.get("auto_scenarios", []))),
             "system_prompt": str(payload.get("system_prompt", current.get("system_prompt", ""))).strip(),
             "enabled": bool(payload.get("enabled", current.get("enabled", False))),
         }
