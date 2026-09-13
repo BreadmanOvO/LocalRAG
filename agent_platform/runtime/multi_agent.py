@@ -278,18 +278,23 @@ class CloudTeamRuntime:
         return tier_preference, -profile.max_concurrency, -len(profile.capabilities), profile.profile_id
 
     @staticmethod
-    def _with_profile(spec: CloudAgentSpec, profile: CloudModelProfile) -> CloudAgentSpec:
+    def _with_profile(
+        spec: CloudAgentSpec,
+        profile: CloudModelProfile,
+        *,
+        preserve_agent_overrides: bool = False,
+    ) -> CloudAgentSpec:
         return replace(
             spec,
-            provider=profile.provider,
-            base_url=profile.base_url,
-            model=profile.model,
-            api_key_env=profile.api_key_env,
-            api_key=profile.api_key,
-            capabilities=profile.capabilities,
-            modalities=profile.modalities,
-            max_concurrency=profile.max_concurrency,
-            scenarios=profile.scenarios,
+            provider=spec.provider if preserve_agent_overrides and spec.provider else profile.provider,
+            base_url=spec.base_url if preserve_agent_overrides and spec.base_url else profile.base_url,
+            model=spec.model if preserve_agent_overrides and spec.model else profile.model,
+            api_key_env=spec.api_key_env if preserve_agent_overrides and spec.api_key_env else profile.api_key_env,
+            api_key=spec.api_key if preserve_agent_overrides and spec.api_key else profile.api_key,
+            capabilities=spec.capabilities if preserve_agent_overrides and spec.capabilities else profile.capabilities,
+            modalities=spec.modalities if preserve_agent_overrides and spec.modalities else profile.modalities,
+            max_concurrency=spec.max_concurrency if preserve_agent_overrides and spec.max_concurrency else profile.max_concurrency,
+            scenarios=spec.scenarios if preserve_agent_overrides and spec.scenarios else profile.scenarios,
             model_profile=profile.profile_id,
         )
 
@@ -306,8 +311,8 @@ class CloudTeamRuntime:
                     raise ModelRoutingError(spec.agent_id, f"固定模型不存在：{spec.model_profile}")
                 if not self._is_ready_profile(profile):
                     raise ModelRoutingError(spec.agent_id, f"固定模型尚未就绪：{spec.model_profile}")
-                selected = self._with_profile(spec, profile)
-                reason = f"固定绑定：{profile.display_name}（{profile.model}）"
+                selected = self._with_profile(spec, profile, preserve_agent_overrides=True)
+                reason = f"固定绑定：{profile.display_name}（{selected.model}）"
             else:
                 if not all((spec.provider, spec.base_url, spec.model, spec.api_key)):
                     raise ModelRoutingError(spec.agent_id, "固定模型尚未完成配置")

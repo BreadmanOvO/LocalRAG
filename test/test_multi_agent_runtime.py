@@ -104,6 +104,34 @@ class CloudConfigTests(unittest.TestCase):
             self.assertEqual("vision-model", result.turns[0].model)
             self.assertEqual("vision", result.turns[0].model_profile)
 
+    def test_fixed_profile_snapshot_preserves_agent_level_connection_overrides(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "multi.json"
+            path.write_text(json.dumps({
+                "contract_version": "agent-platform-cloud-v1",
+                "model_profiles": {
+                    "shared": {
+                        "provider": "sensenova", "base_url": "https://token.sensenova.cn/v1",
+                        "model": "shared-model", "api_key": "profile-key",
+                    },
+                },
+                "agents": {
+                    "chairperson": {
+                        "display_name": "总助理", "responsibility": "汇总", "model_profile": "shared",
+                        "model": "agent-model", "api_key": "agent-key",
+                    },
+                },
+            }), encoding="utf-8")
+            loaded = load_cloud_team_config(path, environ={})
+            seen: list[tuple[str, str]] = []
+            runtime = CloudTeamRuntime(
+                loaded.agents,
+                profiles=loaded.profiles,
+                invoker=lambda spec, messages: (seen.append((spec.model, spec.api_key)) or "ok"),
+            )
+            runtime.execute("固定模型", architecture="direct")
+            self.assertEqual([("agent-model", "agent-key")], seen)
+
 
 class CloudTeamRuntimeTests(unittest.TestCase):
     def test_unimplemented_architecture_and_missing_independent_agents_fail_before_call(self) -> None:
