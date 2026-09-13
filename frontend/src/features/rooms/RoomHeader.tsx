@@ -1,5 +1,8 @@
 import type { Room } from "../../shared/api/client";
+import { roomTheme, themes } from "../../app/theme";
 
 export function RoomHeader({ room }: { room: Room }) {
-  return <div><p className="eyebrow">工作房间 · {room.space_id}</p><h1>{room.title || "未命名房间"}</h1><p className="subtitle"><span className="status-dot" /> {room.status} · 版本 {room.row_version}</p></div>;
+  const createdTheme = roomTheme(room.room_id) ?? "company";
+  const roomLabel = createdTheme === "emperor" ? "御前议事" : "任务房间";
+  return <div><p className="eyebrow">{roomLabel} · {themes[createdTheme].leadLabel}</p><h1>{room.title || "未命名任务"}</h1><p className="subtitle"><span className="status-dot" /> {room.status}</p></div>;
 }

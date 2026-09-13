@@ -7,8 +7,22 @@ export type Event = components["schemas"]["EventResponse"];
 export type Member = components["schemas"]["MemberResponse"];
 export type Role = components["schemas"]["RoleResponse"];
 export type Persona = components["schemas"]["PersonaResponse"];
-export type MultiAgentExecution = components["schemas"]["MultiAgentExecuteResponse"];
+export type MultiAgentTurn = components["schemas"]["MultiAgentTurnResponse"] & {
+  model?: string;
+  model_profile?: string;
+  selection_mode?: AgentBindingMode;
+  selection_reason?: string;
+};
+export type MultiAgentExecution = Omit<components["schemas"]["MultiAgentExecuteResponse"], "turns"> & { turns: MultiAgentTurn[] };
 export type ModelSettings = components["schemas"]["ModelSettingsResponse"];
+export type AgentBindingMode = "fixed" | "auto";
+export type CompatibleAgentConfig = components["schemas"]["AgentConfigRequest"] & {
+  model_binding_mode?: AgentBindingMode;
+  auto_tier?: string;
+  auto_modalities?: string[];
+  auto_scenarios?: string[];
+  auto_capabilities?: string[];
+};
 
 export const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
 const client = createClient<paths>({ baseUrl: API_BASE });
@@ -92,7 +106,7 @@ export const api = {
     const { data, error } = await client.PUT("/settings/model-profiles/{profile_id}", { params: { path: { profile_id: profileId } }, body });
     return unwrap(data, error);
   },
-  saveAgentConfig: async (agentId: string, body: components["schemas"]["AgentConfigRequest"]) => {
+  saveAgentConfig: async (agentId: string, body: CompatibleAgentConfig) => {
     const { data, error } = await client.PUT("/settings/agents/{agent_id}", { params: { path: { agent_id: agentId } }, body });
     return unwrap(data, error);
   },
