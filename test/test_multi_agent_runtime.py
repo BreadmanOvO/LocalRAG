@@ -383,6 +383,60 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         self.assertEqual(2, len(run_started))
         self.assertEqual("selected-model", run_started[-1]["payload"]["model_snapshot"][0]["model"])
 
+    def test_formed_room_uses_frozen_runtime_when_current_config_is_invalid(self) -> None:
+        runtime = CloudTeamRuntime(
+            {"chairperson": _spec("chairperson", "汇总")},
+            invoker=lambda spec, messages: spec.model,
+        )
+        app = create_app(team_runtime=runtime)
+        client = TestClient(app)
+        room_id = client.post("/rooms", json={"space_id": "space-demo"}).json()["room_id"]
+        first = client.post(
+            f"/rooms/{room_id}/multi-agent/execute",
+            json={"goal": "建立房间模型绑定", "architecture": "direct"},
+        )
+        self.assertEqual(200, first.status_code, first.text)
+
+        app.state.team_runtime = None
+        with patch.object(CloudTeamRuntime, "from_config", side_effect=RuntimeError("temporary invalid config")):
+            followup = client.post(
+                f"/rooms/{room_id}/multi-agent/execute",
+                json={"goal": "继续处理", "architecture": "direct"},
+            )
+        self.assertEqual(200, followup.status_code, followup.text)
+        self.assertEqual(first.json()["turns"][0]["model"], followup.json()["turns"][0]["model"])
+
+    def test_room_rejects_overlapping_team_runs(self) -> None:
+        started = threading.Event()
+        release = threading.Event()
+
+        def invoke(spec, messages):
+            started.set()
+            self.assertTrue(release.wait(timeout=3))
+            return "done"
+
+        runtime = CloudTeamRuntime({"chairperson": _spec("chairperson", "汇总")}, invoker=invoke)
+        with TestClient(create_app(team_runtime=runtime)) as client:
+            room_id = client.post("/rooms", json={"space_id": "space-demo"}).json()["room_id"]
+            first = client.post(
+                f"/rooms/{room_id}/multi-agent/execute",
+                json={"goal": "长任务", "architecture": "direct", "background": True},
+            )
+            self.assertEqual(200, first.status_code, first.text)
+            self.assertTrue(started.wait(timeout=2))
+            overlapping = client.post(
+                f"/rooms/{room_id}/multi-agent/execute",
+                json={"goal": "重复任务", "architecture": "direct"},
+            )
+            self.assertEqual(409, overlapping.status_code, overlapping.text)
+            self.assertEqual("run_active", overlapping.json()["code"])
+            release.set()
+            for _ in range(60):
+                if client.get(f"/runs/{first.json()['run_id']}").json()["status"] == "completed":
+                    break
+                time.sleep(0.02)
+            self.assertEqual("completed", client.get(f"/runs/{first.json()['run_id']}").json()["status"])
+
     def test_room_snapshot_rejects_new_auto_modality_without_switching_model(self) -> None:
         auto = CloudAgentSpec(
             "chairperson", "总助理", "汇总", "", "", "", "", "",

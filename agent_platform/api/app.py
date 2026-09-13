@@ -120,6 +120,10 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
             payload={"message_id": message.message_id, "role": message.role},
         )
 
+    def _release_team_room(room_id: str) -> None:
+        with room_model_snapshot_lock:
+            active_team_rooms.discard(room_id)
+
     app = FastAPI(title="LocalRAG Agent Platform API", version="1.8.0")
     app.state.repository, app.state.events, app.state.runs, app.state.tasks, app.state.personas, app.state.planner, app.state.team_runtime, app.state.asset_store, app.state.team_worker = repository, events, runs, tasks, personas, planner, team_runtime, asset_store, team_worker
 
@@ -149,6 +153,12 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
             raise ApiDomainError("space_forbidden", "the credential cannot access this space", status=403, details={"space_id": space_id})
         return principal
 
+    def _require_admin(request: Request) -> None:
+        """Require the wildcard space grant for credentialed admin actions."""
+        principal = _principal(request)
+        if auth_required and (principal is None or "*" not in principal.spaces):
+            raise ApiDomainError("admin_required", "管理员凭证才能执行此操作", status=403)
+
     def _room_for_request(request: Request, room_id: str) -> Any:
         room = repository.get_room(room_id)
         _require_space(request, room.space_id)
@@ -158,16 +168,24 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         runtime = app.state.team_runtime
         if runtime is None:
             try:
-                # Prefer the latest configuration. If it is temporarily
-                # invalid, an already formed room may continue on its own
-                # frozen runtime; new rooms still report the configuration
-                # error instead of silently using stale settings.
                 runtime = CloudTeamRuntime.from_config()
             except (RuntimeError, OSError) as exc:
-                runtime = room_runtimes.get(room.room_id)
-                if runtime is None:
-                    raise ApiDomainError("capability_not_ready", str(exc), status=503) from exc
+                raise ApiDomainError("capability_not_ready", str(exc), status=503) from exc
             app.state.team_runtime = runtime
+        return runtime
+
+    def _runtime_for_room(room_id: str) -> CloudTeamRuntime:
+        """Load current settings, falling back only to this room's frozen runtime."""
+        runtime = app.state.team_runtime
+        if runtime is not None:
+            return runtime
+        try:
+            runtime = CloudTeamRuntime.from_config()
+        except (RuntimeError, OSError) as exc:
+            runtime = room_runtimes.get(room_id)
+            if runtime is None:
+                raise ApiDomainError("capability_not_ready", str(exc), status=503) from exc
+        app.state.team_runtime = runtime
         return runtime
 
     @app.exception_handler(ApiDomainError)
@@ -254,9 +272,10 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         return result
 
     @app.post("/settings/model-discovery", response_model=ModelDiscoveryResponse)
-    async def discover_models(body: ModelDiscoveryRequest) -> Any:
+    async def discover_models(request: Request, body: ModelDiscoveryRequest) -> Any:
+        _require_admin(request)
         try:
-            api_key = model_config.discovery_key(body.profile_id, body.api_key)
+            api_key = model_config.discovery_key(body.profile_id, body.api_key, base_url=body.base_url)
             items = ModelConfigStore.discover_models(body.base_url, api_key)
         except ModelConfigError as exc:
             raise ApiDomainError("model_discovery_failed", str(exc), status=502) from exc
@@ -445,12 +464,7 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         task = tasks.get(task_id)
         if task is not None and task.room_id != room.room_id:
             raise ApiDomainError("conflict", "task belongs to another room", status=409)
-        runtime = app.state.team_runtime
-        if runtime is None:
-            try:
-                runtime = CloudTeamRuntime.from_config()
-            except (RuntimeError, OSError) as exc:
-                raise ApiDomainError("capability_not_ready", str(exc), status=503) from exc
+        runtime = _runtime_for_room(room.room_id)
         decision = task_router.route(body.goal, requested_architecture=body.architecture, max_agents=body.max_agents)
         if decision.architecture in {"graph", "heterogeneous"}:
             raise ApiDomainError("capability_not_ready", f"当前策略尚未接入真实执行器：{decision.architecture}", status=503, details={"route_reason": decision.reason, "required_capabilities": list(decision.required_capabilities)})
@@ -468,7 +482,6 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
                     required_capabilities=decision.required_capabilities,
                     existing_snapshot=room_model_snapshots.get(room.room_id),
                 )
-                room_model_snapshots[room.room_id] = model_snapshot
             except ModelRoutingError as exc:
                 raise ApiDomainError(
                     "model_routing_failed",
@@ -498,8 +511,9 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
                     "model_snapshot": model_snapshot.public(),
                 },
             )
-            active_team_rooms.add(room.room_id)
             room_runtimes[room.room_id] = runtime
+            room_model_snapshots[room.room_id] = model_snapshot
+            active_team_rooms.add(room.room_id)
 
         def record_turn(turn: Any) -> None:
             if runs.get_run(run_id).status != "running":
@@ -541,7 +555,7 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
                     events.append(room.room_id, "run_failed", run_id=run_id, task_id=task_id, payload={"error": type(exc).__name__, "worker": True})
                 finally:
                     task.active_run_id = None
-                    active_team_rooms.discard(room.room_id)
+                    _release_team_room(room.room_id)
 
             job = team_worker.submit(execute_in_worker)
             events.append(room.room_id, "run_queued", run_id=run_id, task_id=task_id, payload={"job_id": job.job_id})
@@ -562,7 +576,7 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
             raise ApiDomainError("multi_agent_failed", "团队执行未完成，已保留完成步骤，请查看运行轨迹。", status=502) from exc
         finally:
             task.active_run_id = None
-            active_team_rooms.discard(room.room_id)
+            _release_team_room(room.room_id)
         return {
             "room_id": room.room_id,
             "task_id": task_id,

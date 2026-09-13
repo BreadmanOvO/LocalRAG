@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from agent_platform.conversations import ConflictError, SqlAlchemyConversationRepository
@@ -18,6 +19,19 @@ class SqlConversationRepositoryTests(unittest.TestCase):
         room, message = repo.create_room_with_message("space-demo", "initial", "hello")
         self.assertEqual(1, room.room_sequence)
         self.assertEqual(room.room_id, message.room_id)
+
+    def test_memory_sqlite_is_shared_across_threads(self) -> None:
+        repo = SqlAlchemyConversationRepository.from_url("sqlite://")
+        room = repo.create_room("space-demo", "共享")
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            messages = list(pool.map(lambda value: repo.save_message(room.room_id, value), ("a", "b")))
+        self.assertEqual({1, 2}, {message.room_sequence for message in messages})
+
+    def test_concurrent_room_creation_reuses_space_without_false_conflict(self) -> None:
+        repo = SqlAlchemyConversationRepository.from_url("sqlite://")
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            rooms = list(pool.map(lambda title: repo.create_room("space-demo", title), ("a", "b")))
+        self.assertEqual({"a", "b"}, {room.title for room in rooms})
 
     def test_sqlite_round_trip_and_idempotency(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

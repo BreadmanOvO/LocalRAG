@@ -123,6 +123,21 @@ class ModelConfigStoreTests(unittest.TestCase):
         with self.assertRaisesRegex(ModelConfigError, "private or local"):
             ModelConfigStore.discover_models("http://127.0.0.1:9/v1")
 
+    def test_saved_key_cannot_be_forwarded_to_a_different_url(self) -> None:
+        with TemporaryDirectory() as directory:
+            store = ModelConfigStore(Path(directory) / "multi_agent_models.json")
+            store.upsert_profile({"profile_id": "cloud", "base_url": "https://api.example.com/v1", "api_key": "saved-secret"})
+            with self.assertRaisesRegex(ModelConfigError, "profile URL"):
+                store.discovery_key("cloud", base_url="https://attacker.example.com/v1")
+
+    def test_discovery_requires_admin_scope_when_authentication_is_enabled(self) -> None:
+        with TemporaryDirectory() as directory:
+            store = ModelConfigStore(Path(directory) / "multi_agent_models.json")
+            client = TestClient(create_app(model_config_store=store, auth_required=True, auth_tokens={"user-token": ["space-demo"], "admin-token": ["*"]}))
+            user = client.post("/settings/model-discovery", headers={"Authorization": "Bearer user-token"}, json={"base_url": "https://api.example.com/v1"})
+            self.assertEqual(403, user.status_code)
+            self.assertEqual("admin_required", user.json()["code"])
+
 
 if __name__ == "__main__":
     unittest.main()

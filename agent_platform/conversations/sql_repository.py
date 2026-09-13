@@ -10,12 +10,14 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from hashlib import sha256
+from threading import RLock
 from typing import Literal
 from uuid import uuid4
 
 from sqlalchemy import Column, DateTime, Integer, MetaData, String, Table, Text, UniqueConstraint, create_engine, insert, select, update
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.pool import StaticPool
 
 from agent_platform.contracts.identity import new_identifier, validate_identifier
 from .repository import ConflictError, Membership, Message, NotFoundError, Room, RoomClosedError
@@ -34,6 +36,7 @@ class SqlAlchemyConversationRepository:
 
     def __init__(self, engine: Engine, *, create_schema: bool = True) -> None:
         self.engine = engine
+        self._write_lock = RLock()
         self.metadata = MetaData()
         self.spaces = Table("spaces", self.metadata,
             Column("space_id", String(255), primary_key=True),
@@ -77,7 +80,23 @@ class SqlAlchemyConversationRepository:
 
     @classmethod
     def from_url(cls, url: str, *, create_schema: bool = True) -> "SqlAlchemyConversationRepository":
-        return cls(create_engine(url, future=True, pool_pre_ping=True), create_schema=create_schema)
+        engine_kwargs = {"future": True, "pool_pre_ping": True}
+        if url in {"sqlite://", "sqlite:///:memory:"}:
+            engine_kwargs.update({"poolclass": StaticPool, "connect_args": {"check_same_thread": False}})
+        return cls(create_engine(url, **engine_kwargs), create_schema=create_schema)
+
+    def _ensure_space(self, conn, space_id: str) -> None:
+        """Create a space once without turning concurrent room creation into a conflict."""
+        if conn.execute(select(self.spaces.c.space_id).where(self.spaces.c.space_id == space_id)).first() is not None:
+            return
+        try:
+            with conn.begin_nested():
+                conn.execute(insert(self.spaces).values(space_id=space_id, name=space_id))
+        except IntegrityError:
+            # Another transaction won the race. The outer room insert still
+            # owns its transaction and can proceed on databases that support
+            # savepoints; callers translate a true room conflict below.
+            pass
 
     def close(self) -> None:
         """Release pooled connections (useful for process shutdown and tests)."""
@@ -88,14 +107,13 @@ class SqlAlchemyConversationRepository:
         room_id = validate_identifier(room_id, "room") if room_id else new_identifier("room")
         now = _now()
         try:
-            with self.engine.begin() as conn:
-                existing_space = conn.execute(select(self.spaces.c.space_id).where(self.spaces.c.space_id == space_id)).first()
-                if existing_space is None:
-                    conn.execute(insert(self.spaces).values(space_id=space_id, name=space_id))
+            with self._write_lock, self.engine.begin() as conn:
+                self._ensure_space(conn, space_id)
                 conn.execute(insert(self.rooms).values(room_id=room_id, space_id=space_id, status="active", title=title.strip(), room_sequence=0, row_version=1, created_at=now, updated_at=now))
         except IntegrityError as exc:
             raise ConflictError(f"room already exists: {room_id}") from exc
-        return self.get_room(room_id)
+        with self._write_lock:
+            return self.get_room(room_id)
 
     def create_room_with_message(self, space_id: str, title: str, content: str, *, room_id: str | None = None, idempotency_key: str | None = None) -> tuple[Room, Message]:
         space_id = validate_identifier(space_id, "space")
@@ -105,19 +123,19 @@ class SqlAlchemyConversationRepository:
         message_id = new_identifier("message")
         now = _now()
         try:
-            with self.engine.begin() as conn:
-                if conn.execute(select(self.spaces.c.space_id).where(self.spaces.c.space_id == space_id)).first() is None:
-                    conn.execute(insert(self.spaces).values(space_id=space_id, name=space_id))
+            with self._write_lock, self.engine.begin() as conn:
+                self._ensure_space(conn, space_id)
                 conn.execute(insert(self.rooms).values(room_id=room_id, space_id=space_id, status="active", title=title.strip(), room_sequence=0, row_version=1, created_at=now, updated_at=now))
                 conn.execute(insert(self.messages).values(message_id=message_id, room_id=room_id, task_id=None, turn_id=f"turn-{message_id}", content=content.strip(), role="user", status="saved", room_sequence=1, idempotency_key=idempotency_key, content_sha256=sha256(content.strip().encode()).hexdigest(), created_at=now))
                 conn.execute(update(self.rooms).where(self.rooms.c.room_id == room_id).values(room_sequence=1, row_version=2, updated_at=now))
         except IntegrityError as exc:
             raise ConflictError("room or initial message already exists") from exc
-        return self.get_room(room_id), self._message({"message_id": message_id, "room_id": room_id, "content": content.strip(), "role": "user", "status": "saved", "room_sequence": 1, "idempotency_key": idempotency_key, "content_sha256": sha256(content.strip().encode()).hexdigest(), "created_at": now})
+        with self._write_lock:
+            return self.get_room(room_id), self._message({"message_id": message_id, "room_id": room_id, "content": content.strip(), "role": "user", "status": "saved", "room_sequence": 1, "idempotency_key": idempotency_key, "content_sha256": sha256(content.strip().encode()).hexdigest(), "created_at": now})
 
     def get_room(self, room_id: str) -> Room:
         room_id = validate_identifier(room_id, "room")
-        with self.engine.connect() as conn:
+        with self._write_lock, self.engine.connect() as conn:
             row = conn.execute(select(self.rooms).where(self.rooms.c.room_id == room_id)).mappings().first()
         if row is None:
             raise NotFoundError(room_id)
@@ -140,7 +158,7 @@ class SqlAlchemyConversationRepository:
         identifier = validate_identifier(message_id, "message") if message_id else new_identifier("message")
         now = _now()
         try:
-            with self.engine.begin() as conn:
+            with self._write_lock, self.engine.begin() as conn:
                 room = conn.execute(select(self.rooms).where(self.rooms.c.room_id == room_id).with_for_update()).mappings().first()
                 if room is None:
                     raise NotFoundError(room_id)
@@ -183,7 +201,7 @@ class SqlAlchemyConversationRepository:
         if not isinstance(agent_id, str) or not agent_id.strip():
             raise ValueError("agent_id must not be empty")
         membership = Membership(f"membership-{uuid4().hex}", validate_identifier(room_id, "room"), agent_id.strip(), joined_at=_now())
-        with self.engine.begin() as conn:
+        with self._write_lock, self.engine.begin() as conn:
             room = conn.execute(select(self.rooms).where(self.rooms.c.room_id == room_id).with_for_update()).mappings().first()
             if room is None:
                 raise NotFoundError(room_id)

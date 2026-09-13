@@ -282,7 +282,7 @@ class ModelConfigStore:
         self.save(raw)
         return self.public()
 
-    def discovery_key(self, profile_id: str = "", supplied_key: str = "") -> str:
+    def discovery_key(self, profile_id: str = "", supplied_key: str = "", *, base_url: str = "") -> str:
         if supplied_key.strip():
             return supplied_key.strip()
         if not profile_id.strip():
@@ -291,6 +291,10 @@ class ModelConfigStore:
         profile = raw["model_profiles"].get(_id(profile_id, "profile_id"))
         if not isinstance(profile, dict):
             raise ModelConfigError("model profile not found")
+        stored_url = self._normalize_base_url(str(profile.get("base_url", "")).strip())
+        requested_url = self._normalize_base_url(str(base_url or "").strip())
+        if stored_url and requested_url and stored_url != requested_url:
+            raise ModelConfigError("a saved API key can only be used with its profile URL")
         inline = str(profile.get("api_key", "")).strip()
         env_name = str(profile.get("api_key_env", "")).strip()
         return inline or (os.environ.get(env_name, "").strip() if env_name else "")
