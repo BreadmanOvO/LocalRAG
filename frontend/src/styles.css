@@ -85,6 +85,10 @@ textarea:focus { border-color: #87dcb8; box-shadow: 0 0 0 3px rgba(135, 220, 184
 .model-row { display: grid; grid-template-columns: minmax(170px, 1fr) minmax(180px, 1fr) minmax(120px, .6fr); gap: 12px; align-items: center; padding: 13px 0; border-top: 1px solid #293451; }
 .model-row select { border: 1px solid #374361; background: #10182e; color: #f2f5ff; border-radius: 8px; padding: 11px 12px; }
 .model-row small { display: block; margin-top: 5px; }
+.danger-button { color: #ff9b9b; border-color: #6f3741; }
+.check-field { display: flex; flex-direction: row; align-items: center; gap: 9px; padding-top: 28px; }
+.check-field input { width: auto; accent-color: #83b7ff; }
+.wide-field { grid-column: 1 / -1; }
 .failure-card { margin-top: 18px; border: 1px solid #6b3647; background: rgba(84, 31, 49, .35); border-radius: 10px; padding: 13px 15px; }
 .failure-card p { color: #f6c3cc; margin: 7px 0; }
 .failure-card small { color: #bf8795; font-size: 11px; }

@@ -199,6 +199,88 @@ class ModelSettingsResponse(BaseModel):
     agents: list[ModelAgentSetting]
     models: list[ModelChoice]
 
+
+class ModelProfileRequest(BaseModel):
+    profile_id: str = Field(min_length=1)
+    display_name: str = ""
+    provider: str = ""
+    base_url: str = ""
+    model: str = ""
+    api_key_env: str = ""
+    api_key: str = ""
+    capabilities: list[str] = Field(default_factory=list)
+    modalities: list[str] = Field(default_factory=lambda: ["text"])
+    scenarios: list[str] = Field(default_factory=list)
+    tier: str = "standard"
+    max_concurrency: int = Field(default=4, ge=1)
+    enabled: bool = False
+    clear_api_key: bool = False
+
+
+class AgentConfigRequest(BaseModel):
+    agent_id: str = Field(min_length=1)
+    display_name: str = ""
+    responsibility: str = ""
+    model_profile: str = ""
+    tier: str = "standard"
+    capabilities: list[str] = Field(default_factory=list)
+    modalities: list[str] = Field(default_factory=lambda: ["text"])
+    system_prompt: str = ""
+    enabled: bool = False
+
+
+class ModelProfileResponse(BaseModel):
+    profile_id: str
+    display_name: str
+    provider: str
+    base_url: str
+    model: str
+    api_key_env: str
+    has_api_key: bool
+    capabilities: list[str]
+    modalities: list[str]
+    scenarios: list[str]
+    tier: str
+    max_concurrency: int
+    enabled: bool
+    ready: bool
+    readiness_issues: list[str]
+
+
+class AgentConfigResponse(BaseModel):
+    agent_id: str
+    display_name: str
+    responsibility: str
+    model_profile: str
+    tier: str
+    capabilities: list[str]
+    modalities: list[str]
+    system_prompt: str
+    enabled: bool
+    ready: bool
+    readiness_issues: list[str]
+
+
+class ModelCatalogResponse(BaseModel):
+    contract_version: str
+    profiles: list[ModelProfileResponse]
+    agents: list[AgentConfigResponse]
+
+
+class ModelDiscoveryRequest(BaseModel):
+    base_url: str = Field(min_length=1)
+    api_key: str = ""
+    profile_id: str = ""
+
+
+class DiscoveredModelResponse(BaseModel):
+    id: str
+    owned_by: str = ""
+
+
+class ModelDiscoveryResponse(BaseModel):
+    items: list[DiscoveredModelResponse]
+
 class AssetUploadRequest(BaseModel):
     space_id: str = "default"
     filename: str = Field(min_length=1)

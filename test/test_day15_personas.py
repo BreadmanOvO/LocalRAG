@@ -14,7 +14,7 @@ class Day15PersonaTests(unittest.TestCase):
     def test_roles_and_default_profiles_are_available(self) -> None:
         roles = self.client.get("/roles")
         self.assertEqual(200, roles.status_code)
-        self.assertGreaterEqual(len(roles.json()["items"]), 3)
+        self.assertGreaterEqual(len(roles.json()["items"]), 10)
         profile = self.client.get("/persona-profiles/persona-researcher")
         self.assertEqual(200, profile.status_code)
         self.assertEqual(1, profile.json()["version"])

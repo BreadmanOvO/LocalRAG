@@ -84,9 +84,20 @@ class PersonaRegistry:
 
 def default_registry() -> PersonaRegistry:
     registry = PersonaRegistry()
-    registry.add_role(RoleSpec("role-assistant", "总助理", "办公室", ("澄清目标", "汇总结果"), ("chat", "route")))
-    registry.add_role(RoleSpec("role-researcher", "研究员", "研究部", ("检索资料", "整理证据"), ("rag", "analysis")))
-    registry.add_role(RoleSpec("role-reviewer", "审查员", "质量部", ("交叉核验", "标记风险"), ("review", "analysis")))
+    roles = (
+        RoleSpec("role-assistant", "总助理", "办公室", ("澄清目标", "协调分工", "汇总结果"), ("chat", "route", "summarization")),
+        RoleSpec("role-project-manager", "项目经理", "项目管理部", ("拆解里程碑", "跟踪依赖", "管理风险"), ("planning", "coordination")),
+        RoleSpec("role-researcher", "研究员", "研究部", ("检索资料", "整理证据", "识别缺口"), ("rag", "analysis")),
+        RoleSpec("role-architect", "架构师", "技术部", ("设计边界", "评估取舍", "制定接口"), ("architecture", "reasoning")),
+        RoleSpec("role-engineer", "工程师", "技术部", ("实现方案", "编写测试", "修复缺陷"), ("coding", "testing")),
+        RoleSpec("role-data-analyst", "数据分析师", "数据部", ("处理表格", "计算指标", "解释数据"), ("data", "table", "analysis")),
+        RoleSpec("role-visual-analyst", "视觉分析师", "多模态部", ("理解图片", "读取图表", "定位视觉证据"), ("vision", "ocr", "visual_grounding")),
+        RoleSpec("role-reviewer", "审查员", "质量部", ("交叉核验", "寻找反例", "标记风险"), ("review", "analysis")),
+        RoleSpec("role-security-auditor", "安全审计员", "安全部", ("检查权限", "识别注入", "评估数据风险"), ("security", "review")),
+        RoleSpec("role-writer", "报告撰写员", "交付部", ("组织结构", "统一表达", "生成交付物"), ("writing", "summarization")),
+    )
+    for role in roles:
+        registry.add_role(role)
     registry.save_profile(PersonaProfile("persona-assistant", "role-assistant", 1, "总助理", "你是负责澄清目标、分派工作并汇总结果的总助理。"))
     registry.save_profile(PersonaProfile("persona-researcher", "role-researcher", 1, "研究员", "你是重证据、重来源的研究员。"))
     registry.save_profile(PersonaProfile("persona-reviewer", "role-reviewer", 1, "审查员", "你是谨慎、独立的质量审查员。"))

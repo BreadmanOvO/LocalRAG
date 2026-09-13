@@ -80,6 +80,30 @@ export const api = {
     const { data, error } = await client.GET("/settings/models");
     return unwrap(data, error);
   },
+  modelCatalog: async () => {
+    const { data, error } = await client.GET("/settings/model-catalog");
+    return unwrap(data, error);
+  },
+  discoverModels: async (baseUrl: string, apiKey: string, profileId = "") => {
+    const { data, error } = await client.POST("/settings/model-discovery", { body: { base_url: baseUrl, api_key: apiKey, profile_id: profileId } });
+    return unwrap(data, error);
+  },
+  saveModelProfile: async (profileId: string, body: components["schemas"]["ModelProfileRequest"]) => {
+    const { data, error } = await client.PUT("/settings/model-profiles/{profile_id}", { params: { path: { profile_id: profileId } }, body });
+    return unwrap(data, error);
+  },
+  saveAgentConfig: async (agentId: string, body: components["schemas"]["AgentConfigRequest"]) => {
+    const { data, error } = await client.PUT("/settings/agents/{agent_id}", { params: { path: { agent_id: agentId } }, body });
+    return unwrap(data, error);
+  },
+  deleteModelProfile: async (profileId: string) => {
+    const { data, error } = await client.DELETE("/settings/model-profiles/{profile_id}", { params: { path: { profile_id: profileId } } });
+    return unwrap(data, error);
+  },
+  deleteAgentConfig: async (agentId: string) => {
+    const { data, error } = await client.DELETE("/settings/agents/{agent_id}", { params: { path: { agent_id: agentId } } });
+    return unwrap(data, error);
+  },
   updateModelBinding: async (agentId: string, sourceAgentId: string, tier?: string) => {
     const { data, error } = await client.PUT("/settings/models/{agent_id}", {
       params: { path: { agent_id: agentId } },

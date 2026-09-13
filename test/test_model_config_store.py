@@ -1,0 +1,82 @@
+from __future__ import annotations
+
+import json
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from pathlib import Path
+from tempfile import TemporaryDirectory
+import unittest
+from unittest.mock import patch
+
+from fastapi.testclient import TestClient
+
+from agent_platform.api import create_app
+from agent_platform.integrations.model_config_store import ModelConfigError, ModelConfigStore
+
+
+class _ModelsHandler(BaseHTTPRequestHandler):
+    received_authorization = ""
+
+    def do_GET(self):  # noqa: N802
+        type(self).received_authorization = self.headers.get("Authorization", "")
+        body = json.dumps({"data": [{"id": "text-model", "owned_by": "local"}, {"id": "vision-model", "owned_by": "cloud"}]}).encode()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, format, *args):  # noqa: A002
+        return
+
+
+class ModelConfigStoreTests(unittest.TestCase):
+    def test_empty_config_is_page_manageable_and_key_is_redacted(self) -> None:
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "multi_agent_models.json"
+            store = ModelConfigStore(path)
+            self.assertEqual([], store.public()["profiles"])
+            store.upsert_profile({"profile_id": "vision", "provider": "", "base_url": "", "model": "", "api_key": "secret", "enabled": False})
+            public = store.public()["profiles"][0]
+            self.assertEqual("", public["api_key"])
+            self.assertTrue(public["has_api_key"])
+            self.assertFalse(public["ready"])
+            store.upsert_profile({"profile_id": "vision", "api_key": "", "clear_api_key": False})
+            self.assertEqual("secret", store.load()["model_profiles"]["vision"]["api_key"])
+
+    def test_api_crud_and_discovery_use_injected_local_store(self) -> None:
+        with TemporaryDirectory() as directory:
+            store = ModelConfigStore(Path(directory) / "multi_agent_models.json")
+            client = TestClient(create_app(model_config_store=store))
+            self.assertEqual({"profiles": [], "agents": [], "contract_version": "agent-platform-cloud-v1"}, client.get("/settings/model-catalog").json())
+            saved = client.put("/settings/model-profiles/vision", json={"profile_id": "vision", "api_key": "local-secret", "enabled": False}).json()
+            self.assertNotIn("api_key", saved["profiles"][0])
+            self.assertEqual(200, client.put("/settings/agents/reviewer", json={"agent_id": "reviewer", "display_name": "审查员", "responsibility": "核验", "model_profile": "vision"}).status_code)
+            self.assertEqual(409, client.delete("/settings/model-profiles/vision").status_code)
+            self.assertEqual(200, client.delete("/settings/agents/reviewer").status_code)
+
+    def test_discovery_reads_saved_profile_key_without_returning_it(self) -> None:
+        server = HTTPServer(("127.0.0.1", 0), _ModelsHandler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            with TemporaryDirectory() as directory:
+                store = ModelConfigStore(Path(directory) / "multi_agent_models.json")
+                store.upsert_profile({"profile_id": "local", "base_url": f"http://127.0.0.1:{server.server_port}/v1", "api_key": "saved-secret", "enabled": False})
+                client = TestClient(create_app(model_config_store=store))
+                with patch("agent_platform.integrations.model_config_store.ModelConfigStore._is_safe_discovery_host", return_value=True):
+                    response = client.post("/settings/model-discovery", json={"profile_id": "local", "base_url": f"http://127.0.0.1:{server.server_port}/v1"})
+                self.assertEqual(200, response.status_code, response.text)
+                self.assertEqual(["text-model", "vision-model"], [item["id"] for item in response.json()["items"]])
+                self.assertEqual("Bearer saved-secret", _ModelsHandler.received_authorization)
+                self.assertNotIn("saved-secret", response.text)
+        finally:
+            server.shutdown()
+
+    def test_discovery_rejects_private_hosts(self) -> None:
+        with self.assertRaisesRegex(ModelConfigError, "private or local"):
+            ModelConfigStore.discover_models("http://127.0.0.1:9/v1")
+
+
+if __name__ == "__main__":
+    unittest.main()

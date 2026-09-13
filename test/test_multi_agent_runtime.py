@@ -123,6 +123,25 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         self.assertEqual("strong", chair["tier"])
         self.assertEqual("sensenova-6.7-flash-lite", chair["model"])
 
+    def test_running_execution_keeps_model_snapshot_after_rebind(self) -> None:
+        chair = _spec("chairperson", "汇总")
+        researcher = CloudAgentSpec("researcher", "研究", "研究", "sensenova", "https://token.sensenova.cn/v1", "research-model", "KEY", "secret")
+        reviewer = CloudAgentSpec("reviewer", "审查", "审查", "sensenova", "https://token.sensenova.cn/v1", "review-model", "KEY", "secret")
+        runtime = CloudTeamRuntime({"chairperson": chair, "researcher": researcher, "reviewer": reviewer})
+        calls = []
+
+        def invoke(spec, messages):
+            calls.append((spec.agent_id, spec.model))
+            if len(calls) == 1:
+                runtime.update_model_binding("researcher", source_agent_id="reviewer")
+            return spec.model
+
+        runtime._invoker = invoke
+        result = runtime.execute("snapshot", architecture="hierarchical", max_agents=3)
+        self.assertEqual(["chairperson", "researcher", "reviewer"], [item[0] for item in calls])
+        self.assertEqual("research-model", calls[1][1])
+        self.assertEqual("research-model", result.turns[1].content)
+
     def test_api_persists_team_messages_and_events(self) -> None:
         def invoke(spec, messages):
             return f"answer from {spec.agent_id}"

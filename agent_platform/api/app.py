@@ -34,6 +34,7 @@ from agent_platform.personas import PersonaProfile, default_registry
 from agent_platform.routing import ArchitectureSpec, PlanCompiler, TaskProfile, TaskRouter
 from agent_platform.runtime.multi_agent import CloudTeamRuntime
 from agent_platform.capability_packs import LocalObjectStore
+from agent_platform.integrations.model_config_store import ModelConfigError, ModelConfigStore
 from .auth import AuthConfigError, BearerAuthenticator, Principal, env_auth_required
 
 from .schemas import (
@@ -42,7 +43,7 @@ from .schemas import (
     MemberListResponse, MessageListResponse, MessageResponse, RoomCreateRequest, RoomListResponse, RoomResponse,
     PersonaCreateRequest, PersonaResponse, PersonaBindingResponse, RoleListResponse, PlanCompileRequest, PlanCompileResponse,
     RunCreateRequest, RunResponse, TaskCreateRequest, TaskResponse, MultiAgentExecuteRequest, MultiAgentExecuteResponse,
-    AssetUploadRequest, AssetUploadResponse, ModelBindingUpdateRequest, ModelSettingsResponse,
+    AssetUploadRequest, AssetUploadResponse, ModelBindingUpdateRequest, ModelSettingsResponse, ModelProfileRequest, AgentConfigRequest, ModelCatalogResponse, ModelDiscoveryRequest, ModelDiscoveryResponse,
 )
 
 
@@ -75,7 +76,7 @@ def _error(request: Request, exc: ApiDomainError) -> JSONResponse:
     return JSONResponse(status_code=exc.status, content=payload.model_dump())
 
 
-def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRepository | None = None, events: EventStore | SqlAlchemyEventStore | None = None, runs: RunController | None = None, team_runtime: CloudTeamRuntime | None = None, database_url: str | None = None, asset_store: LocalObjectStore | None = None, auth_required: bool | None = None, auth_tokens: dict[str, str | list[str] | tuple[str, ...]] | None = None) -> FastAPI:
+def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRepository | None = None, events: EventStore | SqlAlchemyEventStore | None = None, runs: RunController | None = None, team_runtime: CloudTeamRuntime | None = None, database_url: str | None = None, asset_store: LocalObjectStore | None = None, model_config_store: ModelConfigStore | None = None, auth_required: bool | None = None, auth_tokens: dict[str, str | list[str] | tuple[str, ...]] | None = None) -> FastAPI:
     """Create an API app with injectable in-memory stores for tests and demos."""
     if repository is None and (database_url or os.environ.get("LOCALRAG_DATABASE_URL")):
         repository = SqlAlchemyConversationRepository.from_url(database_url or os.environ["LOCALRAG_DATABASE_URL"])
@@ -104,6 +105,7 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         except AuthConfigError as exc:
             raise RuntimeError(f"authentication configuration is incomplete: {exc}") from exc
     asset_spaces: dict[str, str] = {}
+    model_config = model_config_store or ModelConfigStore()
 
     def _record_message_event(message: Any) -> None:
         """Project each saved message into the room event stream exactly once."""
@@ -194,6 +196,61 @@ def create_app(*, repository: ConversationRepository | SqlAlchemyConversationRep
         except KeyError as exc:
             raise ApiDomainError("not_found", "agent or model choice not found", status=404) from exc
         return runtime.model_settings()
+
+    @app.get("/settings/model-catalog", response_model=ModelCatalogResponse)
+    async def model_catalog() -> Any:
+        return model_config.public()
+
+    @app.put("/settings/model-profiles/{profile_id}", response_model=ModelCatalogResponse)
+    async def save_model_profile(profile_id: str, body: ModelProfileRequest) -> Any:
+        if profile_id != body.profile_id:
+            raise ApiDomainError("invalid_request", "profile_id in path and body must match", status=422)
+        try:
+            result = model_config.upsert_profile(body.model_dump())
+        except ModelConfigError as exc:
+            raise ApiDomainError("invalid_model_config", str(exc), status=422) from exc
+        app.state.team_runtime = None
+        return result
+
+    @app.delete("/settings/model-profiles/{profile_id}", response_model=ModelCatalogResponse)
+    async def remove_model_profile(profile_id: str) -> Any:
+        try:
+            result = model_config.delete_profile(profile_id)
+        except KeyError as exc:
+            raise ApiDomainError("not_found", "model profile not found", status=404) from exc
+        except ModelConfigError as exc:
+            raise ApiDomainError("model_in_use", str(exc), status=409) from exc
+        app.state.team_runtime = None
+        return result
+
+    @app.put("/settings/agents/{agent_id}", response_model=ModelCatalogResponse)
+    async def save_agent_config(agent_id: str, body: AgentConfigRequest) -> Any:
+        if agent_id != body.agent_id:
+            raise ApiDomainError("invalid_request", "agent_id in path and body must match", status=422)
+        try:
+            result = model_config.upsert_agent(body.model_dump())
+        except ModelConfigError as exc:
+            raise ApiDomainError("invalid_agent_config", str(exc), status=422) from exc
+        app.state.team_runtime = None
+        return result
+
+    @app.delete("/settings/agents/{agent_id}", response_model=ModelCatalogResponse)
+    async def remove_agent_config(agent_id: str) -> Any:
+        try:
+            result = model_config.delete_agent(agent_id)
+        except KeyError as exc:
+            raise ApiDomainError("not_found", "agent not found", status=404) from exc
+        app.state.team_runtime = None
+        return result
+
+    @app.post("/settings/model-discovery", response_model=ModelDiscoveryResponse)
+    async def discover_models(body: ModelDiscoveryRequest) -> Any:
+        try:
+            api_key = model_config.discovery_key(body.profile_id, body.api_key)
+            items = ModelConfigStore.discover_models(body.base_url, api_key)
+        except ModelConfigError as exc:
+            raise ApiDomainError("model_discovery_failed", str(exc), status=502) from exc
+        return {"items": items}
 
     @app.get("/roles", response_model=RoleListResponse)
     async def list_roles() -> Any:

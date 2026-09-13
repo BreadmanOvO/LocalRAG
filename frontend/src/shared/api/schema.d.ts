@@ -366,6 +366,76 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/settings/agents/{agent_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save Agent Config */
+        put: operations["save_agent_config_settings_agents__agent_id__put"];
+        post?: never;
+        /** Remove Agent Config */
+        delete: operations["remove_agent_config_settings_agents__agent_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/settings/model-catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Model Catalog */
+        get: operations["model_catalog_settings_model_catalog_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/settings/model-discovery": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Discover Models */
+        post: operations["discover_models_settings_model_discovery_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/settings/model-profiles/{profile_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save Model Profile */
+        put: operations["save_model_profile_settings_model_profiles__profile_id__put"];
+        post?: never;
+        /** Remove Model Profile */
+        delete: operations["remove_model_profile_settings_model_profiles__profile_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/settings/models": {
         parameters: {
             query?: never;
@@ -472,6 +542,70 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AgentConfigRequest */
+        AgentConfigRequest: {
+            /** Agent Id */
+            agent_id: string;
+            /** Capabilities */
+            capabilities?: string[];
+            /**
+             * Display Name
+             * @default
+             */
+            display_name: string;
+            /**
+             * Enabled
+             * @default false
+             */
+            enabled: boolean;
+            /** Modalities */
+            modalities?: string[];
+            /**
+             * Model Profile
+             * @default
+             */
+            model_profile: string;
+            /**
+             * Responsibility
+             * @default
+             */
+            responsibility: string;
+            /**
+             * System Prompt
+             * @default
+             */
+            system_prompt: string;
+            /**
+             * Tier
+             * @default standard
+             */
+            tier: string;
+        };
+        /** AgentConfigResponse */
+        AgentConfigResponse: {
+            /** Agent Id */
+            agent_id: string;
+            /** Capabilities */
+            capabilities: string[];
+            /** Display Name */
+            display_name: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Modalities */
+            modalities: string[];
+            /** Model Profile */
+            model_profile: string;
+            /** Readiness Issues */
+            readiness_issues: string[];
+            /** Ready */
+            ready: boolean;
+            /** Responsibility */
+            responsibility: string;
+            /** System Prompt */
+            system_prompt: string;
+            /** Tier */
+            tier: string;
+        };
         /** AssetUploadRequest */
         AssetUploadRequest: {
             /** Content Base64 */
@@ -556,6 +690,16 @@ export interface components {
              * @constant
              */
             status: "accepted";
+        };
+        /** DiscoveredModelResponse */
+        DiscoveredModelResponse: {
+            /** Id */
+            id: string;
+            /**
+             * Owned By
+             * @default
+             */
+            owned_by: string;
         };
         /** EventIdentityResponse */
         EventIdentityResponse: {
@@ -735,6 +879,15 @@ export interface components {
             /** Tier */
             tier?: string | null;
         };
+        /** ModelCatalogResponse */
+        ModelCatalogResponse: {
+            /** Agents */
+            agents: components["schemas"]["AgentConfigResponse"][];
+            /** Contract Version */
+            contract_version: string;
+            /** Profiles */
+            profiles: components["schemas"]["ModelProfileResponse"][];
+        };
         /** ModelChoice */
         ModelChoice: {
             /** Base Url */
@@ -753,6 +906,120 @@ export interface components {
             provider: string;
             /** Source Agent Id */
             source_agent_id: string;
+        };
+        /** ModelDiscoveryRequest */
+        ModelDiscoveryRequest: {
+            /**
+             * Api Key
+             * @default
+             */
+            api_key: string;
+            /** Base Url */
+            base_url: string;
+            /**
+             * Profile Id
+             * @default
+             */
+            profile_id: string;
+        };
+        /** ModelDiscoveryResponse */
+        ModelDiscoveryResponse: {
+            /** Items */
+            items: components["schemas"]["DiscoveredModelResponse"][];
+        };
+        /** ModelProfileRequest */
+        ModelProfileRequest: {
+            /**
+             * Api Key
+             * @default
+             */
+            api_key: string;
+            /**
+             * Api Key Env
+             * @default
+             */
+            api_key_env: string;
+            /**
+             * Base Url
+             * @default
+             */
+            base_url: string;
+            /** Capabilities */
+            capabilities?: string[];
+            /**
+             * Clear Api Key
+             * @default false
+             */
+            clear_api_key: boolean;
+            /**
+             * Display Name
+             * @default
+             */
+            display_name: string;
+            /**
+             * Enabled
+             * @default false
+             */
+            enabled: boolean;
+            /**
+             * Max Concurrency
+             * @default 4
+             */
+            max_concurrency: number;
+            /** Modalities */
+            modalities?: string[];
+            /**
+             * Model
+             * @default
+             */
+            model: string;
+            /** Profile Id */
+            profile_id: string;
+            /**
+             * Provider
+             * @default
+             */
+            provider: string;
+            /** Scenarios */
+            scenarios?: string[];
+            /**
+             * Tier
+             * @default standard
+             */
+            tier: string;
+        };
+        /** ModelProfileResponse */
+        ModelProfileResponse: {
+            /** Api Key Env */
+            api_key_env: string;
+            /** Base Url */
+            base_url: string;
+            /** Capabilities */
+            capabilities: string[];
+            /** Display Name */
+            display_name: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Has Api Key */
+            has_api_key: boolean;
+            /** Max Concurrency */
+            max_concurrency: number;
+            /** Modalities */
+            modalities: string[];
+            /** Model */
+            model: string;
+            /** Profile Id */
+            profile_id: string;
+            /** Provider */
+            provider: string;
+            /** Readiness Issues */
+            readiness_issues: string[];
+            /** Ready */
+            ready: boolean;
+            /** Scenarios */
+            scenarios: string[];
+            /** Tier */
+            tier: string;
         };
         /** ModelSettingsResponse */
         ModelSettingsResponse: {
@@ -1765,6 +2032,191 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RunResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    save_agent_config_settings_agents__agent_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgentConfigRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelCatalogResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_agent_config_settings_agents__agent_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                agent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelCatalogResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    model_catalog_settings_model_catalog_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelCatalogResponse"];
+                };
+            };
+        };
+    };
+    discover_models_settings_model_discovery_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModelDiscoveryRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelDiscoveryResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    save_model_profile_settings_model_profiles__profile_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profile_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ModelProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelCatalogResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_model_profile_settings_model_profiles__profile_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profile_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelCatalogResponse"];
                 };
             };
             /** @description Validation Error */
