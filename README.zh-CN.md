@@ -6,7 +6,7 @@
 
 LocalRAG 是一个面向自动驾驶感知算法资料的 Agentic RAG 系统。它将混合检索、来源核验、任务记忆和可恢复研究流程组合在一个 Streamlit 应用中，并支持云端模型、本地模型服务和长会话压缩。
 
-当前实现以 v1.7 Agentic RAG 为基线。v1.8 增加统一助理工作台合同、Python Runtime 边界、公司式角色预设和可追溯的多 Agent 协作。v1.8 的代码边界见 [`agent_platform/README.md`](agent_platform/README.md)，尚未完成的能力会在开发记录中明确标注。
+当前 v1.8 工作台为 BeTheBoss：React 前端与 Python Runtime 提供公司和朝廷人设、可配置云模型与可追溯的多 Agent 任务。直办、分层、蜂群、对抗、图式、异构六种模式共用依赖调度器。v1.7 的 Streamlit Agentic RAG 入口继续保留。包职责见 [`agent_platform/README.md`](agent_platform/README.md)。
 
 ## 工作原理
 
@@ -169,20 +169,24 @@ streamlit run app_qa.py --server.fileWatcherType none
 streamlit run app_qa.py
 ```
 
-### v1.8 统一助理合同演示
+### BeTheBoss 工作台（v1.8）
 
-v1.8 提供可运行的 FastAPI + React 合同演示，可验证建房、幂等消息、`message_saved` 事件投影、角色读取和直办/委派计划编译，不依赖模型服务：
+工作台使用 FastAPI + React，支持任务自动启动、群聊、动态协作图与持久房间。以下 smoke 使用隔离数据库和空模型配置检查建房、幂等消息、事件、角色及计划编译，不调用云模型：
 
 ```powershell
 python scripts/smoke_agent_platform.py
-python scripts/run_agent_platform.ps1
+.\scripts\start_localrag.ps1
 ```
 
-另开终端执行 `cd frontend; npm run dev`，访问 `http://127.0.0.1:5173`。配置模型和环境变量后，房间页还可以启动有界的云端多 Agent 执行；生产 PostgreSQL、持久 worker/SSE 和跨进程恢复仍需单独验收。旧 Streamlit 入口仍是 v1.7 RAG 路径。
+访问 `http://127.0.0.1:5173`；关闭服务使用 `scripts/stop_localrag.ps1`。一键启动默认将房间、消息、事件、任务、运行、命令与不含密钥的模型绑定存入 `results/runtime/localrag.db`，`LOCALRAG_DATABASE_URL` 可指定其他 SQLite 数据库或 PostgreSQL。
 
-多 Agent 模型配置示例见 `config/multi_agent_models.example.json`。复制为本机的 `config/multi_agent_models.json` 后，为启用的 provider 设置对应环境变量（商汤使用 `LOCALRAG_CLOUD_API_KEY`，魔塔使用 `MODELSCOPE_API_KEY`）；密钥不会写入 JSON。当前是顺序协作原型，真实模型端到端尚待验收。
+在公司设置中新增供应商、URL、API Key 和模型，获取模型列表后设置等级、模态与场景，验证连接并启用。配置写入被 Git 忽略的 `config/multi_agent_models.json`，示例文件为空模板；支持本机内联 `api_key` 或 `api_key_env` 引用，API 不回传密钥。不同 Agent 可并发复用同一模型，但对话独立；每位 Agent 首次加入房间时冻结绑定，设置变更应用到新房间。
 
-PostgreSQL conversation adapter 仍在开发：先由管理员依次执行 `agent_platform/runtime/migrations/0001_initial.sql`、`0002_message_idempotency.sql`，再设置 `LOCALRAG_DATABASE_URL=postgresql+psycopg://...`。API 不会自动迁移生产库；该适配器当前只保存房间、消息和成员，任务/run/事件仍在内存，不能用于生产持久执行。
+获取模型仍启用 SSRF 防护。本地开发遇到 DNS/代理把公网供应商域名解析到 RFC 2544 测试地址段（`198.18.0.0/15`）时，仓库内 PowerShell 启动脚本会显式开启兼容；直接启动服务时请设置 `LOCALRAG_ENV=development` 或 `LOCALRAG_ALLOW_SYNTHETIC_DNS=1`。未知环境、生产环境和显式填写的私网/回环/本机地址始终拒绝。
+
+取消命令在返回前将 run、任务与命令一起提交，后台迟到结果不能撤销取消。中断任务仅在计划指纹匹配时复用完成步骤，计划改变后需新建任务。轨迹默认显示当前任务，按步骤合并状态并连续编号；原始事件游标、重试记录与模型路由理由可展开查看。房间可关闭、重新打开或逻辑删除，过期租约最多等待 90 秒再恢复。
+
+PostgreSQL 已有房间、消息、事件、任务、run、命令和租约的 SQL 适配；设置 `LOCALRAG_DATABASE_URL` 后执行 `python -m agent_platform.runtime.migrations.runner $env:LOCALRAG_DATABASE_URL`，API 不自动迁移生产库。工作台使用有界后台线程执行模型任务；独立 `scripts/run_agent_worker.py` 仍是确认 job 的 handler，尚未接入工作台执行器。本地重启、取消和恢复已有回归测试。生产 PostgreSQL 故障接管及云供应商长期稳定性仍需要对应环境的实测证据。
 
 默认读取 `config/active_corpus.json`。仓库已提交清洗后的 100 篇语料，Chroma 索引需要在本机执行 `quickstart/windows/03-prepare-data.ps1` 生成；已评测语料会产生 7339 个 chunk。active corpus profile 同时记录来源数、片段数和 corpus/registry 指纹。也可以通过环境变量选择已有目录：
 
@@ -353,4 +357,5 @@ v1.6 本地模型服务与长会话验证：模型服务质量 gate、性能 ben
 | v1.5 | 执行预算、证据绑定、暂停恢复和 checkpoint |
 | v1.6 | 本地模型服务、Gateway fallback 和会话压缩 |
 | v1.7 | Dense + BM25 → RRF → Cross-Encoder、统一 provenance 和工具错误合同 |
+| v1.8 | BeTheBoss 工作台、六种执行模式、SQL 房间状态、模型设置、事件回放与资产入库 |
 | main | 文档上传 staging、预览、显式 publish 和可选评测回调 |

@@ -91,6 +91,7 @@ class Checkpoint:
     completed_step_ids: tuple[str, ...] = ()
     row_version: int = 1
     created_at: str = ""
+    plan_fingerprint: str = ""
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "checkpoint_id", validate_identifier(self.checkpoint_id, "checkpoint"))
@@ -98,6 +99,10 @@ class Checkpoint:
         object.__setattr__(self, "step_id", validate_identifier(self.step_id, "step"))
         object.__setattr__(self, "plan_revision", _version(self.plan_revision, "plan_revision", 1))
         object.__setattr__(self, "control_epoch", _version(self.control_epoch, "control_epoch"))
+        fingerprint = self.plan_fingerprint.strip() if isinstance(self.plan_fingerprint, str) else ""
+        if fingerprint and len(fingerprint) > 128:
+            raise ValueError("plan_fingerprint is too long")
+        object.__setattr__(self, "plan_fingerprint", fingerprint)
         object.__setattr__(self, "state", _payload(self.state, "state"))
         object.__setattr__(self, "completed_step_ids", _tuple_text(self.completed_step_ids, "completed_step_ids"))
         object.__setattr__(self, "row_version", _version(self.row_version, "row_version", 1))
@@ -216,6 +221,7 @@ def _checkpoint_dict(item: Checkpoint) -> dict[str, Any]:
         "step_id": item.step_id,
         "plan_revision": item.plan_revision,
         "control_epoch": item.control_epoch,
+        **({"plan_fingerprint": item.plan_fingerprint} if item.plan_fingerprint else {}),
         "state": deepcopy(item.state),
         "completed_step_ids": list(item.completed_step_ids),
         "row_version": item.row_version,
@@ -281,6 +287,7 @@ class RecoveryService:
         *,
         plan_revision: int,
         control_epoch: int,
+        plan_fingerprint: str = "",
         state: dict[str, Any],
         completed_step_ids: tuple[str, ...] = (),
         checkpoint_id: str | None = None,
@@ -300,7 +307,7 @@ class RecoveryService:
             identifier = validate_identifier(checkpoint_id, "checkpoint") if checkpoint_id else new_identifier("checkpoint")
             if identifier in self._checkpoints:
                 existing = self._checkpoints[identifier]
-                candidate = Checkpoint(identifier, run_id, step_id, plan_revision, control_epoch, state, completed_step_ids, existing.row_version, existing.created_at)
+                candidate = Checkpoint(identifier, run_id, step_id, plan_revision, control_epoch, state, completed_step_ids, existing.row_version, existing.created_at, plan_fingerprint)
                 if existing != candidate:
                     raise CheckpointConflictError("checkpoint id is already bound to another payload")
                 return deepcopy(existing)
@@ -313,6 +320,7 @@ class RecoveryService:
                 state,
                 completed_step_ids,
                 (previous.row_version + 1) if previous else 1,
+                plan_fingerprint=plan_fingerprint,
             )
             self._checkpoints[identifier] = checkpoint
             self._latest[key] = identifier
@@ -332,6 +340,7 @@ class RecoveryService:
         *,
         plan_revision: int,
         control_epoch: int,
+        plan_fingerprint: str = "",
         checkpoint_id: str | None = None,
     ) -> Checkpoint:
         run_id = validate_identifier(run_id, "run")
@@ -350,6 +359,8 @@ class RecoveryService:
                 raise CheckpointConflictError("checkpoint belongs to another run")
             if checkpoint.plan_revision != plan_revision or checkpoint.control_epoch != control_epoch:
                 raise CheckpointConflictError("checkpoint version does not match current run")
+            if checkpoint.plan_fingerprint != plan_fingerprint.strip():
+                raise CheckpointConflictError("checkpoint plan fingerprint does not match current plan")
             return deepcopy(checkpoint)
 
     def archive_run(self, run_id: str, *, reason: str = "completed") -> ArchiveRecord:

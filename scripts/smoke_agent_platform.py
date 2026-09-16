@@ -1,9 +1,4 @@
-"""Run a local end-to-end smoke check for the v1.8 demo contract.
-
-This deliberately exercises the API and does not call a model provider. The
-legacy Streamlit app remains the real RAG execution path until the Runtime
-worker integration is completed.
-"""
+"""Check the local workspace API using an isolated DB and no model provider."""
 from __future__ import annotations
 
 import json
@@ -12,12 +7,14 @@ import shutil
 import socket
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 from urllib.error import URLError
-from urllib.request import Request, urlopen
+from urllib.request import ProxyHandler, Request, build_opener
 
 ROOT = Path(__file__).resolve().parents[1]
+LOCAL_HTTP = build_opener(ProxyHandler({}))
 
 
 def _runtime_python() -> Path:
@@ -55,33 +52,50 @@ def _free_port() -> int:
         return int(sock.getsockname()[1])
 
 
-def _request(base: str, path: str, *, method: str = "GET", payload: dict | None = None, headers: dict[str, str] | None = None) -> dict:
+def _request(base: str, path: str, *, method: str = "GET", payload: dict | None = None, headers: dict[str, str] | None = None, timeout: float = 5) -> dict:
     body = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
     request = Request(base + path, data=body, method=method, headers={"Content-Type": "application/json", **(headers or {})})
-    with urlopen(request, timeout=5) as response:
+    with LOCAL_HTTP.open(request, timeout=timeout) as response:
         return json.loads(response.read().decode("utf-8"))
+
+
+def _wait_ready(process, base: str, *, timeout: float = 90) -> None:
+    deadline = time.monotonic() + timeout
+    last_error = "no response"
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            raise RuntimeError(f"agent platform exited before readiness (exit={process.returncode})")
+        try:
+            health = _request(base, "/health", timeout=min(1, max(.01, deadline - time.monotonic())))
+            if health.get("status") == "ok":
+                return
+            last_error = "health status is not ok"
+        except (URLError, OSError, ValueError) as exc:
+            last_error = type(exc).__name__
+        time.sleep(min(.2, max(0, deadline - time.monotonic())))
+    raise RuntimeError(f"agent platform did not become ready within {timeout:g}s ({last_error})")
 
 
 def main() -> int:
     port = _free_port()
     base = f"http://127.0.0.1:{port}"
     runtime_python = _runtime_python()
+    temporary = tempfile.TemporaryDirectory(prefix="localrag-smoke-")
+    environment = os.environ.copy()
+    database_path = (Path(temporary.name) / "smoke.db").as_posix()
+    environment["LOCALRAG_DATABASE_URL"] = f"sqlite:///{database_path}"
+    environment["LOCALRAG_MULTI_AGENT_CONFIG"] = str(Path(temporary.name) / "no-models.json")
+    environment["LOCALRAG_AUTH_REQUIRED"] = "0"
+    startup_log = tempfile.TemporaryFile(mode="w+b")
     process = subprocess.Popen(
         [str(runtime_python), "-m", "uvicorn", "agent_platform.api.app:app", "--host", "127.0.0.1", "--port", str(port)],
         cwd=ROOT,
+        env=environment,
         stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stderr=startup_log,
     )
     try:
-        deadline = time.monotonic() + 15
-        while time.monotonic() < deadline:
-            try:
-                if _request(base, "/health")["status"] == "ok":
-                    break
-            except (URLError, OSError):
-                time.sleep(0.2)
-        else:
-            raise RuntimeError("agent platform did not become ready")
+        _wait_ready(process, base)
 
         headers = {"Idempotency-Key": "smoke-assistant-1"}
         first = _request(base, "/assistant/messages", method="POST", headers=headers, payload={"space_id": "space-demo", "content": "演示 v1.8 工作台"})
@@ -97,10 +111,14 @@ def main() -> int:
         assert plan["mode"] == "delegate"
         assert len(roles["items"]) >= 3
         assert len(messages["items"]) == 1
-        assert len(events["items"]) == 1
-        assert events["items"][0]["event_type"] == "message_saved"
-        print(f"smoke pass: room={room_id}, messages={len(messages['items'])}, events={len(events['items'])}, roles={len(roles['items'])}, plan={plan['mode']}")
+        message_events = [item for item in events["items"] if item["event_type"] == "message_saved"]
+        assert len(message_events) == 1
+        print(f"smoke pass: room={room_id}, messages={len(messages['items'])}, events={len(events['items'])}, message_saved={len(message_events)}, roles={len(roles['items'])}, plan={plan['mode']}")
         return 0
+    except Exception:
+        startup_log.seek(0)
+        print(startup_log.read().decode("utf-8", errors="replace")[-6000:], file=sys.stderr)
+        raise
     finally:
         process.terminate()
         try:
@@ -108,6 +126,8 @@ def main() -> int:
         except subprocess.TimeoutExpired:
             process.kill()
             process.wait(timeout=5)
+        temporary.cleanup()
+        startup_log.close()
 
 
 if __name__ == "__main__":

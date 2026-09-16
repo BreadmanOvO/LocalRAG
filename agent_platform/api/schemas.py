@@ -19,6 +19,8 @@ class AssistantMessageRequest(BaseModel):
     content: str = Field(min_length=1)
     title: str = ""
     room_id: str | None = None
+    persona_theme: Literal["company", "emperor"] | None = None
+    architecture: Literal["auto", "direct", "hierarchical", "swarm", "adversarial", "heterogeneous", "graph"] = "auto"
 
 
 class MessageCreateRequest(BaseModel):
@@ -148,6 +150,7 @@ class MultiAgentExecuteRequest(BaseModel):
     max_agents: int = Field(default=3, ge=1, le=8)
     task_id: str | None = None
     background: bool = False
+    persona_theme: Literal["company", "emperor"] | None = None
 
 class MultiAgentTurnResponse(BaseModel):
     agent_id: str
@@ -286,6 +289,11 @@ class ModelCatalogResponse(BaseModel):
     agents: list[AgentConfigResponse]
 
 
+class ModelProfileCloneResponse(BaseModel):
+    profile_id: str
+    catalog: ModelCatalogResponse
+
+
 class ModelDiscoveryRequest(BaseModel):
     base_url: str = Field(min_length=1)
     api_key: str = ""
@@ -300,11 +308,46 @@ class DiscoveredModelResponse(BaseModel):
 class ModelDiscoveryResponse(BaseModel):
     items: list[DiscoveredModelResponse]
 
+class ModelVerificationResponse(BaseModel):
+    profile_id: str
+    verified: bool
+    message: str
+    model: str
+
 class AssetUploadRequest(BaseModel):
-    space_id: str = "default"
-    filename: str = Field(min_length=1)
-    content_base64: str = Field(min_length=1)
+    space_id: str = Field(default="default", min_length=1, max_length=128)
+    filename: str = Field(min_length=1, max_length=255)
+    content_base64: str = Field(min_length=1, max_length=41943040)
     evaluate: bool = False
+
+class AssetStageResponse(BaseModel):
+    stage: str
+    at: str
+
+class AssetIngestionResponse(BaseModel):
+    job_id: str
+    space_id: str
+    filename: str
+    asset_id: str
+    size_bytes: int
+    status: Literal["queued", "running", "completed", "failed", "deleted"]
+    stage: str
+    chunk_count: int
+    source_id: str | None
+    error: str | None
+    history: list[AssetStageResponse]
+    updated_at: str
+    evaluation_status: str
+
+class AssetIngestionListResponse(BaseModel):
+    items: list[AssetIngestionResponse]
+
+class AssetSearchHit(BaseModel):
+    text: str
+    metadata: dict[str, Any]
+
+class AssetSearchResponse(BaseModel):
+    items: list[AssetSearchHit]
 
 class AssetUploadResponse(BaseModel):
     asset_id: str
@@ -366,6 +409,28 @@ class EventResponse(BaseModel):
 class EventListResponse(BaseModel):
     items: list[EventResponse]
     next: int
+
+
+class ArtifactResponse(BaseModel):
+    """A room-scoped projection of a step output or declared artifact."""
+
+    artifact_id: str
+    title: str
+    artifact_type: str
+    content: str
+    output: Any = None
+    source_event_id: str
+    source_step_id: str | None
+    source_agent_id: str | None
+    source_agent_name: str | None
+    run_id: str | None
+    task_id: str | None
+    timestamp: str
+    is_final: bool = False
+
+
+class ArtifactListResponse(BaseModel):
+    items: list[ArtifactResponse]
 
 
 class TaskResponse(BaseModel):

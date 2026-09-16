@@ -286,7 +286,7 @@ class CloudAgentClient:
 
     def __init__(self, spec: CloudAgentSpec, *, timeout_seconds: float = 60.0) -> None:
         self.spec = spec
-        self._model = ChatOpenAI(model=spec.model, api_key=spec.api_key, base_url=spec.base_url, timeout=timeout_seconds, max_retries=1)
+        self._model = ChatOpenAI(model=spec.model, api_key=spec.api_key, base_url=spec.base_url, timeout=timeout_seconds, max_retries=0)
 
     def invoke(self, messages: Sequence[BaseMessage]) -> str:
         response = self._model.invoke(list(messages))
@@ -297,3 +297,12 @@ class CloudAgentClient:
         if not text:
             raise RuntimeError(f"Cloud agent returned an empty response: {self.spec.agent_id}")
         return text
+
+    def stream(self, messages: Sequence[BaseMessage]):
+        """Yield provider chunks without exposing provider-specific objects."""
+        for chunk in self._model.stream(list(messages)):
+            content = getattr(chunk, "content", "")
+            if isinstance(content, list):
+                content = "".join(item.get("text", "") if isinstance(item, dict) else str(item) for item in content)
+            if isinstance(content, str) and content:
+                yield content

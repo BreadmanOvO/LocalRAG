@@ -15,3 +15,7 @@ export function enqueueMessage(roomId: string, content: string): PendingMessage 
 export function removeFromOutbox(roomId: string, clientId: string): void {
   localStorage.setItem(key(roomId), JSON.stringify(readOutbox(roomId).filter((item) => item.clientId !== clientId)));
 }
+
+export function clearRoomOutbox(roomId: string): void {
+  try { localStorage.removeItem(key(roomId)); } catch { /* The stale room can still be left. */ }
+}

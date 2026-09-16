@@ -57,7 +57,7 @@ class KnowledgeBaseService(object):
         collection_name: str | None = None,
         embedding_model=None,
     ) -> None:
-        runtime_config = load_runtime_config()
+        runtime_config = load_runtime_config() if embedding_model is None else None
         persist_directory = persist_directory or config.persist_directory
         collection_name = collection_name or config.collection_name
         os.makedirs(persist_directory, exist_ok=True)

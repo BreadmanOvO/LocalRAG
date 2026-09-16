@@ -286,6 +286,38 @@ class IngestionWorkflow:
             staging_directory=staging_path,
         )
 
+    def stage_file(self, filename: str, content: bytes, *, metadata=None, source_id=None, vision=None, on_progress=None) -> StagedDocument:
+        """Preserve page/row locators when extracting heterogeneous uploads."""
+        from processing.document_parser import parse_document
+
+        progress = on_progress or (lambda stage: None)
+        progress("parsing")
+        parts = parse_document(filename, content, vision=vision)
+        progress("cleaning")
+        text = "\n\n".join(f"## {part.locator}\n{normalize_text(part.text)}" for part in parts)
+        progress("chunking")
+        filename = self._validate_filename(filename)
+        digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        source_id = source_id or f"upload-{digest[:24]}"
+        if not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", source_id):
+            raise ValueError("source_id must contain only letters, digits, hyphens or underscores")
+        source_metadata = self._build_metadata(filename=filename, source_id=source_id, metadata=metadata)
+        chunks = []
+        for part in parts:
+            for chunk in self.knowledge_base._chunk_upload(normalize_text(part.text), {**source_metadata, **part.metadata, "locator": part.locator}, chunking_strategy="doc_type_aware"):
+                chunks.append(ChunkRecord(chunk.text, {**chunk.metadata, **part.metadata, "locator": part.locator, "chunk_order": len(chunks)}))
+        if not chunks:
+            raise ValueError("chunking produced no chunks")
+        staged = StagedDocument(source_id, filename, text, source_metadata, tuple(chunks), self.staging_directory / source_id)
+        if staged.manifest_path.exists():
+            manifest = json.loads(staged.manifest_path.read_text(encoding="utf-8"))
+            if manifest.get("status") == "published":
+                if manifest.get("content_sha256") != digest:
+                    raise ValueError("source_id already published with different content; use a new source_id")
+                return self.load_staged(source_id)
+        self._write_pending(staged)
+        return staged
+
     def preview(self, staged: StagedDocument | str, *, max_chunks: int = 3, max_chars: int = 800) -> dict[str, Any]:
         document = self.load_staged(staged) if isinstance(staged, str) else staged
         return {
@@ -414,6 +446,7 @@ class IngestionWorkflow:
         rag_service=None,
         refresh_callback: Callable[[], Any] | None = None,
         release_version: str | None = None,
+        on_progress: Callable[[str], Any] | None = None,
     ) -> PublishResult:
         """Publish a staged document and optionally invoke an evaluator.
 
@@ -422,6 +455,7 @@ class IngestionWorkflow:
         callback is supplied by the caller.
         """
         document = self.load_staged(staged) if isinstance(staged, str) else staged
+        progress = on_progress or (lambda stage: None)
         manifest_path = document.manifest_path
         current_manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
         if current_manifest.get("status") == "published":
@@ -441,6 +475,7 @@ class IngestionWorkflow:
         ids = [self._chunk_id(document, chunk) for chunk in document.chunks]
         inserted_ids: list[str] = []
         try:
+            progress("indexing")
             clean_path.parent.mkdir(parents=True, exist_ok=True)
             clean_path.write_text(document.normalized_text, encoding="utf-8")
             existing_ids: set[str] = set()
@@ -459,11 +494,14 @@ class IngestionWorkflow:
                 if record_id not in existing_ids
             ]
             if records_to_add:
+                # Include all attempted IDs in rollback even if a batch partially fails.
+                inserted_ids = [record_id for _chunk, record_id in records_to_add]
                 self.knowledge_base.add_chunk_records(
                     [chunk for chunk, _record_id in records_to_add],
                     ids=[record_id for _chunk, record_id in records_to_add],
                 )
-                inserted_ids = [record_id for _chunk, record_id in records_to_add]
+
+            progress("publishing")
 
             registry = self._read_registry()
             registry = [entry for entry in registry if entry.get("source_id") != document.source_id]

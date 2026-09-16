@@ -40,6 +40,21 @@ class Day10RecoveryTests(unittest.TestCase):
         with self.assertRaises(ArchivedRunError):
             self.service.save_checkpoint(self.run_id, "step-next", plan_revision=1, control_epoch=0, state={})
 
+    def test_fingerprint_survives_backup_and_rejects_changed_or_missing_plan(self):
+        checkpoint = self.service.save_checkpoint(self.run_id, self.step_id,
+            plan_revision=1, control_epoch=0, plan_fingerprint="a" * 64, state={"output": "old result"})
+        restored = RecoveryService()
+        restored.restore_backup(self.service.create_backup())
+        self.assertEqual(checkpoint, restored.resume(self.run_id, plan_revision=1, control_epoch=0, plan_fingerprint="a" * 64))
+        for fingerprint in ("b" * 64, ""):
+            with self.assertRaises(CheckpointConflictError):
+                restored.resume(self.run_id, plan_revision=1, control_epoch=0, plan_fingerprint=fingerprint)
+
+    def test_legacy_checkpoint_cannot_satisfy_fingerprinted_plan(self):
+        self.service.save_checkpoint(self.run_id, self.step_id, plan_revision=1, control_epoch=0, state={})
+        with self.assertRaises(CheckpointConflictError):
+            self.service.resume(self.run_id, plan_revision=1, control_epoch=0, plan_fingerprint="a" * 64)
+
     def test_backup_checksum_and_deletion_ledger_prevent_resurrection(self):
         checkpoint = self.service.save_checkpoint(self.run_id, self.step_id, plan_revision=1, control_epoch=0, state={"x": 1})
         persona = self.service.save_persona_snapshot("space-demo", "assistant", "v1", {"tone": "brief"}, agent_id="researcher")

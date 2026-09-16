@@ -149,6 +149,26 @@ class SqlAlchemyConversationRepository:
             rows = conn.execute(statement).mappings().all()
         return tuple(Room(row["space_id"], row["room_id"], row["title"], row["status"], row["room_sequence"], row["row_version"]) for row in rows)
 
+    def _change_room_status(self, room_id: str, status: str) -> Room:
+        with self._write_lock, self.engine.begin() as conn:
+            row = conn.execute(select(self.rooms).where(self.rooms.c.room_id == room_id).with_for_update()).mappings().first()
+            if row is None:
+                raise NotFoundError(room_id)
+            if row["status"] == "deleted" and status != "deleted":
+                raise RoomClosedError("deleted room cannot be reopened")
+            conn.execute(update(self.rooms).where(self.rooms.c.room_id == room_id).values(
+                status=status, row_version=self.rooms.c.row_version + 1, updated_at=_now()))
+        return self.get_room(room_id)
+
+    def archive_room(self, room_id: str) -> Room:
+        return self._change_room_status(room_id, "archived")
+
+    def reopen_room(self, room_id: str) -> Room:
+        return self._change_room_status(room_id, "active")
+
+    def delete_room(self, room_id: str) -> Room:
+        return self._change_room_status(room_id, "deleted")
+
     def save_message(self, room_id: str, content: str, *, role: Literal["user", "assistant", "system", "tool"] = "user", idempotency_key: str | None = None, message_id: str | None = None) -> Message:
         room_id = validate_identifier(room_id, "room")
         if not isinstance(content, str) or not content.strip():

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
@@ -9,7 +10,11 @@ from agent_platform.api import create_app
 
 class Day13AssistantWorkbenchTests(unittest.TestCase):
     def setUp(self) -> None:
+        missing = patch("agent_platform.runtime.multi_agent.CloudTeamRuntime.from_config", side_effect=RuntimeError("test has no configured model"))
+        missing.start()
+        self.addCleanup(missing.stop)
         self.app = create_app()
+        self.addCleanup(self.app.state.team_worker.close)
         self.client = TestClient(self.app)
 
     def test_assistant_first_message_atomically_creates_room(self) -> None:
@@ -25,8 +30,8 @@ class Day13AssistantWorkbenchTests(unittest.TestCase):
         self.assertEqual(1, payload["room"]["room_sequence"])
         self.assertEqual("user", payload["message"]["role"])
         events = self.client.get(f"/rooms/{payload['room']['room_id']}/events").json()["items"]
-        self.assertEqual(["message_saved"], [item["event_type"] for item in events])
-        self.assertEqual(payload["message"]["message_id"], events[0]["payload"]["message_id"])
+        self.assertEqual(["room_architecture_selected", "message_saved", "task_start_failed"], [item["event_type"] for item in events])
+        self.assertEqual(payload["message"]["message_id"], events[1]["payload"]["message_id"])
 
     def test_assistant_first_message_idempotent_replay(self) -> None:
         request = {"space_id": "space-demo", "content": "同一个问题"}

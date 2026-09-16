@@ -32,6 +32,7 @@ Thumbs.db
 chroma_db/
 chat_history/
 agent_memory/
+results/asset_library/
 md5.txt
 
 # Local Streamlit cache/config
@@ -79,5 +80,9 @@ results/model_benchmark/
 .env.*
 *.local
 runtime_models.json
+.localrag-*.pid
+.localrag/
 config/multi_agent_models.json
+results/runtime/*.db
+results/runtime/*.db-*
 key.json

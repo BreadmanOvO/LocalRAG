@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import sqlite3
 import subprocess
@@ -18,6 +19,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from sqlalchemy.engine import make_url
 
 
 class BackupError(RuntimeError):
@@ -116,7 +118,8 @@ def backup_database(database_url: str, destination: str | Path) -> Path:
     if database_url.startswith("postgresql"):
         if shutil.which("pg_dump") is None:
             raise BackupError("pg_dump is required for PostgreSQL backup")
-        completed = subprocess.run(["pg_dump", "--format=custom", "--file", str(target), database_url], capture_output=True, text=True, check=False)
+        cli_url, environment = _postgres_cli_connection(database_url)
+        completed = subprocess.run(["pg_dump", "--format=custom", "--file", str(target), cli_url], env=environment, capture_output=True, text=True, check=False)
         if completed.returncode != 0:
             raise BackupError("pg_dump failed")
         return target
@@ -139,8 +142,21 @@ def restore_database(database_url: str, backup: str | Path) -> None:
     if database_url.startswith("postgresql"):
         if shutil.which("pg_restore") is None:
             raise BackupError("pg_restore is required for PostgreSQL restore")
-        completed = subprocess.run(["pg_restore", "--clean", "--if-exists", "--dbname", database_url, str(backup)], capture_output=True, text=True, check=False)
+        cli_url, environment = _postgres_cli_connection(database_url)
+        completed = subprocess.run(["pg_restore", "--clean", "--if-exists", "--dbname", cli_url, str(backup)], env=environment, capture_output=True, text=True, check=False)
         if completed.returncode != 0:
             raise BackupError("pg_restore failed")
         return
     raise BackupError("unsupported database URL for restore")
+
+
+def _postgres_cli_connection(database_url: str) -> tuple[str, dict[str, str]]:
+    """Return a libpq URL without a password in argv and a private env copy."""
+    parsed = make_url(database_url)
+    driver = "postgresql"
+    password = parsed.password
+    cli_url = parsed._replace(drivername=driver, password=None).render_as_string(hide_password=False)
+    environment = dict(os.environ)
+    if password:
+        environment["PGPASSWORD"] = password
+    return cli_url, environment

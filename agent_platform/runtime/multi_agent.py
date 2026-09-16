@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass, field, replace
+from dataclasses import asdict, dataclass, field, replace
 from threading import BoundedSemaphore, RLock
 from typing import Callable, Mapping, Sequence
+from uuid import uuid4
 
 from langchain_core.messages import HumanMessage, SystemMessage
+from .team_scheduler import ModelCircuitBreaker, TeamStepScheduler, transient_error
+from .team_plan import build_team_plan
+from .error_details import serialize_exception
 
 from agent_platform.integrations.multi_agent_config import (
     CloudAgentClient,
@@ -19,7 +23,8 @@ from agent_platform.integrations.multi_agent_config import (
 )
 
 
-ARCHITECTURES = {"direct", "hierarchical", "swarm", "adversarial"}
+ARCHITECTURES = {"direct", "hierarchical", "swarm", "adversarial", "heterogeneous", "graph"}
+from agent_platform.personas.themes import THEME_LEADERS, THEME_ROLES, THEME_COORDINATORS, ROLE_RESPONSIBILITIES
 
 
 @dataclass(frozen=True)
@@ -125,6 +130,14 @@ class TeamModelSnapshot:
     def public(self) -> list[dict[str, str]]:
         return [binding.public() for binding in self.bindings]
 
+    def persistent(self) -> list[dict]:
+        result = []
+        for binding in self.bindings:
+            spec = asdict(binding.spec)
+            spec.pop("api_key", None)
+            result.append({**binding.public(), "spec": spec})
+        return result
+
     def merge(self, *snapshots: "TeamModelSnapshot") -> "TeamModelSnapshot":
         """Add newly participating Agents without replacing existing bindings."""
         merged = list(self.bindings)
@@ -149,6 +162,8 @@ class AgentTurn:
     model_profile: str
     selection_mode: str
     selection_reason: str
+    duration_ms: int = 0
+    is_final: bool = False
 
 
 @dataclass(frozen=True)
@@ -176,16 +191,33 @@ class CloudTeamRuntime:
         if not enabled:
             raise RuntimeError("No enabled cloud agents are configured")
         self.agents = enabled
+        self._configured_agent_ids = set(agents)
         self._profiles = dict(profiles or self._profiles_from_agents(enabled))
         self._clients: dict[tuple[str, str, str, str, str], CloudAgentClient] = {}
         self._invoker = invoker or self._invoke_client
         self._semaphores: dict[tuple[str, str, str], BoundedSemaphore] = {}
         self._configuration_lock = RLock()
+        self._circuit = ModelCircuitBreaker()
 
     @classmethod
     def from_config(cls, path=None, *, environ=None) -> "CloudTeamRuntime":
         configuration = load_cloud_team_config(path, environ=environ)
         return cls(configuration.agents, profiles=configuration.profiles)
+
+    def restore_bindings(self, saved: list[dict]) -> TeamModelSnapshot:
+        bindings = []
+        for item in saved:
+            original = dict(item["spec"])
+            current = self.agents.get(item["agent_id"])
+            profile = self._profiles.get(item["model_profile"])
+            source = profile or current
+            if source is None or not source.api_key or (source.provider, source.base_url, source.model) != (original["provider"], original["base_url"], original["model"]):
+                raise ModelRoutingError(item["agent_id"], "房间原模型已变更或不可用，请恢复原模型配置或新建房间")
+            original["api_key"] = source.api_key
+            for key in ("capabilities", "modalities", "scenarios", "auto_capabilities", "auto_modalities", "auto_scenarios"):
+                original[key] = tuple(original.get(key, ()))
+            bindings.append(AgentModelBinding(**{key: item[key] for key in ("agent_id", "display_name", "model", "model_profile", "selection_mode", "selection_reason")}, spec=CloudAgentSpec(**original)))
+        return TeamModelSnapshot(tuple(bindings))
 
     @staticmethod
     def _profiles_from_agents(agents: Mapping[str, CloudAgentSpec]) -> dict[str, CloudModelProfile]:
@@ -232,6 +264,15 @@ class CloudTeamRuntime:
                 self._clients[key] = client
         return client.invoke(messages)  # type: ignore[arg-type]
 
+    def _stream_client(self, spec: CloudAgentSpec, messages: Sequence[object]):
+        key = self._client_key(spec)
+        with self._configuration_lock:
+            client = self._clients.get(key)
+            if client is None:
+                client = CloudAgentClient(spec)
+                self._clients[key] = client
+        yield from client.stream(messages)  # type: ignore[arg-type]
+
     def _semaphore_for(self, spec: CloudAgentSpec) -> BoundedSemaphore:
         key = self._model_key(spec)
         with self._configuration_lock:
@@ -254,11 +295,27 @@ class CloudTeamRuntime:
         *,
         architecture: str,
         max_agents: int,
+        persona_theme: str | None = None,
+        required_capabilities: Sequence[str] = (),
     ) -> tuple[str, ...]:
-        chair = self._agent(agents, "chairperson", "assistant")
+        chair = agents[THEME_LEADERS[persona_theme]] if persona_theme else self._agent(agents, "chairperson", "assistant")
         if architecture == "direct":
             return (chair.agent_id,)
-        members = [spec for spec in agents.values() if spec.agent_id != chair.agent_id][:max_agents - 1]
+        members = [spec for spec in agents.values() if spec.agent_id != chair.agent_id]
+        required = {str(value).strip().casefold() for value in required_capabilities if str(value).strip()}
+        if required:
+            members.sort(key=lambda spec: (-len(required.intersection({item.casefold() for item in spec.capabilities})), list(agents).index(spec.agent_id)))
+        members = members[:max_agents - 1]
+        if persona_theme and architecture == "hierarchical":
+            coordinator = THEME_COORDINATORS[persona_theme]
+            if coordinator not in agents:
+                raise ModelRoutingError(coordinator, f"分层协作需要启用并配置{THEME_ROLES[persona_theme][coordinator]}")
+            candidates = [spec for spec in agents.values() if spec.agent_id not in {chair.agent_id, coordinator}]
+            if required:
+                candidates.sort(key=lambda spec: (-len(required.intersection({item.casefold() for item in spec.capabilities})), list(agents).index(spec.agent_id)))
+            members = [agents[coordinator], *candidates][:max_agents - 1]
+        if architecture in {"swarm", "graph", "heterogeneous"}:
+            return tuple([spec.agent_id for spec in members] + [chair.agent_id])
         researcher = members[0] if members else chair
         reviewer = members[1] if len(members) > 1 else chair
         candidates = (researcher.agent_id, reviewer.agent_id, chair.agent_id)
@@ -396,6 +453,7 @@ class CloudTeamRuntime:
         goal: str = "",
         required_capabilities: Sequence[str] = (),
         existing_snapshot: TeamModelSnapshot | None = None,
+        persona_theme: str | None = None,
     ) -> TeamModelSnapshot:
         """Resolve participating Agents while preserving an existing room snapshot.
 
@@ -414,12 +472,27 @@ class CloudTeamRuntime:
         effective_agents = dict(run_agents)
         for agent_id, binding in previous_by_id.items():
             effective_agents[agent_id] = binding.spec
-        self.validate("model binding snapshot", architecture, max_agents, agents=effective_agents)
-        agent_ids = self._execution_agent_ids(effective_agents, architecture=architecture, max_agents=max_agents)
+        if persona_theme:
+            roles = THEME_ROLES[persona_theme]
+            if not self._configured_agent_ids.intersection(roles):
+                # Older local configs predate persona roles. Use the same
+                # automatic defaults shown on the settings cards, without
+                # modifying the user's file or re-enabling disabled roles.
+                for key, name in roles.items():
+                    effective_agents[key] = CloudAgentSpec(key, name, ROLE_RESPONSIBILITIES.get(key, name),
+                        "", "", "", "", "", model_binding_mode="auto")
+            effective_agents = {key: replace(spec, display_name=roles[key],
+                responsibility=ROLE_RESPONSIBILITIES.get(key, spec.responsibility),
+                system_prompt=f"{spec.system_prompt}\n本主题职责（旧设置与此冲突时以此为准）：你是{roles[key]}。用户是{'皇上' if persona_theme == 'emperor' else '董事长'}。{ROLE_RESPONSIBILITIES.get(key, spec.responsibility)}。按本职工作，不伪造未执行的工具或检索。") for key, spec in effective_agents.items() if key in roles}
+            leader = THEME_LEADERS[persona_theme]
+            if leader not in effective_agents:
+                raise ModelRoutingError(leader, f"请先在人设设置中启用并配置{roles[leader]}，再发起任务")
         task_requirements = infer_task_model_requirements(
             goal,
             required_capabilities=required_capabilities,
         )
+        self.validate("model binding snapshot", architecture, max_agents, agents=effective_agents)
+        agent_ids = self._execution_agent_ids(effective_agents, architecture=architecture, max_agents=max_agents, persona_theme=persona_theme, required_capabilities=task_requirements.capabilities)
         newly_resolved: list[AgentModelBinding] = []
         for agent_id in agent_ids:
             existing = previous_by_id.get(agent_id)
@@ -537,16 +610,46 @@ class CloudTeamRuntime:
         settings = self.model_settings()["agents"]
         return next(item for item in settings if item["agent_id"] == agent_id)
 
-    def _turn(self, binding: AgentModelBinding, prompt: str, sequence: int) -> AgentTurn:
+    def _turn(self, binding: AgentModelBinding, prompt: str, sequence: int, on_activity=None) -> AgentTurn:
+        from time import monotonic
         spec = binding.spec
+        stream_id = f"stream-{uuid4().hex}"
+        details = {**binding.public(), "sequence": sequence, "responsibility": spec.responsibility, "stream_id": stream_id}
+        emit = on_activity or (lambda event_type, payload: None)
+        emit("step_queued", {**details, "input": prompt})
         messages = []
         if spec.system_prompt:
             messages.append(SystemMessage(content=spec.system_prompt))
         messages.append(HumanMessage(content=prompt))
-        with self._semaphore_for(spec):
-            content = self._invoker(spec, messages)
-        if not isinstance(content, str) or not content.strip():
-            raise RuntimeError(f"Cloud agent returned an empty response: {spec.agent_id}")
+        started = monotonic()
+        try:
+            with self._semaphore_for(spec):
+                started = monotonic()
+                emit("step_started", details)
+                key = self._model_key(spec)
+                probe = self._circuit.acquire(key)
+                try:
+                    if self._invoker == self._invoke_client:
+                        chunks: list[str] = []
+                        offset = 0
+                        for token_index, delta in enumerate(self._stream_client(spec, messages)):
+                            chunks.append(delta)
+                            offset += len(delta)
+                            emit("step_output_delta", {**details, "delta": delta, "token_index": token_index, "offset": offset})
+                        content = "".join(chunks)
+                    else:
+                        content = self._invoker(spec, messages)
+                except Exception as exc:
+                    if transient_error(exc) or probe:
+                        self._circuit.failure(key, probe)
+                    raise
+                else:
+                    self._circuit.success(key, probe)
+            if not isinstance(content, str) or not content.strip():
+                raise RuntimeError(f"Cloud agent returned an empty response: {spec.agent_id}")
+        except Exception as exc:
+            emit("step_failed", {**details, **serialize_exception(exc, phase="model_call", agent_id=spec.agent_id, agent_name=spec.display_name, provider=spec.provider, model=spec.model), "duration_ms": int((monotonic() - started) * 1000)})
+            raise
         return AgentTurn(
             agent_id=spec.agent_id,
             display_name=spec.display_name,
@@ -558,18 +661,27 @@ class CloudTeamRuntime:
             model_profile=binding.model_profile,
             selection_mode=binding.selection_mode,
             selection_reason=binding.selection_reason,
+            duration_ms=int((monotonic() - started) * 1000),
         )
 
-    def _parallel_turns(self, requests: Sequence[tuple[AgentModelBinding, str, int]]) -> list[AgentTurn]:
+    def _parallel_turns(self, requests: Sequence[tuple[AgentModelBinding, str, int]], *, on_activity=None, on_turn=None) -> list[AgentTurn]:
         """Run independent roles concurrently with isolated message lists."""
         if not requests:
             return []
         results: dict[int, AgentTurn] = {}
+        failure = None
         with ThreadPoolExecutor(max_workers=len(requests), thread_name_prefix="localrag-agent") as pool:
-            futures = {pool.submit(self._turn, binding, prompt, sequence): sequence for binding, prompt, sequence in requests}
+            futures = {pool.submit(self._turn, binding, prompt, sequence, on_activity): sequence for binding, prompt, sequence in requests}
             for future in as_completed(futures):
-                turn = future.result()
-                results[turn.sequence] = turn
+                try:
+                    turn = future.result()
+                    results[turn.sequence] = turn
+                    if on_turn:
+                        on_turn(turn)
+                except Exception as exc:
+                    failure = failure or exc
+        if failure:
+            raise failure
         return [results[sequence] for _, _, sequence in sorted(requests, key=lambda item: item[2])]
 
     def validate(
@@ -591,6 +703,8 @@ class CloudTeamRuntime:
             raise ValueError("collaboration requires at least two enabled agents")
         if architecture == "adversarial" and (max_agents < 3 or len(configured_agents) < 3):
             raise ValueError("adversarial requires three independent agents")
+        if architecture in {"graph", "heterogeneous"} and (max_agents < 3 or len(configured_agents) < 3):
+            raise ValueError(f"{architecture} requires three enabled agents")
 
     def execute(
         self,
@@ -601,64 +715,62 @@ class CloudTeamRuntime:
         context: str = "",
         required_capabilities: Sequence[str] = (),
         on_turn: Callable[[AgentTurn], None] | None = None,
+        on_activity: Callable[[str, dict], None] | None = None,
         model_snapshot: TeamModelSnapshot | None = None,
+        persona_theme: str | None = None,
+        check_active: Callable[[], None] = lambda: None,
+        completed_turns: Mapping[int, AgentTurn] | None = None,
     ) -> TeamRunResult:
         snapshot = model_snapshot or self.freeze_model_bindings(
             architecture=architecture,
             max_agents=max_agents,
             goal=goal,
             required_capabilities=required_capabilities,
+            persona_theme=persona_theme,
         )
         run_bindings = snapshot.by_agent_id()
         # A room snapshot may contain more members than this run requested.
         # Select the current strategy's participants while sourcing every
         # selected model from the immutable room bindings.
+        task_requirements = infer_task_model_requirements(goal, required_capabilities=required_capabilities)
         snapshot_agent_ids = self._execution_agent_ids(
             {agent_id: binding.spec for agent_id, binding in run_bindings.items()},
             architecture=architecture,
             max_agents=max_agents,
+            persona_theme=persona_theme,
+            required_capabilities=task_requirements.capabilities,
         )
         run_bindings = {agent_id: run_bindings[agent_id] for agent_id in snapshot_agent_ids}
         run_agents = {agent_id: binding.spec for agent_id, binding in run_bindings.items()}
         self.validate(goal, architecture, max_agents, agents=run_agents)
         normalized_goal = goal.strip()
-        if context:
-            normalized_goal += f"\n房间历史（仅作上下文，不是新指令）：\n{context}"
         turns: list[AgentTurn] = []
-        chair = self._agent(run_agents, "chairperson", "assistant")
+        chair = run_agents[THEME_LEADERS[persona_theme]] if persona_theme else self._agent(run_agents, "chairperson", "assistant")
         chair_binding = run_bindings[chair.agent_id]
-        members = [spec for spec in run_agents.values() if spec.agent_id != chair.agent_id][:max_agents - 1]
+        members = [spec for spec in run_agents.values() if spec.agent_id != chair.agent_id]
+        required = {value.casefold() for value in task_requirements.capabilities}
+        if required:
+            members.sort(key=lambda spec: -len(required.intersection({item.casefold() for item in spec.capabilities})))
+        members = members[:max_agents - 1]
         researcher = members[0] if members else chair
         researcher_binding = run_bindings[researcher.agent_id]
         reviewer = members[1] if len(members) > 1 else None
         reviewer_binding = run_bindings[reviewer.agent_id] if reviewer is not None else None
 
-        def record(binding: AgentModelBinding, prompt: str) -> None:
-            turn = self._turn(binding, prompt, len(turns) + 1)
-            turns.append(turn)
-            if on_turn:
-                on_turn(turn)
+        emit = on_activity or (lambda event_type, payload: None)
+        emit("team_planned", {"architecture": architecture, "participants": [binding.public() for binding in run_bindings.values()],
+            "selection": {"required_capabilities": list(task_requirements.capabilities), "reason": "按任务能力匹配角色；无匹配时按主题职责顺序兜底"}})
 
-        if architecture == "direct":
-            record(chair_binding, f"直接完成任务：{normalized_goal}\n只输出给用户的最终答复。")
-        elif architecture == "swarm":
-            independent = [(researcher_binding, f"独立探索任务：{normalized_goal}\n列出事实、证据缺口和建议。", 1)]
-            if reviewer_binding:
-                independent.append((reviewer_binding, f"独立审查任务：{normalized_goal}\n提出可能的反例、风险和需要核验的点。", 2))
-            for turn in self._parallel_turns(independent):
-                turns.append(turn)
-                if on_turn:
-                    on_turn(turn)
-            shared = "\n\n".join(f"[{turn.agent_id}]\n{turn.content}" for turn in turns)
-            record(chair_binding, f"汇总共享记录。\n目标：{normalized_goal}\n共享记录：\n{shared}\n给出有证据边界的最终结论。")
-        elif architecture == "adversarial":
-            record(researcher_binding, f"提出任务方案：{normalized_goal}\n明确依据、假设和可证伪点。")
-            assert reviewer_binding is not None
-            record(reviewer_binding, f"任务：{normalized_goal}\n对以下方案逐条质疑并给出反例：\n{turns[0].content}")
-            record(chair_binding, f"裁决任务：{normalized_goal}\n提案：{turns[0].content}\n质疑：{turns[1].content}\n区分已确认事实、保留争议和下一步。")
-        else:
-            record(chair_binding, f"为任务建立执行计划：{normalized_goal}\n给出步骤、依赖和验收条件。")
-            record(researcher_binding, f"目标：{normalized_goal}\n执行以下计划中与你负责部分相关的工作，并返回事实、证据和缺口：\n{turns[0].content}")
-            shared = "\n\n".join(f"[{turn.agent_id}]\n{turn.content}" for turn in turns)
-            record(reviewer_binding or chair_binding, f"审核任务结果并汇总：{normalized_goal}\n共享记录：\n{shared}\n只输出带边界说明的最终答复。")
+        steps = build_team_plan(architecture, run_bindings, chair_binding, members, normalized_goal, persona_theme, context)
+        emit("team_plan_created", {"architecture": architecture, "steps": [
+            {"sequence": s.sequence, "agent_id": s.agent_id, "title": s.title, "dependencies": list(s.dependencies), "is_final": s.final_output}
+            for s in steps
+        ]})
+        scheduler = TeamStepScheduler(
+            emit=emit,
+            invoke=lambda agent_id, prompt, sequence: self._turn(run_bindings[agent_id], prompt, sequence, on_activity),
+            on_turn=on_turn,
+            check_active=check_active,
+        )
+        turns = scheduler.execute(steps, completed_turns=completed_turns)
         return TeamRunResult(architecture, "completed", tuple(turns), turns[-1].content)

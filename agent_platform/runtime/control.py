@@ -205,6 +205,13 @@ class RunController:
         except KeyError as exc:
             raise ControlError("unknown run") from exc
 
+    def restore_run(self, state: RunControlState) -> RunControlState:
+        """Refresh a controller from committed state, including control versions."""
+        validate_identifier(state.run_id, "run")
+        with self._lock:
+            self._runs[state.run_id] = state
+            return state
+
     def start(self, run_id: str, *, expected_row_version: int) -> RunControlState:
         with self._lock:
             state = self._checked(run_id, expected_row_version)

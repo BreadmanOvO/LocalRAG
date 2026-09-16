@@ -9,6 +9,9 @@ streamlit
 dashscope
 pypdf
 pymupdf
+python-docx
+openpyxl
+filelock
 rapidocr-onnxruntime
 sentence-transformers
 rank-bm25
@@ -16,6 +19,7 @@ ragas
 fastapi
 sqlalchemy
 psycopg[binary]
+boto3
 httpx
 peft
 prometheus-client

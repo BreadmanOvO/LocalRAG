@@ -9,6 +9,9 @@ from agent_platform.runtime.import_inventory import inventory_sqlite
 
 ROOT = Path(__file__).parents[1]
 MIGRATION = ROOT / "agent_platform" / "runtime" / "migrations" / "0001_initial.sql"
+COUNTERS_MIGRATION = ROOT / "agent_platform" / "runtime" / "migrations" / "0003_room_event_counters.sql"
+EVENT_COMPAT_MIGRATION = ROOT / "agent_platform" / "runtime" / "migrations" / "0004_event_payload_compatibility.sql"
+RUNTIME_STATE_MIGRATION = ROOT / "agent_platform" / "runtime" / "migrations" / "0005_runtime_state.sql"
 
 
 class Day5MigrationInventoryTests(unittest.TestCase):
@@ -59,6 +62,24 @@ class Day5MigrationInventoryTests(unittest.TestCase):
         for field in ("row_version", "control_epoch", "plan_revision", "room_sequence", "fencing_token"):
             self.assertIn(field, sql)
         self.assertIn("ON CONFLICT (version) DO NOTHING", sql)
+        self.assertIn("usage JSONB", sql)
+        self.assertIn("timestamp TEXT", sql)
+
+    def test_event_migrations_backfill_counters_and_record_versions(self):
+        counters = COUNTERS_MIGRATION.read_text(encoding="utf-8")
+        compatibility = EVENT_COMPAT_MIGRATION.read_text(encoding="utf-8")
+        self.assertIn("MAX(run_events.room_sequence)", counters)
+        self.assertIn("VALUES (3, 'room_event_counters')", counters)
+        self.assertIn("ADD COLUMN IF NOT EXISTS usage", compatibility)
+        self.assertIn("ADD COLUMN IF NOT EXISTS timestamp", compatibility)
+        self.assertIn("VALUES (4, 'event_payload_compatibility')", compatibility)
+
+    def test_runtime_state_migration_declares_durable_execution_tables(self):
+        sql = RUNTIME_STATE_MIGRATION.read_text(encoding="utf-8")
+        for table in ("runtime_tasks", "runtime_runs", "runtime_jobs", "runtime_commands"):
+            self.assertIn(f"CREATE TABLE IF NOT EXISTS {table}", sql)
+        self.assertIn("runtime_runs_active_room_idx", sql)
+        self.assertIn("VALUES (5, 'runtime_state')", sql)
 
 
 if __name__ == "__main__":

@@ -1,76 +1,57 @@
-"""Ingest new documents into the knowledge base."""
+"""Publish files with the same parsing, cleaning and chunking path as asset uploads."""
+from __future__ import annotations
+
+import argparse
 import json
 import sys
 from pathlib import Path
 
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from core.knowledge_base import KnowledgeBaseService
-from config import settings as config
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 
-def load_registry():
-    with open("data/evaluation/shared/source_registry.json", "r", encoding="utf-8") as f:
-        return json.load(f)
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--file", type=Path, action="append", help="待入库文件，可多次指定；省略则读取来源注册表")
+    parser.add_argument("--registry", type=Path, default=ROOT / "data/evaluation/shared/source_registry.json")
+    args = parser.parse_args(argv)
+    from core.ingestion_workflow import IngestionWorkflow
+    from agent_platform.capability_packs.asset_ingestion import configured_vision
+    from agent_platform.integrations.model_config_store import ModelConfigStore
 
-
-def get_new_docs(registry):
-    """Find documents in registry that haven't been ingested yet."""
-    # Check MD5 file for already ingested docs
-    ingested = set()
-    if Path(config.md5_path).exists():
-        with open(config.md5_path, "r", encoding="utf-8") as f:
-            ingested = {line.strip() for line in f if line.strip()}
-
-    new_docs = []
-    for entry in registry:
-        path = entry.get("path_or_url", "")
-        if not path or not Path(path).exists():
+    entries = [{"path_or_url": str(path)} for path in args.file] if args.file else json.loads(args.registry.read_text(encoding="utf-8"))
+    workflow = IngestionWorkflow(registry_path=args.registry)
+    vision = configured_vision(ModelConfigStore())
+    failures = completed = skipped = 0
+    for entry in entries:
+        path = Path(entry.get("path_or_url", ""))
+        path = path if path.is_absolute() else ROOT / path
+        if not path.is_file():
+            print(f"Missing file: {path}")
+            failures += 1
             continue
-        # Check if already ingested by reading file and computing MD5
-        content = Path(path).read_text(encoding="utf-8")
-        from core.knowledge_base import get_string_md5
-        md5 = get_string_md5(content)
-        if md5 not in ingested:
-            new_docs.append((entry, content, md5))
-
-    return new_docs
-
-
-def main():
-    registry = load_registry()
-    new_docs = get_new_docs(registry)
-
-    if not new_docs:
-        print("No new documents to ingest.")
-        return
-
-    print(f"Found {len(new_docs)} new documents to ingest:")
-    for entry, content, md5 in new_docs:
-        print(f"  - {entry['source_id']}: {entry['title']}")
-
-    kb = KnowledgeBaseService()
-
-    for entry, content, md5 in new_docs:
-        print(f"\nIngesting {entry['source_id']}: {entry['title']}...")
-        source_metadata = {
-            "source": entry["path_or_url"],
-            "source_id": entry["source_id"],
-            "doc_type": entry.get("doc_type", "untyped"),
-            "category": entry.get("category", ""),
-            "language": entry.get("language", "zh"),
-        }
         try:
-            chunk_records = kb.ingest_document(content, source_metadata, chunking_strategy="doc_type_aware")
-            from core.knowledge_base import save_md5
-            save_md5(md5)
-            print(f"  Done: {len(chunk_records)} chunks created")
-        except Exception as e:
-            print(f"  Error: {e}")
-
-    print("\nIngestion complete!")
+            # Existing registry IDs remain citation-stable. Do not reindex legacy rows.
+            source_id = entry.get("source_id")
+            if source_id and workflow.knowledge_base.chroma.get(where={"source_id": source_id}, limit=1).get("ids"):
+                skipped += 1
+                print(f"Already indexed: {source_id}")
+                continue
+            progress = lambda stage: print(f"[{path.name}] {stage}", flush=True)
+            staged = workflow.stage_file(path.name, path.read_bytes(), metadata=entry, source_id=source_id, vision=vision, on_progress=progress)
+            result = workflow.publish(staged, on_progress=progress)
+            if result.published:
+                completed += 1
+            else:
+                skipped += 1
+            print(f"[{path.name}] {result.chunk_count} chunks, source={result.source_id}")
+        except Exception as exc:
+            # Model-provider exception strings can contain credentials.
+            print(f"[{path.name}] failed: {type(exc).__name__}")
+            failures += 1
+    print(f"Published: {completed}; skipped: {skipped}; failed: {failures}")
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

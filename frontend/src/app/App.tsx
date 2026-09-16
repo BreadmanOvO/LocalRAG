@@ -51,7 +51,7 @@ export function App() {
         <RoomList />
         <div className="sidebar-bottom">
           <NavLink className={({ isActive }) => (isActive ? "nav-item settings-link active" : "nav-item settings-link")} to="/company"><Settings2 aria-hidden="true" size={17} />{activeDefinition.setupLabel}</NavLink>
-          <span className="theme-status"><BrandIcon aria-hidden="true" size={14} />{activeDefinition.name}主题</span>
+          <span className="theme-status"><BrandIcon aria-hidden="true" size={14} />{activeTheme === "emperor" ? "当皇上也是一种艺术" : "让团队把事办明白"}</span>
         </div>
       </aside>
       <main className="main-content"><Outlet /></main>

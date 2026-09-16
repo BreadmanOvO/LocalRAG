@@ -1,6 +1,6 @@
 # v1.8 Agent Platform 包边界
 
-这里是 v1.8 新增 Python Runtime 的唯一顶层包。当前包含合同实现及执行适配增量；v1.7 的 `agent/`、`core/`、`model_gateway/`、`model_serving/` 和 Streamlit 入口继续按现状运行，迁移通过适配器完成，不在 D01 直接改写。
+这里是 BeTheBoss 工作台的 Python 后端：提供 FastAPI、任务调度、云模型执行、房间持久化、事件流与资产接口。v1.7 的 `agent/`、`core/`、`model_gateway/`、`model_serving/` 和 Streamlit 入口继续运行，通过适配器复用。
 
 ## 仓库中的位置
 
@@ -49,6 +49,8 @@ D01 建立目录与依赖边界，后续功能按 Day 节点加入。目录存�
 
 ## 当前状态
 
-截至 D34，以下切片已有可执行代码和测试：FastAPI 房间/消息 API、React 工作台、游标/SSE snapshot、角色与人设注册、直办/委派计划编译、分层/图策略、Blackboard/对抗式合同、异构能力和多模态元数据、MCP/沙箱策略、回放/评测/发布检查，以及云模型客户端、顺序分层/共享汇总/对抗流程原型及群聊事件投影。可以运行 `python scripts/smoke_agent_platform.py` 验证统一入口演示链路；配置云模型后可从房间页启动团队任务。
+截至 2026-09-15，直办、分层、蜂群、对抗、图式、异构六种执行模式已接入 `TeamStepScheduler`，支持依赖等待、并行分支、有限重试、熔断、摘要交接和完成步骤恢复。用户提交任务后自动执行，Agent 实际模型固定到房间绑定，模型选择及处理进度写入房间事件。
 
-这些切片仍主要是内存或浏览器级实现；D34 的云模型执行是同步切片，D35 开始提供 SQLAlchemy PostgreSQL conversation adapter（通过 `LOCALRAG_DATABASE_URL` 选择）。跨进程 worker/SSE、OCR/VLM、MCP server、对象存储和生产鉴权尚未完成；目录和 schema 的存在不能单独视为生产能力已实现。
+一键启动默认使用 SQLite；SQLAlchemy 同时提供 PostgreSQL 适配，迁移包含 `0001`–`0006`。房间、消息、事件、task/run、命令与房间租约可持久保存。取消命令事务化提交，checkpoint 校验计划指纹，SSE 按原始游标补读，前端轨迹按当前任务合并并使用连续展示编号。
+
+资产解析/入库、OCR/VLM 接口、MCP stdio、S3/MinIO 适配和 Bearer/space 鉴权均有代码与定向测试。工作台当前在 API 进程内使用有界后台线程；独立 SQL worker 提供领取与 fencing 合同，但其命令行默认 handler 仍为空确认，不能作为真实任务执行部署。生产 PostgreSQL 故障接管、真实对象存储恢复及云模型长期稳定性需分别验收。测试结果与限制统一见 [当前验收记录](../RAG_md/docs/v1.8/evidence/2026-09-15-runtime-closure.md)，历史 Day 文档记录当时范围。

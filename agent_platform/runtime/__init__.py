@@ -3,6 +3,7 @@
 from .import_inventory import build_inventory, inventory_sqlite
 from .event_store import EventConflictError, EventStore, EventStoreError, RoomSnapshot
 from .sql_event_store import SqlAlchemyEventStore
+from .sql_runtime_store import SqlRuntimeStore
 from .control import (
     AttemptRecord,
     ControlConflictError,
@@ -51,6 +52,7 @@ __all__ = [
     "EventStoreError",
     "RoomSnapshot",
     "SqlAlchemyEventStore",
+    "SqlRuntimeStore",
     "AttemptRecord",
     "ControlConflictError",
     "ControlError",

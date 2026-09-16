@@ -21,6 +21,59 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/asset-ingestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Ingestions */
+        get: operations["list_ingestions_asset_ingestions_get"];
+        put?: never;
+        /** Ingest Asset */
+        post: operations["ingest_asset_asset_ingestions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/asset-ingestions/{job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Ingestion */
+        get: operations["get_ingestion_asset_ingestions__job_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Ingestion */
+        delete: operations["delete_ingestion_asset_ingestions__job_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/asset-ingestions/{job_id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry Ingestion */
+        post: operations["retry_ingestion_asset_ingestions__job_id__retry_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/assets": {
         parameters: {
             query?: never;
@@ -32,6 +85,23 @@ export interface paths {
         put?: never;
         /** Upload Asset */
         post: operations["upload_asset_assets_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/assets/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search Assets */
+        get: operations["search_assets_assets_search_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -66,7 +136,7 @@ export interface paths {
         put?: never;
         /**
          * Assistant Message
-         * @description Persist the first assistant message and room in one repository boundary.
+         * @description Save a user instruction and start execution without a second UI action.
          */
         post: operations["assistant_message_assistant_messages_post"];
         delete?: never;
@@ -223,6 +293,44 @@ export interface paths {
         get: operations["get_room_rooms__room_id__get"];
         put?: never;
         post?: never;
+        /** Delete Room */
+        delete: operations["delete_room_rooms__room_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rooms/{room_id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Archive Room */
+        post: operations["archive_room_rooms__room_id__archive_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rooms/{room_id}/artifacts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Room Artifacts
+         * @description Return only artifacts projected from this room's event stream.
+         */
+        get: operations["list_room_artifacts_rooms__room_id__artifacts_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -280,6 +388,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/rooms/{room_id}/execution": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Room Execution */
+        get: operations["room_execution_rooms__room_id__execution_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/rooms/{room_id}/members": {
         parameters: {
             query?: never;
@@ -326,6 +451,40 @@ export interface paths {
         put?: never;
         /** Execute Multi Agent */
         post: operations["execute_multi_agent_rooms__room_id__multi_agent_execute_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rooms/{room_id}/reopen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reopen Room */
+        post: operations["reopen_room_rooms__room_id__reopen_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rooms/{room_id}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start Saved Task */
+        post: operations["start_saved_task_rooms__room_id__start_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -431,6 +590,40 @@ export interface paths {
         post?: never;
         /** Remove Model Profile */
         delete: operations["remove_model_profile_settings_model_profiles__profile_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/settings/model-profiles/{profile_id}/clone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Clone Model Profile */
+        post: operations["clone_model_profile_settings_model_profiles__profile_id__clone_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/settings/model-profiles/{profile_id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify Model Profile */
+        post: operations["verify_model_profile_settings_model_profiles__profile_id__verify_post"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -636,6 +829,104 @@ export interface components {
             /** Tier */
             tier: string;
         };
+        /** ArtifactListResponse */
+        ArtifactListResponse: {
+            /** Items */
+            items: components["schemas"]["ArtifactResponse"][];
+        };
+        /**
+         * ArtifactResponse
+         * @description A room-scoped projection of a step output or declared artifact.
+         */
+        ArtifactResponse: {
+            /** Artifact Id */
+            artifact_id: string;
+            /** Artifact Type */
+            artifact_type: string;
+            /** Content */
+            content: string;
+            /**
+             * Is Final
+             * @default false
+             */
+            is_final: boolean;
+            /** Output */
+            output?: unknown;
+            /** Run Id */
+            run_id: string | null;
+            /** Source Agent Id */
+            source_agent_id: string | null;
+            /** Source Agent Name */
+            source_agent_name: string | null;
+            /** Source Event Id */
+            source_event_id: string;
+            /** Source Step Id */
+            source_step_id: string | null;
+            /** Task Id */
+            task_id: string | null;
+            /** Timestamp */
+            timestamp: string;
+            /** Title */
+            title: string;
+        };
+        /** AssetIngestionListResponse */
+        AssetIngestionListResponse: {
+            /** Items */
+            items: components["schemas"]["AssetIngestionResponse"][];
+        };
+        /** AssetIngestionResponse */
+        AssetIngestionResponse: {
+            /** Asset Id */
+            asset_id: string;
+            /** Chunk Count */
+            chunk_count: number;
+            /** Error */
+            error: string | null;
+            /** Evaluation Status */
+            evaluation_status: string;
+            /** Filename */
+            filename: string;
+            /** History */
+            history: components["schemas"]["AssetStageResponse"][];
+            /** Job Id */
+            job_id: string;
+            /** Size Bytes */
+            size_bytes: number;
+            /** Source Id */
+            source_id: string | null;
+            /** Space Id */
+            space_id: string;
+            /** Stage */
+            stage: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "completed" | "failed" | "deleted";
+            /** Updated At */
+            updated_at: string;
+        };
+        /** AssetSearchHit */
+        AssetSearchHit: {
+            /** Metadata */
+            metadata: {
+                [key: string]: unknown;
+            };
+            /** Text */
+            text: string;
+        };
+        /** AssetSearchResponse */
+        AssetSearchResponse: {
+            /** Items */
+            items: components["schemas"]["AssetSearchHit"][];
+        };
+        /** AssetStageResponse */
+        AssetStageResponse: {
+            /** At */
+            at: string;
+            /** Stage */
+            stage: string;
+        };
         /** AssetUploadRequest */
         AssetUploadRequest: {
             /** Content Base64 */
@@ -677,8 +968,16 @@ export interface components {
         };
         /** AssistantMessageRequest */
         AssistantMessageRequest: {
+            /**
+             * Architecture
+             * @default auto
+             * @enum {string}
+             */
+            architecture: "auto" | "direct" | "hierarchical" | "swarm" | "adversarial" | "heterogeneous" | "graph";
             /** Content */
             content: string;
+            /** Persona Theme */
+            persona_theme?: ("company" | "emperor") | null;
             /** Room Id */
             room_id?: string | null;
             /** Space Id */
@@ -970,6 +1269,12 @@ export interface components {
             /** Items */
             items: components["schemas"]["DiscoveredModelResponse"][];
         };
+        /** ModelProfileCloneResponse */
+        ModelProfileCloneResponse: {
+            catalog: components["schemas"]["ModelCatalogResponse"];
+            /** Profile Id */
+            profile_id: string;
+        };
         /** ModelProfileRequest */
         ModelProfileRequest: {
             /**
@@ -1071,6 +1376,17 @@ export interface components {
             /** Models */
             models: components["schemas"]["ModelChoice"][];
         };
+        /** ModelVerificationResponse */
+        ModelVerificationResponse: {
+            /** Message */
+            message: string;
+            /** Model */
+            model: string;
+            /** Profile Id */
+            profile_id: string;
+            /** Verified */
+            verified: boolean;
+        };
         /** MultiAgentExecuteRequest */
         MultiAgentExecuteRequest: {
             /**
@@ -1091,6 +1407,8 @@ export interface components {
              * @default 3
              */
             max_agents: number;
+            /** Persona Theme */
+            persona_theme?: ("company" | "emperor") | null;
             /** Task Id */
             task_id?: string | null;
         };
@@ -1398,6 +1716,163 @@ export interface operations {
             };
         };
     };
+    list_ingestions_asset_ingestions_get: {
+        parameters: {
+            query: {
+                space_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetIngestionListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ingest_asset_asset_ingestions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssetUploadRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetIngestionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ingestion_asset_ingestions__job_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetIngestionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_ingestion_asset_ingestions__job_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetIngestionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retry_ingestion_asset_ingestions__job_id__retry_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetIngestionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     upload_asset_assets_post: {
         parameters: {
             query?: never;
@@ -1418,6 +1893,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AssetUploadResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_assets_assets_search_get: {
+        parameters: {
+            query: {
+                space_id: string;
+                q: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetSearchResponse"];
                 };
             };
             /** @description Validation Error */
@@ -1797,6 +2304,99 @@ export interface operations {
             };
         };
     };
+    delete_room_rooms__room_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                room_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    archive_room_rooms__room_id__archive_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                room_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_room_artifacts_rooms__room_id__artifacts_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                room_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_events_rooms__room_id__events_get: {
         parameters: {
             query?: {
@@ -1838,7 +2438,9 @@ export interface operations {
                 follow?: boolean;
                 timeout?: number;
             };
-            header?: never;
+            header?: {
+                "Last-Event-ID"?: string | null;
+            };
             path: {
                 room_id: string;
             };
@@ -1885,6 +2487,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    room_execution_rooms__room_id__execution_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                room_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -2022,6 +2655,68 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MultiAgentExecuteResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reopen_room_rooms__room_id__reopen_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                room_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    start_saved_task_rooms__room_id__start_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                room_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -2271,6 +2966,68 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ModelCatalogResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    clone_model_profile_settings_model_profiles__profile_id__clone_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profile_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelProfileCloneResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_model_profile_settings_model_profiles__profile_id__verify_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profile_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelVerificationResponse"];
                 };
             };
             /** @description Validation Error */

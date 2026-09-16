@@ -1,33 +1,23 @@
 import { FormEvent, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, LoaderCircle, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { rememberRoomTheme, useTheme } from "../app/theme";
 import { api } from "../shared/api/client";
-
-const spaceStorageKey = "betheboss.space-id.v1";
-
-function stableSpaceId() {
-  try {
-    const existing = window.localStorage.getItem(spaceStorageKey);
-    if (existing) return existing;
-    const identifier = `space-${crypto.randomUUID()}`;
-    window.localStorage.setItem(spaceStorageKey, identifier);
-    return identifier;
-  } catch {
-    return `space-${crypto.randomUUID()}`;
-  }
-}
+import { stableSpaceId } from "../shared/space";
 
 export function WorkspacePage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { definition, theme } = useTheme();
   const [spaceId] = useState(stableSpaceId);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [architecture, setArchitecture] = useState<"auto" | "direct" | "hierarchical" | "swarm" | "adversarial" | "heterogeneous" | "graph">("auto");
   const create = useMutation({
-    mutationFn: () => api.assistantMessage(spaceId, content.trim(), title.trim()),
+    mutationFn: () => api.assistantMessage(spaceId, content.trim(), title.trim(), theme ?? undefined, architecture),
     onSuccess: (result) => {
+      void queryClient.invalidateQueries({ queryKey: ["rooms"] });
       if (theme) rememberRoomTheme(result.room.room_id, theme);
       navigate(`/rooms/${result.room.room_id}`);
     },
@@ -57,6 +47,7 @@ export function WorkspacePage() {
       </label>
       <div className="task-submit-row">
         <p>系统会为这项任务分配独立房间。</p>
+        <label className="task-mode-select">协作模式<select value={architecture} onChange={(event) => setArchitecture(event.target.value as typeof architecture)}><option value="auto">自动路由（推荐）</option><option value="direct">直接处理</option><option value="hierarchical">分层协作</option><option value="swarm">蜂群协作</option><option value="adversarial">对抗协作</option><option value="heterogeneous">异构协作</option><option value="graph">图式协作</option></select></label>
         <button className="primary-button" disabled={create.isPending || !content.trim()}>
           {create.isPending ? <LoaderCircle aria-hidden="true" size={16} className="spin" /> : <ArrowRight aria-hidden="true" size={16} />}
           {create.isPending ? "正在创建" : definition?.taskAction ?? "下达任务"}

@@ -115,6 +115,16 @@ class SqlAlchemyEventStore:
             rows = conn.execute(statement).mappings().all()
         return tuple(self._event(row) for row in rows)
 
+    def get_event(self, event_id: str) -> RunEvent | None:
+        with self.engine.connect() as conn:
+            row = conn.execute(select(self.events).where(self.events.c.event_id == event_id)).mappings().first()
+        return self._event(row) if row else None
+
+    def next_sequence(self, room_id: str) -> int:
+        with self.engine.connect() as conn:
+            row = conn.execute(select(self.room_counters.c.next_sequence).where(self.room_counters.c.room_id == room_id)).first()
+        return int(row[0]) if row else 1
+
     def snapshot(self, room_id: str) -> RoomSnapshot:
         events = self.read_after(RoomEventCursor(validate_identifier(room_id, "room"), 0))
         cursor = RoomEventCursor(room_id, events[-1].identity.room_sequence if events else 0)

@@ -6,7 +6,7 @@
 
 LocalRAG is an Agentic RAG system for autonomous-driving perception research. It combines hybrid retrieval, source verification, task memory, and resumable research workflows in a Streamlit application. The system supports cloud models, a local model gateway, and long-context compression.
 
-The current implementation is the v1.7 Agentic RAG baseline. The v1.8 work adds a unified assistant workspace contract, a Python Runtime boundary, company-style role presets, and traceable multi-agent collaboration. The v1.8 code boundary is documented in [`agent_platform/README.md`](agent_platform/README.md); unfinished capabilities remain explicitly marked in the development records.
+The current v1.8 workspace is BeTheBoss: a React interface backed by a Python Runtime, with company and imperial-court personas, configurable cloud models, and traceable multi-agent tasks. Direct, hierarchical, swarm, adversarial, graph, and heterogeneous execution share a dependency scheduler. The v1.7 Streamlit Agentic RAG entry points remain available. See [`agent_platform/README.md`](agent_platform/README.md) for package responsibilities.
 
 ## How it works
 
@@ -171,20 +171,24 @@ Set each role's `route` independently. RAG and summary apply the Gateway's error
 streamlit run app_qa.py
 ```
 
-### v1.8 assistant contract demo
+### BeTheBoss workspace (v1.8)
 
-The v1.8 slice has a runnable FastAPI + React contract demo. It exercises room creation, idempotent messages, `message_saved` event projection, role lookup, and direct/delegated plan compilation without requiring a model provider:
+The v1.8 slice provides a runnable FastAPI + React workspace. It exercises room creation, idempotent messages, `message_saved` event projection, role lookup, plan compilation, durable Runtime records, and configurable multi-agent execution:
 
 ```powershell
 python scripts/smoke_agent_platform.py
-python scripts/run_agent_platform.ps1
+.\scripts\start_localrag.ps1
 ```
 
-In another terminal, start the React workspace with `cd frontend; npm run dev` and open `http://127.0.0.1:5173`. The room page can also start a bounded cloud multi-agent run when the local model configuration and provider key are available. Production PostgreSQL, durable workers/SSE, and cross-process recovery remain separate acceptance items; the legacy Streamlit entry remains the v1.7 RAG path.
+Run `scripts/start_localrag.ps1` and open `http://127.0.0.1:5173`; use `scripts/stop_localrag.ps1` to stop both services. The one-click launcher stores rooms, messages, events, run records, and secret-free model bindings in `results/runtime/localrag.db` by default. Set `LOCALRAG_DATABASE_URL` before starting to use another SQLite database or PostgreSQL. API tests can still explicitly use in-memory stores.
 
-Copy `config/multi_agent_models.example.json` to the ignored local file `config/multi_agent_models.json`. Each `model_profile` defines provider, model, capability, modality, and concurrency metadata; each agent binds to a profile and declares its tier (`lead`, `specialist`, `critic`, or a project-specific name). Roles may reuse the same model profile, but each role receives an isolated message list and independent client call; independent swarm members are submitted concurrently and only the reducer sees their shared output. For local convenience, `config/multi_agent_models.json` may contain an inline `api_key` field; this file is ignored by Git. The example keeps keys external through `LOCALRAG_CLOUD_API_KEY` (SenseNova) and `MODELSCOPE_API_KEY` (ModelScope). Runtime settings in the Company page can rebind a role to another configured model choice and change its tier for new tasks; an active run keeps its original model snapshot.
+Submit a task to start execution immediately. Close a room to retain read-only history, reopen it to continue, or delete it to remove it from normal access (a database tombstone remains). After a failed or interrupted run, use **Resume task** in the room: completed steps are reused only when the plan fingerprint matches. A changed plan requires a new task. An expired worker lease can take up to 90 seconds to become available. The task trace shows the selected run, groups each step's transitions, and uses consecutive display numbers; original event cursors and model-routing reasons remain available in expandable details. Cancellation commits the run, task and command together before acknowledgement, and late worker completion cannot undo it.
 
-The PostgreSQL conversation adapter is in development. Have an administrator apply `agent_platform/runtime/migrations/0001_initial.sql` followed by `0002_message_idempotency.sql`, then set `LOCALRAG_DATABASE_URL=postgresql+psycopg://...`. The API does not migrate production databases. Only rooms, messages, and members use this adapter; tasks, runs, and events remain in memory, so it is not yet suitable for durable production execution.
+Configure providers, URLs, API keys and models in Company settings. Discover models, set tier/modality/scenario metadata, verify connectivity, then enable the model for new tasks. Settings are saved in the Git-ignored `config/multi_agent_models.json`; the example file is an empty template. Inline `api_key` and `api_key_env` references are supported, and the API never returns keys. Roles may reuse a model profile through isolated conversations; independent branches run concurrently. Each Agent's first binding is frozen for its room, so setting changes apply to new rooms.
+
+Model discovery keeps the SSRF guard enabled. When local DNS/proxy maps a public provider hostname to the RFC 2544 benchmark range (`198.18.0.0/15`), the bundled PowerShell launchers explicitly enable compatibility; when starting the service directly, set `LOCALRAG_ENV=development` or `LOCALRAG_ALLOW_SYNTHETIC_DNS=1`. Unknown and production environments, as well as explicitly entered private/loopback/local IPs, remain blocked.
+
+Rooms, messages, events, tasks, runs, commands and room leases have SQL adapters for SQLite/PostgreSQL. Set `LOCALRAG_DATABASE_URL` and run `python -m agent_platform.runtime.migrations.runner $env:LOCALRAG_DATABASE_URL` before using PostgreSQL. The workspace executes cloud calls in bounded background threads, with lease heartbeats, finite transient retries and dependency blocking. The separate `scripts/run_agent_worker.py` still uses an acknowledgement handler and is not the workspace execution entry point. Local restart/cancellation/recovery tests cover these paths; production PostgreSQL failover and sustained cloud-provider stability require their own deployment evidence. External tool side effects are not automatically replayed.
 
 By default, the app loads the profile in `config/active_corpus.json`. The repository contains the cleaned 100-document corpus, while the Chroma index is built locally. Create it with `quickstart/windows/03-prepare-data.ps1`; the evaluated corpus produces 7,339 chunks. The active corpus profile records source count, chunk count, and corpus/registry fingerprints. To use another existing index:
 
@@ -355,4 +359,5 @@ The v1.6 local-serving and long-context validation passed the model-quality Gate
 | v1.5 | Execution budgets, evidence binding, pause/resume, and checkpoints |
 | v1.6 | Local model serving, Gateway fallback, and conversation compression |
 | v1.7 | Dense + BM25 → RRF → Cross-Encoder, unified provenance, and tool-error contracts |
+| v1.8 | BeTheBoss workspace, six execution modes, SQL room state, model settings, event replay and asset ingestion |
 | main | Document-upload staging, preview, explicit publish, and optional evaluation callback |

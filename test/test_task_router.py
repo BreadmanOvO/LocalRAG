@@ -26,6 +26,11 @@ class TaskRouterTests(unittest.TestCase):
         self.assertEqual("swarm", decision.architecture)
         self.assertEqual("delegate", decision.mode)
 
+    def test_long_task_exposes_capability_signals_for_participant_selection(self) -> None:
+        decision = self.router.route("研究论文并整理证据，最后写一份详细技术报告与实施建议供团队使用")
+        self.assertEqual("hierarchical", decision.architecture)
+        self.assertEqual(("research", "writing"), decision.required_capabilities)
+
 
 if __name__ == "__main__":
     unittest.main()

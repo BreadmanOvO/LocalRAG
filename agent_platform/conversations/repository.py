@@ -160,6 +160,15 @@ class ConversationRepository:
             self._rooms[room.room_id] = updated
             return updated
 
+    def reopen_room(self, room_id: str) -> Room:
+        with self._lock:
+            room = self.get_room(room_id)
+            if room.status == "deleted":
+                raise RoomClosedError("deleted room cannot be reopened")
+            updated = replace(room, status="active", row_version=room.row_version + 1)
+            self._rooms[room_id] = updated
+            return updated
+
     def save_message(
         self,
         room_id: str,

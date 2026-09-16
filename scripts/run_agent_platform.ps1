@@ -7,6 +7,10 @@ $ErrorActionPreference = "Stop"
 $root = Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")
 Push-Location $root
 try {
+    $previousSyntheticDns = $env:LOCALRAG_ALLOW_SYNTHETIC_DNS
+    if ($env:LOCALRAG_ENV -notin @("prod", "production") -and -not $env:LOCALRAG_ALLOW_SYNTHETIC_DNS) {
+        $env:LOCALRAG_ALLOW_SYNTHETIC_DNS = "1"
+    }
     $pythonCandidates = @()
     if ($env:LOCALRAG_PYTHON) { $pythonCandidates += $env:LOCALRAG_PYTHON }
     $pythonCandidates += (Join-Path $root ".venv\Scripts\python.exe")
@@ -27,4 +31,7 @@ try {
     if (-not $runtimePython) { throw "FastAPI is unavailable; activate the project environment or set LOCALRAG_PYTHON" }
     & $runtimePython -m uvicorn agent_platform.api.app:app --host $BindHost --port $Port
     if ($LASTEXITCODE -ne 0) { throw "agent platform exited with code $LASTEXITCODE" }
-} finally { Pop-Location }
+} finally {
+    $env:LOCALRAG_ALLOW_SYNTHETIC_DNS = $previousSyntheticDns
+    Pop-Location
+}

@@ -204,9 +204,299 @@
         "title": "AgentConfigResponse",
         "type": "object"
       },
+      "ArtifactListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ArtifactResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ArtifactListResponse",
+        "type": "object"
+      },
+      "ArtifactResponse": {
+        "description": "A room-scoped projection of a step output or declared artifact.",
+        "properties": {
+          "artifact_id": {
+            "title": "Artifact Id",
+            "type": "string"
+          },
+          "artifact_type": {
+            "title": "Artifact Type",
+            "type": "string"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "is_final": {
+            "default": false,
+            "title": "Is Final",
+            "type": "boolean"
+          },
+          "output": {
+            "title": "Output"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "source_agent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Agent Id"
+          },
+          "source_agent_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Agent Name"
+          },
+          "source_event_id": {
+            "title": "Source Event Id",
+            "type": "string"
+          },
+          "source_step_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Step Id"
+          },
+          "task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Task Id"
+          },
+          "timestamp": {
+            "title": "Timestamp",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "title",
+          "artifact_type",
+          "content",
+          "source_event_id",
+          "source_step_id",
+          "source_agent_id",
+          "source_agent_name",
+          "run_id",
+          "task_id",
+          "timestamp"
+        ],
+        "title": "ArtifactResponse",
+        "type": "object"
+      },
+      "AssetIngestionListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AssetIngestionResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "AssetIngestionListResponse",
+        "type": "object"
+      },
+      "AssetIngestionResponse": {
+        "properties": {
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "chunk_count": {
+            "title": "Chunk Count",
+            "type": "integer"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "evaluation_status": {
+            "title": "Evaluation Status",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/AssetStageResponse"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          },
+          "space_id": {
+            "title": "Space Id",
+            "type": "string"
+          },
+          "stage": {
+            "title": "Stage",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "running",
+              "completed",
+              "failed",
+              "deleted"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "space_id",
+          "filename",
+          "asset_id",
+          "size_bytes",
+          "status",
+          "stage",
+          "chunk_count",
+          "source_id",
+          "error",
+          "history",
+          "updated_at",
+          "evaluation_status"
+        ],
+        "title": "AssetIngestionResponse",
+        "type": "object"
+      },
+      "AssetSearchHit": {
+        "properties": {
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "metadata"
+        ],
+        "title": "AssetSearchHit",
+        "type": "object"
+      },
+      "AssetSearchResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AssetSearchHit"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "AssetSearchResponse",
+        "type": "object"
+      },
+      "AssetStageResponse": {
+        "properties": {
+          "at": {
+            "title": "At",
+            "type": "string"
+          },
+          "stage": {
+            "title": "Stage",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stage",
+          "at"
+        ],
+        "title": "AssetStageResponse",
+        "type": "object"
+      },
       "AssetUploadRequest": {
         "properties": {
           "content_base64": {
+            "maxLength": 41943040,
             "minLength": 1,
             "title": "Content Base64",
             "type": "string"
@@ -217,12 +507,15 @@
             "type": "boolean"
           },
           "filename": {
+            "maxLength": 255,
             "minLength": 1,
             "title": "Filename",
             "type": "string"
           },
           "space_id": {
             "default": "default",
+            "maxLength": 128,
+            "minLength": 1,
             "title": "Space Id",
             "type": "string"
           }
@@ -291,10 +584,39 @@
       },
       "AssistantMessageRequest": {
         "properties": {
+          "architecture": {
+            "default": "auto",
+            "enum": [
+              "auto",
+              "direct",
+              "hierarchical",
+              "swarm",
+              "adversarial",
+              "heterogeneous",
+              "graph"
+            ],
+            "title": "Architecture",
+            "type": "string"
+          },
           "content": {
             "minLength": 1,
             "title": "Content",
             "type": "string"
+          },
+          "persona_theme": {
+            "anyOf": [
+              {
+                "enum": [
+                  "company",
+                  "emperor"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persona Theme"
           },
           "room_id": {
             "anyOf": [
@@ -1133,6 +1455,23 @@
         "title": "ModelDiscoveryResponse",
         "type": "object"
       },
+      "ModelProfileCloneResponse": {
+        "properties": {
+          "catalog": {
+            "$ref": "#/components/schemas/ModelCatalogResponse"
+          },
+          "profile_id": {
+            "title": "Profile Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "profile_id",
+          "catalog"
+        ],
+        "title": "ModelProfileCloneResponse",
+        "type": "object"
+      },
       "ModelProfileRequest": {
         "properties": {
           "api_key": {
@@ -1338,6 +1677,34 @@
         "title": "ModelSettingsResponse",
         "type": "object"
       },
+      "ModelVerificationResponse": {
+        "properties": {
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "profile_id": {
+            "title": "Profile Id",
+            "type": "string"
+          },
+          "verified": {
+            "title": "Verified",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "profile_id",
+          "verified",
+          "message",
+          "model"
+        ],
+        "title": "ModelVerificationResponse",
+        "type": "object"
+      },
       "MultiAgentExecuteRequest": {
         "properties": {
           "architecture": {
@@ -1370,6 +1737,21 @@
             "minimum": 1.0,
             "title": "Max Agents",
             "type": "integer"
+          },
+          "persona_theme": {
+            "anyOf": [
+              {
+                "enum": [
+                  "company",
+                  "emperor"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persona Theme"
           },
           "task_id": {
             "anyOf": [
@@ -2101,6 +2483,198 @@
         "summary": "Get Artifact"
       }
     },
+    "/asset-ingestions": {
+      "get": {
+        "operationId": "list_ingestions_asset_ingestions_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "space_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "title": "Space Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetIngestionListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Ingestions"
+      },
+      "post": {
+        "operationId": "ingest_asset_asset_ingestions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetUploadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetIngestionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ingest Asset"
+      }
+    },
+    "/asset-ingestions/{job_id}": {
+      "delete": {
+        "operationId": "delete_ingestion_asset_ingestions__job_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetIngestionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Ingestion"
+      },
+      "get": {
+        "operationId": "get_ingestion_asset_ingestions__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetIngestionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Ingestion"
+      }
+    },
+    "/asset-ingestions/{job_id}/retry": {
+      "post": {
+        "operationId": "retry_ingestion_asset_ingestions__job_id__retry_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetIngestionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retry Ingestion"
+      }
+    },
     "/assets": {
       "post": {
         "operationId": "upload_asset_assets_post",
@@ -2137,6 +2711,58 @@
           }
         },
         "summary": "Upload Asset"
+      }
+    },
+    "/assets/search": {
+      "get": {
+        "operationId": "search_assets_assets_search_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "space_id",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "title": "Space Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "maxLength": 2000,
+              "minLength": 1,
+              "title": "Q",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetSearchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Assets"
       }
     },
     "/assets/{asset_id}": {
@@ -2180,7 +2806,7 @@
     },
     "/assistant/messages": {
       "post": {
-        "description": "Persist the first assistant message and room in one repository boundary.",
+        "description": "Save a user instruction and start execution without a second UI action.",
         "operationId": "assistant_message_assistant_messages_post",
         "parameters": [
           {
@@ -2576,6 +3202,43 @@
       }
     },
     "/rooms/{room_id}": {
+      "delete": {
+        "operationId": "delete_room_rooms__room_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "title": "Room Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Room"
+      },
       "get": {
         "operationId": "get_room_rooms__room_id__get",
         "parameters": [
@@ -2612,6 +3275,85 @@
           }
         },
         "summary": "Get Room"
+      }
+    },
+    "/rooms/{room_id}/archive": {
+      "post": {
+        "operationId": "archive_room_rooms__room_id__archive_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "title": "Room Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Archive Room"
+      }
+    },
+    "/rooms/{room_id}/artifacts": {
+      "get": {
+        "description": "Return only artifacts projected from this room's event stream.",
+        "operationId": "list_room_artifacts_rooms__room_id__artifacts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "title": "Room Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtifactListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Room Artifacts"
       }
     },
     "/rooms/{room_id}/events": {
@@ -2721,6 +3463,22 @@
               "title": "Timeout",
               "type": "number"
             }
+          },
+          {
+            "in": "header",
+            "name": "Last-Event-ID",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Last-Event-Id"
+            }
           }
         ],
         "responses": {
@@ -2792,6 +3550,43 @@
           }
         },
         "summary": "Get Event"
+      }
+    },
+    "/rooms/{room_id}/execution": {
+      "get": {
+        "operationId": "room_execution_rooms__room_id__execution_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "title": "Room Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Room Execution"
       }
     },
     "/rooms/{room_id}/members": {
@@ -3005,6 +3800,84 @@
           }
         },
         "summary": "Execute Multi Agent"
+      }
+    },
+    "/rooms/{room_id}/reopen": {
+      "post": {
+        "operationId": "reopen_room_rooms__room_id__reopen_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "title": "Room Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reopen Room"
+      }
+    },
+    "/rooms/{room_id}/start": {
+      "post": {
+        "operationId": "start_saved_task_rooms__room_id__start_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "title": "Room Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Start Saved Task Rooms  Room Id  Start Post"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start Saved Task"
       }
     },
     "/runs": {
@@ -3310,6 +4183,84 @@
           }
         },
         "summary": "Save Model Profile"
+      }
+    },
+    "/settings/model-profiles/{profile_id}/clone": {
+      "post": {
+        "operationId": "clone_model_profile_settings_model_profiles__profile_id__clone_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelProfileCloneResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Clone Model Profile"
+      }
+    },
+    "/settings/model-profiles/{profile_id}/verify": {
+      "post": {
+        "operationId": "verify_model_profile_settings_model_profiles__profile_id__verify_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelVerificationResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify Model Profile"
       }
     },
     "/settings/models": {

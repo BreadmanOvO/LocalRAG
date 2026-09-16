@@ -19,6 +19,21 @@ EffectState = Literal["none", "not_applied", "applied", "unknown"]
 ResultStatus = Literal["succeeded", "failed", "blocked", "needs_input"]
 ClaimStatus = Literal["unreviewed", "supported", "contradicted", "insufficient"]
 EventType = Literal[
+    "task_start_failed",
+    "room_deleted",
+    "step_reused",
+    "run_paused",
+    "team_plan_created",
+    "step_claimed",
+    "step_retrying",
+    "step_blocked",
+    "step_output_delta",
+    "memory_read",
+    "room_persona_selected",
+    "room_architecture_selected",
+    "team_planned",
+    "step_queued",
+    "step_failed",
     "message_saved",
     "run_started",
     "run_queued",
@@ -26,6 +41,7 @@ EventType = Literal[
     "tool_started",
     "tool_completed",
     "handoff_created",
+    "handoff_accepted",
     "claim_recorded",
     "step_completed",
     "run_completed",
@@ -176,8 +192,13 @@ class RunEvent(_Contract):
         if self.room_id != self.identity.room_id:
             raise ValueError("room_id must match event identity")
         if self.event_type not in {
+            "task_start_failed",
+            "room_deleted", "step_reused",
+            "run_paused",
+            "team_plan_created", "step_claimed", "step_retrying", "step_blocked", "step_output_delta", "memory_read",
+            "room_persona_selected", "room_architecture_selected", "team_planned", "step_queued", "step_failed",
             "message_saved", "run_started", "run_queued", "step_started", "tool_started", "tool_completed",
-            "handoff_created", "claim_recorded", "step_completed", "run_completed", "run_failed",
+            "handoff_created", "handoff_accepted", "claim_recorded", "step_completed", "run_completed", "run_failed",
             "run_cancelled", "command_rejected",
         }:
             raise ValueError(f"unsupported event_type: {self.event_type}")

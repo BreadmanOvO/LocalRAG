@@ -2,6 +2,7 @@ import type { Event } from "../../shared/api/client";
 
 export type ModelResolution = {
   agentId: string | null;
+  displayName: string | null;
   model: string;
   modelProfile: string | null;
   selectionMode: "fixed" | "auto" | null;
@@ -21,6 +22,7 @@ export function modelResolutionFromEvent(event: Event): ModelResolution | null {
   const selectionMode = text(event.payload, "selection_mode");
   return {
     agentId: text(event.payload, "agent_id"),
+    displayName: text(event.payload, "display_name"),
     model,
     modelProfile: text(event.payload, "model_profile"),
     selectionMode: selectionMode === "fixed" || selectionMode === "auto" ? selectionMode : null,

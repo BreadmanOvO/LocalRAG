@@ -162,6 +162,8 @@ CREATE TABLE IF NOT EXISTS run_events (
     caused_by JSONB NOT NULL DEFAULT '[]'::jsonb,
     consumes JSONB NOT NULL DEFAULT '[]'::jsonb,
     produces JSONB NOT NULL DEFAULT '[]'::jsonb,
+    usage JSONB NOT NULL DEFAULT '{}'::jsonb,
+    timestamp TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE (room_id, room_sequence)
 );

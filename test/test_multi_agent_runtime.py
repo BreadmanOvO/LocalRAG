@@ -14,6 +14,7 @@ from fastapi.testclient import TestClient
 from agent_platform.api import create_app
 from agent_platform.integrations.multi_agent_config import CloudAgentClient, CloudAgentSpec, CloudModelProfile, load_cloud_agents, load_cloud_team_config
 from agent_platform.runtime.multi_agent import CloudTeamRuntime, ModelRoutingError
+from agent_platform.runtime.error_details import serialize_exception
 
 
 def _spec(agent_id: str, responsibility: str) -> CloudAgentSpec:
@@ -134,6 +135,61 @@ class CloudConfigTests(unittest.TestCase):
 
 
 class CloudTeamRuntimeTests(unittest.TestCase):
+    def test_completed_asset_is_injected_into_real_task_prompt(self) -> None:
+        captured: list[str] = []
+
+        class FakeIngestion:
+            def list(self, space_id):
+                return [{"status": "completed", "source_id": "upload-demo"}]
+
+            def search(self, space_id, query):
+                return [{"text": "唯一事实 DEMO-RAG-20260915", "metadata": {"source": "demo.txt", "locator": "全文", "source_id": "upload-demo"}}]
+
+        def invoke(spec, messages):
+            prompt = str(messages[-1].content)
+            captured.append(prompt)
+            return prompt
+
+        app = create_app(team_runtime=CloudTeamRuntime({"chairperson": _spec("chairperson", "汇总")}, invoker=invoke))
+        app.state.asset_ingestion = FakeIngestion()
+        client = TestClient(app)
+        room_id = client.post("/rooms", json={"space_id": "space-demo"}).json()["room_id"]
+        response = client.post(f"/rooms/{room_id}/multi-agent/execute", json={"goal": "根据资料回答 DEMO-RAG-20260915", "architecture": "direct"})
+        self.assertEqual(200, response.status_code, response.text)
+        self.assertIn("唯一事实 DEMO-RAG-20260915", captured[0])
+        events = client.get(f"/rooms/{room_id}/events").json()["items"]
+        started = next(event for event in events if event["event_type"] == "run_started")
+        self.assertTrue(started["payload"]["rag"]["used"])
+        self.assertEqual(["upload-demo"], started["payload"]["rag"]["source_ids"])
+
+    def test_task_capabilities_prioritize_matching_participant(self) -> None:
+        runtime = CloudTeamRuntime({
+            "chairperson": _spec("chairperson", "汇总"),
+            "researcher": CloudAgentSpec("researcher", "研究员", "研究", "sensenova", "https://token.sensenova.cn/v1", "research", "KEY", "secret", capabilities=("research",)),
+            "reviewer": CloudAgentSpec("reviewer", "审查员", "审查", "sensenova", "https://token.sensenova.cn/v1", "review", "KEY", "secret", capabilities=("review",)),
+        }, invoker=lambda spec, messages: spec.agent_id)
+        result = runtime.execute("请审查方案并指出风险", architecture="hierarchical", max_agents=3, required_capabilities=("review",))
+        self.assertIn("reviewer", [turn.agent_id for turn in result.turns])
+
+    def test_serialized_failure_is_actionable_and_redacted(self) -> None:
+        exc = RuntimeError("provider failed with sk-secret123456789")
+        payload = serialize_exception(exc, phase="model_call", provider="demo", model="model-a")
+        self.assertEqual("model_request_failed", payload["error_code"])
+        self.assertTrue(payload["suggestion"])
+        self.assertNotIn("sk-secret", payload["error_message"])
+
+    def test_default_cloud_path_streams_ordered_deltas_before_final_turn(self) -> None:
+        runtime = CloudTeamRuntime({"chairperson": _spec("chairperson", "汇总")})
+        events = []
+        with patch.object(runtime, "_stream_client", return_value=iter(("逐", "字", "输出"))):
+            result = runtime.execute("流式回答", architecture="direct", on_activity=lambda kind, payload: events.append((kind, payload)))
+
+        deltas = [payload for kind, payload in events if kind == "step_output_delta"]
+        self.assertEqual("逐字输出", result.final)
+        self.assertEqual([0, 1, 2], [item["token_index"] for item in deltas])
+        self.assertEqual([1, 2, 4], [item["offset"] for item in deltas])
+        self.assertEqual(1, len({item["stream_id"] for item in deltas}))
+
     def test_unimplemented_architecture_and_missing_independent_agents_fail_before_call(self) -> None:
         invoke = Mock(return_value="ok")
         runtime = CloudTeamRuntime({"chairperson": _spec("chairperson", "汇总"), "reviewer": _spec("reviewer", "审查")}, invoker=invoke)
@@ -158,8 +214,9 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         self.assertNotIn("private key", response.text)
         self.assertIn("前置约束只讨论摄像头", calls[0])
         messages = client.get(f"/rooms/{room_id}/messages").json()["items"]
-        self.assertIn("已完成计划", messages[-1]["content"])
+        self.assertNotIn("已完成计划", [message["content"] for message in messages])
         events = client.get(f"/rooms/{room_id}/events").json()["items"]
+        self.assertTrue(any(event["event_type"] == "step_completed" and event["payload"].get("output") == "已完成计划" for event in events))
         self.assertEqual("run_failed", events[-1]["event_type"])
         response = client.post(f"/rooms/{room_id}/multi-agent/execute", json={"goal": "补充", "architecture": "direct"})
         self.assertEqual(200, response.status_code)
@@ -175,7 +232,9 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         runtime = CloudTeamRuntime({"chairperson": _spec("chairperson", "汇总"), "researcher": _spec("researcher", "研究"), "reviewer": _spec("reviewer", "审查")}, invoker=invoke)
         result = runtime.execute("比较两份资料", architecture="swarm", max_agents=3)
         self.assertEqual("completed", result.status)
-        self.assertEqual(["researcher", "reviewer", "chairperson"], [turn.agent_id for turn in result.turns])
+        self.assertEqual(["chairperson", "researcher", "reviewer", "chairperson"], [turn.agent_id for turn in result.turns])
+        self.assertFalse(result.turns[0].is_final)
+        self.assertTrue(result.turns[-1].is_final)
         self.assertIn("researcher result", calls[-1][1])
         self.assertIn("reviewer result", calls[-1][1])
 
@@ -191,7 +250,7 @@ class CloudTeamRuntimeTests(unittest.TestCase):
 
         runtime = CloudTeamRuntime({"chairperson": _spec("chairperson", "汇总"), "researcher": _spec("researcher", "研究"), "reviewer": _spec("reviewer", "审查")}, invoker=invoke)
         result = runtime.execute("并发独立探索", architecture="swarm", max_agents=3)
-        self.assertEqual(["researcher", "reviewer", "chairperson"], [turn.agent_id for turn in result.turns])
+        self.assertEqual(["chairperson", "researcher", "reviewer", "chairperson"], [turn.agent_id for turn in result.turns])
         self.assertNotEqual(prompts["researcher"], prompts["reviewer"])
 
     def test_model_settings_rebind_only_future_runtime_calls(self) -> None:
@@ -220,7 +279,7 @@ class CloudTeamRuntimeTests(unittest.TestCase):
 
         runtime._invoker = invoke
         result = runtime.execute("snapshot", architecture="hierarchical", max_agents=3)
-        self.assertEqual(["chairperson", "researcher", "reviewer"], [item[0] for item in calls])
+        self.assertEqual(["chairperson", "researcher", "chairperson"], [item[0] for item in calls])
         self.assertEqual("research-model", calls[1][1])
         self.assertEqual("research-model", result.turns[1].content)
 
@@ -514,6 +573,10 @@ class CloudTeamRuntimeTests(unittest.TestCase):
         self.assertEqual("sensenova-6.7-flash-lite", events[1]["payload"]["model_snapshot"][0]["model"])
         completed_steps = [event for event in events if event["event_type"] == "step_completed"]
         self.assertEqual("sensenova-6.7-flash-lite", completed_steps[0]["payload"]["model"])
+        self.assertEqual(1, sum(bool(event["payload"].get("is_final")) for event in completed_steps))
+        saved_messages = client.get(f"/rooms/{room['room_id']}/messages").json()["items"]
+        self.assertEqual(["user", "assistant"], [message["role"] for message in saved_messages])
+        self.assertEqual("answer from chairperson", saved_messages[-1]["content"])
         self.assertNotIn("secret", str(events))
         self.assertEqual("run_completed", events[-1]["event_type"])
 

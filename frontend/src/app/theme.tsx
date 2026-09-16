@@ -31,16 +31,13 @@ export const themes: Record<ThemeId, ThemeDefinition> = {
     taskAction: "下达任务",
     taskPlaceholder: "说明目标、已知信息和你期待的交付结果",
     roles: [
-      { id: "chairperson", department: "董事长办公室", title: "董事长", responsibility: "确定目标、优先级与最终取舍", focus: "决策与裁决" },
-      { id: "executive_assistant", department: "董事长办公室", title: "董事长助理", responsibility: "接收任务、组织协作与汇总回报", focus: "任务统筹" },
+      { id: "executive_assistant", department: "董事长办公室", title: "董事长助理", responsibility: "理解目标与约束，判断是否需要团队，明确交付要求并核对最终结果；简单任务直接完成", focus: "任务理解与交付" },
       { id: "strategy_lead", department: "战略发展部", title: "战略负责人", responsibility: "定义问题边界、比较路径与关键风险", focus: "方向判断" },
       { id: "technology_lead", department: "技术委员会", title: "技术负责人", responsibility: "评估技术可行性、资源与实现约束", focus: "技术决策" },
-      { id: "project_manager", department: "项目管理办公室", title: "项目经理", responsibility: "拆解交付、安排依赖并跟踪进度", focus: "项目推进" },
+      { id: "project_manager", department: "项目管理办公室", title: "项目经理", responsibility: "依据明确的任务书详细拆解、分工、安排依赖与检查点并整合专业成果", focus: "拆解与执行统筹" },
       { id: "architect", department: "技术委员会", title: "架构师", responsibility: "设计系统边界、接口和演进路径", focus: "架构设计" },
       { id: "engineer", department: "研发中心", title: "工程师", responsibility: "实现方案、验证行为并处理故障", focus: "实现验证" },
-      { id: "researcher", department: "研究院", title: "研究员", responsibility: "检索证据、提出假设并标注不确定性", focus: "研究分析" },
       { id: "data_analyst", department: "数据智能部", title: "数据分析师", responsibility: "分析数据、核验口径与发现异常", focus: "数据洞察" },
-      { id: "reviewer", department: "质量与风险委员会", title: "审查员", responsibility: "寻找反例、核查结论与识别风险", focus: "质量审查" },
       { id: "report_writer", department: "董事长办公室", title: "报告撰写员", responsibility: "组织结论、证据和待决事项", focus: "清晰交付" },
     ],
   },
@@ -48,22 +45,21 @@ export const themes: Record<ThemeId, ThemeDefinition> = {
     id: "emperor",
     name: "当皇上",
     setupLabel: "宫廷设置",
-    leadLabel: "内阁大学士",
+    leadLabel: "总管太监",
     taskHeading: "颁布新旨意",
     taskAction: "颁布旨意",
     taskPlaceholder: "说明所要处置的事务、已知线索和期望结果",
     roles: [
-      { id: "emperor", department: "御前", title: "皇上", responsibility: "定夺大政、优先次序与最终裁决", focus: "圣裁" },
-      { id: "grand_secretary", department: "内阁", title: "内阁大学士", responsibility: "承旨、会商与汇总奏报", focus: "统筹" },
-      { id: "chief_eunuch", department: "司礼监", title: "司礼监掌印", responsibility: "传达旨意、督办进度与校核文书", focus: "督办" },
-      { id: "minister_personnel", department: "吏部", title: "吏部尚书", responsibility: "评估人事、职责和协作分派", focus: "组织调度" },
+      { id: "chief_eunuch", department: "司礼监", title: "总管太监", responsibility: "理解旨意与约束，判断是否需要百官协作，明确交付要求并核对奏报；简单事务直接答复", focus: "明旨与回奏" },
+      { id: "grand_secretary", department: "内阁", title: "内阁大学士", responsibility: "依据明确的旨意详细拆解、分派事务、安排依赖与检查点并整合专业成果", focus: "拆解与政务统筹" },
+      { id: "minister_personnel", department: "吏部", title: "吏部尚书", responsibility: "评估人员能力、职责归属与任用建议；跨部任务进度由内阁统筹", focus: "人事评估" },
       { id: "minister_revenue", department: "户部", title: "户部尚书", responsibility: "核算资源、成本和投入产出", focus: "资源分析" },
       { id: "minister_rites", department: "礼部", title: "礼部尚书", responsibility: "整理沟通、规范与对外表达", focus: "表达规范" },
       { id: "minister_war", department: "兵部", title: "兵部尚书", responsibility: "制定推进策略、应急预案和行动节奏", focus: "行动规划" },
       { id: "minister_justice", department: "刑部", title: "刑部尚书", responsibility: "核查规则、边界和责任风险", focus: "合规审查" },
       { id: "minister_works", department: "工部", title: "工部尚书", responsibility: "审视技术实现、工艺和落地质量", focus: "工程实现" },
-      { id: "censor", department: "都察院", title: "都察院御史", responsibility: "提出异议、查验依据和暴露隐患", focus: "独立监察" },
-      { id: "academician", department: "翰林院", title: "翰林院学士", responsibility: "考据资料、起草文稿和归纳结论", focus: "考据撰文" },
+      { id: "censor", department: "都察院", title: "都察院御史", responsibility: "查验依据、提出异议并暴露隐患", focus: "监察核验" },
+      { id: "academician", department: "翰林院", title: "翰林院学士", responsibility: "考据资料、起草文稿并整理奏报", focus: "考据撰文" },
     ],
   },
 };
@@ -118,6 +114,16 @@ export function rememberRoomTheme(roomId: string, theme: ThemeId) {
     window.localStorage.setItem(roomThemeStorageKey, JSON.stringify(next));
   } catch {
     // A room remains usable when local preferences cannot be saved.
+  }
+}
+
+export function forgetRoomTheme(roomId: string) {
+  try {
+    const next = readRoomThemeMap();
+    delete next[roomId];
+    window.localStorage.setItem(roomThemeStorageKey, JSON.stringify(next));
+  } catch {
+    // Missing local storage must not block leaving an unavailable room.
   }
 }
 

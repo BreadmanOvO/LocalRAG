@@ -18,7 +18,7 @@ export function useRoomEvents(roomId: string, initialCursor = 0): RoomEventState
     const connect = () => {
       if (stopped) return;
       const base = API_BASE.replace(/\/$/, "");
-      source = new EventSource(`${base}/rooms/${encodeURIComponent(roomId)}/events/stream?after=${cursor.current}`);
+      source = new EventSource(`${base}/rooms/${encodeURIComponent(roomId)}/events/stream?after=${cursor.current}&follow=true&timeout=60`);
       source.onopen = () => setState((current) => ({ ...current, connected: true }));
       source.onmessage = (message) => {
         try {

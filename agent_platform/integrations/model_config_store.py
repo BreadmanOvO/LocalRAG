@@ -13,9 +13,11 @@ import os
 import ipaddress
 import socket
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
+from threading import RLock
 from typing import Any, Mapping
-from urllib.parse import urlsplit
+from urllib.parse import SplitResult, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from .multi_agent_config import CloudModelProfile, DEFAULT_CONFIG, profile_matches_requirements
@@ -23,6 +25,18 @@ from .multi_agent_config import CloudModelProfile, DEFAULT_CONFIG, profile_match
 
 class ModelConfigError(ValueError):
     pass
+
+
+# Some local DNS/proxy setups map otherwise public provider hostnames to the
+# RFC 2544 benchmark range while the request is sent through that proxy.  It
+# is not a routable provider address and must never make an explicitly entered
+# private IP safe.  We handle it separately so development discovery works
+# without weakening the normal SSRF guard.
+_SYNTHETIC_DNS_NETWORK = ipaddress.ip_network("198.18.0.0/15")
+_TRUTHY_ENV_VALUES = {"1", "true", "yes", "on"}
+_LOCAL_ENV_VALUES = {"dev", "development", "local", "test", "testing"}
+_PRODUCTION_ENV_VALUES = {"prod", "production"}
+_DISCOVERY_DNS_LOCK = RLock()
 
 
 class _NoRedirect(HTTPRedirectHandler):
@@ -243,6 +257,39 @@ class ModelConfigStore:
         self.save(raw)
         return self.public()
 
+    def clone_profile(self, profile_id: str) -> tuple[str, dict[str, Any]]:
+        """Create a disabled copy while retaining the stored provider key.
+
+        The key never appears in the returned public catalog. A clone gets its
+        own profile identity so agents can bind to different models from the
+        same provider without changing the original profile.
+        """
+        source_id = _id(profile_id, "profile_id")
+        raw = self.load()
+        source = raw["model_profiles"].get(source_id)
+        if not isinstance(source, dict):
+            raise KeyError(source_id)
+        suffix = "-copy"
+        clone_id = f"{source_id}{suffix}"
+        index = 2
+        while clone_id in raw["model_profiles"]:
+            clone_id = f"{source_id}{suffix}-{index}"
+            index += 1
+        if len(clone_id) > 100:
+            stem = source_id[: 100 - len(suffix)]
+            clone_id = f"{stem}{suffix}"
+            while clone_id in raw["model_profiles"]:
+                raise ModelConfigError("cannot generate a unique clone profile id")
+        cloned = dict(source)
+        for key in ("capabilities", "modalities", "scenarios"):
+            if isinstance(cloned.get(key), list):
+                cloned[key] = list(cloned[key])
+        cloned["display_name"] = f"{str(source.get('display_name', source_id)).strip() or source_id} 副本"
+        cloned["enabled"] = False
+        raw["model_profiles"][clone_id] = cloned
+        self.save(raw)
+        return clone_id, self.public()
+
     def upsert_agent(self, payload: Mapping[str, Any]) -> dict[str, Any]:
         agent_id = _id(str(payload.get("agent_id", "")), "agent_id")
         raw = self.load()
@@ -293,7 +340,10 @@ class ModelConfigStore:
             raise ModelConfigError("model profile not found")
         stored_url = self._normalize_base_url(str(profile.get("base_url", "")).strip())
         requested_url = self._normalize_base_url(str(base_url or "").strip())
-        if stored_url and requested_url and stored_url != requested_url:
+        # A saved key is scoped to the exact normalized profile URL.  Treat a
+        # missing URL on either side as a mismatch too; otherwise a partially
+        # configured profile could forward its key to an arbitrary endpoint.
+        if stored_url != requested_url:
             raise ModelConfigError("a saved API key can only be used with its profile URL")
         inline = str(profile.get("api_key", "")).strip()
         env_name = str(profile.get("api_key_env", "")).strip()
@@ -312,7 +362,69 @@ class ModelConfigStore:
         return parsed._replace(path=path).geturl().rstrip("/")
 
     @staticmethod
-    def _is_safe_discovery_host(hostname: str) -> bool:
+    def _is_production_environment() -> bool:
+        return os.environ.get("LOCALRAG_ENV", "").strip().lower() in _PRODUCTION_ENV_VALUES
+
+    @staticmethod
+    def _allow_synthetic_dns() -> bool:
+        """Whether benchmark-range DNS answers are safe to use for discovery.
+
+        Local DNS/proxy setups sometimes map public provider names to the RFC
+        2544 benchmark range. Discovery still uses the hostname (and an
+        explicitly entered private IP is rejected below). The compatibility is
+        enabled only for an explicitly marked local environment or an explicit
+        opt-in flag; unknown and production environments fail closed.
+        """
+        if ModelConfigStore._is_production_environment():
+            return False
+        configured = os.environ.get("LOCALRAG_ALLOW_SYNTHETIC_DNS", "")
+        if configured.strip():
+            return configured.strip().lower() in _TRUTHY_ENV_VALUES
+        environment = os.environ.get("LOCALRAG_ENV", "").strip().lower()
+        return environment in _LOCAL_ENV_VALUES
+
+    @staticmethod
+    def _is_blocked_discovery_address(address: Any) -> bool:
+        return bool(
+            not address.is_global
+            or address.is_private
+            or address.is_loopback
+            or address.is_link_local
+            or address.is_reserved
+            or address.is_unspecified
+            or address.is_multicast
+        )
+
+    @staticmethod
+    def _parse_discovery_url(value: str) -> SplitResult:
+        try:
+            parsed = urlsplit(str(value or "").strip().rstrip("/"))
+        except ValueError as exc:
+            raise ModelConfigError("base_url must be an http(s) URL") from exc
+        if (
+            parsed.scheme not in {"http", "https"}
+            or not parsed.hostname
+            or parsed.username
+            or parsed.password
+            or parsed.query
+            or parsed.fragment
+        ):
+            raise ModelConfigError("base_url must be an http(s) URL")
+        return parsed
+
+    @staticmethod
+    def _resolve_safe_discovery_host(hostname: str) -> tuple[str, ...]:
+        # A literal address is user input, not a DNS answer.  Keep rejecting it
+        # even when it happens to be in the development-only benchmark range.
+        try:
+            literal = ipaddress.ip_address(hostname)
+        except ValueError:
+            literal = None
+        if literal is not None:
+            if ModelConfigStore._is_blocked_discovery_address(literal):
+                raise ModelConfigError("model discovery does not allow private or local addresses")
+            return (str(literal),)
+
         try:
             addresses = {info[4][0] for info in socket.getaddrinfo(hostname, None)}
         except OSError as exc:
@@ -321,23 +433,63 @@ class ModelConfigStore:
             raise ModelConfigError("model discovery host cannot be resolved")
         for address in addresses:
             parsed = ipaddress.ip_address(address)
-            if parsed.is_private or parsed.is_loopback or parsed.is_link_local or parsed.is_reserved or parsed.is_unspecified:
+            if parsed in _SYNTHETIC_DNS_NETWORK:
+                if ModelConfigStore._allow_synthetic_dns():
+                    continue
                 raise ModelConfigError("model discovery does not allow private or local addresses")
+            if ModelConfigStore._is_blocked_discovery_address(parsed):
+                raise ModelConfigError("model discovery does not allow private or local addresses")
+        return tuple(sorted(addresses))
+
+    @staticmethod
+    def _is_safe_discovery_host(hostname: str) -> bool:
+        ModelConfigStore._resolve_safe_discovery_host(hostname)
         return True
+
+    @staticmethod
+    @contextmanager
+    def _pin_discovery_resolution(hostname: str, addresses: tuple[str, ...]):
+        """Pin socket resolution for one outbound request.
+
+        The safety check and the actual HTTP/OpenAI connection must use the
+        same validated addresses.  Without this small scoped resolver, a DNS
+        rebinding between ``getaddrinfo`` and ``connect`` could turn a public
+        URL into an SSRF request.  Other hosts and proxy resolution continue to
+        use the platform resolver.
+        """
+        expected = str(hostname or "").rstrip(".").lower()
+        original = socket.getaddrinfo
+
+        def pinned_getaddrinfo(host: Any, port: Any, family: int = 0, socktype: int = 0, proto: int = 0, flags: int = 0):
+            current = str(host or "").rstrip(".").lower()
+            if current != expected:
+                return original(host, port, family, socktype, proto, flags)
+            results: list[tuple[Any, ...]] = []
+            for address in addresses:
+                results.extend(original(address, port, family, socktype, proto, flags))
+            if results:
+                return results
+            return original(host, port, family, socktype, proto, flags)
+
+        with _DISCOVERY_DNS_LOCK:
+            socket.getaddrinfo = pinned_getaddrinfo
+            try:
+                yield
+            finally:
+                socket.getaddrinfo = original
 
     @staticmethod
     def discover_models(base_url: str, api_key: str = "", timeout: float = 15.0) -> list[dict[str, str]]:
         value = str(base_url or "").strip().rstrip("/")
-        parsed = urlsplit(value)
-        if parsed.scheme not in {"http", "https"} or not parsed.hostname or parsed.username or parsed.password or parsed.query or parsed.fragment:
-            raise ModelConfigError("base_url must be an http(s) URL")
-        ModelConfigStore._is_safe_discovery_host(parsed.hostname)
+        parsed = ModelConfigStore._parse_discovery_url(value)
+        addresses = ModelConfigStore._resolve_safe_discovery_host(parsed.hostname)
         normalized = ModelConfigStore._normalize_base_url(value)
         url = normalized + "/models"
         request = Request(url, headers={"Accept": "application/json", **({"Authorization": f"Bearer {api_key}"} if api_key else {})})
         try:
-            with build_opener(_NoRedirect).open(request, timeout=timeout) as response:
-                payload = json.loads(response.read().decode("utf-8"))
+            with ModelConfigStore._pin_discovery_resolution(parsed.hostname, addresses):
+                with build_opener(_NoRedirect).open(request, timeout=timeout) as response:
+                    payload = json.loads(response.read().decode("utf-8"))
         except Exception as exc:
             raise ModelConfigError(f"model discovery failed: {type(exc).__name__}") from exc
         rows = payload.get("data", payload) if isinstance(payload, dict) else payload

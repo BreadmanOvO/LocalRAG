@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LoaderCircle, UsersRound } from "lucide-react";
 import { api, type MultiAgentExecution } from "../../shared/api/client";
 
@@ -7,8 +7,10 @@ export function MultiAgentPanel({ roomId }: { roomId: string }) {
   const [goal, setGoal] = useState("");
   const [result, setResult] = useState<MultiAgentExecution | null>(null);
   const queryClient = useQueryClient();
+  const roomEvents = useQuery({ queryKey: ["events", roomId], queryFn: () => api.events(roomId), enabled: Boolean(roomId) });
+  const selectedArchitecture = roomEvents.data?.items.find((event) => event.event_type === "room_architecture_selected")?.payload.architecture;
   const execute = useMutation({
-    mutationFn: () => api.executeMultiAgent(roomId, goal.trim(), "auto", 3),
+    mutationFn: () => api.executeMultiAgent(roomId, goal.trim(), (selectedArchitecture === "direct" || selectedArchitecture === "hierarchical" || selectedArchitecture === "swarm" || selectedArchitecture === "adversarial" || selectedArchitecture === "heterogeneous" || selectedArchitecture === "graph" ? selectedArchitecture : "auto"), 3),
     onSuccess: (value) => {
       setResult(value);
       setGoal("");
